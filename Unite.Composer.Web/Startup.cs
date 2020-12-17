@@ -14,6 +14,15 @@ namespace Unite.Composer.Web
 {
     public class Startup
     {
+        private static readonly string[] _trustedOrigins =
+        {
+            "http://unite.unite:80",
+            "https://unite.unite:443",
+            "http://localhost:5000",
+            "https://localhost:5001",
+            "http://localhost:8080"
+        };
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -44,7 +53,7 @@ namespace Unite.Composer.Web
 
             app.UseCors(builer =>
             {
-                builer.WithOrigins("http://localhost:8080", "http://localhost:80", "https://localhost:443")
+                builer.WithOrigins(_trustedOrigins)
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();
