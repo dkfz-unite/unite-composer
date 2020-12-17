@@ -55,10 +55,9 @@ namespace Unite.Composer.Web
 
             app.UseCors(builer =>
             {
-                builer.WithOrigins(_trustedOrigins)
+                builer.AllowAnyOrigin()
                       .AllowAnyHeader()
-                      .AllowAnyMethod()
-                      .AllowCredentials();
+                      .AllowAnyMethod();
             });
 
             app.UseEndpoints(endpoints =>
