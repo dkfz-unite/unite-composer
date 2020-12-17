@@ -16,8 +16,8 @@ namespace Unite.Composer.Web
     {
         private static readonly string[] _trustedOrigins =
         {
-            "http://unite.unite:80",
-            "https://unite.unite:443",
+            "http://web.unite:80",
+            "https://web.unite:443",
             "http://localhost:5000",
             "https://localhost:5001",
             "http://localhost:8080"
