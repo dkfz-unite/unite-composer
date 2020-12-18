@@ -51,14 +51,14 @@ namespace Unite.Composer.Web
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseCors(builer =>
             {
                 builer.AllowAnyOrigin()
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
