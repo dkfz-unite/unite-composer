@@ -36,6 +36,8 @@ namespace Unite.Composer.Web
         {
             services.AddServices();
 
+            services.AddCors();
+
             services.AddControllers(options => options.AddMvcOptions())
                     .AddJsonOptions(options => options.AddJsonOptions());
         }
