@@ -7,11 +7,11 @@ namespace Unite.Composer.Web.Configuration
         private static string _defaultMySqlHost = "localhost";
         private static string _defaultMySqlDatabase = "unite";
         private static string _defaultMySqlUser = "root";
-        private static string _defaultMySqlPassword = "12345";
+        private static string _defaultMySqlPassword = "Long-p@55w0rd";
 
         private static string _defaultElasticHost = "http://localhost:9200";
         private static string _defaultElasticUser = "elastic";
-        private static string _defaultElasticPassword = "12345";
+        private static string _defaultElasticPassword = "Long-p@55w0rd";
 
 
 
