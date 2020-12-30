@@ -23,13 +23,13 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.DonorFilters != null)
             {
-                request.AddTermsQuery(
-                    donor => donor.Id.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    donor => donor.Id,
                     criteria.DonorFilters.Id
                 );
 
                 request.AddMatchQuery(
-                    donor => donor.Diagnosis.Suffix(_keywordSuffix),
+                    donor => donor.Diagnosis,
                     criteria.DonorFilters.Diagnosis
                 );
 
@@ -57,8 +57,8 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.CellLineFilters != null)
             {
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().Name.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    donor => donor.CellLines.First().Name,
                     criteria.CellLineFilters.Name
                 );
 
@@ -105,9 +105,15 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.MutationFilters != null)
             {
-                request.AddTermsQuery(
-                    donor => donor.Samples.First().Mutations.First().Code.Suffix(_keywordSuffix),
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Code.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    donor => donor.Samples.First().Mutations.First().Name,
+                    donor => donor.CellLines.First().Samples.First().Mutations.First().Name,
+                    criteria.MutationFilters.Name
+                );
+
+                request.AddMatchQuery(
+                    donor => donor.Samples.First().Mutations.First().Code,
+                    donor => donor.CellLines.First().Samples.First().Mutations.First().Code,
                     criteria.MutationFilters.Code
                 );
 
@@ -145,9 +151,9 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.GeneFilters != null)
             {
-                request.AddTermsQuery(
-                    donor => donor.Samples.First().Mutations.First().Gene.Name.Suffix(_keywordSuffix),
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Gene.Name.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    donor => donor.Samples.First().Mutations.First().Gene.Name,
+                    donor => donor.CellLines.First().Samples.First().Mutations.First().Gene.Name,
                     criteria.GeneFilters.Name
                 );
             }

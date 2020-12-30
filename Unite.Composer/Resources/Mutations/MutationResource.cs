@@ -6,6 +6,7 @@ namespace Unite.Composer.Resources.Mutations
     public class MutationResource
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Code { get; set; }
         public string Type { get; set; }
 
@@ -17,6 +18,7 @@ namespace Unite.Composer.Resources.Mutations
         public MutationResource(MutationIndex index)
         {
             Id = index.Id;
+            Name = index.Name;
             Code = index.Code;
             Type = index.Type;
 

@@ -10,7 +10,7 @@ namespace Unite.Composer.Indices.Services
     public class MutationIndexService : IndexService<MutationIndex>
     {
         private const string _keywordSuffix = "keyword";
-        
+
         protected override string DefaultIndex => "mutations";
 
         public MutationIndexService(IElasticOptions options) : base(options)
@@ -23,8 +23,13 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.MutationFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Code.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    mutation => mutation.Name,
+                    criteria.MutationFilters.Name
+                );
+
+                request.AddMatchQuery(
+                    mutation => mutation.Code,
                     criteria.MutationFilters.Code
                 );
 
@@ -38,8 +43,8 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.MutationType
                 );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Contig.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    mutation => mutation.Contig,
                     criteria.MutationFilters.Contig
                 );
 
@@ -55,29 +60,24 @@ namespace Unite.Composer.Indices.Services
                 );
             }
 
-            if(criteria.GeneFilters != null)
+            if (criteria.GeneFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Gene.Name.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    mutation => mutation.Gene.Name,
                     criteria.GeneFilters.Name
                 );
             }
 
-            if(criteria.DonorFilters != null)
+            if (criteria.DonorFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().Donor.Id.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    mutation => mutation.Samples.First().Donor.Id,
                     criteria.DonorFilters.Id
                 );
 
                 request.AddMatchQuery(
-                    mutation => mutation.Samples.First().Donor.Diagnosis.Suffix(_keywordSuffix),
+                    mutation => mutation.Samples.First().Donor.Diagnosis,
                     criteria.DonorFilters.Diagnosis
-                );
-
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().Donor.ClinicalData.Gender.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.Gender
                 );
 
                 request.AddTermsQuery(
@@ -102,10 +102,10 @@ namespace Unite.Composer.Indices.Services
                 );
             }
 
-            if(criteria.CellLineFilters != null)
+            if (criteria.CellLineFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.Name.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    mutation => mutation.Samples.First().CellLine.Name,
                     criteria.CellLineFilters.Name
                 );
 
