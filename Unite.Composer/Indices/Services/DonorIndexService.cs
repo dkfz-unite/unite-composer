@@ -23,8 +23,8 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.DonorFilters != null)
             {
-                request.AddTermsQuery(
-                    donor => donor.Id.Suffix(_keywordSuffix),
+                request.AddMatchQuery(
+                    donor => donor.Id,
                     criteria.DonorFilters.Id
                 );
 
@@ -157,6 +157,11 @@ namespace Unite.Composer.Indices.Services
                     criteria.GeneFilters.Name
                 );
             }
+
+            request.OrderBy(
+                donor => donor.Id.Suffix(_keywordSuffix),
+                SortOrder.Ascending
+            );
 
             return request;
         }

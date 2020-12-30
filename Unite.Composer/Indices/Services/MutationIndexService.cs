@@ -150,6 +150,11 @@ namespace Unite.Composer.Indices.Services
                 );
             }
 
+            request.OrderBy(
+                mutation => mutation.Id,
+                SortOrder.Ascending
+            );
+
             return request;
         }
     }

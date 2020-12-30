@@ -261,6 +261,36 @@ namespace Unite.Composer.Indices.Services.Extensions
             request.Query = SetOrAdd(request.Query, query);
         }
 
+        /// <summary>
+        /// Adds ordering query to given request
+        /// </summary>
+        /// <typeparam name="T">Index type</typeparam>
+        /// <typeparam name="TProp">Property type</typeparam>
+        /// <param name="request">Source request</param>
+        /// <param name="property">Ordering property</param>
+        /// <param name="order">Ordering type</param>
+        public static void OrderBy<T, TProp>(this ISearchRequest<T> request,
+            Expression<Func<T, TProp>> property,
+            SortOrder order = SortOrder.Ascending)
+            where T : class
+        {
+            var sort = new FieldSortDescriptor<T>()
+                .Field(property)
+                .Order(order);
+
+            if(request.Sort != null)
+            {
+                request.Sort.Add(sort);
+            }
+            else
+            {
+                request.Sort = new List<ISort>
+                {
+                    sort
+                };
+            }
+        }
+
 
         private static QueryContainer SetOrAdd(QueryContainer sourceQuery, QueryContainer newQuery)
         {
