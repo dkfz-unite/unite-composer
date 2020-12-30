@@ -70,8 +70,8 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.DonorFilters != null)
             {
-                request.AddMatchQuery(
-                    mutation => mutation.Samples.First().Donor.Id,
+                request.AddTermsQuery(
+                    mutation => mutation.Samples.First().Donor.Id.Suffix(_keywordSuffix),
                     criteria.DonorFilters.Id
                 );
 

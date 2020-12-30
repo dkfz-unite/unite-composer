@@ -23,8 +23,8 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.DonorFilters != null)
             {
-                request.AddMatchQuery(
-                    donor => donor.Id,
+                request.AddTermsQuery(
+                    donor => donor.Id.Suffix(_keywordSuffix),
                     criteria.DonorFilters.Id
                 );
 
