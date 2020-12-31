@@ -80,6 +80,8 @@ namespace Unite.Composer.Indices.Services
 
             request.AddMultiMatchQuery(searchCriteria.Term);
 
+            request.TrackTotalHits();
+
             return request;
         }
 
