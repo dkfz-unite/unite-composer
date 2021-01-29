@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities;
+﻿using Unite.Indices.Entities.Basic.Mutations;
 
 namespace Unite.Composer.Resources.Mutations
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Unite.Indices.Entities.Donors;
 
@@ -12,28 +11,25 @@ namespace Unite.Composer.Resources.Donors
         public bool? MtaProtected { get; set; }
         public string Diagnosis { get; set; }
         public DateTime? DiagnosisDate { get; set; }
+
         public ClinicalDataResource ClinicalData { get; set; }
         public TreatmentResource[] Treatments { get; set; }
         public WorkPackageResource[] WorkPackages { get; set; }
         public StudyResource[] Studies { get; set; }
 
-        public int CellLines { get; set; }
         public int Samples { get; set; }
         public int Mutations { get; set; }
         public int Genes { get; set; }
 
         public DonorResource(DonorIndex index)
         {
-            var mutations = new List<int>();
-            var genes = new List<int>();
-
             Id = index.Id;
             Origin = index.Origin;
             MtaProtected = index.MtaProtected;
             Diagnosis = index.Diagnosis;
             DiagnosisDate = index.DiagnosisDate;
 
-            if(index.ClinicalData != null)
+            if (index.ClinicalData != null)
             {
                 ClinicalData = new ClinicalDataResource(index.ClinicalData);
             }
@@ -52,91 +48,27 @@ namespace Unite.Composer.Resources.Donors
                     .ToArray();
             }
 
-            if(index.Studies != null && index.Studies.Any())
+            if (index.Studies != null && index.Studies.Any())
             {
                 Studies = index.Studies
                     .Select(study => new StudyResource(study))
                     .ToArray();
             }
 
-            if (index.CellLines != null && index.CellLines.Any())
+            if (index.Mutations != null && index.Mutations.Any())
             {
-                CellLines = index.CellLines
-                    .Select(cellLine => cellLine.Id)
-                    .Distinct()
+                Samples = index.Mutations
+                    .SelectMany(mutation => mutation.Samples)
+                    .GroupBy(sample => sample.Id)
+                    .Select(g => g.First())
                     .Count();
 
-                var cellLineMutations = index.CellLines
-                    .Where(cellLine => cellLine.Samples != null)
-                    .SelectMany(cellLine => cellLine.Samples)
-                    .Where(sample => sample.Mutations != null)
-                    .SelectMany(sample => sample.Mutations)
-                    .Select(mutation => mutation.Id)
-                    .Distinct();
-
-                if (cellLineMutations.Any())
-                {
-                    mutations.AddRange(cellLineMutations);
-                }
-
-                var cellLineGenes = index.CellLines
-                    .Where(cellLine => cellLine.Samples != null)
-                    .SelectMany(cellLine => cellLine.Samples)
-                    .Where(sample => sample.Mutations != null)
-                    .SelectMany(sample => sample.Mutations)
-                    .Where(mutation => mutation.Gene != null)
-                    .Select(mutation => mutation.Gene.Id)
-                    .Distinct();
-
-                if (cellLineGenes.Any())
-                {
-                    genes.AddRange(cellLineGenes);
-                }
-            }
-
-            if (index.Samples != null && index.Samples.Any())
-            {
-                Samples = index.Samples
-                    .Select(sample => sample.Id)
-                    .Distinct()
+                Mutations = index.Mutations
                     .Count();
 
-                var sampleMutations = index.Samples
-                    .Where(sample => sample.Mutations != null)
-                    .SelectMany(sample => sample.Mutations)
-                    .Select(mutation => mutation.Id)
-                    .Distinct();
+                Genes = index.Mutations
+                    .Count(mutation => mutation.Gene != null);
 
-                if (sampleMutations.Any())
-                {
-                    mutations.AddRange(sampleMutations);
-                }
-
-                var sampleGenes = index.Samples
-                    .Where(sample => sample.Mutations != null)
-                    .SelectMany(sample => sample.Mutations)
-                    .Where(mutation => mutation.Gene != null)
-                    .Select(mutation => mutation.Gene.Id)
-                    .Distinct();
-
-                if (sampleGenes.Any())
-                {
-                    genes.AddRange(sampleGenes);
-                }
-            }
-
-            if (mutations.Any())
-            {
-                Mutations = mutations
-                    .Distinct()
-                    .Count();
-            }
-
-            if (genes.Any())
-            {
-                Genes = genes
-                    .Distinct()
-                    .Count();
             }
         }
     }

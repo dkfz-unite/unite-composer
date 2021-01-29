@@ -55,95 +55,88 @@ namespace Unite.Composer.Indices.Services
                 );
             }
 
-            if (criteria.CellLineFilters != null)
-            {
-                request.AddMatchQuery(
-                    donor => donor.CellLines.First().Name,
-                    criteria.CellLineFilters.Name
-                );
+            //if (criteria.CellLineFilters != null)
+            //{
+            //    request.AddMatchQuery(
+            //        donor => donor.CellLines.First().Name,
+            //        criteria.CellLineFilters.Name
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().Type.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.Type
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().Type.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.Type
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().GeneExpressionSubtype.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.GeneExpressionSubtype
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().GeneExpressionSubtype.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.GeneExpressionSubtype
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().Species.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.Species
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().Species.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.Species
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().IdhStatus.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.IdhStatus
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().IdhStatus.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.IdhStatus
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().IdhMutation.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.IdhMutation
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().IdhMutation.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.IdhMutation
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().MethylationStatus.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.MethylationStatus
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().MethylationStatus.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.MethylationStatus
+            //    );
 
-                request.AddTermsQuery(
-                    donor => donor.CellLines.First().MethylationSubtype.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.MethylationSubtype
-                );
+            //    request.AddTermsQuery(
+            //        donor => donor.CellLines.First().MethylationSubtype.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.MethylationSubtype
+            //    );
 
-                request.AddBoolQuery(
-                    donor => donor.CellLines.First().GcimpMethylation,
-                    criteria.CellLineFilters.GcimpMethylation
-                );
-            }
+            //    request.AddBoolQuery(
+            //        donor => donor.CellLines.First().GcimpMethylation,
+            //        criteria.CellLineFilters.GcimpMethylation
+            //    );
+            //}
 
             if (criteria.MutationFilters != null)
             {
                 request.AddMatchQuery(
-                    donor => donor.Samples.First().Mutations.First().Name,
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Name,
+                    donor => donor.Mutations.First().Name,
                     criteria.MutationFilters.Name
                 );
 
                 request.AddMatchQuery(
-                    donor => donor.Samples.First().Mutations.First().Code,
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Code,
+                    donor => donor.Mutations.First().Code,
                     criteria.MutationFilters.Code
                 );
 
                 request.AddTermsQuery(
-                    donor => donor.Samples.First().Mutations.First().SequenceType.Suffix(_keywordSuffix),
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().SequenceType.Suffix(_keywordSuffix),
+                    donor => donor.Mutations.First().SequenceType.Suffix(_keywordSuffix),
                     criteria.MutationFilters.SequenceType
                 );
 
                 request.AddTermsQuery(
-                    donor => donor.Samples.First().Mutations.First().Type.Suffix(_keywordSuffix),
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Type.Suffix(_keywordSuffix),
+                    donor => donor.Mutations.First().Type.Suffix(_keywordSuffix),
                     criteria.MutationFilters.MutationType
                 );
 
                 request.AddTermsQuery(
-                    donor => donor.Samples.First().Mutations.First().Contig.Suffix(_keywordSuffix),
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Contig.Suffix(_keywordSuffix),
+                    donor => donor.Mutations.First().Contig.Suffix(_keywordSuffix),
                     criteria.MutationFilters.Contig
                 );
 
                 request.AddTermsQuery(
-                    donor => donor.Samples.First().Mutations.First().Chromosome.Suffix(_keywordSuffix),
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Chromosome.Suffix(_keywordSuffix),
+                    donor => donor.Mutations.First().Chromosome.Suffix(_keywordSuffix),
                     criteria.MutationFilters.Chromosome
                 );
 
                 request.AddRangeQuery(
-                    donor => donor.Samples.First().Mutations.First().Position,
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Position,
+                    donor => donor.Mutations.First().Position,
                     criteria.MutationFilters.Position?.From,
                     criteria.MutationFilters.Position?.To
                 );
@@ -152,8 +145,7 @@ namespace Unite.Composer.Indices.Services
             if (criteria.GeneFilters != null)
             {
                 request.AddMatchQuery(
-                    donor => donor.Samples.First().Mutations.First().Gene.Name,
-                    donor => donor.CellLines.First().Samples.First().Mutations.First().Gene.Name,
+                    donor => donor.Mutations.First().Gene.Name,
                     criteria.GeneFilters.Name
                 );
             }

@@ -27,11 +27,9 @@ namespace Unite.Composer.Resources.Mutations
                 Gene = new GeneResource(index.Gene);
             }
 
-            if(index.Samples!= null && index.Samples.Length > 0)
+            if(index.Donors != null && index.Donors.Length > 0)
             {
-                Donors = index.Samples
-                    .Select(sample => sample.Donor.Id)
-                    .Distinct()
+                Donors = index.Donors
                     .Count();
             }
         }

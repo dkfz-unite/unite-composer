@@ -71,84 +71,84 @@ namespace Unite.Composer.Indices.Services
             if (criteria.DonorFilters != null)
             {
                 request.AddTermsQuery(
-                    mutation => mutation.Samples.First().Donor.Id.Suffix(_keywordSuffix),
+                    mutation => mutation.Donors.First().Id.Suffix(_keywordSuffix),
                     criteria.DonorFilters.Id
                 );
 
                 request.AddMatchQuery(
-                    mutation => mutation.Samples.First().Donor.Diagnosis,
+                    mutation => mutation.Donors.First().Diagnosis,
                     criteria.DonorFilters.Diagnosis
                 );
 
                 request.AddTermsQuery(
-                    mutation => mutation.Samples.First().Donor.ClinicalData.Gender.Suffix(_keywordSuffix),
+                    mutation => mutation.Donors.First().ClinicalData.Gender.Suffix(_keywordSuffix),
                     criteria.DonorFilters.Gender
                 );
 
                 request.AddRangeQuery(
-                    mutation => mutation.Samples.First().Donor.ClinicalData.Age,
+                    mutation => mutation.Donors.First().ClinicalData.Age,
                     criteria.DonorFilters.Age?.From,
                     criteria.DonorFilters.Age?.To
                 );
 
                 request.AddTermsQuery(
-                    mutation => mutation.Samples.First().Donor.ClinicalData.AgeCategory.Suffix(_keywordSuffix),
+                    mutation => mutation.Donors.First().ClinicalData.AgeCategory.Suffix(_keywordSuffix),
                     criteria.DonorFilters.AgeCategory
                 );
 
                 request.AddTermsQuery(
-                    mutation => mutation.Samples.First().Donor.ClinicalData.VitalStatus.Suffix(_keywordSuffix),
+                    mutation => mutation.Donors.First().ClinicalData.VitalStatus.Suffix(_keywordSuffix),
                     criteria.DonorFilters.VitalStatus
                 );
             }
 
-            if (criteria.CellLineFilters != null)
-            {
-                request.AddMatchQuery(
-                    mutation => mutation.Samples.First().CellLine.Name,
-                    criteria.CellLineFilters.Name
-                );
+            //if (criteria.CellLineFilters != null)
+            //{
+            //    request.AddMatchQuery(
+            //        mutation => mutation.Samples.First().CellLine.Name,
+            //        criteria.CellLineFilters.Name
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.Type.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.Type
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.Type.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.Type
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.GeneExpressionSubtype.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.GeneExpressionSubtype
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.GeneExpressionSubtype.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.GeneExpressionSubtype
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.Species.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.Species
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.Species.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.Species
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.IdhStatus.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.IdhStatus
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.IdhStatus.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.IdhStatus
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.IdhMutation.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.IdhMutation
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.IdhMutation.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.IdhMutation
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.MethylationStatus.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.MethylationStatus
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.MethylationStatus.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.MethylationStatus
+            //    );
 
-                request.AddTermsQuery(
-                    mutation => mutation.Samples.First().CellLine.MethylationSubtype.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.MethylationSubtype
-                );
+            //    request.AddTermsQuery(
+            //        mutation => mutation.Samples.First().CellLine.MethylationSubtype.Suffix(_keywordSuffix),
+            //        criteria.CellLineFilters.MethylationSubtype
+            //    );
 
-                request.AddBoolQuery(
-                    mutation => mutation.Samples.First().CellLine.GcimpMethylation,
-                    criteria.CellLineFilters.GcimpMethylation
-                );
-            }
+            //    request.AddBoolQuery(
+            //        mutation => mutation.Samples.First().CellLine.GcimpMethylation,
+            //        criteria.CellLineFilters.GcimpMethylation
+            //    );
+            //}
 
             request.OrderBy(
                 mutation => mutation.Id,

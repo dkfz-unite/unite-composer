@@ -1,5 +1,5 @@
 ﻿using System;
-using Unite.Indices.Entities;
+using Unite.Indices.Entities.Basic.Donors;
 
 namespace Unite.Composer.Resources.Donors
 {
