@@ -9,6 +9,8 @@ namespace Unite.Composer.Resources.Mutations
         public string Name { get; set; }
         public string Code { get; set; }
         public string Type { get; set; }
+        public string Ref { get; set; }
+        public string Alt { get; set; }
 
         public GeneResource Gene { get; set; }
 
@@ -21,6 +23,8 @@ namespace Unite.Composer.Resources.Mutations
             Name = index.Name;
             Code = index.Code;
             Type = index.Type;
+            Ref = index.Ref;
+            Alt = index.Alt;
 
             if(index.Gene != null)
             {
