@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Indices.Criteria.Filters
 {
-    public class DonorFilters
+    public class DonorFilters : EpigeneticsDataFilters
     {
         public string[] Id { get; set; }
         public string[] Diagnosis { get; set; }

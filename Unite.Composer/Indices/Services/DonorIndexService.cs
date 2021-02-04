@@ -53,6 +53,36 @@ namespace Unite.Composer.Indices.Services
                     donor => donor.ClinicalData.VitalStatus.Suffix(_keywordSuffix),
                     criteria.DonorFilters.VitalStatus
                 );
+
+                request.AddTermsQuery(
+                    donor => donor.EpigeneticsData.GeneExpressionSubtype.Suffix(_keywordSuffix),
+                    criteria.DonorFilters.GeneExpressionSubtype
+                );
+
+                request.AddTermsQuery(
+                    donor => donor.EpigeneticsData.IdhStatus.Suffix(_keywordSuffix),
+                    criteria.DonorFilters.IdhStatus
+                );
+
+                request.AddTermsQuery(
+                    donor => donor.EpigeneticsData.IdhMutation.Suffix(_keywordSuffix),
+                    criteria.DonorFilters.IdhMutation
+                );
+
+                request.AddTermsQuery(
+                    donor => donor.EpigeneticsData.MethylationStatus.Suffix(_keywordSuffix),
+                    criteria.DonorFilters.MethylationStatus
+                );
+
+                request.AddTermsQuery(
+                    donor => donor.EpigeneticsData.MethylationSubtype.Suffix(_keywordSuffix),
+                    criteria.DonorFilters.MethylationSubtype
+                );
+
+                request.AddBoolQuery(
+                    donor => donor.EpigeneticsData.GcimpMethylation,
+                    criteria.DonorFilters.GcimpMethylation
+                );
             }
 
             //if (criteria.CellLineFilters != null)
@@ -68,38 +98,8 @@ namespace Unite.Composer.Indices.Services
             //    );
 
             //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().GeneExpressionSubtype.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.GeneExpressionSubtype
-            //    );
-
-            //    request.AddTermsQuery(
             //        donor => donor.CellLines.First().Species.Suffix(_keywordSuffix),
             //        criteria.CellLineFilters.Species
-            //    );
-
-            //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().IdhStatus.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.IdhStatus
-            //    );
-
-            //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().IdhMutation.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.IdhMutation
-            //    );
-
-            //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().MethylationStatus.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.MethylationStatus
-            //    );
-
-            //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().MethylationSubtype.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.MethylationSubtype
-            //    );
-
-            //    request.AddBoolQuery(
-            //        donor => donor.CellLines.First().GcimpMethylation,
-            //        criteria.CellLineFilters.GcimpMethylation
             //    );
             //}
 

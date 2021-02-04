@@ -13,6 +13,7 @@ namespace Unite.Composer.Resources.Donors
         public DateTime? DiagnosisDate { get; set; }
 
         public ClinicalDataResource ClinicalData { get; set; }
+        public EpigeneticsDataResource EpigeneticsData { get; set; }
         public TreatmentResource[] Treatments { get; set; }
         public WorkPackageResource[] WorkPackages { get; set; }
         public StudyResource[] Studies { get; set; }
@@ -32,6 +33,11 @@ namespace Unite.Composer.Resources.Donors
             if (index.ClinicalData != null)
             {
                 ClinicalData = new ClinicalDataResource(index.ClinicalData);
+            }
+
+            if(index.EpigeneticsData != null)
+            {
+                EpigeneticsData = new EpigeneticsDataResource(index.EpigeneticsData);
             }
 
             if (index.Treatments != null && index.Treatments.Any())
