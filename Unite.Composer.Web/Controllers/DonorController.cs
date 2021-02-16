@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Indices.Services;
+using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Controllers
@@ -15,6 +16,7 @@ namespace Unite.Composer.Web.Controllers
         }
 
         [HttpGet]
+        [CookieAuthorize]
         public DonorIndex Get(string id)
         {
             if (string.IsNullOrWhiteSpace(id))

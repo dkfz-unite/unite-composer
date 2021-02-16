@@ -4,6 +4,7 @@ using Unite.Composer.Indices;
 using Unite.Composer.Indices.Criteria;
 using Unite.Composer.Indices.Services;
 using Unite.Composer.Resources.Mutations;
+using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Indices.Entities.Mutations;
 
 namespace Unite.Composer.Web.Controllers
@@ -19,6 +20,7 @@ namespace Unite.Composer.Web.Controllers
         }
 
         [HttpGet]
+        [CookieAuthorize]
         public SearchResult<MutationResource> Get()
         {
             var searchResult = _indexService.FindAll();
@@ -27,6 +29,7 @@ namespace Unite.Composer.Web.Controllers
         }
 
         [HttpPost]
+        [CookieAuthorize]
         public SearchResult<MutationResource> Post([FromBody] SearchCriteria criteria = null)
         {
             var searchResult = _indexService.FindAll(criteria);
