@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Unite.Composer.Identity.Constants;
 
 namespace Unite.Composer.Web.Controllers.Identity.Helpers
@@ -7,8 +8,26 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
     {
         public static void AddAuthorizationCookies(IResponseCookies cookies, string session, string token)
         {
-            cookies.Append(CookieNames.SessionCookieName, session);
-            cookies.Append(CookieNames.TokenCookieName, token, new() { HttpOnly = true });
+            cookies.Append(
+                CookieNames.SessionCookieName,
+                session,
+                new()
+                {
+                    SameSite = SameSiteMode.Strict,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddYears(1)
+                });
+
+            cookies.Append(
+                CookieNames.TokenCookieName,
+                token,
+                new()
+                {
+                    SameSite = SameSiteMode.Strict,
+                    Secure = true,
+                    Expires = DateTime.UtcNow.AddYears(1),
+                    HttpOnly = true
+                });
         }
 
         public static void RemoveAuthorizationCookies(IResponseCookies cookies)
