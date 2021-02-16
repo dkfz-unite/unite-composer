@@ -13,9 +13,9 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
                 session,
                 new()
                 {
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.Lax,
                     Secure = true,
-                    Expires = DateTime.UtcNow.AddYears(1)
+                    Expires = DateTime.Now.AddYears(1)
                 });
 
             cookies.Append(
@@ -23,9 +23,9 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
                 token,
                 new()
                 {
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.Lax,
                     Secure = true,
-                    Expires = DateTime.UtcNow.AddYears(1),
+                    Expires = DateTime.Now.AddYears(1),
                     HttpOnly = true
                 });
         }
