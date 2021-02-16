@@ -11,7 +11,7 @@ namespace Unite.Composer.Identity.Models.Validation
                 .NotEmpty().WithMessage("Should not be empty")
                 .MinimumLength(8).WithMessage("Minimul length is 8")
                 .Must(HaveLetter).WithMessage("Should have at least 1 letter")
-                .Must(HaveCapitalLetter).WithMessage("Should have at least 1 capital letter")
+                //.Must(HaveCapitalLetter).WithMessage("Should have at least 1 capital letter")
                 .Must(HaveNumber).WithMessage("Should have at least 1 number");
 
         }
