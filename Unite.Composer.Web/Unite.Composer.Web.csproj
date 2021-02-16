@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Configuration\Filters\Attributes\" />
+    <Folder Include="Controllers\Identity\" />
+    <Folder Include="Controllers\Identity\Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
