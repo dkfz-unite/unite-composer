@@ -14,7 +14,7 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
                 new()
                 {
                     SameSite = SameSiteMode.Lax,
-                    Secure = true,
+                    Secure = false,
                     Expires = DateTime.Now.AddYears(1)
                 });
 
