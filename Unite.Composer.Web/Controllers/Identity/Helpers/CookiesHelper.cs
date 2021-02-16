@@ -10,7 +10,11 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
         {
             cookies.Append(
                 CookieNames.SessionCookieName,
-                session
+                session,
+                new()
+                {
+                    Expires = DateTime.Now.AddMonths(1)
+                }
             );
 
             cookies.Append(
@@ -18,6 +22,7 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
                 token,
                 new()
                 {
+                    Expires = DateTime.Now.AddMonths(1),
                     HttpOnly = true
                 });
         }
