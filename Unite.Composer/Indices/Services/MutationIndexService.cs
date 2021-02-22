@@ -21,11 +21,6 @@ namespace Unite.Composer.Indices.Services
         {
             var request = base.CreateRequest(criteria);
 
-            request.AddTermsQuery(
-                mutation => mutation.SequenceType.Suffix(_keywordSuffix),
-                new string[] { "g" }
-            );
-
             if (criteria.MutationFilters != null)
             {
                 request.AddMatchQuery(
