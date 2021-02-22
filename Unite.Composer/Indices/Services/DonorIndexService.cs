@@ -85,24 +85,6 @@ namespace Unite.Composer.Indices.Services
                 );
             }
 
-            //if (criteria.CellLineFilters != null)
-            //{
-            //    request.AddMatchQuery(
-            //        donor => donor.CellLines.First().Name,
-            //        criteria.CellLineFilters.Name
-            //    );
-
-            //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().Type.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.Type
-            //    );
-
-            //    request.AddTermsQuery(
-            //        donor => donor.CellLines.First().Species.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.Species
-            //    );
-            //}
-
             if (criteria.MutationFilters != null)
             {
                 request.AddMatchQuery(
@@ -151,8 +133,8 @@ namespace Unite.Composer.Indices.Services
             }
 
             request.OrderBy(
-                donor => donor.Id.Suffix(_keywordSuffix),
-                SortOrder.Ascending
+                donor => donor.NumberOfMutations,
+                SortOrder.Descending
             );
 
             return request;

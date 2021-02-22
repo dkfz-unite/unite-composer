@@ -38,11 +38,6 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.Code
                 );
 
-                //request.AddTermsQuery(
-                //    mutation => mutation.SequenceType.Suffix(_keywordSuffix),
-                //    criteria.MutationFilters.SequenceType
-                //);
-
                 request.AddTermsQuery(
                     mutation => mutation.Type.Suffix(_keywordSuffix),
                     criteria.MutationFilters.MutationType
@@ -137,27 +132,9 @@ namespace Unite.Composer.Indices.Services
                 );
             }
 
-            //if (criteria.CellLineFilters != null)
-            //{
-            //    request.AddMatchQuery(
-            //        mutation => mutation.Samples.First().CellLine.Name,
-            //        criteria.CellLineFilters.Name
-            //    );
-
-            //    request.AddTermsQuery(
-            //        mutation => mutation.Samples.First().CellLine.Type.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.Type
-            //    );
-
-            //    request.AddTermsQuery(
-            //        mutation => mutation.Samples.First().CellLine.Species.Suffix(_keywordSuffix),
-            //        criteria.CellLineFilters.Species
-            //    );
-            //}
-
             request.OrderBy(
-                mutation => mutation.Id,
-                SortOrder.Ascending
+                mutation => mutation.NumberOfDonors,
+                SortOrder.Descending
             );
 
             return request;

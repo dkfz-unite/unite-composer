@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Indices.Services;
+using Unite.Composer.Resources.Mutations;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Indices.Entities.Mutations;
 
@@ -17,14 +18,26 @@ namespace Unite.Composer.Web.Controllers
 
         [HttpGet]
         [CookieAuthorize]
-        public MutationIndex Get(string id)
+        public MutationResource Get(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
                 return null;
             }
 
-            return _indexService.Find(id);
+            var index = _indexService.Find(id);
+
+            return From(index);
+        }
+
+        private MutationResource From(MutationIndex index)
+        {
+            if(index == null)
+            {
+                return null;
+            }
+
+            return new MutationResource(index);
         }
     }
 }

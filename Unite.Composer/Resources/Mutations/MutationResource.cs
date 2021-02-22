@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Unite.Indices.Entities.Mutations;
+﻿using Unite.Indices.Entities.Mutations;
 
 namespace Unite.Composer.Resources.Mutations
 {
@@ -31,11 +30,7 @@ namespace Unite.Composer.Resources.Mutations
                 Gene = new GeneResource(index.Gene);
             }
 
-            if(index.Donors != null && index.Donors.Length > 0)
-            {
-                Donors = index.Donors
-                    .Count();
-            }
+            Donors = index.NumberOfDonors;
         }
     }
 }

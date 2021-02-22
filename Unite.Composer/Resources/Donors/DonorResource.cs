@@ -61,6 +61,8 @@ namespace Unite.Composer.Resources.Donors
                     .ToArray();
             }
 
+            
+
             if (index.Mutations != null && index.Mutations.Any())
             {
                 Samples = index.Mutations
@@ -68,14 +70,10 @@ namespace Unite.Composer.Resources.Donors
                     .GroupBy(sample => sample.Id)
                     .Select(g => g.First())
                     .Count();
-
-                Mutations = index.Mutations
-                    .Count();
-
-                Genes = index.Mutations
-                    .Count(mutation => mutation.Gene != null);
-
             }
+
+            Mutations = index.NumberOfMutations;
+            Genes = index.NumberOfGenes;
         }
     }
 }
