@@ -21,6 +21,11 @@ namespace Unite.Composer.Indices.Services
         {
             var request = base.CreateRequest(criteria);
 
+            request.AddTermsQuery(
+                mutation => mutation.SequenceType.Suffix(_keywordSuffix),
+                new string[] { "g" }
+            );
+
             if (criteria.MutationFilters != null)
             {
                 request.AddMatchQuery(
@@ -33,10 +38,10 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.Code
                 );
 
-                request.AddTermsQuery(
-                    mutation => mutation.SequenceType.Suffix(_keywordSuffix),
-                    criteria.MutationFilters.SequenceType
-                );
+                //request.AddTermsQuery(
+                //    mutation => mutation.SequenceType.Suffix(_keywordSuffix),
+                //    criteria.MutationFilters.SequenceType
+                //);
 
                 request.AddTermsQuery(
                     mutation => mutation.Type.Suffix(_keywordSuffix),
