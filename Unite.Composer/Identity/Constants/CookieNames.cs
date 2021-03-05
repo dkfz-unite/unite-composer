@@ -2,7 +2,7 @@
 {
     public static class CookieNames
     {
-        public const string SessionCookieName = "unite_session";
-        public const string TokenCookieName = "unite_token";
+        public const string SessionCookie = "unite_session";
+        public const string TokenCookie = "unite_token";
     }
 }

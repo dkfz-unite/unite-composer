@@ -32,7 +32,7 @@ namespace Unite.Composer.Web.Configuration.Extensions
         private static void AddOptions(this IServiceCollection services)
         {
             services.AddTransient<IElasticOptions, ElasticOptions>();
-            services.AddTransient<IMySqlOptions, MySqlOptions>();
+            services.AddTransient<ISqlOptions, SqlOptions>();
         }
 
         private static void AddValidation(this IServiceCollection services)

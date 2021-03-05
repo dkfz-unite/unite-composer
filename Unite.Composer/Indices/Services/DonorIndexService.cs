@@ -87,10 +87,6 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.MutationFilters != null)
             {
-                request.AddMatchQuery(
-                    donor => donor.Mutations.First().Name,
-                    criteria.MutationFilters.Name
-                );
 
                 request.AddMatchQuery(
                     donor => donor.Mutations.First().Code,
@@ -107,10 +103,6 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.MutationType
                 );
 
-                request.AddTermsQuery(
-                    donor => donor.Mutations.First().Contig.Suffix(_keywordSuffix),
-                    criteria.MutationFilters.Contig
-                );
 
                 request.AddTermsQuery(
                     donor => donor.Mutations.First().Chromosome.Suffix(_keywordSuffix),
@@ -118,18 +110,24 @@ namespace Unite.Composer.Indices.Services
                 );
 
                 request.AddRangeQuery(
-                    donor => donor.Mutations.First().Position,
+                    donor => donor.Mutations.First().Start,
                     criteria.MutationFilters.Position?.From,
                     criteria.MutationFilters.Position?.To
                 );
+
+                //request.AddRangeQuery(
+                //    donor => donor.Mutations.First().End,
+                //    criteria.MutationFilters.Position?.From,
+                //    criteria.MutationFilters.Position?.To
+                //);
             }
 
             if (criteria.GeneFilters != null)
             {
-                request.AddMatchQuery(
-                    donor => donor.Mutations.First().Gene.Name,
-                    criteria.GeneFilters.Name
-                );
+                //request.AddMatchQuery(
+                //    donor => donor.Mutations.First().Gene.Name,
+                //    criteria.GeneFilters.Name
+                //);
             }
 
             request.OrderBy(

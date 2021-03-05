@@ -9,7 +9,7 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
         public static void AddAuthorizationCookies(IResponseCookies cookies, string session, string token)
         {
             cookies.Append(
-                CookieNames.SessionCookieName,
+                CookieNames.SessionCookie,
                 session,
                 new()
                 {
@@ -18,7 +18,7 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
             );
 
             cookies.Append(
-                CookieNames.TokenCookieName,
+                CookieNames.TokenCookie,
                 token,
                 new()
                 {
@@ -29,14 +29,14 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
 
         public static void RemoveAuthorizationCookies(IResponseCookies cookies)
         {
-            cookies.Delete(CookieNames.SessionCookieName);
-            cookies.Delete(CookieNames.TokenCookieName);
+            cookies.Delete(CookieNames.SessionCookie);
+            cookies.Delete(CookieNames.TokenCookie);
         }
 
         public static (string Session, string Token)? GetAuthorizationCookies(IRequestCookieCollection cookies)
         {
-            if (cookies.TryGetValue(CookieNames.SessionCookieName, out var session) &&
-               cookies.TryGetValue(CookieNames.TokenCookieName, out var token))
+            if (cookies.TryGetValue(CookieNames.SessionCookie, out var session) &&
+               cookies.TryGetValue(CookieNames.TokenCookie, out var token))
             {
                 return (session, token);
             }
