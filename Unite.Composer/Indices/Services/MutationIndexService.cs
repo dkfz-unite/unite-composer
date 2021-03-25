@@ -128,6 +128,10 @@ namespace Unite.Composer.Indices.Services
                 SortOrder.Descending
             );
 
+            request.Exclude(
+                mutation => mutation.Donors
+            );
+
             return request;
         }
     }
