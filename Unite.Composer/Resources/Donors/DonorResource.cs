@@ -18,7 +18,6 @@ namespace Unite.Composer.Resources.Donors
         public WorkPackageResource[] WorkPackages { get; set; }
         public StudyResource[] Studies { get; set; }
 
-        public int Samples { get; set; }
         public int Mutations { get; set; }
         public int Genes { get; set; }
 
@@ -59,17 +58,6 @@ namespace Unite.Composer.Resources.Donors
                 Studies = index.Studies
                     .Select(study => new StudyResource(study))
                     .ToArray();
-            }
-
-            
-
-            if (index.Mutations != null && index.Mutations.Any())
-            {
-                Samples = index.Mutations
-                    .SelectMany(mutation => mutation.Samples)
-                    .GroupBy(sample => sample.Id)
-                    .Select(g => g.First())
-                    .Count();
             }
 
             Mutations = index.NumberOfMutations;

@@ -34,6 +34,7 @@ namespace Unite.Composer.Resources.Mutations
             AffectedTranscripts = index.AffectedTranscripts?
                 .Select(index => new AffectedTranscriptResource(index))
                 .OrderBy(resource => resource.Gene.Symbol)
+                .ThenBy(resource => resource.Consequences.OrderBy(consequence => consequence.Severity).First().Severity)
                 .ToArray();
 
             // This code transfroms affected transcripts data to format suitable for mutations list view.
