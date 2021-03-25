@@ -114,12 +114,6 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.Position?.From,
                     criteria.MutationFilters.Position?.To
                 );
-
-                //request.AddRangeQuery(
-                //    donor => donor.Mutations.First().End,
-                //    criteria.MutationFilters.Position?.From,
-                //    criteria.MutationFilters.Position?.To
-                //);
             }
 
             if (criteria.GeneFilters != null)
