@@ -11,7 +11,6 @@ namespace Unite.Composer.Indices.Criteria
         public DonorFilters DonorFilters { get; set; }
         public CellLineFilters CellLineFilters { get; set; }
         public MutationFilters MutationFilters { get; set; }
-        public GeneFilters GeneFilters { get; set; }
 
         public SearchCriteria()
         {

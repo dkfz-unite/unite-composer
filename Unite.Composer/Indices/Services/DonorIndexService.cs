@@ -103,7 +103,6 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.MutationType
                 );
 
-
                 request.AddTermsQuery(
                     donor => donor.Mutations.First().Chromosome.Suffix(_keywordSuffix),
                     criteria.MutationFilters.Chromosome
@@ -114,14 +113,21 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.Position?.From,
                     criteria.MutationFilters.Position?.To
                 );
-            }
 
-            if (criteria.GeneFilters != null)
-            {
-                //request.AddMatchQuery(
-                //    donor => donor.Mutations.First().Gene.Name,
-                //    criteria.GeneFilters.Name
-                //);
+                request.AddTermsQuery(
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Consequences.First().Impact.Suffix(_keywordSuffix),
+                    criteria.MutationFilters.Impact
+                );
+
+                request.AddTermsQuery(
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix),
+                    criteria.MutationFilters.Consequence
+                );
+
+                request.AddMatchQuery(
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Gene.Symbol,
+                    criteria.MutationFilters.Gene
+                );
             }
 
             request.OrderBy(

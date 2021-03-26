@@ -44,19 +44,20 @@ namespace Unite.Composer.Indices.Services
                     criteria.MutationFilters.Position?.To
                 );
 
-                //request.AddRangeQuery(
-                //    mutation => mutation.End,
-                //    criteria.MutationFilters.Position?.From,
-                //    criteria.MutationFilters.Position?.To
-                //);
-            }
+                request.AddTermsQuery(
+                    mutation => mutation.AffectedTranscripts.First().Consequences.First().Impact.Suffix(_keywordSuffix),
+                    criteria.MutationFilters.Impact
+                );
 
-            if (criteria.GeneFilters != null)
-            {
-                //request.AddMatchQuery(
-                //    mutation => mutation.Gene.Name,
-                //    criteria.GeneFilters.Name
-                //);
+                request.AddTermsQuery(
+                    mutation => mutation.AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix),
+                    criteria.MutationFilters.Consequence
+                );
+
+                request.AddMatchQuery(
+                    mutation => mutation.AffectedTranscripts.First().Gene.Symbol,
+                    criteria.MutationFilters.Gene
+                );
             }
 
             if (criteria.DonorFilters != null)
