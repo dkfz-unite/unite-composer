@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using Unite.Composer.Web.Controllers.Extensions;
+using Unite.Composer.Web.Configuration.Extensions;
 
 namespace Unite.Composer.Web.Configuration.Filters
 {

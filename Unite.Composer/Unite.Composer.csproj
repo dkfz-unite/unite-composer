@@ -5,17 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unite.Data" Version="1.4.0" />
-    <PackageReference Include="Unite.Indices" Version="1.3.3" />
-    <PackageReference Include="FluentValidation" Version="9.5.3" />
+    <PackageReference Include="Unite.Data" Version="1.5.8" />
+    <PackageReference Include="Unite.Indices" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
-    <Folder Include="Identity\Models\" />
     <Folder Include="Identity\Services\" />
     <Folder Include="Identity\Constants\" />
-    <Folder Include="Identity\Models\Validation\" />
-    <Folder Include="Validation\" />
-    <Folder Include="Identity\Resources\" />
   </ItemGroup>
 </Project>

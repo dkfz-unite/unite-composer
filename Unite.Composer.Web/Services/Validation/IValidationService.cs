@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Unite.Composer.Validation
+namespace Unite.Composer.Web.Services.Validation
 {
     public interface IValidationService
     {

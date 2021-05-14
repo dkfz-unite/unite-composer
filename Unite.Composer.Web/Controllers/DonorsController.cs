@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Indices;
 using Unite.Composer.Indices.Criteria;
 using Unite.Composer.Indices.Services;
-using Unite.Composer.Resources.Donors;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
+using Unite.Composer.Web.Resources.Donors;
 using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Controllers

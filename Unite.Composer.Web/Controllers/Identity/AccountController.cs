@@ -3,12 +3,12 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Unite.Composer.Identity.Models;
-using Unite.Composer.Identity.Resources;
 using Unite.Composer.Identity.Services;
-using Unite.Composer.Validation;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
+using Unite.Composer.Web.Models.Identity;
+using Unite.Composer.Web.Resources.Identity;
+using Unite.Composer.Web.Services.Validation;
 using Unite.Data.Entities.Identity;
 
 namespace Unite.Composer.Web.Controllers.Identity
@@ -40,7 +40,7 @@ namespace Unite.Composer.Web.Controllers.Identity
 
         [HttpGet]
         [CookieAuthorize]
-        public ActionResult Get()
+        public IActionResult Get()
         {
             var currentUser = GetCurrentUser(Request);
 
@@ -51,7 +51,7 @@ namespace Unite.Composer.Web.Controllers.Identity
 
         [HttpPut]
         [CookieAuthorize]
-        public ActionResult Put([FromBody] PasswordChangeModel model)
+        public IActionResult Put([FromBody] PasswordChangeModel model)
         {
             if (!_validationService.ValidateParameter(model, _passwordChangeModelValidator, out var modelErrorMessage))
             {
@@ -93,9 +93,9 @@ namespace Unite.Composer.Web.Controllers.Identity
             return user;
         }
 
-        private Account CreateFrom(User user)
+        private AccountResource CreateFrom(User user)
         {
-            var account = new Account();
+            var account = new AccountResource();
 
             account.Email = user.Email;
 

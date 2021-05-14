@@ -5,7 +5,7 @@ namespace Unite.Composer.Resources.Mutations
 {
     public class MutationResource
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Code { get; set; }
         public string Type { get; set; }
         public string Chromosome { get; set; }
@@ -18,7 +18,7 @@ namespace Unite.Composer.Resources.Mutations
         public dynamic[] TranscriptConsequences { get; set; }
 
         public int Donors { get; set; }
-
+        public int Specimens { get; set; }
 
         public MutationResource(MutationIndex index)
         {
@@ -38,8 +38,6 @@ namespace Unite.Composer.Resources.Mutations
                 .ThenBy(resource => resource.Transcript.EnsemblId)
                 .ToArray();
 
-            // This code transfroms affected transcripts data to format suitable for mutations list view.
-            // This code is written not in javascript, but in C# because of weak grouping functionality in javascript.
             TranscriptConsequences = index.AffectedTranscripts?
                 .Select(affectedTranscript => new
                 {
@@ -76,6 +74,7 @@ namespace Unite.Composer.Resources.Mutations
                 .ToArray();
 
             Donors = index.NumberOfDonors;
+            Specimens = index.NumberOfSpecimens;
         }
 
         private string GetPosition(int start, int end)

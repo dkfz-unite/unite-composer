@@ -20,7 +20,7 @@ namespace Unite.Composer.Web.Controllers.Identity
 
         [HttpPost]
         [CookieAuthorize]
-        public ActionResult Post()
+        public IActionResult Post()
         {
             var session = GetCurrentSession(Request);
 

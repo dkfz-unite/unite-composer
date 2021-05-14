@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Unite.Composer.Identity.Models;
 using Unite.Composer.Identity.Services;
-using Unite.Composer.Validation;
+using Unite.Composer.Web.Models.Identity;
+using Unite.Composer.Web.Services.Validation;
 using Unite.Data.Entities.Identity;
 
 namespace Unite.Composer.Web.Controllers.Identity
@@ -32,7 +32,7 @@ namespace Unite.Composer.Web.Controllers.Identity
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] SignUpModel signUpModel)
+        public IActionResult Post([FromBody] SignUpModel signUpModel)
         {
             if (!_validationService.ValidateParameter(signUpModel, _validator, out var modelErrorMessage))
             {

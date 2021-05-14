@@ -1,6 +1,6 @@
-﻿namespace Unite.Composer.Identity.Resources
+﻿namespace Unite.Composer.Web.Resources.Identity
 {
-    public class Account
+    public class AccountResource
     {
         public string Email { get; set; }
 

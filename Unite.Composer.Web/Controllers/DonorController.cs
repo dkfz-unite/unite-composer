@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Indices.Services;
-using Unite.Composer.Resources.Donors;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
+using Unite.Composer.Web.Resources.Donors;
 using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Controllers
@@ -18,14 +18,11 @@ namespace Unite.Composer.Web.Controllers
 
         [HttpGet]
         [CookieAuthorize]
-        public DonorResource Get(string id)
+        public DonorResource Get(int id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return null;
-            }
+            var key = id.ToString();
 
-            var index = _indexService.Find(id);
+            var index = _indexService.Find(key);
 
             return From(index);
         }

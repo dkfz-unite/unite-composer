@@ -20,7 +20,7 @@ namespace Unite.Composer.Web.Controllers.Identity
 
 
         [HttpGet]
-        public ActionResult Get(string email)
+        public IActionResult Get(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {

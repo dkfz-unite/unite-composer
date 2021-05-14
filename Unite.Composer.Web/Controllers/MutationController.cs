@@ -18,14 +18,11 @@ namespace Unite.Composer.Web.Controllers
 
         [HttpGet]
         [CookieAuthorize]
-        public MutationResource Get(string id)
+        public MutationResource Get(long id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return null;
-            }
+            var key = id.ToString();
 
-            var index = _indexService.Find(id);
+            var index = _indexService.Find(key);
 
             return From(index);
         }

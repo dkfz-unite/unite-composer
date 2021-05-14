@@ -1,19 +1,15 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Unite.Indices.Entities.Donors;
 
-namespace Unite.Composer.Resources.Donors
+namespace Unite.Composer.Web.Resources.Donors
 {
     public class DonorResource
     {
-        public string Id { get; set; }
-        public string Origin { get; set; }
+        public int Id { get; set; }
+        public string ReferenceId { get; set; }
         public bool? MtaProtected { get; set; }
-        public string Diagnosis { get; set; }
-        public DateTime? DiagnosisDate { get; set; }
 
         public ClinicalDataResource ClinicalData { get; set; }
-        public EpigeneticsDataResource EpigeneticsData { get; set; }
         public TreatmentResource[] Treatments { get; set; }
         public WorkPackageResource[] WorkPackages { get; set; }
         public StudyResource[] Studies { get; set; }
@@ -24,19 +20,12 @@ namespace Unite.Composer.Resources.Donors
         public DonorResource(DonorIndex index)
         {
             Id = index.Id;
-            Origin = index.Origin;
+            ReferenceId = index.ReferenceId;
             MtaProtected = index.MtaProtected;
-            Diagnosis = index.Diagnosis;
-            DiagnosisDate = index.DiagnosisDate;
 
             if (index.ClinicalData != null)
             {
                 ClinicalData = new ClinicalDataResource(index.ClinicalData);
-            }
-
-            if(index.EpigeneticsData != null)
-            {
-                EpigeneticsData = new EpigeneticsDataResource(index.EpigeneticsData);
             }
 
             if (index.Treatments != null && index.Treatments.Any())

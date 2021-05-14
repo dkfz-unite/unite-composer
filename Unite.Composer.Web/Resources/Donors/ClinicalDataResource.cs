@@ -1,21 +1,18 @@
 ﻿using System;
-using Unite.Indices.Entities.Basic.Donors;
+using Unite.Indices.Entities.Basic.Clinical;
 
-namespace Unite.Composer.Resources.Donors
+namespace Unite.Composer.Web.Resources.Donors
 {
     public class ClinicalDataResource
     {
 		public string Gender { get; set; }
 		public int? Age { get; set; }
-		public string AgeCategory { get; set; }
+		public string Diagnosis { get; set; }
+		public DateTime? DiagnosisDate { get; set; }
+		public string PrimarySite { get; set; }
 		public string Localization { get; set; }
-		public string VitalStatus { get; set; }
+		public bool? VitalStatus { get; set; }
 		public DateTime? VitalStatusChangeDate { get; set; }
-		public int? SurvivalDays { get; set; }
-		public DateTime? ProgressionDate { get; set; }
-		public int? ProgressionFreeDays { get; set; }
-		public DateTime? RelapseDate { get; set; }
-		public int? RelapseFreeDays { get; set; }
 		public int? KpsBaseline { get; set; }
 		public bool? SteroidsBaseline { get; set; }
 
@@ -23,18 +20,14 @@ namespace Unite.Composer.Resources.Donors
         {
 			Gender = index.Gender;
 			Age = index.Age;
-			AgeCategory = index.AgeCategory;
+			Diagnosis = index.Diagnosis;
+			DiagnosisDate = index.DiagnosisDate;
+			PrimarySite = index.PrimarySite;
 			Localization = index.Localization;
 			VitalStatus = index.VitalStatus;
 			VitalStatusChangeDate = index.VitalStatusChangeDate;
-			SurvivalDays = index.SurvivalDays;
-			ProgressionDate = index.ProgressionDate;
-			ProgressionFreeDays = index.ProgressionFreeDays;
-			RelapseDate = index.RelapseDate;
-			RelapseFreeDays = index.RelapseFreeDays;
 			KpsBaseline = index.KpsBaseline;
 			SteroidsBaseline = index.SteroidsBaseline;
         }
-
 	}
 }

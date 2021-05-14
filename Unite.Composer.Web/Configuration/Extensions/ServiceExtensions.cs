@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Unite.Composer.Identity.Models;
-using Unite.Composer.Identity.Models.Validation;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Indices.Services;
-using Unite.Composer.Validation;
 using Unite.Composer.Web.Configuration.Options;
+using Unite.Composer.Web.Models.Identity;
+using Unite.Composer.Web.Models.Identity.Validators;
+using Unite.Composer.Web.Services.Validation;
 using Unite.Data.Entities.Identity;
 using Unite.Data.Services;
 using Unite.Data.Services.Configuration.Options;

@@ -1,4 +1,4 @@
-﻿namespace Unite.Composer.Identity.Models
+﻿namespace Unite.Composer.Web.Models.Identity
 {
     public class PasswordChangeModel
     {

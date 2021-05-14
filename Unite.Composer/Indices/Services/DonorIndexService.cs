@@ -23,13 +23,18 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.DonorFilters != null)
             {
-                request.AddMatchQuery(
+                request.AddTermsQuery(
                     donor => donor.Id,
                     criteria.DonorFilters.Id
                 );
 
                 request.AddMatchQuery(
-                    donor => donor.Diagnosis,
+                    donor => donor.ReferenceId,
+                    criteria.DonorFilters.ReferenceId
+                );
+
+                request.AddMatchQuery(
+                    donor => donor.ClinicalData.Diagnosis,
                     criteria.DonorFilters.Diagnosis
                 );
 
@@ -43,59 +48,46 @@ namespace Unite.Composer.Indices.Services
                     criteria.DonorFilters.Age?.From,
                     criteria.DonorFilters.Age?.To
                 );
+            }
 
+            if(criteria.CellLineFilters != null)
+            {
                 request.AddTermsQuery(
-                    donor => donor.ClinicalData.AgeCategory.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.AgeCategory
+                    donor => donor.Mutations.First().Specimens.First().Id,
+                    criteria.CellLineFilters.Id
+                );
+
+                request.AddMatchQuery(
+                    donor => donor.Mutations.First().Specimens.First().ReferenceId,
+                    criteria.CellLineFilters.ReferenceId
+                );
+
+                request.AddMatchQuery(
+                    donor => donor.Mutations.First().Specimens.First().CellLine.Name,
+                    criteria.CellLineFilters.Name
                 );
 
                 request.AddTermsQuery(
-                    donor => donor.ClinicalData.VitalStatus.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.VitalStatus
+                    donor => donor.Mutations.First().Specimens.First().CellLine.Type.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.Type
                 );
 
                 request.AddTermsQuery(
-                    donor => donor.EpigeneticsData.GeneExpressionSubtype.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.GeneExpressionSubtype
-                );
-
-                request.AddTermsQuery(
-                    donor => donor.EpigeneticsData.IdhStatus.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.IdhStatus
-                );
-
-                request.AddTermsQuery(
-                    donor => donor.EpigeneticsData.IdhMutation.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.IdhMutation
-                );
-
-                request.AddTermsQuery(
-                    donor => donor.EpigeneticsData.MethylationStatus.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.MethylationStatus
-                );
-
-                request.AddTermsQuery(
-                    donor => donor.EpigeneticsData.MethylationSubtype.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.MethylationSubtype
-                );
-
-                request.AddBoolQuery(
-                    donor => donor.EpigeneticsData.GcimpMethylation,
-                    criteria.DonorFilters.GcimpMethylation
+                    donor => donor.Mutations.First().Specimens.First().CellLine.Species.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.Species
                 );
             }
 
             if (criteria.MutationFilters != null)
             {
+                request.AddTermsQuery(
+                    donor => donor.Mutations.First().Id,
+                    criteria.MutationFilters.Id
+                );
 
                 request.AddMatchQuery(
                     donor => donor.Mutations.First().Code,
                     criteria.MutationFilters.Code
-                );
-
-                request.AddTermsQuery(
-                    donor => donor.Mutations.First().SequenceType.Suffix(_keywordSuffix),
-                    criteria.MutationFilters.SequenceType
                 );
 
                 request.AddTermsQuery(

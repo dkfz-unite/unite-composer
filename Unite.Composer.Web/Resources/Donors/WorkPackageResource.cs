@@ -1,13 +1,13 @@
 ﻿using Unite.Indices.Entities.Basic.Donors;
 
-namespace Unite.Composer.Resources.Donors
+namespace Unite.Composer.Web.Resources.Donors
 {
-    public class StudyResource
+    public class WorkPackageResource
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public StudyResource(StudyIndex index)
+        public WorkPackageResource(WorkPackageIndex index)
         {
             Id = index.Id;
             Name = index.Name;

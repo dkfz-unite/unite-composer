@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Unite.Composer.Web.Controllers.Extensions
+namespace Unite.Composer.Web.Configuration.Extensions
 {
     public static class ModelStateExtensions
 	{

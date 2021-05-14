@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Unite.Composer.Identity.Models.Validation
+namespace Unite.Composer.Web.Models.Identity.Validators
 {
     public class SignInModelValidator : AbstractValidator<SignInModel>
     {

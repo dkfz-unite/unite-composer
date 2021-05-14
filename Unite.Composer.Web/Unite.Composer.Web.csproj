@@ -9,10 +9,22 @@
     <Folder Include="Configuration\Filters\Attributes\" />
     <Folder Include="Controllers\Identity\" />
     <Folder Include="Controllers\Identity\Helpers\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\Donors\" />
+    <Folder Include="Resources\Mutations\" />
+    <Folder Include="Models\" />
+    <Folder Include="Models\Identity\" />
+    <Folder Include="Models\Identity\Validators\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\Validation\" />
+    <Folder Include="Resources\Identity\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.1.0" />
   </ItemGroup>
 </Project>

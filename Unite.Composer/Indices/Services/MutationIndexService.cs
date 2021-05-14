@@ -23,6 +23,11 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.MutationFilters != null)
             {
+                request.AddTermsQuery(
+                    mutation => mutation.Id,
+                    criteria.MutationFilters.Id
+                );
+
                 request.AddMatchQuery(
                     mutation => mutation.Code,
                     criteria.MutationFilters.Code
@@ -63,12 +68,17 @@ namespace Unite.Composer.Indices.Services
             if (criteria.DonorFilters != null)
             {
                 request.AddTermsQuery(
-                    mutation => mutation.Donors.First().Id.Suffix(_keywordSuffix),
+                    mutation => mutation.Donors.First().Id,
                     criteria.DonorFilters.Id
                 );
 
                 request.AddMatchQuery(
-                    mutation => mutation.Donors.First().Diagnosis,
+                    mutation => mutation.Donors.First().ReferenceId,
+                    criteria.DonorFilters.ReferenceId
+                );
+
+                request.AddMatchQuery(
+                    mutation => mutation.Donors.First().ClinicalData.Diagnosis,
                     criteria.DonorFilters.Diagnosis
                 );
 
@@ -82,45 +92,33 @@ namespace Unite.Composer.Indices.Services
                     criteria.DonorFilters.Age?.From,
                     criteria.DonorFilters.Age?.To
                 );
+            }
 
+            if (criteria.CellLineFilters != null)
+            {
                 request.AddTermsQuery(
-                    mutation => mutation.Donors.First().ClinicalData.AgeCategory.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.AgeCategory
+                    mutation => mutation.Donors.First().Specimens.First().Id,
+                    criteria.CellLineFilters.Id
+                );
+
+                request.AddMatchQuery(
+                    mutation => mutation.Donors.First().Specimens.First().ReferenceId,
+                    criteria.CellLineFilters.ReferenceId
+                );
+
+                request.AddMatchQuery(
+                    mutation => mutation.Donors.First().Specimens.First().CellLine.Name,
+                    criteria.CellLineFilters.Name
                 );
 
                 request.AddTermsQuery(
-                    mutation => mutation.Donors.First().ClinicalData.VitalStatus.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.VitalStatus
+                    mutation => mutation.Donors.First().Specimens.First().CellLine.Type.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.Type
                 );
 
                 request.AddTermsQuery(
-                    mutation => mutation.Donors.First().EpigeneticsData.GeneExpressionSubtype.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.GeneExpressionSubtype
-                );
-
-                request.AddTermsQuery(
-                    mutation => mutation.Donors.First().EpigeneticsData.IdhStatus.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.IdhStatus
-                );
-
-                request.AddTermsQuery(
-                    mutation => mutation.Donors.First().EpigeneticsData.IdhMutation.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.IdhMutation
-                );
-
-                request.AddTermsQuery(
-                    mutation => mutation.Donors.First().EpigeneticsData.MethylationStatus.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.MethylationStatus
-                );
-
-                request.AddTermsQuery(
-                    mutation => mutation.Donors.First().EpigeneticsData.MethylationSubtype.Suffix(_keywordSuffix),
-                    criteria.DonorFilters.MethylationSubtype
-                );
-
-                request.AddBoolQuery(
-                    mutation => mutation.Donors.First().EpigeneticsData.GcimpMethylation,
-                    criteria.DonorFilters.GcimpMethylation
+                    mutation => mutation.Donors.First().Specimens.First().CellLine.Species.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.Species
                 );
             }
 

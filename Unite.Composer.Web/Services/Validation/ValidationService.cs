@@ -3,7 +3,7 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace Unite.Composer.Validation
+namespace Unite.Composer.Web.Services.Validation
 {
     public class ValidationService : IValidationService
     {

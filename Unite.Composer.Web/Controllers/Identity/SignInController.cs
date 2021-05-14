@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Unite.Composer.Identity.Models;
 using Unite.Composer.Identity.Services;
-using Unite.Composer.Validation;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
+using Unite.Composer.Web.Models.Identity;
+using Unite.Composer.Web.Services.Validation;
 using Unite.Data.Entities.Identity;
 
 namespace Unite.Composer.Web.Controllers.Identity
@@ -34,7 +34,7 @@ namespace Unite.Composer.Web.Controllers.Identity
         }
 
 
-        public ActionResult Post([FromBody] SignInModel model)
+        public IActionResult Post([FromBody] SignInModel model)
         {
             if(!_validationService.ValidateParameter(model, _validator, out var modelErrorMessage))
             {
