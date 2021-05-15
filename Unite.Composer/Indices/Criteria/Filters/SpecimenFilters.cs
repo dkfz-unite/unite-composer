@@ -2,7 +2,6 @@
 {
     public abstract class SpecimenFilters
     {
-        public int[] Id { get; set; }
         public string[] ReferenceId { get; set; }
     }
 }

@@ -4,8 +4,6 @@ namespace Unite.Composer.Indices.Criteria.Filters
 {
     public class MutationFilters
     {
-        public long[] Id { get; set; }
-
         public string[] Code { get; set; }
         public string[] MutationType { get; set; }
         public string[] Chromosome { get; set; }

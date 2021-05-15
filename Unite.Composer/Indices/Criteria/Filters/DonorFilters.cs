@@ -4,7 +4,6 @@ namespace Unite.Composer.Indices.Criteria.Filters
 {
     public class DonorFilters
     {
-        public int[] Id { get; set; }
         public string[] ReferenceId { get; set; }
 
         public string[] Gender { get; set; }

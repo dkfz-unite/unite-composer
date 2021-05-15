@@ -23,11 +23,6 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.MutationFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Id,
-                    criteria.MutationFilters.Id
-                );
-
                 request.AddMatchQuery(
                     mutation => mutation.Code,
                     criteria.MutationFilters.Code
@@ -67,11 +62,6 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.DonorFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Donors.First().Id,
-                    criteria.DonorFilters.Id
-                );
-
                 request.AddMatchQuery(
                     mutation => mutation.Donors.First().ReferenceId,
                     criteria.DonorFilters.ReferenceId
@@ -96,11 +86,6 @@ namespace Unite.Composer.Indices.Services
 
             if (criteria.CellLineFilters != null)
             {
-                request.AddTermsQuery(
-                    mutation => mutation.Donors.First().Specimens.First().Id,
-                    criteria.CellLineFilters.Id
-                );
-
                 request.AddMatchQuery(
                     mutation => mutation.Donors.First().Specimens.First().ReferenceId,
                     criteria.CellLineFilters.ReferenceId
