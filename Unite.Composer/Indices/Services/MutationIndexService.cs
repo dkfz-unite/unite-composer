@@ -82,6 +82,11 @@ namespace Unite.Composer.Indices.Services
                     criteria.DonorFilters.Age?.From,
                     criteria.DonorFilters.Age?.To
                 );
+
+                request.AddBoolQuery(
+                    mutation => mutation.Donors.First().ClinicalData.VitalStatus,
+                    criteria.DonorFilters.VitalStatus
+                );
             }
 
             if (criteria.CellLineFilters != null)

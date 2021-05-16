@@ -9,5 +9,6 @@ namespace Unite.Composer.Indices.Criteria.Filters
         public string[] Gender { get; set; }
         public Range Age { get; set; }
         public string[] Diagnosis { get; set; }
+        public bool? VitalStatus { get; set; }
     }
 }
