@@ -117,9 +117,10 @@ namespace Unite.Composer.Indices.Services
                 SortOrder.Descending
             );
 
-            request.Exclude(
-                donor => donor.Mutations
-            );
+            //TODO refactor for Oncogrid... UND-... maybe create a new serivce implementation for the DI
+            // request.Exclude(
+            //     donor => donor.Mutations
+            // );
 
             return request;
         }
