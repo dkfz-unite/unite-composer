@@ -81,13 +81,13 @@ namespace Unite.Composer.Web.Controllers.Identity
 
         private User GetCurrentUser(HttpRequest request)
         {
-            // Should neven be null since CookieAuthorize filter was passed
+            // Should never be null since CookieAuthorize filter was passed
             var cookies = CookiesHelper.GetAuthorizationCookies(request.Cookies);
 
-            // Should neven be null since CookieAuthorize filter was passed
+            // Should never be null since CookieAuthorize filter was passed
             var session = _sessionService.GetSession(new() { Session = cookies.Value.Session, Token = cookies.Value.Token });
 
-            // Should neven be null since CookieAuthorize filter was passed
+            // Should never be null since CookieAuthorize filter was passed
             var user = _identityService.FindUser(session.User.Email);
 
             return user;
