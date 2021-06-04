@@ -13,12 +13,6 @@ namespace Unite.Composer.Web.Resources.OncoGrid
 
         public string Symbol { get; set; }
 
-        public OncoGridGeneResource(GeneIndex index)
-        {
-            Id = index.EnsemblId;
-            Symbol = index.Symbol;
-        }
-
         //TODO Check if DistinctBy could be implemented instead of this Comparer
         private sealed class EnsemblIdEqualityComparer : IEqualityComparer<OncoGridGeneResource>
         {
