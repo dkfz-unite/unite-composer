@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Unite.Indices.Entities.Basic.Mutations;
 
-namespace Unite.Composer.Web.Resources.OncoGrid
+namespace Unite.Composer.Visualization.Oncogrid.Data
 {
-    public class OncoGridGeneResource
+    public class OncoGridGeneData
     {
         /// <summary>
         /// Attention: Do not rename this attribute because this name is required within the used javascript framework for oncogrid:
@@ -14,9 +13,9 @@ namespace Unite.Composer.Web.Resources.OncoGrid
         public string Symbol { get; set; }
 
         //TODO Check if DistinctBy could be implemented instead of this Comparer
-        private sealed class EnsemblIdEqualityComparer : IEqualityComparer<OncoGridGeneResource>
+        private sealed class EnsemblIdEqualityComparer : IEqualityComparer<OncoGridGeneData>
         {
-            public bool Equals(OncoGridGeneResource x, OncoGridGeneResource y)
+            public bool Equals(OncoGridGeneData x, OncoGridGeneData y)
             {
                 if (ReferenceEquals(x, y)) return true;
                 if (ReferenceEquals(x, null)) return false;
@@ -25,13 +24,13 @@ namespace Unite.Composer.Web.Resources.OncoGrid
                 return x.Id == y.Id;
             }
 
-            public int GetHashCode(OncoGridGeneResource obj)
+            public int GetHashCode(OncoGridGeneData obj)
             {
                 return (obj.Id != null ? obj.Id.GetHashCode() : 0);
             }
         }
 
-        public static IEqualityComparer<OncoGridGeneResource> EnsemblIdComparer { get; } =
+        public static IEqualityComparer<OncoGridGeneData> EnsemblIdComparer { get; } =
             new EnsemblIdEqualityComparer();
     }
 }

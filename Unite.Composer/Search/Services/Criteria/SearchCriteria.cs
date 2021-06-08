@@ -10,6 +10,7 @@
         public TissueCriteria TissueFilters { get; set; }
         public CellLineCriteria CellLineFilters { get; set; }
         public MutationCriteria MutationFilters { get; set; }
+        public OncoGridCriteria OncoGridFilters { get; set; }
 
         public SearchCriteria()
         {

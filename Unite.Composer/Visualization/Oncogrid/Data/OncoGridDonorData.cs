@@ -1,8 +1,8 @@
 ﻿using Unite.Indices.Entities.Donors;
 
-namespace Unite.Composer.Web.Resources.OncoGrid
+namespace Unite.Composer.Visualization.Oncogrid.Data
 {
-    public class OncoGridDonorResource
+    public class OncoGridDonorData
     {
         /// <summary>
         /// Attention: Do not rename this attribute because this name is required within the used javascript framework for oncogrid:
@@ -15,7 +15,7 @@ namespace Unite.Composer.Web.Resources.OncoGrid
         public int Mutations { get; }
         public int Genes { get; }
 
-        public OncoGridDonorResource(DonorIndex index)
+        public OncoGridDonorData(DonorIndex index)
         {
             Id = index.ReferenceId;
 
