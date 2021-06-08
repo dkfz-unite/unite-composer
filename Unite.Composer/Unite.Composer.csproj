@@ -5,12 +5,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unite.Data" Version="1.5.8" />
-    <PackageReference Include="Unite.Indices" Version="1.5.0" />
+    <PackageReference Include="Unite.Data" Version="1.5.13" />
+    <PackageReference Include="Unite.Indices" Version="1.5.7" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
     <Folder Include="Identity\Services\" />
     <Folder Include="Identity\Constants\" />
+    <Folder Include="Search\Engine\" />
+    <Folder Include="Search\Engine\Extensions\" />
+    <Folder Include="Search\Engine\Filters\" />
+    <Folder Include="Search\Engine\Queries\" />
+    <Folder Include="Search\Services\" />
+    <Folder Include="Search\Services\Criteria\" />
+    <Folder Include="Search\Services\Filters\" />
+    <Folder Include="Visualization\" />
+    <Folder Include="Visualization\Oncogrid\" />
+    <Folder Include="Visualization\Oncogrid\Models\" />
   </ItemGroup>
 </Project>

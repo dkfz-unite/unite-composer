@@ -18,6 +18,9 @@
     <Folder Include="Services\" />
     <Folder Include="Services\Validation\" />
     <Folder Include="Resources\Identity\" />
+    <Folder Include="Resources\Specimens\" />
+    <Folder Include="Controllers\Search\" />
+    <Folder Include="Controllers\Visualization\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -25,6 +28,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.1.0" />
+    <PackageReference Include="FluentValidation" Version="10.2.1" />
   </ItemGroup>
 </Project>
