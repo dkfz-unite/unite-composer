@@ -7,7 +7,7 @@ using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
 using Unite.Indices.Entities.Donors;
 
-namespace Unite.Composer.Web.Controllers.Search
+namespace Unite.Composer.Web.Controllers.Search.Donors
 {
     [Route("api/[controller]")]
     public class DonorsController : Controller

@@ -7,7 +7,7 @@ using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Indices.Entities.Mutations;
 
-namespace Unite.Composer.Web.Controllers.Search
+namespace Unite.Composer.Web.Controllers.Search.Mutations
 {
     [Route("api/[controller]")]
     public class MutationsController : Controller

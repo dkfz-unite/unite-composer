@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Search.Services;
 using Unite.Composer.Resources.Mutations;
+using Unite.Composer.Search.Services;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Indices.Entities.Mutations;
 
-namespace Unite.Composer.Web.Controllers.Search
+namespace Unite.Composer.Web.Controllers.Search.Mutations
 {
     [Route("api/[controller]")]
     public class MutationController : Controller

@@ -22,5 +22,11 @@
     <Folder Include="Visualization\" />
     <Folder Include="Visualization\Oncogrid\" />
     <Folder Include="Visualization\Oncogrid\Models\" />
+    <Folder Include="Search\Services\Context\" />
+    <Folder Include="Search\Services\Context\Enums\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Search\Services\Context\" />
+    <None Remove="Search\Services\Context\Enums\" />
   </ItemGroup>
 </Project>

@@ -1,13 +1,15 @@
-﻿using Unite.Composer.Search.Engine;
+﻿using System;
+using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
+using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Search;
+using Unite.Composer.Search.Services.Filters;
 using Unite.Indices.Entities.Specimens;
 using Unite.Indices.Services.Configuration.Options;
 
 namespace Unite.Composer.Search.Services
 {
-    public class SpecimensSearchService : ISearchService<SpecimenIndex>
+    public class SpecimensSearchService : ISearchService<SpecimenIndex, SpecimenSearchContext>
     {
         private readonly IIndexService<SpecimenIndex> _indexService;
 
@@ -18,7 +20,7 @@ namespace Unite.Composer.Search.Services
         }
 
 
-        public SpecimenIndex Get(string key)
+        public SpecimenIndex Get(string key, SpecimenSearchContext searchContext = null)
         {
             var query = new GetQuery<SpecimenIndex>(key)
                 .AddExclusion(specimen => specimen.Mutations);
@@ -28,23 +30,42 @@ namespace Unite.Composer.Search.Services
             return result;
         }
 
-        public SearchResult<SpecimenIndex> Search(SearchCriteria searchCriteria = null)
+        public SearchResult<SpecimenIndex> Search(SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
         {
             var criteria = searchCriteria ?? new SearchCriteria();
 
-            var criteriaFilters = new SpecimenCriteriaFiltersCollection(criteria)
+            var context = searchContext ?? new SpecimenSearchContext();
+
+            var filters = GetFiltersCollection(criteria, context)
                 .All();
 
             var query = new SearchQuery<SpecimenIndex>()
                 .AddPagination(criteria.From, criteria.Size)
                 .AddFullTextSearch(criteria.Term)
-                .AddFilters(criteriaFilters)
+                .AddFilters(filters)
                 .AddOrdering(specimen => specimen.NumberOfMutations)
                 .AddExclusion(specimen => specimen.Mutations);
 
             var result = _indexService.SearchAsync(query).Result;
 
             return result;
+        }
+
+
+        private CriteriaFiltersCollection<SpecimenIndex, SearchCriteria> GetFiltersCollection(SearchCriteria criteria, SpecimenSearchContext context)
+        {
+            if (context.SpecimenType == Context.Enums.SpecimenType.Tissue)
+            {
+                return new TissueCriteriaFiltersCollection(criteria);
+            }
+            else if (context.SpecimenType == Context.Enums.SpecimenType.CellLine)
+            {
+                return new CellLineCriteriaFiltersCollection(criteria);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

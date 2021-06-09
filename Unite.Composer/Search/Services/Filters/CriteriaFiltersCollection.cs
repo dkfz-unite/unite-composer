@@ -9,26 +9,23 @@ namespace Unite.Composer.Search.Services.Filters
         where TIndex : class
         where TCriteria : class
     {
-        protected IEnumerable<IFilter<TIndex>> filters;
+        protected ICollection<IFilter<TIndex>> _filters;
 
 
         public CriteriaFiltersCollection(TCriteria criteria)
         {
-            filters = MapCriteria(criteria);
+            _filters = new List<IFilter<TIndex>>();
         }
 
 
         public virtual IEnumerable<IFilter<TIndex>> All()
         {
-            return filters;
+            return _filters;
         }
 
         public virtual IEnumerable<IFilter<TIndex>> Without(params string[] filterNames)
         {
-            return filters.Where(filter => !filterNames.Contains(filter.Name));
+            return _filters.Where(filter => !filterNames.Contains(filter.Name));
         }
-
-
-        protected abstract IEnumerable<IFilter<TIndex>> MapCriteria(TCriteria criteria);
     }
 }

@@ -265,6 +265,25 @@ namespace Unite.Composer.Search.Engine.Extensions
             request.Query = SetOrAdd(request.Query, query);
         }
 
+        /// <summary>
+        /// Adds 'Exists' query to check that given property is set.
+        /// Creates new query or adds query to existing request query with logical 'AND' operator.
+        /// </summary>
+        /// <typeparam name="TIndex">Index type</typeparam>
+        /// <typeparam name="TProp">Property type</typeparam>
+        /// <param name="request">Source request</param>
+        /// <param name="property">Filter property</param>
+        public static void AddExistsQuery<TIndex, TProp>(this ISearchRequest<TIndex> request,
+            Expression<Func<TIndex, TProp>> property)
+            where TIndex : class
+        {
+            var query = Query<TIndex>.Exists(d => d
+                .Field(property)
+            );
+
+            request.Query = SetOrAdd(request.Query, query);
+        }
+
 
         private static QueryContainer SetOrAdd(QueryContainer sourceQuery, QueryContainer newQuery)
         {
