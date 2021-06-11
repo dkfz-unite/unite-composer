@@ -8,15 +8,21 @@ using Unite.Indices.Entities.Specimens;
 
 namespace Unite.Composer.Search.Services
 {
-    public abstract class SpecimenCriteriaFiltersCollection : CriteriaFiltersCollection<SpecimenIndex, SearchCriteria>
+    public class SpecimenCriteriaFiltersCollection : CriteriaFiltersCollection<SpecimenIndex>
     {
         protected const string _keywordSuffix = "keyword";
 
 
-        public SpecimenCriteriaFiltersCollection(SearchCriteria criteria) : base(criteria)
+        public SpecimenCriteriaFiltersCollection(SearchCriteria criteria) : base()
         {
             if (criteria.DonorFilters != null)
             {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    DonorFilterNames.Id,
+                    specimen => specimen.Donor.Id,
+                    criteria.DonorFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     DonorFilterNames.ReferenceId,
                     specimen => specimen.Donor.ReferenceId,
@@ -109,6 +115,12 @@ namespace Unite.Composer.Search.Services
 
             if (criteria.MutationFilters != null)
             {
+                _filters.Add(new EqualityFilter<SpecimenIndex, long>(
+                    MutationFilterNames.Id,
+                    specimen => specimen.Mutations.First().Id,
+                    criteria.MutationFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     MutationFilterNames.Code,
                     specimen => specimen.Mutations.First().Code,
@@ -157,6 +169,12 @@ namespace Unite.Composer.Search.Services
 
         private void AddSpecimenFilters(SpecimenFilterNames filterNames, SpecimenCriteria criteria)
         {
+            _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                filterNames.Id,
+                specimen => specimen.Id,
+                criteria.Id)
+            );
+
             _filters.Add(new EqualityFilter<SpecimenIndex, object>(
                 filterNames.GeneExpressionSubtype,
                 specimen => specimen.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),

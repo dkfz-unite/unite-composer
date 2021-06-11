@@ -4,6 +4,7 @@ namespace Unite.Composer.Search.Services.Criteria
 {
     public class DonorCriteria
     {
+        public int[] Id { get; set; }
         public string[] ReferenceId { get; set; }
 
         public string[] Gender { get; set; }

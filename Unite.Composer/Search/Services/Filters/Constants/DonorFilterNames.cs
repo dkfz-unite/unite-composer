@@ -4,6 +4,7 @@
     {
         private const string _prefix = "Donor";
 
+        public static readonly string Id = $"{_prefix}.Id";
         public static readonly string ReferenceId = $"{_prefix}.ReferenceId";
         public static readonly string Diagnosis = $"{_prefix}.Diagnosis";
         public static readonly string Gender = $"{_prefix}.Gender";

@@ -2,6 +2,7 @@
 {
     public class SpecimenFilterNames
     {
+        public string Id { get; internal set; }
         public string GeneExpressionSubtype { get; internal set; }
         public string IdhStatus { get; internal set; }
         public string IdhMutation { get; internal set; }

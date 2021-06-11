@@ -4,7 +4,7 @@ namespace Unite.Composer.Search.Services.Context
 {
     public class SpecimenSearchContext
     {
-        public SpecimenType SpecimenType { get; set; }
+        public SpecimenType? SpecimenType { get; set; }
 
 
         public SpecimenSearchContext()

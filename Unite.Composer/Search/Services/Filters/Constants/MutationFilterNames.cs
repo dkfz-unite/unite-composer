@@ -4,6 +4,7 @@
     {
         private const string _prefix = "Mutation";
 
+        public static readonly string Id = $"{_prefix}.Id";
         public static readonly string Code = $"{_prefix}.Code";
         public static readonly string Type = $"{_prefix}.Type";
         public static readonly string Chromosome = $"{_prefix}.Chromosome";

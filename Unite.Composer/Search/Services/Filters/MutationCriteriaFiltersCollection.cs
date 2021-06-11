@@ -8,15 +8,21 @@ using Unite.Indices.Entities.Mutations;
 
 namespace Unite.Composer.Search.Services.Search
 {
-    public class MutationCriteriaFiltersCollection : CriteriaFiltersCollection<MutationIndex, SearchCriteria>
+    public class MutationCriteriaFiltersCollection : CriteriaFiltersCollection<MutationIndex>
     {
         private const string _keywordSuffix = "keyword";
 
 
-        public MutationCriteriaFiltersCollection(SearchCriteria criteria) : base(criteria)
+        public MutationCriteriaFiltersCollection(SearchCriteria criteria) : base()
         {
             if (criteria.DonorFilters != null)
             {
+                _filters.Add(new EqualityFilter<MutationIndex, int>(
+                    DonorFilterNames.Id,
+                    mutation => mutation.Donors.First().Id,
+                    criteria.DonorFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
                     DonorFilterNames.ReferenceId,
                     mutation => mutation.Donors.First().ReferenceId,
@@ -109,6 +115,12 @@ namespace Unite.Composer.Search.Services.Search
 
             if (criteria.MutationFilters != null)
             {
+                _filters.Add(new EqualityFilter<MutationIndex, long>(
+                    MutationFilterNames.Id,
+                    mutation => mutation.Id,
+                    criteria.MutationFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
                     MutationFilterNames.Code,
                     mutation => mutation.Code,
@@ -156,6 +168,12 @@ namespace Unite.Composer.Search.Services.Search
 
         private void AddSpecimenFilters(SpecimenFilterNames filterNames, SpecimenCriteria criteria)
         {
+            _filters.Add(new EqualityFilter<MutationIndex, int>(
+                filterNames.Id,
+                mutation => mutation.Donors.First().Specimens.First().Id,
+                criteria.Id)
+            );
+
             _filters.Add(new EqualityFilter<MutationIndex, object>(
                 filterNames.GeneExpressionSubtype,
                 mutation => mutation.Donors.First().Specimens.First().MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),

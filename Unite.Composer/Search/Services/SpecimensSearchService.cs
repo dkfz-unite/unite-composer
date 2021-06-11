@@ -1,5 +1,4 @@
-﻿using System;
-using Unite.Composer.Search.Engine;
+﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
@@ -52,7 +51,7 @@ namespace Unite.Composer.Search.Services
         }
 
 
-        private CriteriaFiltersCollection<SpecimenIndex, SearchCriteria> GetFiltersCollection(SearchCriteria criteria, SpecimenSearchContext context)
+        private CriteriaFiltersCollection<SpecimenIndex> GetFiltersCollection(SearchCriteria criteria, SpecimenSearchContext context)
         {
             if (context.SpecimenType == Context.Enums.SpecimenType.Tissue)
             {
@@ -64,7 +63,7 @@ namespace Unite.Composer.Search.Services
             }
             else
             {
-                throw new NotImplementedException();
+                return new SpecimenCriteriaFiltersCollection(criteria); 
             }
         }
     }

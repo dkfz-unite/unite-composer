@@ -4,6 +4,7 @@
     {
         private const string _prefix = "CellLine";
 
+        public static readonly string Id = $"{_prefix}.Id";
         public static readonly string ReferenceId = $"{_prefix}.ReferenceId";
         public static readonly string Type = $"{_prefix}.Type";
         public static readonly string Species = $"{_prefix}.Species";
@@ -22,6 +23,7 @@
         {
             return new SpecimenFilterNames
             {
+                Id = Id,
                 GeneExpressionSubtype = GeneExpressionSubtype,
                 IdhStatus = IdhStatus,
                 IdhMutation = IdhMutation,
