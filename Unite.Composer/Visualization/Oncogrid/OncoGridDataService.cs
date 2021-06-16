@@ -5,6 +5,7 @@ using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Search;
 using Unite.Composer.Visualization.Oncogrid.Data;
+using Unite.Data.Entities.Mutations;
 using Unite.Indices.Entities.Donors;
 using Unite.Indices.Services.Configuration.Options;
 
@@ -19,7 +20,11 @@ namespace Unite.Composer.Visualization.Oncogrid
             _indexService = new DonorsIndexService(options);
         }
 
-        //TODO: Create oncogrid search criteria similar to search criteria if required
+        public OncoGridDataService(DonorsIndexService indexService)
+        {
+            _indexService = indexService;
+        }
+
         public OncoGridData GetData(SearchCriteria searchCriteria = null)
         {
             var criteria = searchCriteria ?? new SearchCriteria();
@@ -27,8 +32,11 @@ namespace Unite.Composer.Visualization.Oncogrid
             var criteriaFilters = new DonorCriteriaFiltersCollection(criteria)
                 .All();
 
+            var mostAffectedDonorCount = criteria.OncoGridFilters?.MostAffectedDonorCount ??
+                                         new OncoGridCriteria().MostAffectedDonorCount;
+
             var query = new SearchQuery<DonorIndex>()
-                .AddPagination(0, criteria.OncoGridFilters.MostAffectedDonorCount)
+                .AddPagination(0, mostAffectedDonorCount)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations);
@@ -37,7 +45,6 @@ namespace Unite.Composer.Visualization.Oncogrid
 
             return From(result.Rows, searchCriteria?.OncoGridFilters);
         }
-
 
         private OncoGridData From(IEnumerable<DonorIndex> donors, OncoGridCriteria filter)
         {
@@ -56,7 +63,6 @@ namespace Unite.Composer.Visualization.Oncogrid
             oncoGridResource.Observations.AddRange(observationResources);
             return oncoGridResource;
         }
-
 
         /// <summary>
         /// Selects the top <see cref="OncoGridCriteria.MostAffectedDonorCount"/> Donors ordered by <see cref="DonorIndex.NumberOfMutations"/>
@@ -77,6 +83,11 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// 
         /// Based on Donors the actual Mutations.AffectedTranscripts are flattened and grouped by the ensembleID of the transcript-gene.
         /// This genes are then ordered by the count, which represents the actual occurence within mutations.
+        /// 
+        /// Important note:
+        /// Each affectedTranscript can have multiple instances of the same gene.
+        /// In order to not count them again as an occurrence the genes are grouped within the affectedTranscript.
+        /// 
         /// </summary>
         /// <param name="mostAffectedDonorResources">top X donors of which the affected genes are queried from</param>
         /// <param name="mostAffectedGenes">limit of the resulting unique genes</param>
@@ -86,25 +97,30 @@ namespace Unite.Composer.Visualization.Oncogrid
         {
             return mostAffectedDonorResources
                 .SelectMany(donorIndex => donorIndex.Mutations
-                    .SelectMany(mutation => mutation.AffectedTranscripts?
-                        .GroupBy(transcript => new {transcript.Gene.EnsemblId, transcript.Gene.Symbol})
-                        .Select(geneGroup => new
-                        {
-                            GeneResource = new OncoGridGeneData
-                            {
-                                Id = geneGroup.Key.EnsemblId,
-                                Symbol = geneGroup.Key.Symbol
-                            },
-                            Count = geneGroup.Count()
-                        })
-                    ))
+                    .Select(mutation => mutation.AffectedTranscripts?
+                        //group by ensembleId in order to have only one GeneId in each mutation 
+                        .GroupBy(transcript => transcript.Gene.EnsemblId,
+                            at => at.Gene,
+                            (key, group) => new {EnsembleId = key, Elements = group})))
+                //Flatten the groups in order to calculate the mutations for each gene with another groupby
+                .SelectMany(geneGroup => geneGroup)
+                .GroupBy(geneGroup => geneGroup.EnsembleId,
+                    geneGroup => geneGroup.Elements,
+                    (key, group) => new {EnsembleId = key, Elements = group.First(), Count = group.Count()})
+                .Select(geneGroup => new
+                {
+                    GeneResource = new OncoGridGeneData
+                    {
+                        Id = geneGroup.EnsembleId,
+                        //Symbol of a gene can be null, if so we return the ensembleId
+                        Symbol = geneGroup.Elements.FirstOrDefault()?.Symbol ?? geneGroup.EnsembleId
+                    },
+                    Count = geneGroup.Count
+                })
                 .OrderByDescending(group => group.Count)
                 .Select(group => group.GeneResource)
-                // TODO: Distinct shouldnt be required because the list is grouped... remove the comparer
-                // .Distinct(OncoGridGeneData.EnsemblIdComparer)
                 .Take(mostAffectedGenes)
                 .ToList();
-            ;
         }
 
         /// <summary>
@@ -121,16 +137,33 @@ namespace Unite.Composer.Visualization.Oncogrid
             return mostAffectedDonorResources
                 .SelectMany(donorIndex => donorIndex.Mutations
                     .SelectMany(mutation => mutation.AffectedTranscripts?
-                        .Where(transcript => mostAffectedGenes.Contains(transcript.Gene.EnsemblId))
-                        .SelectMany(transcript => transcript.Consequences
-                            .Select(consequence => new ObservationData
-                            {
-                                Type = mutation.Type,
-                                DonorId = donorIndex.ReferenceId,
-                                GeneId = transcript.Gene.EnsemblId,
-                                Consequence = consequence.Type,
-                                Id = mutation.Code
-                            }))));
+                        //Each Mutation affects multiple Transcripts. We select all the mutations which affects one of our mostAffectedGenes
+                        .Where(affectedTranscript => mostAffectedGenes.Contains(affectedTranscript.Gene.EnsemblId))
+                        //Map the affectedTranscript to a smaller object with just the highest consequence
+                        .Select(affectedTranscript => new
+                        {
+                            Gene = affectedTranscript.Gene,
+                            Consequence = affectedTranscript.Consequences.OrderBy(consequence => consequence.Severity)
+                                .First()
+                        })
+                        //We want the most severe consequence first.
+                        .OrderBy(affectedTranscript => affectedTranscript.Consequence.Severity)
+                        //Group by each gene and select the most severe consequence
+                        .GroupBy(
+                            //Symbol can be missing so we group after ensembleid
+                            affectedTranscript => affectedTranscript.Gene.EnsemblId,
+                            affectedTranscript => affectedTranscript,
+                            (key, group) => new {EnsembleId = key, Elements = group})
+                        //Select only the most severe consequence for each gene
+                        .Select(group => new ObservationData
+                        {
+                            GeneId = group.EnsembleId,
+                            Consequence = group.Elements.First().Consequence.Type,
+                            Type = mutation.Type,
+                            DonorId = donorIndex.ReferenceId,
+                            Id = mutation.Code
+                        })
+                    ));
         }
     }
 }
