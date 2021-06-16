@@ -70,9 +70,9 @@ namespace Unite.Composer.Search.Services.Search
                 );
 
                 _filters.Add(new EqualityFilter<MutationIndex, object>(
-                    TissueFilterNames.TumourType,
-                    mutation => mutation.Donors.First().Specimens.First().Tissue.TumourType.Suffix(_keywordSuffix),
-                    criteria.TissueFilters.TumourType)
+                    TissueFilterNames.TumorType,
+                    mutation => mutation.Donors.First().Specimens.First().Tissue.TumorType.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.TumorType)
                 );
 
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
@@ -93,15 +93,21 @@ namespace Unite.Composer.Search.Services.Search
                 );
 
                 _filters.Add(new EqualityFilter<MutationIndex, object>(
+                    CellLineFilterNames.Species,
+                    mutation => mutation.Donors.First().Specimens.First().CellLine.Species.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.Species)
+                );
+
+                _filters.Add(new EqualityFilter<MutationIndex, object>(
                     CellLineFilterNames.Type,
                     mutation => mutation.Donors.First().Specimens.First().CellLine.Type.Suffix(_keywordSuffix),
                     criteria.CellLineFilters.Type)
                 );
 
                 _filters.Add(new EqualityFilter<MutationIndex, object>(
-                    CellLineFilterNames.Species,
-                    mutation => mutation.Donors.First().Specimens.First().CellLine.Species.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.Species)
+                    CellLineFilterNames.CultureType,
+                    mutation => mutation.Donors.First().Specimens.First().CellLine.CultureType.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.CultureType)
                 );
 
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(

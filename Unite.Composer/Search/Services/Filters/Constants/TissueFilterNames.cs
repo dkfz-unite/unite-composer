@@ -7,7 +7,7 @@
         public static readonly string Id = $"{_prefix}.Id";
         public static readonly string ReferenceId = $"{_prefix}.ReferenceId";
         public static readonly string Type = $"{_prefix}.Type";
-        public static readonly string TumourType = $"{_prefix}.TumourType";
+        public static readonly string TumorType = $"{_prefix}.TumorType";
         public static readonly string Source = $"{_prefix}.Source";
 
         public static readonly string GeneExpressionSubtype = $"{_prefix}.GeneExpressionSubtype";

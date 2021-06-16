@@ -70,9 +70,9 @@ namespace Unite.Composer.Search.Services
                 );
 
                 _filters.Add(new EqualityFilter<SpecimenIndex, object>(
-                    TissueFilterNames.TumourType,
-                    specimen => specimen.Tissue.TumourType.Suffix(_keywordSuffix),
-                    criteria.TissueFilters.TumourType)
+                    TissueFilterNames.TumorType,
+                    specimen => specimen.Tissue.TumorType.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.TumorType)
                 );
 
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
@@ -93,15 +93,21 @@ namespace Unite.Composer.Search.Services
                 );
 
                 _filters.Add(new EqualityFilter<SpecimenIndex, object>(
+                    CellLineFilterNames.Species,
+                    specimen => specimen.CellLine.Species.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.Species)
+                );
+
+                _filters.Add(new EqualityFilter<SpecimenIndex, object>(
                     CellLineFilterNames.Type,
                     specimen => specimen.CellLine.Type.Suffix(_keywordSuffix),
                     criteria.CellLineFilters.Type)
                 );
 
                 _filters.Add(new EqualityFilter<SpecimenIndex, object>(
-                    CellLineFilterNames.Species,
-                    specimen => specimen.CellLine.Species.Suffix(_keywordSuffix),
-                    criteria.CellLineFilters.Species)
+                    CellLineFilterNames.CultureType,
+                    specimen => specimen.CellLine.CultureType.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.CultureType)
                 );
 
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
