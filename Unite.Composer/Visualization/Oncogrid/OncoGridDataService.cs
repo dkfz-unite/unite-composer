@@ -56,9 +56,10 @@ namespace Unite.Composer.Visualization.Oncogrid
             var mostAffectedGeneResources = CreateGenes(mostAffectedDonors, mostAffectedGeneCount);
             var distinctEnsembleIds = mostAffectedGeneResources.Select(res => res.Id);
             var observationResources = CreateObservations(mostAffectedDonors, distinctEnsembleIds);
+            var uniqueDonorsForOncogrid = observationResources.Select(res => res.DonorId).Distinct();
 
             var oncoGridResource = new OncoGridData();
-            oncoGridResource.Donors.AddRange(oncoGridDonorResources);
+            oncoGridResource.Donors.AddRange(oncoGridDonorResources.Where(donor => uniqueDonorsForOncogrid.Contains(donor.Id)));
             oncoGridResource.Genes.AddRange(mostAffectedGeneResources);
             oncoGridResource.Observations.AddRange(observationResources);
             return oncoGridResource;
@@ -131,7 +132,7 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// <param name="mostAffectedDonorResources">top X donors of which the mutations are prepared for the oncogrid</param>
         /// <param name="mostAffectedGenes">A list of <see cref="GeneIndex.EnsemblId"/> which is used to filter the mutation-transcripts</param>
         /// <returns>A list of column entries for the oncogrid</returns>
-        private IEnumerable<ObservationData> CreateObservations(IEnumerable<DonorIndex> mostAffectedDonorResources,
+        private IList<ObservationData> CreateObservations(IEnumerable<DonorIndex> mostAffectedDonorResources,
             IEnumerable<string> mostAffectedGenes)
         {
             return mostAffectedDonorResources
@@ -163,7 +164,7 @@ namespace Unite.Composer.Visualization.Oncogrid
                             DonorId = donorIndex.ReferenceId,
                             Id = mutation.Code
                         })
-                    ));
+                    )).ToList();
         }
     }
 }
