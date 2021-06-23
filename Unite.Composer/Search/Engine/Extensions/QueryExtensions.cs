@@ -231,6 +231,39 @@ namespace Unite.Composer.Search.Engine.Extensions
         }
 
         /// <summary>
+        /// Adds 'Range' query to given request if any or gange bounds is set.
+        /// Creates new query or adds query to existing request query with logical 'AND' operator.
+        /// </summary>
+        /// <typeparam name="TIndex">Index type</typeparam>
+        /// <typeparam name="TProp">Property type</typeparam>
+        /// <param name="request">Source request</param>
+        /// <param name="propertyFrom">Filter property from</param>
+        /// <param name="propertyTo">Filter property to</param>
+        /// <param name="from">Filter range left bound value</param>
+        /// <param name="to">Filter range right bound value</param>
+        public static void AddRangeFilter<TIndex, TProp>(this ISearchRequest<TIndex> request,
+            Expression<Func<TIndex, TProp>> propertyFrom,
+            Expression<Func<TIndex, TProp>> propertyTo,
+            double? from,
+            double? to)
+            where TIndex : class
+        {
+            var fromQuery = Query<TIndex>.Range(d => d
+                .Field(propertyFrom)
+                .GreaterThanOrEquals(from)
+            );
+
+            var toQuery = Query<TIndex>.Range(d => d
+                .Field(propertyTo)
+                .LessThanOrEquals(to)
+            );
+
+            var query = fromQuery && toQuery;
+
+            request.Query = SetOrAdd(request.Query, query);
+        }
+
+        /// <summary>
         /// Adds 'Range' query to given request if any of range bounds is set.
         /// Creates new query or adds query to existing request query with logical 'AND' operator.
         /// Property queries are combined with logical 'OR' operator.

@@ -9,6 +9,8 @@
         public DonorCriteria DonorFilters { get; set; }
         public TissueCriteria TissueFilters { get; set; }
         public CellLineCriteria CellLineFilters { get; set; }
+        public OrganoidCriteria OrganoidFilters { get; set; }
+        public XenograftCriteria XenograftFilters { get; set; }
         public MutationCriteria MutationFilters { get; set; }
         public OncoGridCriteria OncoGridFilters { get; set; }
 

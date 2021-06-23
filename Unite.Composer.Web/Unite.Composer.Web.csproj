@@ -31,7 +31,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.2.1" />
+    <PackageReference Include="FluentValidation" Version="10.2.3" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controllers\Search\Donors\" />

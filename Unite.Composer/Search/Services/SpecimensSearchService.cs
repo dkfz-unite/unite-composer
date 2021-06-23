@@ -61,6 +61,14 @@ namespace Unite.Composer.Search.Services
             {
                 return new CellLineCriteriaFiltersCollection(criteria);
             }
+            else if (context.SpecimenType == Context.Enums.SpecimenType.Organoid)
+            {
+                return new OrganoidCriteriaFiltersCollection(criteria);
+            }
+            else if (context.SpecimenType == Context.Enums.SpecimenType.Xenograft)
+            {
+                return new XenograftCriteriaFiltersCollection(criteria);
+            }
             else
             {
                 return new SpecimenCriteriaFiltersCollection(criteria); 

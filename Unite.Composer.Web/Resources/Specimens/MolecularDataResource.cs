@@ -4,21 +4,21 @@ namespace Unite.Composer.Web.Resources.Specimens
 {
     public class MolecularDataResource
     {
-        public string GeneExpressionSubtype { get; set; }
+        public string MgmtStatus { get; set; }
         public string IdhStatus { get; set; }
         public string IdhMutation { get; set; }
-        public string MethylationStatus { get; set; }
-        public string MethylationType { get; set; }
+        public string GeneExpressionSubtype { get; set; }
+        public string MethylationSubtype { get; set; }
         public bool? GcimpMethylation { get; set; }
 
 
         public MolecularDataResource(MolecularDataIndex index)
         {
-            GeneExpressionSubtype = index.GeneExpressionSubtype;
+            MgmtStatus = index.MgmtStatus;
             IdhStatus = index.IdhStatus;
             IdhMutation = index.IdhMutation;
-            MethylationStatus = index.MethylationStatus;
-            MethylationType = index.MethylationType;
+            GeneExpressionSubtype = index.GeneExpressionSubtype;
+            MethylationSubtype = index.MethylationSubtype;
             GcimpMethylation = index.GcimpMethylation;
         }
     }
