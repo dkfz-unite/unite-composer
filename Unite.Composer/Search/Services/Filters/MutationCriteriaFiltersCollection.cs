@@ -44,8 +44,8 @@ namespace Unite.Composer.Search.Services.Search
                 _filters.Add(new RangeFilter<MutationIndex, int?>(
                     DonorFilterNames.Age,
                     mutation => mutation.Donors.First().ClinicalData.Age,
-                    criteria.DonorFilters.Age.From,
-                    criteria.DonorFilters.Age.To)
+                    criteria.DonorFilters.Age?.From,
+                    criteria.DonorFilters.Age?.To)
                 );
 
                 _filters.Add(new BooleanFilter<MutationIndex>(
