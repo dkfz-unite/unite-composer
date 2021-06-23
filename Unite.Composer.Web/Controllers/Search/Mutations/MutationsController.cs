@@ -1,21 +1,21 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Resources.Mutations;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
-using Unite.Composer.Web.Resources.Donors;
-using Unite.Indices.Entities.Donors;
+using Unite.Indices.Entities.Mutations;
 
-namespace Unite.Composer.Web.Controllers.Search
+namespace Unite.Composer.Web.Controllers.Search.Mutations
 {
     [Route("api/[controller]")]
-    public class DonorsController : Controller
+    public class MutationsController : Controller
     {
-        private readonly ISearchService<DonorIndex> _searchService;
+        private readonly ISearchService<MutationIndex> _searchService;
 
 
-        public DonorsController(ISearchService<DonorIndex> searchService)
+        public MutationsController(ISearchService<MutationIndex> searchService)
         {
             _searchService = searchService;
         }
@@ -23,7 +23,7 @@ namespace Unite.Composer.Web.Controllers.Search
 
         [HttpGet]
         [CookieAuthorize]
-        public SearchResult<DonorResource> Get()
+        public SearchResult<MutationResource> Get()
         {
             var searchResult = _searchService.Search();
 
@@ -32,7 +32,7 @@ namespace Unite.Composer.Web.Controllers.Search
 
         [HttpPost]
         [CookieAuthorize]
-        public SearchResult<DonorResource> Post([FromBody] SearchCriteria searchCriteria)
+        public SearchResult<MutationResource> Post([FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.Search(searchCriteria);
 
@@ -40,12 +40,12 @@ namespace Unite.Composer.Web.Controllers.Search
         }
 
 
-        private SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)
+        private SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
         {
-            return new SearchResult<DonorResource>()
+            return new SearchResult<MutationResource>()
             {
                 Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new DonorResource(index)).ToArray()
+                Rows = searchResult.Rows.Select(index => new MutationResource(index)).ToArray()
             };
         }
     }

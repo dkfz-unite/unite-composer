@@ -2,20 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
+using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Specimens;
 using Unite.Indices.Entities.Specimens;
 
-namespace Unite.Composer.Web.Controllers.Search
+namespace Unite.Composer.Web.Controllers.Search.Specimens
 {
     [Route("api/[controller]")]
     public class SpecimensController : Controller
     {
-        private readonly ISearchService<SpecimenIndex> _searchService;
+        private readonly ISearchService<SpecimenIndex, SpecimenSearchContext> _searchService;
 
 
-        public SpecimensController(ISearchService<SpecimenIndex> searchService)
+        public SpecimensController(ISearchService<SpecimenIndex, SpecimenSearchContext> searchService)
         {
             _searchService = searchService;
         }
@@ -25,7 +26,11 @@ namespace Unite.Composer.Web.Controllers.Search
         [CookieAuthorize]
         public SearchResult<SpecimenResource> Get()
         {
-            var searchResult = _searchService.Search();
+            var searchCriteria = new SearchCriteria();
+
+            var searchContext = new SpecimenSearchContext();
+
+            var searchResult = _searchService.Search(searchCriteria, searchContext);
 
             return From(searchResult);
         }
@@ -34,7 +39,9 @@ namespace Unite.Composer.Web.Controllers.Search
         [CookieAuthorize]
         public SearchResult<SpecimenResource> Post([FromBody] SearchCriteria searchCriteria)
         {
-            var searchResult = _searchService.Search(searchCriteria);
+            var searchContext = new SpecimenSearchContext();
+
+            var searchResult = _searchService.Search(searchCriteria, searchContext);
 
             return From(searchResult);
         }

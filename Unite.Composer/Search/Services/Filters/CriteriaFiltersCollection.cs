@@ -5,30 +5,31 @@ using Unite.Composer.Search.Engine.Filters;
 
 namespace Unite.Composer.Search.Services.Filters
 {
-    public abstract class CriteriaFiltersCollection<TIndex, TCriteria>
+    public abstract class CriteriaFiltersCollection<TIndex>
         where TIndex : class
-        where TCriteria : class
     {
-        protected IEnumerable<IFilter<TIndex>> filters;
+        protected ICollection<IFilter<TIndex>> _filters;
 
 
-        public CriteriaFiltersCollection(TCriteria criteria)
+        public CriteriaFiltersCollection()
         {
-            filters = MapCriteria(criteria);
+            _filters = new List<IFilter<TIndex>>();
         }
 
 
+        public virtual void AddFilter(IFilter<TIndex> filter)
+        {
+            _filters.Add(filter);
+        }
+
         public virtual IEnumerable<IFilter<TIndex>> All()
         {
-            return filters;
+            return _filters;
         }
 
         public virtual IEnumerable<IFilter<TIndex>> Without(params string[] filterNames)
         {
-            return filters.Where(filter => !filterNames.Contains(filter.Name));
+            return _filters.Where(filter => !filterNames.Contains(filter.Name));
         }
-
-
-        protected abstract IEnumerable<IFilter<TIndex>> MapCriteria(TCriteria criteria);
     }
 }

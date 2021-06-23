@@ -14,29 +14,31 @@ namespace Unite.Composer.Web.Resources.Specimens
         public TissueResource Tissue { get; set; }
         public CellLineResource CellLine { get; set; }
 
+        public MolecularDataResource MolecularData { get; set; }
+
         public int Mutations { get; set; }
         public int Genes { get; set; }
 
 
-        public SpecimenResource(SpecimenIndex index) : this(index, false, false)
+        public SpecimenResource(SpecimenIndex index) : this(index, index.Donor.Id, false, false)
         {
         }
 
-        private SpecimenResource(SpecimenIndex index, bool skipParent, bool skipChildren)
+        private SpecimenResource(SpecimenIndex index, int donorId, bool skipParent, bool skipChildren)
         {
             Id = index.Id;
-            DonorId = index.Donor.Id;
+            DonorId = donorId;
 
 
             if (index.Parent != null && !skipParent)
             {
-                Parent = new SpecimenResource(index.Parent, false, true);
+                Parent = new SpecimenResource(index.Parent, donorId, false, true);
             }
 
             if (index.Children != null && !skipChildren)
             {
                 Children = index.Children
-                    .Select(childIndex => new SpecimenResource(childIndex, true, false))
+                    .Select(childIndex => new SpecimenResource(childIndex, donorId, true, false))
                     .ToArray();
             }
 
@@ -49,6 +51,12 @@ namespace Unite.Composer.Web.Resources.Specimens
             if (index.CellLine != null)
             {
                 CellLine = new CellLineResource(index.CellLine);
+            }
+
+
+            if (index.MolecularData != null)
+            {
+                MolecularData = new MolecularDataResource(index.MolecularData);
             }
 
 

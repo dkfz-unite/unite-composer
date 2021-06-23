@@ -21,6 +21,9 @@
     <Folder Include="Resources\Specimens\" />
     <Folder Include="Controllers\Search\" />
     <Folder Include="Controllers\Visualization\" />
+    <Folder Include="Controllers\Search\Donors\" />
+    <Folder Include="Controllers\Search\Mutations\" />
+    <Folder Include="Controllers\Search\Specimens\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -29,5 +32,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Controllers\Search\Donors\" />
+    <None Remove="Controllers\Search\Mutations\" />
+    <None Remove="Controllers\Search\Specimens\" />
   </ItemGroup>
 </Project>

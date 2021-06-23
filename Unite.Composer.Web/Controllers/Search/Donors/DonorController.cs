@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
-using Unite.Composer.Web.Resources.Specimens;
-using Unite.Indices.Entities.Specimens;
+using Unite.Composer.Web.Resources.Donors;
+using Unite.Indices.Entities.Donors;
 
-namespace Unite.Composer.Web.Controllers.Search
+namespace Unite.Composer.Web.Controllers.Search.Donors
 {
     [Route("api/[controller]")]
-    public class SpecimenController : Controller
+    public class DonorController : Controller
     {
-        private readonly ISearchService<SpecimenIndex> _searchService;
+        private readonly ISearchService<DonorIndex> _searchService;
 
 
-        public SpecimenController(ISearchService<SpecimenIndex> searchService)
+        public DonorController(ISearchService<DonorIndex> searchService)
         {
             _searchService = searchService;
         }
@@ -20,7 +20,7 @@ namespace Unite.Composer.Web.Controllers.Search
 
         [HttpGet]
         [CookieAuthorize]
-        public SpecimenResource Get(int id)
+        public DonorResource Get(int id)
         {
             var key = id.ToString();
 
@@ -30,14 +30,14 @@ namespace Unite.Composer.Web.Controllers.Search
         }
 
 
-        private SpecimenResource From(SpecimenIndex index)
+        private DonorResource From(DonorIndex index)
         {
             if (index == null)
             {
                 return null;
             }
 
-            return new SpecimenResource(index);
+            return new DonorResource(index);
         }
     }
 }

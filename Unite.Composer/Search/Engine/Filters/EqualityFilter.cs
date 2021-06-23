@@ -22,6 +22,14 @@ namespace Unite.Composer.Search.Engine.Filters
             _values = values;
         }
 
+        public EqualityFilter(string name, Expression<Func<TIndex, TProp>> property, TProp value)
+        {
+            Name = name;
+
+            _property = property;
+            _values = new TProp[] { value };
+        }
+
 
         public void Apply(ISearchRequest<TIndex> request)
         {

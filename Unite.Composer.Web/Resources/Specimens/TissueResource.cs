@@ -7,7 +7,7 @@ namespace Unite.Composer.Web.Resources.Specimens
     {
         public string ReferenceId { get; set; }
         public string Type { get; set; }
-        public string TumourType { get; set; }
+        public string TumorType { get; set; }
         public string Source { get; set; }
         public DateTime? ExtractionDate { get; set; }
 
@@ -16,7 +16,7 @@ namespace Unite.Composer.Web.Resources.Specimens
         {
             ReferenceId = index.ReferenceId;
             Type = index.Type;
-            TumourType = index.TumourType;
+            TumorType = index.TumorType;
             Source = index.Source;
             ExtractionDate = index.ExtractionDate;
         }

@@ -14,6 +14,7 @@ namespace Unite.Composer.Web.Resources.Donors
         public WorkPackageResource[] WorkPackages { get; set; }
         public StudyResource[] Studies { get; set; }
 
+        public int Specimens { get; set; }
         public int Mutations { get; set; }
         public int Genes { get; set; }
 
@@ -49,6 +50,7 @@ namespace Unite.Composer.Web.Resources.Donors
                     .ToArray();
             }
 
+            Specimens = index.NumberOfSpecimens;
             Mutations = index.NumberOfMutations;
             Genes = index.NumberOfGenes;
         }
