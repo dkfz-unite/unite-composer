@@ -4,6 +4,7 @@
     {
         Tissue = 1,
         CellLine = 2,
-        Xenograft = 3
+        Organoid = 3,
+        Xenograft = 4
     }
 }

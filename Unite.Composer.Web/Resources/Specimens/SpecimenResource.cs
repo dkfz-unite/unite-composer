@@ -13,6 +13,8 @@ namespace Unite.Composer.Web.Resources.Specimens
 
         public TissueResource Tissue { get; set; }
         public CellLineResource CellLine { get; set; }
+        public OrganoidResource Organoid { get; set; }
+        public XenograftResource Xenograft { get; set; }
 
         public MolecularDataResource MolecularData { get; set; }
 
@@ -47,10 +49,17 @@ namespace Unite.Composer.Web.Resources.Specimens
             {
                 Tissue = new TissueResource(index.Tissue);
             }
-
-            if (index.CellLine != null)
+            else if (index.CellLine != null)
             {
                 CellLine = new CellLineResource(index.CellLine);
+            }
+            else if (index.Organoid != null)
+            {
+                Organoid = new OrganoidResource(index.Organoid);
+            }
+            else if (index.Xenograft != null)
+            {
+                Xenograft = new XenograftResource(index.Xenograft);
             }
 
 

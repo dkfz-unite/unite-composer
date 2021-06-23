@@ -9,7 +9,6 @@ namespace Unite.Composer.Web.Resources.Specimens
         public string Species { get; set; }
         public string Type { get; set; }
         public string CultureType { get; set; }
-        public string PassageNumber { get; set; }
 
         public string Name { get; set; }
         public string DepositorName { get; set; }
@@ -27,7 +26,6 @@ namespace Unite.Composer.Web.Resources.Specimens
             Species = index.Species;
             Type = index.Type;
             CultureType = index.CultureType;
-            PassageNumber = index.PassageNumber;
 
             Name = index.Name;
             DepositorName = index.DepositorName;

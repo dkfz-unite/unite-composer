@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unite.Data" Version="1.5.14" />
-    <PackageReference Include="Unite.Indices" Version="1.5.9" />
+    <PackageReference Include="Unite.Data" Version="1.6.2" />
+    <PackageReference Include="Unite.Indices" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
