@@ -5,6 +5,7 @@ namespace Unite.Composer.Web.Resources.Specimens
 {
     public class XenograftResource
     {
+        public string ReferenceId { get; set; }
         public string MouseStrain { get; set; }
         public int? GroupSize { get; set; }
         public string ImplantType { get; set; }
@@ -19,6 +20,7 @@ namespace Unite.Composer.Web.Resources.Specimens
 
         public XenograftResource(XenograftIndex index)
         {
+            ReferenceId = index.ReferenceId;
             MouseStrain = index.MouseStrain;
             GroupSize = index.GroupSize;
             ImplantType = index.ImplantType;

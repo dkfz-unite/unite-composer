@@ -206,7 +206,7 @@ namespace Unite.Composer.Search.Services
                     criteria.XenograftFilters.Intervention)
                 );
 
-                AddSpecimenFilters(XenograftFilterNames.SpecimenFilterNames(), criteria.OrganoidFilters);
+                AddSpecimenFilters(XenograftFilterNames.SpecimenFilterNames(), criteria.XenograftFilters);
             }
 
             if (criteria.MutationFilters != null)
