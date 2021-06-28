@@ -93,6 +93,9 @@ namespace Unite.Composer.Visualization.Oncogrid
 
             var oncoGridDonorResources = mostAffectedDonors.Select(index => new OncoGridDonorData(index));
 
+            //There are mutations without affectedTranscripts. This mutations can not be assigned to a gene and is therefore not presentable in the oncogrid.
+            mutations = mutations.Where(mutation => mutation.AffectedTranscripts != null).ToArray();
+
             var mostAffectedGeneResources = CreateGenes(mutations, mostAffectedGeneCount);
 
             var distinctEnsembleIds = mostAffectedGeneResources.Select(res => res.Id);
