@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Unite.Composer.Search.Engine;
+using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Search;
@@ -54,6 +55,7 @@ namespace Unite.Composer.Visualization.Oncogrid
                 //TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
                 .AddPagination(0, 10000)
                 .AddFilters(mutationCriteriaFilters)
+                .AddFilter(new NotNullFilter<MutationIndex,object>("Mutations.AffectedTranscripts", mutation => mutation.AffectedTranscripts != null))
                 .AddExclusion(mutation => mutation.Donors.First().Specimens);
             //TODO: exclude all unnecessary information as soon as multiple exclusions work.
             // .AddExclusion(mutation => mutation.Donors.First().Studies)
@@ -92,9 +94,6 @@ namespace Unite.Composer.Visualization.Oncogrid
             var mostAffectedGeneCount = oncoGridFilter?.MostAffectedGeneCount ?? 50;
 
             var oncoGridDonorResources = mostAffectedDonors.Select(index => new OncoGridDonorData(index));
-
-            //There are mutations without affectedTranscripts. This mutations can not be assigned to a gene and is therefore not presentable in the oncogrid.
-            mutations = mutations.Where(mutation => mutation.AffectedTranscripts != null).ToArray();
 
             var mostAffectedGeneResources = CreateGenes(mutations, mostAffectedGeneCount);
 
