@@ -75,6 +75,12 @@ namespace Unite.Composer.Search.Services.Search
 
             if (criteria.TissueFilters != null)
             {
+                _filters.Add(new EqualityFilter<DonorIndex, int>(
+                    TissueFilterNames.Id,
+                    donor => donor.Mutations.First().Specimens.First().Id,
+                    criteria.TissueFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<DonorIndex, string>(
                     TissueFilterNames.ReferenceId,
                     donor => donor.Mutations.First().Specimens.First().Tissue.ReferenceId,
@@ -99,11 +105,52 @@ namespace Unite.Composer.Search.Services.Search
                     criteria.TissueFilters.Source)
                 );
 
-                AddSpecimenFilters(TissueFilterNames.SpecimenFilterNames(), criteria.TissueFilters);
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    TissueFilterNames.MgmtStatus,
+                    donor => donor.Mutations.First().Specimens.First().Tissue.MolecularData.MgmtStatus.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.MgmtStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    TissueFilterNames.IdhStatus,
+                    donor => donor.Mutations.First().Specimens.First().Tissue.MolecularData.IdhStatus.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.IdhStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    TissueFilterNames.IdhMutation,
+                    donor => donor.Mutations.First().Specimens.First().Tissue.MolecularData.IdhMutation.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.IdhMutation)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    TissueFilterNames.GeneExpressionSubtype,
+                    donor => donor.Mutations.First().Specimens.First().Tissue.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.GeneExpressionSubtype)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    TissueFilterNames.MethylationSubtype,
+                    donor => donor.Mutations.First().Specimens.First().Tissue.MolecularData.MethylationSubtype.Suffix(_keywordSuffix),
+                    criteria.TissueFilters.MethylationSubtype)
+                );
+
+                _filters.Add(new BooleanFilter<DonorIndex>(
+                    TissueFilterNames.GcimpMethylation,
+                    donor => donor.Mutations.First().Specimens.First().Tissue.MolecularData.GcimpMethylation,
+                    criteria.TissueFilters.GcimpMethylation)
+                );
             }
 
             if (criteria.CellLineFilters != null)
             {
+                _filters.Add(new EqualityFilter<DonorIndex, int>(
+                    CellLineFilterNames.Id,
+                    donor => donor.Mutations.First().Specimens.First().Id,
+                    criteria.CellLineFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<DonorIndex, string>(
                     CellLineFilterNames.ReferenceId,
                     donor => donor.Mutations.First().Specimens.First().CellLine.ReferenceId,
@@ -132,13 +179,54 @@ namespace Unite.Composer.Search.Services.Search
                    CellLineFilterNames.Name,
                    donor => donor.Mutations.First().Specimens.First().CellLine.Name,
                    criteria.CellLineFilters.Name)
-               );
+                );
 
-                AddSpecimenFilters(CellLineFilterNames.SpecimenFilterNames(), criteria.CellLineFilters);
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    CellLineFilterNames.MgmtStatus,
+                    donor => donor.Mutations.First().Specimens.First().CellLine.MolecularData.MgmtStatus.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.MgmtStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    CellLineFilterNames.IdhStatus,
+                    donor => donor.Mutations.First().Specimens.First().CellLine.MolecularData.IdhStatus.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.IdhStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    CellLineFilterNames.IdhMutation,
+                    donor => donor.Mutations.First().Specimens.First().CellLine.MolecularData.IdhMutation.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.IdhMutation)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    CellLineFilterNames.GeneExpressionSubtype,
+                    donor => donor.Mutations.First().Specimens.First().CellLine.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.GeneExpressionSubtype)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    CellLineFilterNames.MethylationSubtype,
+                    donor => donor.Mutations.First().Specimens.First().CellLine.MolecularData.MethylationSubtype.Suffix(_keywordSuffix),
+                    criteria.CellLineFilters.MethylationSubtype)
+                );
+
+                _filters.Add(new BooleanFilter<DonorIndex>(
+                    CellLineFilterNames.GcimpMethylation,
+                    donor => donor.Mutations.First().Specimens.First().CellLine.MolecularData.GcimpMethylation,
+                    criteria.CellLineFilters.GcimpMethylation)
+                );
             }
 
             if (criteria.OrganoidFilters != null)
             {
+                _filters.Add(new EqualityFilter<DonorIndex, int>(
+                    OrganoidFilterNames.Id,
+                    donor => donor.Mutations.First().Specimens.First().Id,
+                    criteria.OrganoidFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<DonorIndex, string>(
                     OrganoidFilterNames.ReferenceId,
                     donor => donor.Mutations.First().Specimens.First().Organoid.ReferenceId,
@@ -163,11 +251,52 @@ namespace Unite.Composer.Search.Services.Search
                     criteria.OrganoidFilters.Intervention)
                 );
 
-                AddSpecimenFilters(OrganoidFilterNames.SpecimenFilterNames(), criteria.OrganoidFilters);
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    OrganoidFilterNames.MgmtStatus,
+                    donor => donor.Mutations.First().Specimens.First().Organoid.MolecularData.MgmtStatus.Suffix(_keywordSuffix),
+                    criteria.OrganoidFilters.MgmtStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    OrganoidFilterNames.IdhStatus,
+                    donor => donor.Mutations.First().Specimens.First().Organoid.MolecularData.IdhStatus.Suffix(_keywordSuffix),
+                    criteria.OrganoidFilters.IdhStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    OrganoidFilterNames.IdhMutation,
+                    donor => donor.Mutations.First().Specimens.First().Organoid.MolecularData.IdhMutation.Suffix(_keywordSuffix),
+                    criteria.OrganoidFilters.IdhMutation)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    OrganoidFilterNames.GeneExpressionSubtype,
+                    donor => donor.Mutations.First().Specimens.First().Organoid.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),
+                    criteria.OrganoidFilters.GeneExpressionSubtype)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    OrganoidFilterNames.MethylationSubtype,
+                    donor => donor.Mutations.First().Specimens.First().Organoid.MolecularData.MethylationSubtype.Suffix(_keywordSuffix),
+                    criteria.OrganoidFilters.MethylationSubtype)
+                );
+
+                _filters.Add(new BooleanFilter<DonorIndex>(
+                    OrganoidFilterNames.GcimpMethylation,
+                    donor => donor.Mutations.First().Specimens.First().Organoid.MolecularData.GcimpMethylation,
+                    criteria.OrganoidFilters.GcimpMethylation)
+                );
             }
 
             if (criteria.XenograftFilters != null)
             {
+                _filters.Add(new EqualityFilter<DonorIndex, int>(
+                    XenograftFilterNames.Id,
+                    donor => donor.Mutations.First().Specimens.First().Id,
+                    criteria.XenograftFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<DonorIndex, string>(
                     XenograftFilterNames.ReferenceId,
                     donor => donor.Mutations.First().Specimens.First().Xenograft.ReferenceId,
@@ -206,7 +335,42 @@ namespace Unite.Composer.Search.Services.Search
                     criteria.XenograftFilters.Intervention)
                 );
 
-                AddSpecimenFilters(XenograftFilterNames.SpecimenFilterNames(), criteria.XenograftFilters);
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    XenograftFilterNames.MgmtStatus,
+                    donor => donor.Mutations.First().Specimens.First().Xenograft.MolecularData.MgmtStatus.Suffix(_keywordSuffix),
+                    criteria.XenograftFilters.MgmtStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    XenograftFilterNames.IdhStatus,
+                    donor => donor.Mutations.First().Specimens.First().Xenograft.MolecularData.IdhStatus.Suffix(_keywordSuffix),
+                    criteria.XenograftFilters.IdhStatus)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    XenograftFilterNames.IdhMutation,
+                    donor => donor.Mutations.First().Specimens.First().Xenograft.MolecularData.IdhMutation.Suffix(_keywordSuffix),
+                    criteria.XenograftFilters.IdhMutation)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    XenograftFilterNames.GeneExpressionSubtype,
+                    donor => donor.Mutations.First().Specimens.First().Xenograft.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),
+                    criteria.XenograftFilters.GeneExpressionSubtype)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    XenograftFilterNames.MethylationSubtype,
+                    donor => donor.Mutations.First().Specimens.First().Xenograft.MolecularData.MethylationSubtype.Suffix(_keywordSuffix),
+                    criteria.XenograftFilters.MethylationSubtype)
+                );
+
+                _filters.Add(new BooleanFilter<DonorIndex>(
+                    XenograftFilterNames.GcimpMethylation,
+                    donor => donor.Mutations.First().Specimens.First().Xenograft.MolecularData.GcimpMethylation,
+                    criteria.XenograftFilters.GcimpMethylation)
+                );
             }
 
             if (criteria.MutationFilters != null)
@@ -261,52 +425,6 @@ namespace Unite.Composer.Search.Services.Search
                     criteria.MutationFilters.Gene)
                 );
             }
-        }
-
-
-        private void AddSpecimenFilters(SpecimenFilterNames filterNames, SpecimenCriteria criteria)
-        {
-            _filters.Add(new EqualityFilter<DonorIndex, int>(
-                filterNames.Id,
-                donor => donor.Mutations.First().Specimens.First().Id,
-                criteria.Id)
-            );
-
-            _filters.Add(new EqualityFilter<DonorIndex, object>(
-                filterNames.MgmtStatus,
-                donor => donor.Mutations.First().Specimens.First().MolecularData.MgmtStatus.Suffix(_keywordSuffix),
-                criteria.MgmtStatus)
-            );
-
-            _filters.Add(new EqualityFilter<DonorIndex, object>(
-                filterNames.IdhStatus,
-                donor => donor.Mutations.First().Specimens.First().MolecularData.IdhStatus.Suffix(_keywordSuffix),
-                criteria.IdhStatus)
-            );
-
-            _filters.Add(new EqualityFilter<DonorIndex, object>(
-                filterNames.IdhMutation,
-                donor => donor.Mutations.First().Specimens.First().MolecularData.IdhMutation.Suffix(_keywordSuffix),
-                criteria.IdhMutation)
-            );
-
-            _filters.Add(new EqualityFilter<DonorIndex, object>(
-                filterNames.GeneExpressionSubtype,
-                donor => donor.Mutations.First().Specimens.First().MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix),
-                criteria.GeneExpressionSubtype)
-            );
-
-            _filters.Add(new EqualityFilter<DonorIndex, object>(
-                filterNames.MethylationSubtype,
-                donor => donor.Mutations.First().Specimens.First().MolecularData.MethylationSubtype.Suffix(_keywordSuffix),
-                criteria.MethylationSubtype)
-            );
-
-            _filters.Add(new BooleanFilter<DonorIndex>(
-                filterNames.GcimpMethylation,
-                donor => donor.Mutations.First().Specimens.First().MolecularData.GcimpMethylation,
-                criteria.GcimpMethylation)
-            );
         }
     }
 }

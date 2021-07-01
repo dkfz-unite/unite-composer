@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Molecular;
+﻿using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Specimens
 {

@@ -15,6 +15,8 @@ namespace Unite.Composer.Web.Resources.Specimens
         public string TumorGrowthForm { get; set; }
         public string SurvivalDays { get; set; }
 
+        public MolecularDataResource MolecularData { get; set; }
+
         public XenograftInterventionResource[] Interventions { get; set; }
 
 
@@ -29,6 +31,11 @@ namespace Unite.Composer.Web.Resources.Specimens
             Tumorigenicity = index.Tumorigenicity;
             TumorGrowthForm = index.TumorGrowthForm;
             SurvivalDays = GetSurvivalDays(index.SurvivalDaysFrom, index.SurvivalDaysTo);
+
+            if (index.MolecularData != null)
+            {
+                MolecularData = new MolecularDataResource(index.MolecularData);
+            }
 
             if (index.Interventions != null && index.Interventions.Any())
             {

@@ -19,6 +19,8 @@ namespace Unite.Composer.Web.Resources.Specimens
         public string AtccLink { get; set; }
         public string ExPasyLink { get; set; }
 
+        public MolecularDataResource MolecularData { get; set; }
+
 
         public CellLineResource(CellLineIndex index)
         {
@@ -35,6 +37,11 @@ namespace Unite.Composer.Web.Resources.Specimens
             PubMedLink = index.PubMedLink;
             AtccLink = index.AtccLink;
             ExPasyLink = index.ExPasyLink;
+
+            if (index.MolecularData != null)
+            {
+                MolecularData = new MolecularDataResource(index.MolecularData);
+            }
         }
     }
 }

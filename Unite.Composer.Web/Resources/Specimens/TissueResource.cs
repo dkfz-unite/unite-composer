@@ -11,6 +11,8 @@ namespace Unite.Composer.Web.Resources.Specimens
         public string Source { get; set; }
         public DateTime? ExtractionDate { get; set; }
 
+        public MolecularDataResource MolecularData { get; set; }
+
 
         public TissueResource(TissueIndex index)
         {
@@ -19,6 +21,11 @@ namespace Unite.Composer.Web.Resources.Specimens
             TumorType = index.TumorType;
             Source = index.Source;
             ExtractionDate = index.ExtractionDate;
+
+            if (index.MolecularData != null)
+            {
+                MolecularData = new MolecularDataResource(index.MolecularData);
+            }
         }
     }
 }
