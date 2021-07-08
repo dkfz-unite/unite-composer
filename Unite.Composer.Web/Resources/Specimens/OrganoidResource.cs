@@ -10,6 +10,8 @@ namespace Unite.Composer.Web.Resources.Specimens
         public int? ImplantedCellsNumber { get; set; }
         public bool? Tumorigenicity { get; set; }
 
+        public MolecularDataResource MolecularData { get; set; }
+
         public OrganoidInterventionResource[] Interventions { get; set; }
 
 
@@ -20,7 +22,12 @@ namespace Unite.Composer.Web.Resources.Specimens
             ImplantedCellsNumber = index.ImplantedCellsNumber;
             Tumorigenicity = index.Tumorigenicity;
 
-            if(index.Interventions != null && index.Interventions.Any())
+            if (index.MolecularData != null)
+            {
+                MolecularData = new MolecularDataResource(index.MolecularData);
+            }
+
+            if (index.Interventions != null && index.Interventions.Any())
             {
                 Interventions = index.Interventions
                     .Select(interventionIndex => new OrganoidInterventionResource(interventionIndex))

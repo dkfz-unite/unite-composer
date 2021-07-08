@@ -16,7 +16,6 @@ namespace Unite.Composer.Web.Resources.Specimens
         public OrganoidResource Organoid { get; set; }
         public XenograftResource Xenograft { get; set; }
 
-        public MolecularDataResource MolecularData { get; set; }
 
         public int Mutations { get; set; }
         public int Genes { get; set; }
@@ -60,12 +59,6 @@ namespace Unite.Composer.Web.Resources.Specimens
             else if (index.Xenograft != null)
             {
                 Xenograft = new XenograftResource(index.Xenograft);
-            }
-
-
-            if (index.MolecularData != null)
-            {
-                MolecularData = new MolecularDataResource(index.MolecularData);
             }
 
 
