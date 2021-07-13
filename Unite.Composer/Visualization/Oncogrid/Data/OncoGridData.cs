@@ -2,29 +2,33 @@
 
 namespace Unite.Composer.Visualization.Oncogrid.Data
 {
-    /// <summary>
-    /// This class wraps up all information required for the javascript oncogrid framework:
-    /// https://github.com/oncojs/oncogrid
-    /// </summary>
     public class OncoGridData
     {
         /// <summary>
+        /// Donors metadata for the oncogrid 
+        /// </summary>
+        public IEnumerable<OncoGridDonor> Donors { get; set; }
+
+        /// <summary>
+        /// Genes metadata for the oncogrid 
+        /// </summary>
+        public IEnumerable<OncoGridGene> Genes { get; set; }
+
+        /// <summary>
         /// Each entry represents a column within the oncogrid.
-        /// Each reference of <see cref="ObservationData.DonorId"/> requires the existence of an entry within
-        /// <see cref="Donors"/> with an equal <see cref="OncoGridDonorData.Id"/>.
-        /// Each reference of <see cref="ObservationData.GeneId"/> requires the existence of an entry within
-        /// <see cref="Genes"/> with with an equal <see cref="OncoGridGeneData.Id"/>.
+        /// Each reference of <see cref="OncoGridMutation.DonorId"/> requires the existence of an entry within
+        /// <see cref="Donors"/> with an equal <see cref="OncoGridDonor.Id"/>.
+        /// Each reference of <see cref="OncoGridMutation.GeneId"/> requires the existence of an entry within
+        /// <see cref="Genes"/> with with an equal <see cref="OncoGridGene.Id"/>.
         /// </summary>
-        public List<ObservationData> Observations { get; } = new List<ObservationData>();
+        public IEnumerable<OncoGridMutation> Observations { get; set; }
 
-        /// <summary>
-        /// Gene metadata for the oncogrid 
-        /// </summary>
-        public List<OncoGridGeneData> Genes { get; } = new List<OncoGridGeneData>();
 
-        /// <summary>
-        /// Donor metadata for the oncogrid 
-        /// </summary>
-        public List<OncoGridDonorData> Donors { get; } = new List<OncoGridDonorData>();
+        //public OncoGridData()
+        //{
+        //    Donors = new List<OncoGridDonorData>();
+        //    Genes = new List<OncoGridGeneData>();
+        //    Observations = new List<OncoGridMutationData>();
+        //}
     }
 }

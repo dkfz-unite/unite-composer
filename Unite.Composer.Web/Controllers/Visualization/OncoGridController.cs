@@ -20,14 +20,14 @@ namespace Unite.Composer.Web.Controllers.Visualization
         [CookieAuthorize]
         public OncoGridData Get()
         {
-            return _dataService.GetData();
+            return _dataService.LoadData();
         }
 
         [HttpPost]
         [CookieAuthorize]
         public OncoGridData Post([FromBody] SearchCriteria searchCriteria)
         {
-            return _dataService.GetData(searchCriteria);
+            return _dataService.LoadData(searchCriteria);
         }
     }
 }

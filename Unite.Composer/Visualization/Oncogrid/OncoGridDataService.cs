@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
@@ -7,6 +8,7 @@ using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Search;
 using Unite.Composer.Visualization.Oncogrid.Data;
 using Unite.Indices.Services.Configuration.Options;
+
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 
@@ -14,69 +16,61 @@ namespace Unite.Composer.Visualization.Oncogrid
 {
     public class OncoGridDataService
     {
-        private readonly IIndexService<DonorIndex> _donorService;
-        private readonly IIndexService<MutationIndex> _mutationService;
+        private readonly IIndexService<DonorIndex> _donorsIndexService;
+        private readonly IIndexService<MutationIndex> _mutationsIndexService;
+
 
         public OncoGridDataService(IElasticOptions options)
         {
-            _donorService = new DonorsIndexService(options);
-            _mutationService = new MutationsIndexService(options);
+            _donorsIndexService = new DonorsIndexService(options);
+            _mutationsIndexService = new MutationsIndexService(options);
         }
 
-        public OncoGridDataService(DonorsIndexService donorService)
-        {
-            _donorService = donorService;
-        }
 
-        public OncoGridData GetData(SearchCriteria searchCriteria = null)
+        public OncoGridData LoadData(SearchCriteria searchCriteria = null)
         {
+            var stopWatch = new Stopwatch();
+
             var criteria = searchCriteria ?? new SearchCriteria();
-            var donorResult = FindMostAffectedDonors(criteria);
-            var mutationResult = FindMutationsForDonors(criteria, donorResult);
 
-            return From(mutationResult.Rows, donorResult.Rows, searchCriteria);
+            var donorsSearchResult = FindDonors(criteria);
+
+            var donorIds = donorsSearchResult.Rows
+                .Select(donor => donor.Id)
+                .ToArray();
+
+            //var geneIds = donorsSearchResult.TermsAggregations["Genes"]
+            //    .OrderByDescending(aggregation => aggregation.Value)
+            //    .Take(searchCriteria.OncoGridFilters.MostAffectedGeneCount)
+            //    .Select(aggregation => aggregation.Key)
+            //    .ToArray();
+
+            var mutationsSearchResult = FindMutations(criteria, donorIds /*, geneIds*/);
+
+            var data = GetOncoGridData(
+                donorsSearchResult.Rows,
+                mutationsSearchResult.Rows,
+                searchCriteria.OncoGridFilters.MostAffectedGeneCount
+            );
+
+            return data;
         }
 
-        private SearchResult<MutationIndex> FindMutationsForDonors(SearchCriteria criteria,
-            SearchResult<DonorIndex> donorResult)
+
+        /// <summary>
+        /// Retreives donors with highest number of mutations filtered by given search criteria.
+        /// </summary>
+        /// <param name="criteria">Search criteria</param>
+        /// <returns>Search result with donors and number of total available rows.</returns>
+        private SearchResult<DonorIndex> FindDonors(
+            SearchCriteria criteria)
         {
-            // Filter only the mutations which belongs to the most affected donors
-            criteria.DonorFilters = new DonorCriteria
-            {
-                ReferenceId = donorResult.Rows.Select(donor => donor.ReferenceId).ToArray()
-            };
+            var criteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
 
-            criteria.TissueFilters = null;
-            criteria.CellLineFilters = null;
-
-            var mutationCriteriaFilters = new MutationCriteriaFiltersCollection(criteria).All();
-
-            var mutationQuery = new SearchQuery<MutationIndex>()
-                //TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
-                .AddPagination(0, 10000)
-                .AddFilters(mutationCriteriaFilters)
-                .AddFilter(new NotNullFilter<MutationIndex,object>("Mutations.AffectedTranscripts", mutation => mutation.AffectedTranscripts != null))
-                .AddExclusion(mutation => mutation.Donors.First().Specimens);
-            //TODO: exclude all unnecessary information as soon as multiple exclusions work.
-            // .AddExclusion(mutation => mutation.Donors.First().Studies)
-            // .AddExclusion(mutation => mutation.Donors.First().Treatments)
-            // .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
-            // .AddExclusion(mutation => mutation.Donors.First().WorkPackages);
-
-            return _mutationService.SearchAsync(mutationQuery).Result;
-        }
-
-        private SearchResult<DonorIndex> FindMostAffectedDonors(SearchCriteria criteria)
-        {
-            var donorCriteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
-
-            var mostAffectedDonorCount = criteria.OncoGridFilters?.MostAffectedDonorCount ??
-                                         new OncoGridCriteria().MostAffectedDonorCount;
-
-            var donorQuery = new SearchQuery<DonorIndex>()
-                .AddPagination(0, mostAffectedDonorCount)
+            var query = new SearchQuery<DonorIndex>()
+                .AddPagination(0, criteria.OncoGridFilters.MostAffectedDonorCount)
                 .AddFullTextSearch(criteria.Term)
-                .AddFilters(donorCriteriaFilters)
+                .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations)
                 .AddExclusion(donor => donor.Mutations);
             //TODO: exclude all unnecessary information as soon as multiple exclusions work.
@@ -84,117 +78,142 @@ namespace Unite.Composer.Visualization.Oncogrid
             // .AddExclusion(donor => donor.WorkPackages)
             // .AddExclusion(donor => donor.Studies);
 
-            return _donorService.SearchAsync(donorQuery).Result;
-        }
-
-        private OncoGridData From(IEnumerable<MutationIndex> mutations,
-            IEnumerable<DonorIndex> mostAffectedDonors, SearchCriteria searchCriteria)
-        {
-            var oncoGridFilter = searchCriteria?.OncoGridFilters;
-            var mostAffectedGeneCount = oncoGridFilter?.MostAffectedGeneCount ?? 50;
-
-            var oncoGridDonorResources = mostAffectedDonors.Select(index => new OncoGridDonorData(index));
-
-            var mostAffectedGeneResources = CreateGenes(mutations, mostAffectedGeneCount);
-
-            var distinctEnsembleIds = mostAffectedGeneResources.Select(res => res.Id);
-            var observationResources = CreateObservations(mostAffectedDonors, mutations, distinctEnsembleIds);
-            var uniqueDonorsForOncoGrid = observationResources.Select(res => res.DonorId).Distinct();
-
-            var oncoGridResource = new OncoGridData();
-            oncoGridResource.Donors.AddRange(
-                oncoGridDonorResources.Where(donor => uniqueDonorsForOncoGrid.Contains(donor.Id)));
-            oncoGridResource.Genes.AddRange(mostAffectedGeneResources);
-            oncoGridResource.Observations.AddRange(observationResources);
-            return oncoGridResource;
+            return _donorsIndexService.SearchAsync(query).Result;
         }
 
         /// <summary>
-        /// Selects the top Genes ordered by the occurrence.
-        /// 
-        /// Mutations.AffectedTranscripts are flattened and grouped by the ensembleID and gene-symbol of the transcript-gene.
-        /// This genes are then ordered by the count, which represents the actual occurence within mutations.
+        /// Retreives mutations of given donors in given genes filtered by given search criteria.
         /// </summary>
-        /// <param name="mutations"></param>
-        /// <param name="mostAffectedGenes">limit of the resulting unique genes</param>
-        /// <returns>A list of unique Genes for the oncogrid</returns>
-        private List<OncoGridGeneData> CreateGenes(IEnumerable<MutationIndex> mutations,
-            int mostAffectedGenes)
+        /// <param name="criteria">Search criteria</param>
+        /// <param name="donorIds">Id's of donors</param>
+        /// <param name="geneIds">Id's of genes</param>
+        /// <returns>Search result with mutations and number of total available rows.</returns>
+        private SearchResult<MutationIndex> FindMutations(
+            SearchCriteria criteria,
+            IEnumerable<int> donorIds
+            /*IEnumerable<int> geneIds*/)
         {
-            // create a mapping of each gene to the actual occurence amount within all transcripts 
-            return mutations
-                .SelectMany(mutation => mutation.AffectedTranscripts)
-                .GroupBy(transcript => (transcript.Gene.EnsemblId, transcript.Gene.Symbol))
-                .OrderByDescending(group => group.Count())
-                .Take(mostAffectedGenes)
-                .Select(group => new OncoGridGeneData
-                {
-                    Id = group.Key.EnsemblId,
-                    //Symbol of a gene can be null, if so we return the ensembleId
-                    Symbol = group.Key.Symbol ?? group.Key.EnsemblId
-                })
-                .ToList();
+            criteria.DonorFilters = new DonorCriteria
+            {
+                Id = donorIds.ToArray()
+            };
+
+            //criteria.MutationFilters = new GeneCriteria
+            //{
+            //    Identity = geneIds.ToArray()
+            //};
+
+            var criteriaFilters = new MutationCriteriaFiltersCollection(criteria).All();
+
+            var query = new SearchQuery<MutationIndex>()
+                //TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
+                .AddPagination(0, 10000)
+                .AddFilters(criteriaFilters)
+                .AddFilter(new NotNullFilter<MutationIndex, object>("Mutation.HasAffectedTranscripts", mutation => mutation.AffectedTranscripts))
+                .AddExclusion(mutation => mutation.Donors.First().Specimens);
+            //TODO: exclude all unnecessary information as soon as multiple exclusions work.
+            // .AddExclusion(mutation => mutation.Donors.First().Studies)
+            // .AddExclusion(mutation => mutation.Donors.First().Treatments)
+            // .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
+            // .AddExclusion(mutation => mutation.Donors.First().WorkPackages);
+
+            return _mutationsIndexService.SearchAsync(query).Result;
         }
 
+
         /// <summary>
-        /// Creates a list of <see cref="ObservationData"/> which represents an oncogrid column entry.
-        ///
-        /// Based on Donors the actual Mutations.AffectedTranscripts are flattened and filtered by the ensembleid within mostAffectedGenes.
+        /// Builds <see cref="OncoGridData"/> object from donor and mutation indices for given number of most affected genes.
         /// </summary>
-        /// <returns>A list of column entries for the oncogrid</returns>
-        private IEnumerable<ObservationData> CreateObservations(
+        /// <param name="donors">Donor indices</param>
+        /// <param name="mutations">Mutation indices</param>
+        /// <param name="numberOfGenes">Number of most affected genes</param>
+        /// <returns><see cref="OncoGridData"/> object.</returns>
+        private OncoGridData GetOncoGridData(
             IEnumerable<DonorIndex> donors,
             IEnumerable<MutationIndex> mutations,
-            IEnumerable<string> mostAffectedGenes)
+            int numberOfGenes)
         {
-            var observationDatas = new List<ObservationData>();
+            var oncoGridData = new OncoGridData();
 
-            foreach (var donor in donors)
-            {
-                var observationDataForDonorMutations =
-                    CreateObservationDataForDonorMutations(mutations, mostAffectedGenes, donor);
-                observationDatas.AddRange(observationDataForDonorMutations);
-            }
+            oncoGridData.Donors = GetDonorsData(donors);
+            oncoGridData.Genes = GetGenesData(mutations, numberOfGenes);
+            oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations);
 
-            return observationDatas;
+            return oncoGridData;
         }
 
-        private static ObservationData[] CreateObservationDataForDonorMutations(
-            IEnumerable<MutationIndex> mutations,
-            IEnumerable<string> mostAffectedGenes, DonorIndex donor)
+        /// <summary>
+        /// Build <see cref="OncoGridDonor"/> objects from donor indices.
+        /// </summary>
+        /// <param name="donors">Donor indices</param>
+        /// <returns>Collection of <see cref="OncoGridDonor"/> objects.</returns>
+        private IEnumerable<OncoGridDonor> GetDonorsData(
+            IEnumerable<DonorIndex> donors)
         {
-            var observationDataForDonorMutations = mutations
-                //Filter the mutation according to the donorId in order to create an entry for each donor and gene combination available.
-                .Where(mutation => mutation.Donors.Select(donor => donor.ReferenceId).Contains(donor.ReferenceId))
-                .SelectMany(mutation => mutation.AffectedTranscripts?
-                    //Each Mutation affects multiple Transcripts. We select all the mutations which affects one of our mostAffectedGenes
-                    .Where(affectedTranscript => mostAffectedGenes.Contains(affectedTranscript.Gene.EnsemblId))
-                    //Map the affectedTranscript to a smaller object with just the highest consequence
-                    .Select(affectedTranscript => new
+            return donors
+                .Select(index => new OncoGridDonor(index));
+        }
+
+        /// <summary>
+        /// Build <see cref="OncoGridGene"/> objects from mutation indices for given number of most affected genes.
+        /// </summary>
+        /// <param name="mutations">Mutation indices</param>
+        /// <param name="numberOfGenes">Number of most affected genes</param>
+        /// <returns>Collection of <see cref="OncoGridGene"/> objects.</returns>
+        private IEnumerable<OncoGridGene> GetGenesData(
+            IEnumerable<MutationIndex> mutations, int numberOfGenes)
+        {
+            return mutations
+                .Where(mutation => mutation.AffectedTranscripts != null)
+                .SelectMany(mutation => mutation.AffectedTranscripts)
+                .Select(affectedTranscript => affectedTranscript.Gene)
+                .GroupBy(gene => gene.Id)
+                .OrderByDescending(group => group.Count())
+                .Take(numberOfGenes)
+                .Select(group => group.First())
+                .Select(gene => new OncoGridGene(gene));
+        }
+
+        /// <summary>
+        /// Builds <see cref="OncoGridMutation"/> objects from mutation indices
+        /// for all combinations of given <see cref="OncoGridDonor"/> and <see cref="OncoGridGene"/> entries.
+        /// </summary>
+        /// <param name="donors">Donors to fill OncoGrid columns</param>
+        /// <param name="genes">Genes to fill OncoGrid rows</param>
+        /// <param name="mutations">Mutation indices</param>
+        /// <returns>Collection of <see cref="OncoGridMutation"/> objects.</returns>
+        private IEnumerable<OncoGridMutation> GetObservationsData(
+            IEnumerable<OncoGridDonor> donors,
+            IEnumerable<OncoGridGene> genes,
+            IEnumerable<MutationIndex> mutations)
+        {
+            foreach (var donor in donors)
+            {
+                foreach (var gene in genes)
+                {
+                    var observedMutations = mutations.Where(mutation =>
+                        mutation.Donors.Any(mutationDonor => mutationDonor.Id == int.Parse(donor.Id)) &&
+                        mutation.AffectedTranscripts.Any(mutationTranscript => mutationTranscript.Gene.Id == int.Parse(gene.Id))
+                    );
+
+                    foreach (var mutation in observedMutations)
                     {
-                        Gene = affectedTranscript.Gene,
-                        Consequence = affectedTranscript.Consequences.OrderBy(consequence => consequence.Severity)
-                            .First()
-                    })
-                    //We want the most severe consequence first.
-                    .OrderBy(affectedTranscript => affectedTranscript.Consequence.Severity)
-                    //Group by each gene and select the most severe consequence
-                    .GroupBy(
-                        //Symbol can be missing so we group after ensembleid
-                        affectedTranscript => affectedTranscript.Gene.EnsemblId,
-                        affectedTranscript => affectedTranscript,
-                        (key, group) => new {EnsembleId = key, Elements = @group})
-                    //Select only the most severe consequence for each gene
-                    .Select(group => new ObservationData
-                    {
-                        GeneId = group.EnsembleId,
-                        Consequence = group.Elements.First().Consequence.Type,
-                        Type = mutation.Type,
-                        DonorId = donor.ReferenceId,
-                        Id = mutation.Code
-                    })
-                ).ToArray();
-            return observationDataForDonorMutations;
+                        yield return new OncoGridMutation
+                        {
+                            Id = mutation.Id.ToString(),
+                            Code = mutation.Code,
+                            Type = mutation.Type,
+                            Consequence = mutation.AffectedTranscripts
+                                .Where(affectedTranscript => affectedTranscript.Gene.Id == int.Parse(gene.Id))
+                                .SelectMany(affectedTranscript => affectedTranscript.Consequences)
+                                .OrderBy(consequence => consequence.Severity)
+                                .First().Type,
+                            DonorId = donor.Id,
+                            GeneId = gene.Id
+                        };
+                    }
+                }
+            }
         }
     }
 }
