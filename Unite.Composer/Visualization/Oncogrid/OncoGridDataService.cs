@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
@@ -29,8 +28,6 @@ namespace Unite.Composer.Visualization.Oncogrid
 
         public OncoGridData LoadData(SearchCriteria searchCriteria = null)
         {
-            var stopWatch = new Stopwatch();
-
             var criteria = searchCriteria ?? new SearchCriteria();
 
             var donorsSearchResult = FindDonors(criteria);
@@ -135,6 +132,8 @@ namespace Unite.Composer.Visualization.Oncogrid
         {
             var oncoGridData = new OncoGridData();
 
+            // Collections will be enumerated in controller, when building JSON object to return.
+            // If immediate enumeration required, call 'ToArray' method for required data set.
             oncoGridData.Donors = GetDonorsData(donors);
             oncoGridData.Genes = GetGenesData(mutations, numberOfGenes);
             oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations);
@@ -189,11 +188,15 @@ namespace Unite.Composer.Visualization.Oncogrid
         {
             foreach (var donor in donors)
             {
+                var donorId = int.Parse(donor.Id);
+
                 foreach (var gene in genes)
                 {
+                    var geneId = int.Parse(gene.Id);
+
                     var observedMutations = mutations.Where(mutation =>
-                        mutation.Donors.Any(mutationDonor => mutationDonor.Id == int.Parse(donor.Id)) &&
-                        mutation.AffectedTranscripts.Any(mutationTranscript => mutationTranscript.Gene.Id == int.Parse(gene.Id))
+                        mutation.Donors.Any(mutationDonor => mutationDonor.Id == donorId) &&
+                        mutation.AffectedTranscripts.Any(mutationTranscript => mutationTranscript.Gene.Id == geneId)
                     );
 
                     foreach (var mutation in observedMutations)
@@ -204,7 +207,7 @@ namespace Unite.Composer.Visualization.Oncogrid
                             Code = mutation.Code,
                             Type = mutation.Type,
                             Consequence = mutation.AffectedTranscripts
-                                .Where(affectedTranscript => affectedTranscript.Gene.Id == int.Parse(gene.Id))
+                                .Where(affectedTranscript => affectedTranscript.Gene.Id == geneId)
                                 .SelectMany(affectedTranscript => affectedTranscript.Consequences)
                                 .OrderBy(consequence => consequence.Severity)
                                 .First().Type,
