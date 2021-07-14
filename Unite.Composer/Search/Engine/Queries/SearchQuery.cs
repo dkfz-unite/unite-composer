@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Nest;
+using Unite.Composer.Search.Engine.Aggregations;
 using Unite.Composer.Search.Engine.Extensions;
 using Unite.Composer.Search.Engine.Filters;
 
@@ -10,11 +11,15 @@ namespace Unite.Composer.Search.Engine.Queries
     public class SearchQuery<TIndex> where TIndex : class
     {
         private SearchDescriptor<TIndex> _request;
+        private List<IAggregation<TIndex>> _aggregations;
+
+        public IEnumerable<IAggregation<TIndex>> Aggregations => _aggregations;
 
 
         public SearchQuery()
         {
             _request = new SearchDescriptor<TIndex>();
+            _aggregations = new List<IAggregation<TIndex>>();
 
             _request.TrackTotalHits();
         }
@@ -47,6 +52,15 @@ namespace Unite.Composer.Search.Engine.Queries
             {
                 filter.Apply(_request);
             }
+
+            return this;
+        }
+
+        public SearchQuery<TIndex> AddAggregation(IAggregation<TIndex> aggregation)
+        {
+            _aggregations.Add(aggregation);
+
+            aggregation.Apply(_request);
 
             return this;
         }

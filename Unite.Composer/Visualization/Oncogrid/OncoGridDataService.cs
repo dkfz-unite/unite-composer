@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Unite.Composer.Search.Engine;
+using Unite.Composer.Search.Engine.Aggregations;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
@@ -15,6 +16,8 @@ namespace Unite.Composer.Visualization.Oncogrid
 {
     public class OncoGridDataService
     {
+        private const string _genesAggregationName = "Genes";
+
         private readonly IIndexService<DonorIndex> _donorsIndexService;
         private readonly IIndexService<MutationIndex> _mutationsIndexService;
 
@@ -36,13 +39,12 @@ namespace Unite.Composer.Visualization.Oncogrid
                 .Select(donor => donor.Id)
                 .ToArray();
 
-            //var geneIds = donorsSearchResult.TermsAggregations["Genes"]
-            //    .OrderByDescending(aggregation => aggregation.Value)
-            //    .Take(searchCriteria.OncoGridFilters.MostAffectedGeneCount)
-            //    .Select(aggregation => aggregation.Key)
-            //    .ToArray();
+            var geneIds = donorsSearchResult
+                .Aggregations[_genesAggregationName]
+                .Select(aggregation => int.Parse(aggregation.Key))
+                .ToArray();
 
-            var mutationsSearchResult = FindMutations(criteria, donorIds /*, geneIds*/);
+            var mutationsSearchResult = FindMutations(criteria, donorIds, geneIds);
 
             var data = GetOncoGridData(
                 donorsSearchResult.Rows,
@@ -64,10 +66,16 @@ namespace Unite.Composer.Visualization.Oncogrid
         {
             var criteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
 
+            var genesAggregation = new Aggregation<DonorIndex, object>(
+                _genesAggregationName,
+                donor => donor.Mutations.First().AffectedTranscripts.First().Gene.Id,
+                criteria.OncoGridFilters.MostAffectedGeneCount);
+
             var query = new SearchQuery<DonorIndex>()
                 .AddPagination(0, criteria.OncoGridFilters.MostAffectedDonorCount)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
+                .AddAggregation(genesAggregation)
                 .AddOrdering(donor => donor.NumberOfMutations)
                 .AddExclusion(donor => donor.Mutations);
             //TODO: exclude all unnecessary information as soon as multiple exclusions work.
@@ -87,18 +95,18 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// <returns>Search result with mutations and number of total available rows.</returns>
         private SearchResult<MutationIndex> FindMutations(
             SearchCriteria criteria,
-            IEnumerable<int> donorIds
-            /*IEnumerable<int> geneIds*/)
+            IEnumerable<int> donorIds,
+            IEnumerable<int> geneIds)
         {
             criteria.DonorFilters = new DonorCriteria
             {
                 Id = donorIds.ToArray()
             };
 
-            //criteria.MutationFilters = new GeneCriteria
-            //{
-            //    Identity = geneIds.ToArray()
-            //};
+            criteria.MutationFilters = new MutationCriteria
+            {
+                GeneId = geneIds.ToArray()
+            };
 
             var criteriaFilters = new MutationCriteriaFiltersCollection(criteria).All();
 

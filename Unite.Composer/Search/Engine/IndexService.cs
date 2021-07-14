@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Nest;
+using Unite.Composer.Search.Engine.Extensions;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Indices.Services.Configuration.Options;
 
@@ -54,7 +56,9 @@ namespace Unite.Composer.Search.Engine
                 return new SearchResult<TIndex>()
                 {
                     Total = response.Total,
-                    Rows = response.Documents
+                    Rows = response.Documents,
+                    Aggregations = query.Aggregations?
+                        .ToDictionary(aggregation => aggregation.Name, aggregation => response.GetTermsAggregationData(aggregation.Name))
                 };
             }
             else

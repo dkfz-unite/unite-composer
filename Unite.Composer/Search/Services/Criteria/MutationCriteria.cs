@@ -13,5 +13,6 @@ namespace Unite.Composer.Search.Services.Criteria
         public string[] Impact { get; set; }
         public string[] Consequence { get; set; }
         public string[] Gene { get; set; }
+        public int[] GeneId { get; set; }
     }
 }

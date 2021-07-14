@@ -424,6 +424,12 @@ namespace Unite.Composer.Search.Services.Search
                     donor => donor.Mutations.First().AffectedTranscripts.First().Gene.Symbol,
                     criteria.MutationFilters.Gene)
                 );
+
+                _filters.Add(new EqualityFilter<DonorIndex, int>(
+                    MutationFilterNames.GeneId,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Gene.Id,
+                    criteria.MutationFilters.GeneId)
+                );
             }
         }
     }

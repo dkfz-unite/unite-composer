@@ -16,9 +16,11 @@ namespace Unite.Composer.Search.Engine.Extensions
         /// <param name="request">Source request</param>
         /// <param name="name">Aggregation name</param>
         /// <param name="property">Aggregation property</param>
+        /// <param name="size">Number of top met terms to return</param>
         public static void AddTermsAggregation<TIndex, TProp>(this ISearchRequest<TIndex> request,
             string name,
-            Expression<Func<TIndex, TProp>> property)
+            Expression<Func<TIndex, TProp>> property,
+            int? size)
         {
             if (request.Aggregations == null)
             {
@@ -28,6 +30,7 @@ namespace Unite.Composer.Search.Engine.Extensions
             var aggregation = new TermsAggregation(name)
             {
                 Field = new Field(property),
+                Size = size
             };
 
             request.Aggregations.Add(name, aggregation);
