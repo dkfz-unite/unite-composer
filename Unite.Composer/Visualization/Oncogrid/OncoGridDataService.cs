@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Unite.Composer.Search.Engine;
-using Unite.Composer.Search.Engine.Aggregations;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
@@ -16,8 +15,6 @@ namespace Unite.Composer.Visualization.Oncogrid
 {
     public class OncoGridDataService
     {
-        private const string _genesAggregationName = "Genes";
-
         private readonly IIndexService<DonorIndex> _donorsIndexService;
         private readonly IIndexService<MutationIndex> _mutationsIndexService;
 
@@ -39,12 +36,7 @@ namespace Unite.Composer.Visualization.Oncogrid
                 .Select(donor => donor.Id)
                 .ToArray();
 
-            var geneIds = donorsSearchResult
-                .Aggregations[_genesAggregationName]
-                .Select(aggregation => int.Parse(aggregation.Key))
-                .ToArray();
-
-            var mutationsSearchResult = FindMutations(criteria, donorIds, geneIds);
+            var mutationsSearchResult = FindMutations(criteria, donorIds);
 
             var data = GetOncoGridData(
                 donorsSearchResult.Rows,
@@ -62,23 +54,19 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// <param name="criteria">Search criteria</param>
         /// <returns>Search result with donors and number of total available rows.</returns>
         private SearchResult<DonorIndex> FindDonors(
-            SearchCriteria criteria)
+            SearchCriteria searchCriteria)
         {
-            var criteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
+            var criteria = searchCriteria;
 
-            var genesAggregation = new Aggregation<DonorIndex, object>(
-                _genesAggregationName,
-                donor => donor.Mutations.First().AffectedTranscripts.First().Gene.Id,
-                criteria.OncoGridFilters.MostAffectedGeneCount);
+            var criteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
 
             var query = new SearchQuery<DonorIndex>()
                 .AddPagination(0, criteria.OncoGridFilters.MostAffectedDonorCount)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
-                .AddAggregation(genesAggregation)
                 .AddOrdering(donor => donor.NumberOfMutations)
                 .AddExclusion(donor => donor.Mutations);
-            //TODO: exclude all unnecessary information as soon as multiple exclusions work.
+            // TODO: exclude all unnecessary information as soon as multiple exclusions work.
             // .AddExclusion(donor => donor.Treatments)
             // .AddExclusion(donor => donor.WorkPackages)
             // .AddExclusion(donor => donor.Studies);
@@ -94,29 +82,23 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// <param name="geneIds">Id's of genes</param>
         /// <returns>Search result with mutations and number of total available rows.</returns>
         private SearchResult<MutationIndex> FindMutations(
-            SearchCriteria criteria,
-            IEnumerable<int> donorIds,
-            IEnumerable<int> geneIds)
+            SearchCriteria searchCriteria,
+            IEnumerable<int> donorIds)
         {
-            criteria.DonorFilters = new DonorCriteria
-            {
-                Id = donorIds.ToArray()
-            };
-
-            criteria.MutationFilters = new MutationCriteria
-            {
-                GeneId = geneIds.ToArray()
-            };
+            var criteria = new SearchCriteria();
+            criteria.DonorFilters = new DonorCriteria();
+            criteria.DonorFilters.Id = donorIds.ToArray();
+            criteria.MutationFilters = searchCriteria.MutationFilters;
 
             var criteriaFilters = new MutationCriteriaFiltersCollection(criteria).All();
 
             var query = new SearchQuery<MutationIndex>()
-                //TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
+                // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
                 .AddPagination(0, 10000)
                 .AddFilters(criteriaFilters)
                 .AddFilter(new NotNullFilter<MutationIndex, object>("Mutation.HasAffectedTranscripts", mutation => mutation.AffectedTranscripts))
                 .AddExclusion(mutation => mutation.Donors.First().Specimens);
-            //TODO: exclude all unnecessary information as soon as multiple exclusions work.
+            // TODO: exclude all unnecessary information as soon as multiple exclusions work.
             // .AddExclusion(mutation => mutation.Donors.First().Studies)
             // .AddExclusion(mutation => mutation.Donors.First().Treatments)
             // .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
@@ -171,13 +153,12 @@ namespace Unite.Composer.Visualization.Oncogrid
             IEnumerable<MutationIndex> mutations, int numberOfGenes)
         {
             return mutations
-                .Where(mutation => mutation.AffectedTranscripts != null)
                 .SelectMany(mutation => mutation.AffectedTranscripts)
                 .Select(affectedTranscript => affectedTranscript.Gene)
                 .GroupBy(gene => gene.Id)
                 .OrderByDescending(group => group.Count())
-                .Take(numberOfGenes)
                 .Select(group => group.First())
+                .Take(numberOfGenes)
                 .Select(gene => new OncoGridGene(gene));
         }
 

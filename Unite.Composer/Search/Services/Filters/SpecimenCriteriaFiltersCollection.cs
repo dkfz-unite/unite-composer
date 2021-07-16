@@ -124,12 +124,6 @@ namespace Unite.Composer.Search.Services
                     specimen => specimen.Mutations.First().AffectedTranscripts.First().Gene.Symbol,
                     criteria.MutationFilters.Gene)
                 );
-
-                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
-                    MutationFilterNames.GeneId,
-                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Gene.Id,
-                    criteria.MutationFilters.GeneId)
-                );
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Unite.Composer.Search.Engine.Aggregations;
 
 namespace Unite.Composer.Search.Engine.Queries
 {
@@ -8,13 +7,11 @@ namespace Unite.Composer.Search.Engine.Queries
     {
         public long Total { get; set; }
         public IEnumerable<TIndex> Rows { get; set; }
-        public IDictionary<string, IDictionary<string, long>> Aggregations { get; set; }
 
         public SearchResult()
         {
             Total = 0;
             Rows = Enumerable.Empty<TIndex>();
-            Aggregations = null;
         }
     }
 }

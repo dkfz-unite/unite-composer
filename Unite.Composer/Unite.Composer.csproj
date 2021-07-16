@@ -26,13 +26,11 @@
     <Folder Include="Visualization\Oncogrid\Data\" />
     <Folder Include="Common\" />
     <Folder Include="Common\Extensions\" />
-    <Folder Include="Search\Engine\Aggregations\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Search\Services\Context\" />
     <None Remove="Search\Services\Context\Enums\" />
     <None Remove="Common\" />
     <None Remove="Common\Extensions\" />
-    <None Remove="Search\Engine\Aggregations\" />
   </ItemGroup>
 </Project>

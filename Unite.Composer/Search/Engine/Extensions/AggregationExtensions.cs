@@ -27,11 +27,17 @@ namespace Unite.Composer.Search.Engine.Extensions
                 request.Aggregations = new AggregationDictionary();
             }
 
-            var aggregation = new TermsAggregation(name)
-            {
-                Field = new Field(property),
-                Size = size
-            };
+            var termsAggregation = new TermsAggregation(name);
+            termsAggregation.Field = new Field(property);
+            termsAggregation.Size = size;
+
+            var filterAggregation = new FilterAggregation(name);
+            filterAggregation.Filter = request.Query;
+            filterAggregation.Aggregations = termsAggregation;
+
+            var aggregation = request.Query != null
+                ? (AggregationContainer)filterAggregation
+                : (AggregationContainer)termsAggregation;
 
             request.Aggregations.Add(name, aggregation);
         }
@@ -47,9 +53,21 @@ namespace Unite.Composer.Search.Engine.Extensions
             string name)
             where TIndex : class
         {
-            return response.Aggregations.Terms(name)?.Buckets
-                .Where(bucket => bucket.DocCount != null)
-                .ToDictionary(bucket => bucket.Key, bucket => bucket.DocCount.Value);
+            if(response.Aggregations.Filter(name) != null)
+            {
+                return response.Aggregations
+                    .Filter(name)?
+                    .Terms(name)?.Buckets
+                    .Where(bucket => bucket.DocCount != null)
+                    .ToDictionary(bucket => bucket.Key, bucket => bucket.DocCount.Value);
+            }
+            else
+            {
+                return response.Aggregations
+                    .Terms(name)?.Buckets
+                    .Where(bucket => bucket.DocCount != null)
+                    .ToDictionary(bucket => bucket.Key, bucket => bucket.DocCount.Value);
+            }
         }
     }
 }
