@@ -7,7 +7,6 @@ using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Search;
 using Unite.Composer.Visualization.Oncogrid.Data;
 using Unite.Indices.Services.Configuration.Options;
-
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 
@@ -18,13 +17,11 @@ namespace Unite.Composer.Visualization.Oncogrid
         private readonly IIndexService<DonorIndex> _donorsIndexService;
         private readonly IIndexService<MutationIndex> _mutationsIndexService;
 
-
         public OncoGridDataService(IElasticOptions options)
         {
             _donorsIndexService = new DonorsIndexService(options);
             _mutationsIndexService = new MutationsIndexService(options);
         }
-
 
         public OncoGridData LoadData(SearchCriteria searchCriteria = null)
         {
@@ -47,14 +44,12 @@ namespace Unite.Composer.Visualization.Oncogrid
             return data;
         }
 
-
         /// <summary>
-        /// Retreives donors with highest number of mutations filtered by given search criteria.
+        /// Retrieves donors with highest number of mutations filtered by given search criteria.
         /// </summary>
-        /// <param name="criteria">Search criteria</param>
+        /// <param name="searchCriteria">Search criteria</param>
         /// <returns>Search result with donors and number of total available rows.</returns>
-        private SearchResult<DonorIndex> FindDonors(
-            SearchCriteria searchCriteria)
+        private SearchResult<DonorIndex> FindDonors(SearchCriteria searchCriteria)
         {
             var criteria = searchCriteria;
 
@@ -75,15 +70,12 @@ namespace Unite.Composer.Visualization.Oncogrid
         }
 
         /// <summary>
-        /// Retreives mutations of given donors in given genes filtered by given search criteria.
+        /// Retrieves mutations of given donors in given genes filtered by given search criteria.
         /// </summary>
-        /// <param name="criteria">Search criteria</param>
+        /// <param name="searchCriteria">Search criteria</param>
         /// <param name="donorIds">Id's of donors</param>
-        /// <param name="geneIds">Id's of genes</param>
         /// <returns>Search result with mutations and number of total available rows.</returns>
-        private SearchResult<MutationIndex> FindMutations(
-            SearchCriteria searchCriteria,
-            IEnumerable<int> donorIds)
+        private SearchResult<MutationIndex> FindMutations(SearchCriteria searchCriteria, IEnumerable<int> donorIds)
         {
             var criteria = new SearchCriteria();
             criteria.DonorFilters = new DonorCriteria();
@@ -96,7 +88,8 @@ namespace Unite.Composer.Visualization.Oncogrid
                 // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
                 .AddPagination(0, 10000)
                 .AddFilters(criteriaFilters)
-                .AddFilter(new NotNullFilter<MutationIndex, object>("Mutation.HasAffectedTranscripts", mutation => mutation.AffectedTranscripts))
+                .AddFilter(new NotNullFilter<MutationIndex, object>("Mutation.HasAffectedTranscripts",
+                    mutation => mutation.AffectedTranscripts))
                 .AddExclusion(mutation => mutation.Donors.First().Specimens);
             // TODO: exclude all unnecessary information as soon as multiple exclusions work.
             // .AddExclusion(mutation => mutation.Donors.First().Studies)
@@ -106,7 +99,6 @@ namespace Unite.Composer.Visualization.Oncogrid
 
             return _mutationsIndexService.SearchAsync(query).Result;
         }
-
 
         /// <summary>
         /// Builds <see cref="OncoGridData"/> object from donor and mutation indices for given number of most affected genes.
@@ -136,11 +128,9 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// </summary>
         /// <param name="donors">Donor indices</param>
         /// <returns>Collection of <see cref="OncoGridDonor"/> objects.</returns>
-        private IEnumerable<OncoGridDonor> GetDonorsData(
-            IEnumerable<DonorIndex> donors)
+        private IEnumerable<OncoGridDonor> GetDonorsData(IEnumerable<DonorIndex> donors)
         {
-            return donors
-                .Select(index => new OncoGridDonor(index));
+            return donors.Select(index => new OncoGridDonor(index));
         }
 
         /// <summary>
@@ -149,8 +139,7 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// <param name="mutations">Mutation indices</param>
         /// <param name="numberOfGenes">Number of most affected genes</param>
         /// <returns>Collection of <see cref="OncoGridGene"/> objects.</returns>
-        private IEnumerable<OncoGridGene> GetGenesData(
-            IEnumerable<MutationIndex> mutations, int numberOfGenes)
+        private IEnumerable<OncoGridGene> GetGenesData(IEnumerable<MutationIndex> mutations, int numberOfGenes)
         {
             return mutations
                 .SelectMany(mutation => mutation.AffectedTranscripts)
