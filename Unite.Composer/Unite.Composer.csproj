@@ -21,12 +21,16 @@
     <Folder Include="Search\Services\Filters\" />
     <Folder Include="Visualization\" />
     <Folder Include="Visualization\Oncogrid\" />
-    <Folder Include="Visualization\Oncogrid\Models\" />
     <Folder Include="Search\Services\Context\" />
     <Folder Include="Search\Services\Context\Enums\" />
+    <Folder Include="Visualization\Oncogrid\Data\" />
+    <Folder Include="Common\" />
+    <Folder Include="Common\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Search\Services\Context\" />
     <None Remove="Search\Services\Context\Enums\" />
+    <None Remove="Common\" />
+    <None Remove="Common\Extensions\" />
   </ItemGroup>
 </Project>

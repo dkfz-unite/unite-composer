@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Unite.Composer.Web.Resources.Mutations;
 using Unite.Indices.Entities.Mutations;
 
 namespace Unite.Composer.Resources.Mutations

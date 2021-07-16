@@ -10,11 +10,15 @@ namespace Unite.Composer.Search.Engine.Queries
     public class SearchQuery<TIndex> where TIndex : class
     {
         private SearchDescriptor<TIndex> _request;
+        private List<IFilter<TIndex>> _filters;
+
+        public IEnumerable<IFilter<TIndex>> Filters => _filters;
 
 
         public SearchQuery()
         {
             _request = new SearchDescriptor<TIndex>();
+            _filters = new List<IFilter<TIndex>>();
 
             _request.TrackTotalHits();
         }
@@ -36,17 +40,14 @@ namespace Unite.Composer.Search.Engine.Queries
 
         public SearchQuery<TIndex> AddFilter(IFilter<TIndex> filter)
         {
-            filter.Apply(_request);
+            _filters.Add(filter);
 
             return this;
         }
 
         public SearchQuery<TIndex> AddFilters(IEnumerable<IFilter<TIndex>> filters)
         {
-            foreach (var filter in filters)
-            {
-                filter.Apply(_request);
-            }
+            _filters.AddRange(filters);
 
             return this;
         }
@@ -68,6 +69,8 @@ namespace Unite.Composer.Search.Engine.Queries
 
         public ISearchRequest<TIndex> GetRequest()
         {
+            _filters.ForEach(filter => filter.Apply(_request));
+
             return _request;
         }
     }
