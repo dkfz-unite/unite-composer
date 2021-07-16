@@ -17,7 +17,7 @@ namespace Unite.Composer.Visualization.Lolliplot
             _mutationService = new MutationsIndexService(options);
         }
 
-        public LolliplotData GetData(SearchCriteria searchCriteria = null)
+        public LolliplotData GetData(long mutationId)
         {
             // var criteria = searchCriteria ?? new SearchCriteria();
             //

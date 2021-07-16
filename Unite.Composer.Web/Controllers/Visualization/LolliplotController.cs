@@ -3,6 +3,7 @@ using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Visualization.Lolliplot.Data;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
+using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Controllers.Visualization
 {
@@ -18,16 +19,9 @@ namespace Unite.Composer.Web.Controllers.Visualization
 
         [HttpGet]
         [CookieAuthorize]
-        public LolliplotData Get()
+        public LolliplotData Get(long mutationId)
         {
-            return _dataService.GetData();
-        }
-
-        [HttpPost]
-        [CookieAuthorize]
-        public LolliplotData Post([FromBody] SearchCriteria searchCriteria)
-        {
-            return _dataService.GetData(searchCriteria);
+            return _dataService.GetData(mutationId);
         }
     }
 }
