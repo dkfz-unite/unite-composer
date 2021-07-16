@@ -49,9 +49,9 @@ namespace Unite.Composer.Visualization.Oncogrid
 
 
         /// <summary>
-        /// Retreives donors with highest number of mutations filtered by given search criteria.
+        /// Retrieves donors with highest number of mutations filtered by given search criteria.
         /// </summary>
-        /// <param name="criteria">Search criteria</param>
+        /// <param name="searchCriteria">Search criteria</param>
         /// <returns>Search result with donors and number of total available rows.</returns>
         private SearchResult<DonorIndex> FindDonors(
             SearchCriteria searchCriteria)
@@ -75,11 +75,10 @@ namespace Unite.Composer.Visualization.Oncogrid
         }
 
         /// <summary>
-        /// Retreives mutations of given donors in given genes filtered by given search criteria.
+        /// Retrieves mutations of given donors in given genes filtered by given search criteria.
         /// </summary>
-        /// <param name="criteria">Search criteria</param>
+        /// <param name="searchCriteria">Search criteria</param>
         /// <param name="donorIds">Id's of donors</param>
-        /// <param name="geneIds">Id's of genes</param>
         /// <returns>Search result with mutations and number of total available rows.</returns>
         private SearchResult<MutationIndex> FindMutations(
             SearchCriteria searchCriteria,
