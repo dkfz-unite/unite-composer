@@ -1,6 +1,6 @@
 ﻿using Unite.Indices.Entities.Basic.Mutations;
 
-namespace Unite.Composer.Resources.Mutations
+namespace Unite.Composer.Web.Resources.Mutations
 {
     public class GeneResource
     {

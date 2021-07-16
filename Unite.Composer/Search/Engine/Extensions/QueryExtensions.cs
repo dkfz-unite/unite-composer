@@ -221,6 +221,11 @@ namespace Unite.Composer.Search.Engine.Extensions
             double? to)
             where TIndex : class
         {
+            if (!from.HasValue && !to.HasValue)
+            {
+                return;
+            }
+
             var query = Query<TIndex>.Range(d => d
                 .Field(property)
                 .GreaterThanOrEquals(from)
@@ -248,6 +253,11 @@ namespace Unite.Composer.Search.Engine.Extensions
             double? to)
             where TIndex : class
         {
+            if (!from.HasValue && !to.HasValue)
+            {
+                return;
+            }
+
             var fromQuery = Query<TIndex>.Range(d => d
                 .Field(propertyFrom)
                 .GreaterThanOrEquals(from)
@@ -281,6 +291,11 @@ namespace Unite.Composer.Search.Engine.Extensions
             double? to)
             where TIndex : class
         {
+            if (!from.HasValue && !to.HasValue)
+            {
+                return;
+            }
+
             var query1 = Query<TIndex>.Range(d => d
                 .Field(property1)
                 .GreaterThanOrEquals(from)
