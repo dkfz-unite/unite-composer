@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Resources.Mutations;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
+using Unite.Composer.Web.Resources.Mutations;
 using Unite.Composer.Web.Resources.Specimens;
 
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;

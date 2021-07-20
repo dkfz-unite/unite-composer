@@ -13,10 +13,10 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
     [ApiController]
     public class DonorsController : Controller
     {
-        private readonly ISearchService<DonorIndex> _searchService;
+        private readonly IDonorsSearchService _searchService;
 
 
-        public DonorsController(ISearchService<DonorIndex> searchService)
+        public DonorsController(IDonorsSearchService searchService)
         {
             _searchService = searchService;
         }

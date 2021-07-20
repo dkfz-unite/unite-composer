@@ -28,9 +28,8 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddTransient<IIdentityService<User>, IdentityService>();
             services.AddTransient<ISessionService<User, UserSession>, SessionService>();
 
-            services.AddTransient<ISearchService<Indices.Entities.Donors.DonorIndex>, DonorsSearchService>();
+            services.AddTransient<IDonorsSearchService, DonorsSearchService>();
             services.AddTransient<ISearchService<Indices.Entities.Mutations.MutationIndex>, MutationsSearchService>();
-            //services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex>, SpecimensSearchService>();
             services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex, SpecimenSearchContext>, SpecimensSearchService>();
 
             services.AddTransient<OncoGridDataService>();

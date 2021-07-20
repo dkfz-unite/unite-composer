@@ -3,67 +3,39 @@ using Unite.Indices.Entities.Specimens;
 
 namespace Unite.Composer.Web.Resources.Specimens
 {
-    public class SpecimenResource
+    public class SpecimenResource : SpecimenBaseResource
     {
-        public int Id { get; set; }
-        public int DonorId { get; set; }
+        public int DonorId { get; }
 
-        public SpecimenResource Parent { get; set; }
-        public SpecimenResource[] Children { get; set; }
+        public SpecimenResource Parent { get; }
+        public SpecimenResource[] Children { get; }
 
-        public TissueResource Tissue { get; set; }
-        public CellLineResource CellLine { get; set; }
-        public OrganoidResource Organoid { get; set; }
-        public XenograftResource Xenograft { get; set; }
+        public int NumberOfMutations { get; }
+        public int NumberOfGenes { get; }
 
 
-        public int Mutations { get; set; }
-        public int Genes { get; set; }
-
-
-        public SpecimenResource(SpecimenIndex index) : this(index, index.Donor.Id, false, false)
+        public SpecimenResource(SpecimenIndex index) : this(index, false, false)
         {
+            DonorId = index.Donor.Id;
         }
 
-        private SpecimenResource(SpecimenIndex index, int donorId, bool skipParent, bool skipChildren)
+        private SpecimenResource(SpecimenIndex index, bool skipParent, bool skipChildren) : base(index)
         {
-            Id = index.Id;
-            DonorId = donorId;
-
-
             if (index.Parent != null && !skipParent)
             {
-                Parent = new SpecimenResource(index.Parent, donorId, false, true);
+                Parent = new SpecimenResource(index.Parent, false, true);
             }
 
             if (index.Children != null && !skipChildren)
             {
                 Children = index.Children
-                    .Select(childIndex => new SpecimenResource(childIndex, donorId, true, false))
+                    .Select(childIndex => new SpecimenResource(childIndex, true, false))
                     .ToArray();
             }
 
 
-            if (index.Tissue != null)
-            {
-                Tissue = new TissueResource(index.Tissue);
-            }
-            else if (index.CellLine != null)
-            {
-                CellLine = new CellLineResource(index.CellLine);
-            }
-            else if (index.Organoid != null)
-            {
-                Organoid = new OrganoidResource(index.Organoid);
-            }
-            else if (index.Xenograft != null)
-            {
-                Xenograft = new XenograftResource(index.Xenograft);
-            }
-
-
-            Mutations = index.NumberOfMutations;
-            Genes = index.NumberOfGenes;
+            NumberOfMutations = index.NumberOfMutations;
+            NumberOfGenes = index.NumberOfGenes;
         }
     }
 }

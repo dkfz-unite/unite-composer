@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Resources.Mutations;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
+using Unite.Composer.Web.Resources.Mutations;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
@@ -16,12 +16,12 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
     [ApiController]
     public class MutationController : Controller
     {
-        private readonly ISearchService<DonorIndex> _donorsSearchService;
+        private readonly IDonorsSearchService _donorsSearchService;
         private readonly ISearchService<MutationIndex> _mutationsSearchService;
 
 
         public MutationController(
-            ISearchService<DonorIndex> donorsSearchService,
+            IDonorsSearchService donorsSearchService,
             ISearchService<MutationIndex> mutationsSearchService)
         {
             _donorsSearchService = donorsSearchService;

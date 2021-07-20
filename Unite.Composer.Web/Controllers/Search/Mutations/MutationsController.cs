@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Resources.Mutations;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
+using Unite.Composer.Web.Resources.Mutations;
 using Unite.Indices.Entities.Mutations;
 
 namespace Unite.Composer.Web.Controllers.Search.Mutations

@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Resources.Mutations;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
@@ -19,19 +17,13 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
     [ApiController]
     public class DonorController : Controller
     {
-        private readonly ISearchService<DonorIndex> _donorsSearchService;
-        private readonly ISearchService<MutationIndex> _mutationsSearchService;
-        private readonly ISearchService<SpecimenIndex, SpecimenSearchContext> _spesimensSearchService;
+        private readonly IDonorsSearchService _donorsSearchService;
 
 
         public DonorController(
-            ISearchService<DonorIndex> donorsSearchService,
-            ISearchService<MutationIndex> mutationsSearchService,
-            ISearchService<SpecimenIndex, SpecimenSearchContext> specimensSearchService)
+            IDonorsSearchService donorsSearchService)
         {
             _donorsSearchService = donorsSearchService;
-            _mutationsSearchService = mutationsSearchService;
-            _spesimensSearchService = specimensSearchService;
         }
 
 
@@ -48,24 +40,18 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
 
         [HttpPost("{id}/mutations")]
         [CookieAuthorize]
-        public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
+        public SearchResult<DonorMutationResource> SearchMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
-            searchCriteria.DonorFilters = new DonorCriteria { Id = new[] { id } };
+            var searchResult = _donorsSearchService.SearchMutations(id, searchCriteria);
 
-            var searchResult = _mutationsSearchService.Search(searchCriteria);
-
-            return From(searchResult);
+            return From(id, searchResult);
         }
 
         [HttpPost("{id}/specimens")]
         [CookieAuthorize]
-        public SearchResult<SpecimenResource> GetSpecimens(int id, [FromBody] SearchCriteria searchCriteria)
+        public SearchResult<SpecimenResource> SearchSpecimens(int id, [FromBody] SearchCriteria searchCriteria)
         {
-            searchCriteria.DonorFilters = new DonorCriteria { Id = new[] { id } };
-
-            var searchContext = new SpecimenSearchContext();
-
-            var searchResult = _spesimensSearchService.Search(searchCriteria, searchContext);
+            var searchResult = _donorsSearchService.SearchSpecimens(id, searchCriteria);
 
             return From(searchResult);
         }
@@ -81,12 +67,12 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             return new DonorResource(index);
         }
 
-        private static SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
+        private static SearchResult<DonorMutationResource> From(int donorId, SearchResult<MutationIndex> searchResult)
         {
-            return new SearchResult<MutationResource>()
+            return new SearchResult<DonorMutationResource>()
             {
                 Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new MutationResource(index)).ToArray()
+                Rows = searchResult.Rows.Select(index => new DonorMutationResource(donorId, index)).ToArray()
             };
         }
 
