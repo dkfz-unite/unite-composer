@@ -50,6 +50,8 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         [CookieAuthorize]
         public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
+            searchCriteria.DonorFilters = new DonorCriteria { Id = new[] { id } };
+
             var searchResult = _mutationsSearchService.Search(searchCriteria);
 
             return From(searchResult);
@@ -59,6 +61,8 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         [CookieAuthorize]
         public SearchResult<SpecimenResource> GetSpecimens(int id, [FromBody] SearchCriteria searchCriteria)
         {
+            searchCriteria.DonorFilters = new DonorCriteria { Id = new[] { id } };
+
             var searchContext = new SpecimenSearchContext();
 
             var searchResult = _spesimensSearchService.Search(searchCriteria, searchContext);
@@ -67,7 +71,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
 
-        private DonorResource From(DonorIndex index)
+        private static DonorResource From(DonorIndex index)
         {
             if (index == null)
             {
@@ -77,7 +81,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             return new DonorResource(index);
         }
 
-        private SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
+        private static SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
         {
             return new SearchResult<MutationResource>()
             {
@@ -86,7 +90,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             };
         }
 
-        private SearchResult<SpecimenResource> From(SearchResult<SpecimenIndex> searchResult)
+        private static SearchResult<SpecimenResource> From(SearchResult<SpecimenIndex> searchResult)
         {
             return new SearchResult<SpecimenResource>()
             {

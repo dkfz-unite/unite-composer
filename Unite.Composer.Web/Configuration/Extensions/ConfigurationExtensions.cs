@@ -30,6 +30,7 @@ namespace Unite.Composer.Web.Configuration.Extensions
 
             services.AddTransient<ISearchService<Indices.Entities.Donors.DonorIndex>, DonorsSearchService>();
             services.AddTransient<ISearchService<Indices.Entities.Mutations.MutationIndex>, MutationsSearchService>();
+            //services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex>, SpecimensSearchService>();
             services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex, SpecimenSearchContext>, SpecimensSearchService>();
 
             services.AddTransient<OncoGridDataService>();

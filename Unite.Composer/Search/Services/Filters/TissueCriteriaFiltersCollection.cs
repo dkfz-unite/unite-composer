@@ -11,18 +11,12 @@ namespace Unite.Composer.Search.Services
         public TissueCriteriaFiltersCollection(SearchCriteria criteria) : base(criteria)
         {
             _filters.Add(new NotNullFilter<SpecimenIndex, Indices.Entities.Basic.Specimens.TissueIndex>(
-                "Specimen.Type",
+                SpecimenFilterNames.Type,
                 specimen => specimen.Tissue)
             );
 
             if (criteria.TissueFilters != null)
             {
-                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
-                    TissueFilterNames.Id,
-                    specimen => specimen.Id,
-                    criteria.TissueFilters.Id)
-                );
-
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     TissueFilterNames.ReferenceId,
                     specimen => specimen.Tissue.ReferenceId,

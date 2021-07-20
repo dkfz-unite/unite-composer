@@ -12,19 +12,13 @@ namespace Unite.Composer.Search.Services.Filters
         public OrganoidCriteriaFiltersCollection(SearchCriteria criteria) : base(criteria)
         {
             _filters.Add(new NotNullFilter<SpecimenIndex, Indices.Entities.Basic.Specimens.OrganoidIndex>(
-                "Specimen.Type",
+                SpecimenFilterNames.Type,
                 specimen => specimen.Organoid)
             );
 
 
             if (criteria.OrganoidFilters != null)
             {
-                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
-                    OrganoidFilterNames.Id,
-                    specimen => specimen.Id,
-                    criteria.OrganoidFilters.Id)
-                );
-
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     OrganoidFilterNames.ReferenceId,
                     specimen => specimen.Organoid.ReferenceId,

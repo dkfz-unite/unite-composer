@@ -73,14 +73,17 @@ namespace Unite.Composer.Search.Services.Search
                );
             }
 
-            if (criteria.TissueFilters != null)
+            if (criteria.SpecimenFilters != null)
             {
                 _filters.Add(new EqualityFilter<MutationIndex, int>(
-                    TissueFilterNames.Id,
+                    SpecimenFilterNames.Id,
                     mutation => mutation.Donors.First().Specimens.First().Id,
-                    criteria.TissueFilters.Id)
+                    criteria.SpecimenFilters.Id)
                 );
+            }
 
+            if (criteria.TissueFilters != null)
+            {
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
                     TissueFilterNames.ReferenceId,
                     mutation => mutation.Donors.First().Specimens.First().Tissue.ReferenceId,
@@ -145,12 +148,6 @@ namespace Unite.Composer.Search.Services.Search
 
             if (criteria.CellLineFilters != null)
             {
-                _filters.Add(new EqualityFilter<MutationIndex, int>(
-                    CellLineFilterNames.Id,
-                    mutation => mutation.Donors.First().Specimens.First().Id,
-                    criteria.CellLineFilters.Id)
-                );
-
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
                     CellLineFilterNames.ReferenceId,
                     mutation => mutation.Donors.First().Specimens.First().CellLine.ReferenceId,
@@ -221,12 +218,6 @@ namespace Unite.Composer.Search.Services.Search
 
             if (criteria.OrganoidFilters != null)
             {
-                _filters.Add(new EqualityFilter<MutationIndex, int>(
-                    OrganoidFilterNames.Id,
-                    mutation => mutation.Donors.First().Specimens.First().Id,
-                    criteria.OrganoidFilters.Id)
-                );
-
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
                     OrganoidFilterNames.ReferenceId,
                     mutation => mutation.Donors.First().Specimens.First().Organoid.ReferenceId,
@@ -291,12 +282,6 @@ namespace Unite.Composer.Search.Services.Search
 
             if (criteria.XenograftFilters != null)
             {
-                _filters.Add(new EqualityFilter<MutationIndex, int>(
-                    XenograftFilterNames.Id,
-                    mutation => mutation.Donors.First().Specimens.First().Id,
-                    criteria.XenograftFilters.Id)
-                );
-
                 _filters.Add(new SimilarityFilter<MutationIndex, string>(
                     XenograftFilterNames.ReferenceId,
                     mutation => mutation.Donors.First().Specimens.First().Xenograft.ReferenceId,

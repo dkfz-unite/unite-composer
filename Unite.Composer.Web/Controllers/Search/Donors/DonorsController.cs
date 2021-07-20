@@ -10,6 +10,7 @@ using Unite.Indices.Entities.Donors;
 namespace Unite.Composer.Web.Controllers.Search.Donors
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class DonorsController : Controller
     {
         private readonly ISearchService<DonorIndex> _searchService;
@@ -21,18 +22,9 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
 
-        [HttpGet]
+        [HttpPost("")]
         [CookieAuthorize]
-        public SearchResult<DonorResource> Get()
-        {
-            var searchResult = _searchService.Search();
-
-            return From(searchResult);
-        }
-
-        [HttpPost]
-        [CookieAuthorize]
-        public SearchResult<DonorResource> Post([FromBody] SearchCriteria searchCriteria)
+        public SearchResult<DonorResource> Search([FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.Search(searchCriteria);
 
@@ -40,7 +32,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
 
-        private SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)
+        private static SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)
         {
             return new SearchResult<DonorResource>()
             {

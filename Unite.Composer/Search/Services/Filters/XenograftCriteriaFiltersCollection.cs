@@ -12,19 +12,13 @@ namespace Unite.Composer.Search.Services.Filters
         public XenograftCriteriaFiltersCollection(SearchCriteria criteria) : base(criteria)
         {
             _filters.Add(new NotNullFilter<SpecimenIndex, Indices.Entities.Basic.Specimens.XenograftIndex>(
-                "Specimen.Type",
+                SpecimenFilterNames.Type,
                 specimen => specimen.Xenograft)
             );
 
 
             if (criteria.XenograftFilters != null)
             {
-                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
-                   XenograftFilterNames.Id,
-                   specimen => specimen.Id,
-                   criteria.XenograftFilters.Id)
-                );
-
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     XenograftFilterNames.ReferenceId,
                     specimen => specimen.Xenograft.ReferenceId,

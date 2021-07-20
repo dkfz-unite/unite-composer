@@ -73,6 +73,15 @@ namespace Unite.Composer.Search.Services
                );
             }
 
+            if (criteria.SpecimenFilters != null)
+            {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    SpecimenFilterNames.Id,
+                    specimen => specimen.Id,
+                    criteria.SpecimenFilters.Id)
+                );
+            }
+
             if (criteria.MutationFilters != null)
             {
                 _filters.Add(new EqualityFilter<SpecimenIndex, long>(

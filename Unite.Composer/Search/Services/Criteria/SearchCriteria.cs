@@ -7,6 +7,7 @@
         public string Term { get; set; }
 
         public DonorCriteria DonorFilters { get; set; }
+        public SpecimenCriteria SpecimenFilters { get; set; }
         public TissueCriteria TissueFilters { get; set; }
         public CellLineCriteria CellLineFilters { get; set; }
         public OrganoidCriteria OrganoidFilters { get; set; }
