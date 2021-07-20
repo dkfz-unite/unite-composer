@@ -18,5 +18,10 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         /// Mutation metadata for the lolliplot 
         /// </summary>
         public List<LolliplotMutationData> Mutations { get; } = new List<LolliplotMutationData>();
+
+        /// <summary>
+        /// This Property defines the length of the x-Axis of the Lolliplot.
+        /// </summary>
+        public int DomainWidth { get; set; }
     }
 }

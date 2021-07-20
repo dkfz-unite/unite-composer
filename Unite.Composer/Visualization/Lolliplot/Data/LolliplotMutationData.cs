@@ -18,12 +18,12 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         /// <summary>
         /// TODO
         /// </summary>
-        public string X { get; set; }
+        public int X { get; set; }
 
         /// <summary>
         /// TODO
         /// </summary>
-        public string Y { get; set; }
+        public int Y { get; set; }
 
         /// <summary>
         /// Consequence of the mutation <see cref="ConsequenceResource.Type"/>
@@ -38,6 +38,6 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         /// <summary>
         /// How many donors have this mutation <see cref="MutationResource.Donors"/>
         /// </summary>
-        public string Donors { get; set; }
+        public int Donors { get; set; }
     }
 }

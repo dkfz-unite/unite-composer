@@ -17,12 +17,12 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         /// <summary>
         /// Start-Codon of the Protein within the Gene
         /// </summary>
-        public string Start { get; set; }
+        public int Start { get; set; }
 
         /// <summary>
         /// End-Codon of the Protein within the Gene
         /// </summary>
-        public string End { get; set; }
+        public int End { get; set; }
 
         /// <summary>
         /// Description of the protein
