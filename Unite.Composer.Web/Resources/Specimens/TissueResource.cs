@@ -1,5 +1,4 @@
-﻿using System;
-using Unite.Indices.Entities.Basic.Specimens;
+﻿using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Specimens
 {
@@ -9,7 +8,7 @@ namespace Unite.Composer.Web.Resources.Specimens
         public string Type { get; set; }
         public string TumorType { get; set; }
         public string Source { get; set; }
-        public DateTime? ExtractionDate { get; set; }
+        public int? ExtractionDay { get; set; }
 
         public MolecularDataResource MolecularData { get; set; }
 
@@ -20,7 +19,7 @@ namespace Unite.Composer.Web.Resources.Specimens
             Type = index.Type;
             TumorType = index.TumorType;
             Source = index.Source;
-            ExtractionDate = index.ExtractionDate;
+            ExtractionDay = index.ExtractionDay;
 
             if (index.MolecularData != null)
             {
