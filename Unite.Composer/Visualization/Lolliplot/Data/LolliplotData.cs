@@ -23,5 +23,10 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         /// This Property defines the length of the x-Axis of the Lolliplot.
         /// </summary>
         public int DomainWidth { get; set; }
+        
+        /// <summary>
+        /// Contains all transcripts which are affected by the mutation
+        /// </summary>
+        public List<string> Transcripts { get; set; }
     }
 }

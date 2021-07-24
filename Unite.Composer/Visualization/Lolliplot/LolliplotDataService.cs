@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unite.Composer.Search.Engine;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Visualization.Lolliplot.Data;
-using Unite.Indices.Entities.Mutations;
 using Unite.Indices.Services.Configuration.Options;
+using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 
 namespace Unite.Composer.Visualization.Lolliplot
 {
@@ -47,9 +46,36 @@ namespace Unite.Composer.Visualization.Lolliplot
             var lolliplotData = new LolliplotData();
             lolliplotData.Proteins.AddRange(proteinList);
             lolliplotData.Mutations.AddRange(mutationList);
+
             //TODO return the length of the x-Axis => Max Protein End maybe?
             lolliplotData.DomainWidth = 500;
+            // lolliplotData.Transcripts = GetUniqueTranscriptsWithAAChange(mutations);
+            lolliplotData.Transcripts = new List<string> {"PPP1R12C-001 (782 aa)", "PPP1R12C-002 (707 aa)", "PPP1R12C-006 (737 aa)", "PPP1R12C-201 (719 aa)"};
             return lolliplotData;
+        }
+
+        /// <summary>
+        /// TODO:
+        /// Example display string of icgc: PPP1R12C-001 (782 aa)
+        /// Example Ensembl-ID: ENST00000263433
+        /// </summary>
+        /// <param name="mutations"></param>
+        /// <returns></returns>
+        private List<string> GetUniqueTranscriptsWithAAChange(IEnumerable<MutationIndex> mutations)
+        {
+            var uniqueTranscripts = new HashSet<string>();
+            foreach (var mutation in mutations)
+            {
+                foreach (var affectedTranscript in mutation.AffectedTranscripts)
+                {
+                    if (!string.IsNullOrEmpty(affectedTranscript.AminoAcidChange))
+                    {
+                        uniqueTranscripts.Add(affectedTranscript.Transcript.EnsemblId);
+                    }
+                }
+            }
+
+            return uniqueTranscripts.ToList();
         }
 
         private IEnumerable<LolliplotMutationData> GetLolliplotMutationData()
