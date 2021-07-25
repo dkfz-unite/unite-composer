@@ -19,9 +19,9 @@ namespace Unite.Composer.Web.Controllers.Visualization
 
         [HttpGet]
         [CookieAuthorize]
-        public LolliplotData Get(long id)
+        public LolliplotData Get(long id, long transcriptId)
         {
-            return _dataService.GetData(id);
+            return _dataService.GetData(id, transcriptId);
         }
     }
 }
