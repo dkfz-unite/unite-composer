@@ -16,12 +16,12 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         public string Id { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Position inside of the protein
         /// </summary>
         public int X { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Number of donors affected by this mutation
         /// </summary>
         public int Y { get; set; }
 

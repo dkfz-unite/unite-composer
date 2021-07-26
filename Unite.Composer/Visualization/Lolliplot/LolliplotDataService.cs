@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Composer.Search.Services.Filters.Constants;
 using Unite.Composer.Search.Services.Search;
 using Unite.Composer.Visualization.Lolliplot.Data;
+using Unite.Data.Entities.Mutations;
 using Unite.Indices.Entities.Basic.Mutations;
 using Unite.Indices.Services.Configuration.Options;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
@@ -23,44 +26,36 @@ namespace Unite.Composer.Visualization.Lolliplot
 
         public LolliplotData GetData(long mutationId, long selectedTranscriptId)
         {
-            // create new search criteria with the mutationId
-            var criteria = new SearchCriteria {MutationFilters = new MutationCriteria() {Id = new long[1]}};
-            criteria.MutationFilters.Id[0] = mutationId;
+            var originalMutationQuery = new GetQuery<MutationIndex>(mutationId.ToString());
+            var originalMutation = _mutationService.GetAsync(originalMutationQuery).Result;
+            var searchQuery = new SearchQuery<MutationIndex>();
+            var transcriptFilter = new EqualityFilter<MutationIndex, long>("Transcript.Id",
+                index => index.AffectedTranscripts.First().Transcript.Id, selectedTranscriptId);
+            searchQuery.AddFilter(transcriptFilter);
+            searchQuery.AddExclusion(x => x.Donors);
+            searchQuery.AddPagination(0, 10000);
 
-            // add filter containing the newly created search criteria
-            var filters = new MutationCriteriaFiltersCollection(criteria).All();
+            var searchResult = _mutationService.SearchAsync(searchQuery).Result;
 
-            // query the mutations
-            var mutationQuery = new SearchQuery<MutationIndex>()
-                .AddFilter(new NotNullFilter<MutationIndex, object>("Mutations.AffectedTranscripts",
-                    mutation => mutation.AffectedTranscripts != null))
-                .AddFilters(filters)
-                .AddExclusion(mutation => mutation.Donors.First().Specimens)
-                .AddExclusion(mutation => mutation.Donors.First().Studies)
-                .AddExclusion(mutation => mutation.Donors.First().Treatments)
-                .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
-                .AddExclusion(mutation => mutation.Donors.First().WorkPackages);
-
-            var entryMutation = _mutationService.SearchAsync(mutationQuery).Result.Rows.FirstOrDefault();
-            return From(GetAllLolliplotMutationsByOriginalMutation(entryMutation, entryMutation.AffectedTranscripts.FirstOrDefault(t => t.Id == selectedTranscriptId)));
+            return From(searchResult.Rows, originalMutation, selectedTranscriptId);
         }
 
-        private LolliplotData From(IEnumerable<MutationIndex> mutations)
+        private LolliplotData From(IEnumerable<MutationIndex> mutations, MutationIndex originalMutation, long selectedTranscriptId)
         {
-            
-            var lolliplotData = new LolliplotData();
-            
-            //TODO return the length of the x-Axis => Max Protein End maybe?
-            lolliplotData.DomainWidth = 500;
-            lolliplotData.Transcripts = GetUniqueTranscriptsWithAAChange(mutations);
-            lolliplotData.Transcripts = new List<string>
-                {"PPP1R12C-001 (782 aa)", "PPP1R12C-002 (707 aa)", "PPP1R12C-006 (737 aa)", "PPP1R12C-201 (719 aa)"};
-            
+            var lolliplotData = new LolliplotData
+            {
+                Transcripts = GetUniqueTranscriptsWithAAChange(originalMutation)
+            };
+
+
             // TODO get additional data based on the selected transcript 
             var proteinList = GetLolliplotProteinData(mutations);
-            var mutationList = GetLolliplotMutationData(mutations);
             lolliplotData.Proteins.AddRange(proteinList);
+
+            // provide the mutation data to the lolliplot
+            var mutationList = GetLolliplotMutationData(mutations, selectedTranscriptId);
             lolliplotData.Mutations.AddRange(mutationList);
+            lolliplotData.DomainWidth = mutationList.Max(mutation => mutation.X);
             return lolliplotData;
         }
 
@@ -69,31 +64,28 @@ namespace Unite.Composer.Visualization.Lolliplot
         /// Example display string of icgc: PPP1R12C-001 (782 aa)
         /// Example Ensembl-ID: ENST00000263433
         /// </summary>
-        /// <param name="mutations"></param>
+        /// <param name="originalMutation"></param>
         /// <returns></returns>
-        private List<string> GetUniqueTranscriptsWithAAChange(IEnumerable<MutationIndex> mutations)
+        private List<string> GetUniqueTranscriptsWithAAChange(MutationIndex originalMutation)
         {
             var uniqueTranscripts = new HashSet<string>();
-            foreach (var mutation in mutations)
+            foreach (var affectedTranscript in originalMutation.AffectedTranscripts)
             {
-                foreach (var affectedTranscript in mutation.AffectedTranscripts)
+                if (!string.IsNullOrEmpty(affectedTranscript.AminoAcidChange))
                 {
-                    if (!string.IsNullOrEmpty(affectedTranscript.AminoAcidChange))
-                    {
-                        uniqueTranscripts.Add(affectedTranscript.Transcript.EnsemblId);
-                    }
+                    uniqueTranscripts.Add(affectedTranscript.Transcript.EnsemblId);
                 }
             }
-
             return uniqueTranscripts.ToList();
         }
 
         /// <summary>
-        /// Lolliplot needs to display all mutations that have the same gene in the AffectedTranscriptIndex
-        /// as the original mutations currently selected transcript.
+        /// Lolliplot needs to display all mutations that have the same gene in their Transcripts
+        /// as the original mutations currently selected AffectedTranscript.
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<MutationIndex> GetAllLolliplotMutationsByOriginalMutation(MutationIndex originalMutation, AffectedTranscriptIndex selectedTranscript)
+        private IEnumerable<MutationIndex> GetAllLolliplotMutationsBySelectedGene(MutationIndex originalMutation,
+            AffectedTranscriptIndex selectedTranscript)
         {
             //TODO get all the relevant mutations
             var mutations = new List<MutationIndex>
@@ -105,85 +97,27 @@ namespace Unite.Composer.Visualization.Lolliplot
             return mutations;
         }
 
-        private IEnumerable<LolliplotMutationData> GetLolliplotMutationData(IEnumerable<MutationIndex> mutations)
+        private IEnumerable<LolliplotMutationData> GetLolliplotMutationData(IEnumerable<MutationIndex> mutations,
+            long selectedTranscriptId)
         {
             var mutationList = new List<LolliplotMutationData>();
 
-            var consequenceConst = new List<string>(new[]
-            {
-                "transcript_ablation",
-                "splice_acceptor_variant",
-                "splice_donor_variant",
-                "stop_gained",
-                "frameshift_variant",
-                "stop_lost",
-                "start_lost",
-                "transcript_amplification",
-                "inframe_insertion",
-                "inframe_deletion",
-                "missense_variant",
-                "protein_altering_variant",
-                "splice_region_variant",
-                "incomplete_terminal_codon_variant",
-                "start_retained_variant",
-                "stop_retained_variant",
-                "synonymous_variant",
-                "coding_sequence_variant",
-                "mature_miRNA_variant",
-                "5_prime_UTR_variant",
-                "3_prime_UTR_variant",
-                "non_coding_transcript_exon_variant",
-                "intron_variant",
-                "NMD_transcript_variant",
-                "non_coding_transcript_variant",
-                "upstream_gene_variant",
-                "downstream_gene_variant",
-                "TFBS_ablation",
-                "TFBS_amplification",
-                "TF_binding_site_variant",
-                "regulatory_region_ablation",
-                "regulatory_region_amplification",
-                "feature_elongation",
-                "regulatory_region_variant",
-                "feature_truncation",
-                "intergenic_variant"
-            });
-
-            var impactConst = new List<string>(new[]
-            {
-                "HIGH",
-                "MODERATE",
-                "LOW"
-            });
-
-            //Todo extract correct lolliplotMutationData
-
             foreach (var mutation in mutations)
             {
+                var af = mutation.AffectedTranscripts.First(t => t.Transcript.Id == selectedTranscriptId);
+                var resultString = Regex.Match(af.AminoAcidChange, @"\d+").Value;
+                var xPosition = int.Parse(resultString);
+                var consequence = af.Consequences.OrderBy(conseq => conseq.Severity).First();
                 mutationList.Add(new LolliplotMutationData
                 {
                     Id = mutation.Id.ToString(),
                     Y = mutation.NumberOfDonors,
-                    X = 10,
-                    Consequence = mutation.SequenceType,
-                    Impact = "HIGH",
+                    X = xPosition,
+                    Consequence = consequence.Type,
+                    Impact = consequence.Impact,
                     Donors = mutation.NumberOfDonors
                 });
             }
-
-            /*var random = new Random();
-            for (int i = 0; i < 100; i++)
-            {
-                mutationList.Add(new LolliplotMutationData
-                {
-                    Id = "" + i,
-                    Y = random.Next(0, 100),
-                    X = random.Next(0, 100),
-                    Consequence = consequenceConst[random.Next(0, consequenceConst.Count - 1)],
-                    Impact = impactConst[random.Next(0, impactConst.Count - 1)],
-                    Donors = random.Next(0, 100)
-                });
-            }*/
 
             return mutationList;
         }
@@ -191,7 +125,7 @@ namespace Unite.Composer.Visualization.Lolliplot
         private static List<LolliplotProteinData> GetLolliplotProteinData(IEnumerable<MutationIndex> mutations)
         {
             var proteinList = new List<LolliplotProteinData>();
-            
+
             //TODO build ProteinData from mutations. Find out what proteinData is built from
 
             proteinList.Add(new LolliplotProteinData
