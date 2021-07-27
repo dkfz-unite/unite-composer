@@ -26,8 +26,7 @@ namespace Unite.Composer.Visualization.Lolliplot.Data
         
         /// <summary>
         /// Contains all transcripts which are affected by the mutation
-        /// // TODO Check if needed
         /// </summary>
-        public List<string> Transcripts { get; set; }
+        public List<TranscriptData> Transcripts { get; set; }
     }
 }

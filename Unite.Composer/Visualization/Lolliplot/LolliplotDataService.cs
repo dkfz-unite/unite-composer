@@ -42,7 +42,7 @@ namespace Unite.Composer.Visualization.Lolliplot
             var mutationList = GetLolliplotMutationData(mutationIndices, selectedTranscriptId).ToList();
             if (mutationList.Count == 0)
             {
-                return null;
+                return lolliplotData;
             }
             lolliplotData.Mutations.AddRange(mutationList);
             lolliplotData.DomainWidth = mutationList.Max(mutation => mutation.X) + 20;
@@ -66,14 +66,19 @@ namespace Unite.Composer.Visualization.Lolliplot
         /// </summary>
         /// <param name="originalMutation"></param>
         /// <returns>All transcripts with amino acid change of the mutation. Contains all transcripts in the top left drawer of the lolliplot.</returns>
-        private List<string> GetUniqueTranscriptsWithAAChange(MutationIndex originalMutation)
+        private List<TranscriptData> GetUniqueTranscriptsWithAAChange(MutationIndex originalMutation)
         {
-            var uniqueTranscripts = new HashSet<string>();
+            // sort by display value
+            var uniqueTranscripts = new SortedSet<TranscriptData>(TranscriptData.LabelComparer);
             foreach (var affectedTranscript in originalMutation.AffectedTranscripts)
             {
                 if (!string.IsNullOrEmpty(affectedTranscript.AminoAcidChange))
                 {
-                    uniqueTranscripts.Add(affectedTranscript.Transcript.EnsemblId);
+                    uniqueTranscripts.Add(new TranscriptData
+                    {
+                        Label = affectedTranscript.Transcript.EnsemblId,
+                        Value = affectedTranscript.Transcript.Id
+                    });
                 }
             }
 
