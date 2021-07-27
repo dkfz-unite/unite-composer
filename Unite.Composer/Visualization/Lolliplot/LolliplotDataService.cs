@@ -40,6 +40,10 @@ namespace Unite.Composer.Visualization.Lolliplot
             lolliplotData.Proteins.AddRange(proteinList);
 
             var mutationList = GetLolliplotMutationData(mutationIndices, selectedTranscriptId).ToList();
+            if (mutationList.Count == 0)
+            {
+                return null;
+            }
             lolliplotData.Mutations.AddRange(mutationList);
             lolliplotData.DomainWidth = mutationList.Max(mutation => mutation.X) + 20;
             return lolliplotData;
@@ -110,6 +114,13 @@ namespace Unite.Composer.Visualization.Lolliplot
             {
                 var affectedTranscriptIndex =
                     mutation.AffectedTranscripts.First(t => t.Transcript.Id == selectedTranscriptId);
+                
+                //TODO QuickFix: affectedTranscriptIndex.AminoAcidChange can be null and leads to an exception.
+                if (affectedTranscriptIndex.AminoAcidChange == null)
+                {
+                    continue;
+                }
+
                 var resultString = Regex.Match(affectedTranscriptIndex.AminoAcidChange, @"\d+").Value;
                 var xPosition = int.Parse(resultString);
                 var consequence = affectedTranscriptIndex.Consequences
