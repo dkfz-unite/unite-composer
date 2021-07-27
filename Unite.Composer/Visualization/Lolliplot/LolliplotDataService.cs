@@ -4,12 +4,7 @@ using System.Text.RegularExpressions;
 using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Filters.Constants;
-using Unite.Composer.Search.Services.Search;
 using Unite.Composer.Visualization.Lolliplot.Data;
-using Unite.Data.Entities.Mutations;
-using Unite.Indices.Entities.Basic.Mutations;
 using Unite.Indices.Services.Configuration.Options;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 
@@ -26,46 +21,47 @@ namespace Unite.Composer.Visualization.Lolliplot
 
         public LolliplotData GetData(long mutationId, long selectedTranscriptId)
         {
-            var originalMutationQuery = new GetQuery<MutationIndex>(mutationId.ToString());
-            var originalMutation = _mutationService.GetAsync(originalMutationQuery).Result;
-            var searchQuery = new SearchQuery<MutationIndex>();
-            var transcriptFilter = new EqualityFilter<MutationIndex, long>("Transcript.Id",
-                index => index.AffectedTranscripts.First().Transcript.Id, selectedTranscriptId);
-            searchQuery.AddFilter(transcriptFilter);
-            searchQuery.AddExclusion(x => x.Donors);
-            searchQuery.AddPagination(0, 10000);
+            var originalMutation = GetMutationById(mutationId);
+            var allMutationsWithSelectedTranscript = GetAllMutationsByTranscript(selectedTranscriptId);
 
-            var searchResult = _mutationService.SearchAsync(searchQuery).Result;
-
-            return From(searchResult.Rows, originalMutation, selectedTranscriptId);
+            return From(allMutationsWithSelectedTranscript, originalMutation, selectedTranscriptId);
         }
 
-        private LolliplotData From(IEnumerable<MutationIndex> mutations, MutationIndex originalMutation, long selectedTranscriptId)
+        private LolliplotData From(IEnumerable<MutationIndex> mutations, MutationIndex originalMutation,
+            long selectedTranscriptId)
         {
             var lolliplotData = new LolliplotData
             {
                 Transcripts = GetUniqueTranscriptsWithAAChange(originalMutation)
             };
 
-
-            // TODO get additional data based on the selected transcript 
-            var proteinList = GetLolliplotProteinData(mutations);
+            var mutationIndices = mutations.ToList();
+            var proteinList = GetLolliplotProteinData(mutationIndices);
             lolliplotData.Proteins.AddRange(proteinList);
 
-            // provide the mutation data to the lolliplot
-            var mutationList = GetLolliplotMutationData(mutations, selectedTranscriptId);
+            var mutationList = GetLolliplotMutationData(mutationIndices, selectedTranscriptId).ToList();
             lolliplotData.Mutations.AddRange(mutationList);
-            lolliplotData.DomainWidth = mutationList.Max(mutation => mutation.X);
+            lolliplotData.DomainWidth = mutationList.Max(mutation => mutation.X) + 20;
             return lolliplotData;
         }
 
         /// <summary>
-        /// TODO:
+        /// Gets an id and returns the matching MutationIndex.
+        /// </summary>
+        /// <param name="mutationId"></param>
+        /// <returns cref="MutationIndex">Matching MutationIndex.</returns>
+        private MutationIndex GetMutationById(long mutationId)
+        {
+            var originalMutationQuery = new GetQuery<MutationIndex>(mutationId.ToString());
+            return _mutationService.GetAsync(originalMutationQuery).Result;
+        }
+
+        /// <summary>
         /// Example display string of icgc: PPP1R12C-001 (782 aa)
         /// Example Ensembl-ID: ENST00000263433
         /// </summary>
         /// <param name="originalMutation"></param>
-        /// <returns></returns>
+        /// <returns>All transcripts with amino acid change of the mutation. Contains all transcripts in the top left drawer of the lolliplot.</returns>
         private List<string> GetUniqueTranscriptsWithAAChange(MutationIndex originalMutation)
         {
             var uniqueTranscripts = new HashSet<string>();
@@ -76,6 +72,7 @@ namespace Unite.Composer.Visualization.Lolliplot
                     uniqueTranscripts.Add(affectedTranscript.Transcript.EnsemblId);
                 }
             }
+
             return uniqueTranscripts.ToList();
         }
 
@@ -83,20 +80,27 @@ namespace Unite.Composer.Visualization.Lolliplot
         /// Lolliplot needs to display all mutations that have the same gene in their Transcripts
         /// as the original mutations currently selected AffectedTranscript.
         /// </summary>
-        /// <returns></returns>
-        private IEnumerable<MutationIndex> GetAllLolliplotMutationsBySelectedGene(MutationIndex originalMutation,
-            AffectedTranscriptIndex selectedTranscript)
+        /// <returns>All mutations that have the same transcripts as the original mutations AffectedTranscript including the original mutation.</returns>
+        private IEnumerable<MutationIndex> GetAllMutationsByTranscript(long selectedTranscriptId)
         {
-            //TODO get all the relevant mutations
-            var mutations = new List<MutationIndex>
-            {
-                originalMutation
-            };
-            var gene = selectedTranscript.Gene;
-            // "find all other transcripts across all mutations and all donors, which have protein affected."
-            return mutations;
+            var searchQuery = new SearchQuery<MutationIndex>();
+            var transcriptFilter = new EqualityFilter<MutationIndex, long>("Transcript.Id",
+                index => index.AffectedTranscripts.First().Transcript.Id, selectedTranscriptId);
+            searchQuery.AddFilter(transcriptFilter);
+            searchQuery.AddExclusion(x => x.Donors);
+            searchQuery.AddPagination(0, 10000);
+
+            var searchResult = _mutationService.SearchAsync(searchQuery).Result;
+            return searchResult.Rows;
         }
 
+
+        /// <summary>
+        /// Fills the lolliplot mutation data.
+        /// </summary>
+        /// <param name="mutations">All mutations relevant for the lolliplot.</param>
+        /// <param name="selectedTranscriptId">The currently selected AffectedTranscript id of the original mutation.</param>
+        /// <returns cref="LolliplotMutationData">Data for the "lollis" of the lolliplot.</returns>
         private IEnumerable<LolliplotMutationData> GetLolliplotMutationData(IEnumerable<MutationIndex> mutations,
             long selectedTranscriptId)
         {
@@ -104,10 +108,12 @@ namespace Unite.Composer.Visualization.Lolliplot
 
             foreach (var mutation in mutations)
             {
-                var af = mutation.AffectedTranscripts.First(t => t.Transcript.Id == selectedTranscriptId);
-                var resultString = Regex.Match(af.AminoAcidChange, @"\d+").Value;
+                var affectedTranscriptIndex =
+                    mutation.AffectedTranscripts.First(t => t.Transcript.Id == selectedTranscriptId);
+                var resultString = Regex.Match(affectedTranscriptIndex.AminoAcidChange, @"\d+").Value;
                 var xPosition = int.Parse(resultString);
-                var consequence = af.Consequences.OrderBy(conseq => conseq.Severity).First();
+                var consequence = affectedTranscriptIndex.Consequences
+                    .OrderBy(consequenceIndex => consequenceIndex.Severity).First();
                 mutationList.Add(new LolliplotMutationData
                 {
                     Id = mutation.Id.ToString(),
@@ -126,8 +132,9 @@ namespace Unite.Composer.Visualization.Lolliplot
         {
             var proteinList = new List<LolliplotProteinData>();
 
-            //TODO build ProteinData from mutations. Find out what proteinData is built from
+            //TODO get the Protein data from external API
 
+            // Mock Data
             proteinList.Add(new LolliplotProteinData
             {
                 Id = "TAD",
@@ -158,6 +165,7 @@ namespace Unite.Composer.Visualization.Lolliplot
                 End = 500,
                 Description = "von Hippel-Lindau disease tumour suppressor, beta/alpha domain",
             });
+
             return proteinList;
         }
     }
