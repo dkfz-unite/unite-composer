@@ -81,6 +81,7 @@ namespace Unite.Composer.Web.Resources.Mutations
                             Transcripts = geneGroup.Elements
                                 .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)
                                 .Select(affectedTranscript => affectedTranscript.AminoAcidChange)
+                                .Distinct()
                         })
                 })
                 .ToArray();
