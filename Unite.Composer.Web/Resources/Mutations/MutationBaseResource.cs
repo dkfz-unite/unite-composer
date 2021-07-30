@@ -26,7 +26,7 @@ namespace Unite.Composer.Web.Resources.Mutations
         /// - Genes - list of genes affected by the consequence
         /// -- Symbol - gene symbol
         /// -- EnsemblId - gene ensemble id
-        /// -- Transcripts - list of amino acid changes caused by the consiquence in corresponding gene
+        /// -- Transcripts - list of unique amino acid changes caused by the consiquence in corresponding gene
         /// </summary>
         public dynamic[] TranscriptConsequences { get; }
 
