@@ -2,17 +2,10 @@
 {
     public class SpecimenFilterNames
     {
-        public string Id { get; internal set; }
-        public string MgmtStatus { get; internal set; }
-        public string IdhStatus { get; internal set; }
-        public string IdhMutation { get; internal set; }
-        public string GeneExpressionSubtype { get; internal set; }
-        public string MethylationSubtype { get; internal set; }
-        public string GcimpMethylation { get; internal set; }
+        private const string _prefix = "Specimen";
 
-        internal SpecimenFilterNames()
-        {
 
-        }
+        public static readonly string Id = $"{_prefix}.Id";
+        public static readonly string Type = $"{_prefix}.Type";
     }
 }

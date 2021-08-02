@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Specimens;
@@ -11,6 +12,7 @@ using Unite.Indices.Entities.Specimens;
 namespace Unite.Composer.Web.Controllers.Search.Specimens
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class SpecimensController : Controller
     {
         private readonly ISearchService<SpecimenIndex, SpecimenSearchContext> _searchService;
@@ -22,24 +24,11 @@ namespace Unite.Composer.Web.Controllers.Search.Specimens
         }
 
 
-        [HttpGet]
+        [HttpPost("{type}")]
         [CookieAuthorize]
-        public SearchResult<SpecimenResource> Get()
+        public SearchResult<SpecimenResource> Search(SpecimenType type, [FromBody] SearchCriteria searchCriteria)
         {
-            var searchCriteria = new SearchCriteria();
-
-            var searchContext = new SpecimenSearchContext();
-
-            var searchResult = _searchService.Search(searchCriteria, searchContext);
-
-            return From(searchResult);
-        }
-
-        [HttpPost]
-        [CookieAuthorize]
-        public SearchResult<SpecimenResource> Post([FromBody] SearchCriteria searchCriteria)
-        {
-            var searchContext = new SpecimenSearchContext();
+            var searchContext = new SpecimenSearchContext(type);
 
             var searchResult = _searchService.Search(searchCriteria, searchContext);
 
@@ -47,7 +36,7 @@ namespace Unite.Composer.Web.Controllers.Search.Specimens
         }
 
 
-        private SearchResult<SpecimenResource> From(SearchResult<SpecimenIndex> searchResult)
+        private static SearchResult<SpecimenResource> From(SearchResult<SpecimenIndex> searchResult)
         {
             return new SearchResult<SpecimenResource>()
             {

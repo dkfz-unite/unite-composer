@@ -5,7 +5,6 @@
         private const string _prefix = "CellLine";
 
 
-        public static readonly string Id = $"{_prefix}.Id";
         public static readonly string ReferenceId = $"{_prefix}.ReferenceId";
         public static readonly string Species = $"{_prefix}.Species";
         public static readonly string Type = $"{_prefix}.Type";
@@ -19,20 +18,5 @@
         public static readonly string GeneExpressionSubtype = $"{_prefix}.GeneExpressionSubtype";
         public static readonly string MethylationSubtype = $"{_prefix}.MethylationSubtype";
         public static readonly string GcimpMethylation = $"{_prefix}.GcimpMethylation";
-
-
-        public static SpecimenFilterNames SpecimenFilterNames()
-        {
-            return new SpecimenFilterNames
-            {
-                Id = Id,
-                MgmtStatus = MgmtStatus,
-                IdhStatus = IdhStatus,
-                IdhMutation = IdhMutation,
-                GeneExpressionSubtype = GeneExpressionSubtype,
-                MethylationSubtype = MethylationSubtype,
-                GcimpMethylation = GcimpMethylation
-            };
-        }
     }
 }
