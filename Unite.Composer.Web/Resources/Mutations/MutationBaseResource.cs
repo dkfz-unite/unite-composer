@@ -74,6 +74,7 @@ namespace Unite.Composer.Web.Resources.Mutations
                             affectedTranscript => affectedTranscript.Gene.Symbol,
                             //affectedTranscript => affectedTranscript,
                             (key, group) => new { Value = group.First().Gene, Elements = group })
+                        .OrderBy(geneGroup => geneGroup.Value.Symbol)
                         .Select(geneGroup => new
                         {
                             Symbol = geneGroup.Value.Symbol,
@@ -81,6 +82,7 @@ namespace Unite.Composer.Web.Resources.Mutations
                             Transcripts = geneGroup.Elements
                                 .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)
                                 .Select(affectedTranscript => affectedTranscript.AminoAcidChange)
+                                .OrderBy(aminoAcidChange => aminoAcidChange)
                                 .Distinct()
                         })
                 })

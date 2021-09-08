@@ -35,6 +35,7 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex, SpecimenSearchContext>, SpecimensSearchService>();
 
             services.AddTransient<OncoGridDataService>();
+            services.AddTransient<OncoGridDataService1>();
             services.AddTransient<LolliplotDataService>();
         }
 
