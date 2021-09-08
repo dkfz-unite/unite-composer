@@ -3,6 +3,7 @@ using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Indices.Entities.Genes;
+using Unite.Indices.Services.Configuration.Options;
 
 namespace Unite.Composer.Search.Services
 {
@@ -11,9 +12,9 @@ namespace Unite.Composer.Search.Services
         private readonly IIndexService<GeneIndex> _indexService;
 
 
-        public GenesSearchService(IIndexService<GeneIndex> indexService)
+        public GenesSearchService(IElasticOptions options)
         {
-            _indexService = indexService;
+            _indexService = new GenesIndexService(options);
         }
 
         public GeneIndex Get(string key)
