@@ -1,10 +1,11 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Search;
+using Unite.Composer.Search.Services.Filters;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
+using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
@@ -13,6 +14,7 @@ namespace Unite.Composer.Search.Services
     public class DonorsSearchService : IDonorsSearchService
     {
         private readonly IIndexService<DonorIndex> _donorsIndexService;
+        private readonly IIndexService<GeneIndex> _genesIndexService;
         private readonly IIndexService<MutationIndex> _mutationsIndexService;
         private readonly IIndexService<SpecimenIndex> _specimensIndexService;
 
@@ -20,6 +22,7 @@ namespace Unite.Composer.Search.Services
         public DonorsSearchService(IElasticOptions options)
         {
             _donorsIndexService = new DonorsIndexService(options);
+            _genesIndexService = new GenesIndexService(options);
             _mutationsIndexService = new MutationsIndexService(options);
             _specimensIndexService = new SpecimensIndexService(options);
         }
@@ -50,6 +53,26 @@ namespace Unite.Composer.Search.Services
                 .AddExclusion(donor => donor.Mutations);
 
             var result = _donorsIndexService.SearchAsync(query).Result;
+
+            return result;
+        }
+
+        public SearchResult<GeneIndex> SearchGenes(int donorId, SearchCriteria searchCriteria = null)
+        {
+            var criteria = searchCriteria ?? new SearchCriteria();
+
+            criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
+
+            var criteriaFilters = new GeneCriteriaFiltersCollection(criteria)
+                .All();
+
+            var query = new SearchQuery<GeneIndex>()
+                .AddPagination(criteria.From, criteria.Size)
+                .AddFullTextSearch(criteria.Term)
+                .AddFilters(criteriaFilters)
+                .AddOrdering(gene => gene.NumberOfDonors);
+
+            var result = _genesIndexService.SearchAsync(query).Result;
 
             return result;
         }

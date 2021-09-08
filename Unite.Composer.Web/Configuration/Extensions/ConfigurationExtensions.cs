@@ -9,9 +9,9 @@ using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Models.Identity.Validators;
 using Unite.Composer.Web.Services.Validation;
-using Unite.Data.Entities.Identity;
-using Unite.Data.Services;
-using Unite.Data.Services.Configuration.Options;
+using Unite.Identity.Entities;
+using Unite.Identity.Services;
+using Unite.Identity.Services.Configuration.Options;
 using Unite.Indices.Services.Configuration.Options;
 
 namespace Unite.Composer.Web.Configuration.Extensions
@@ -23,13 +23,14 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddOptions();
             services.AddValidation();
 
-            services.AddScoped<UniteDbContext>();
+            services.AddScoped<IdentityDbContext>();
 
             services.AddTransient<IAccessibilityService, AccessibilityService>();
             services.AddTransient<IIdentityService<User>, IdentityService>();
             services.AddTransient<ISessionService<User, UserSession>, SessionService>();
 
             services.AddTransient<IDonorsSearchService, DonorsSearchService>();
+            services.AddTransient<ISearchService<Indices.Entities.Genes.GeneIndex>, GenesSearchService>();
             services.AddTransient<ISearchService<Indices.Entities.Mutations.MutationIndex>, MutationsSearchService>();
             services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex, SpecimenSearchContext>, SpecimensSearchService>();
 

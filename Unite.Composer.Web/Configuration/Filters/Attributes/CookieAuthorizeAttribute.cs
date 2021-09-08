@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
-using Unite.Data.Entities.Identity;
+using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Configuration.Filters.Attributes
 {

@@ -2,11 +2,10 @@
 using Nest;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Constants;
 using Unite.Indices.Entities.Mutations;
 
-namespace Unite.Composer.Search.Services.Search
+namespace Unite.Composer.Search.Services.Filters
 {
     public class MutationCriteriaFiltersCollection : CriteriaFiltersCollection<MutationIndex>
     {
@@ -358,6 +357,35 @@ namespace Unite.Composer.Search.Services.Search
                 );
             }
 
+            if (criteria.GeneFilters != null)
+            {
+                _filters.Add(new EqualityFilter<MutationIndex, int>(
+                    GeneFilterNames.Id,
+                    mutation => mutation.AffectedTranscripts.First().Transcript.Gene.Id,
+                    criteria.GeneFilters.Id)
+                );
+
+                _filters.Add(new SimilarityFilter<MutationIndex, string>(
+                    GeneFilterNames.Symbol,
+                    mutation => mutation.AffectedTranscripts.First().Transcript.Gene.Symbol,
+                    criteria.GeneFilters.Symbol)
+                );
+
+                _filters.Add(new EqualityFilter<MutationIndex, object>(
+                    GeneFilterNames.Chromosome,
+                    mutation => mutation.AffectedTranscripts.First().Transcript.Gene.Chromosome.Suffix(_keywordSuffix),
+                    criteria.GeneFilters.Chromosome)
+                );
+
+                _filters.Add(new MultiPropertyRangeFilter<MutationIndex, int?>(
+                    GeneFilterNames.Position,
+                    mutation => mutation.AffectedTranscripts.First().Transcript.Gene.Start,
+                    mutation => mutation.AffectedTranscripts.First().Transcript.Gene.End,
+                    criteria.GeneFilters.Position?.From,
+                    criteria.GeneFilters.Position?.To)
+                );
+            }
+
             if (criteria.MutationFilters != null)
             {
                 _filters.Add(new EqualityFilter<MutationIndex, long>(
@@ -402,12 +430,6 @@ namespace Unite.Composer.Search.Services.Search
                     MutationFilterNames.Consequence,
                     mutation => mutation.AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix),
                     criteria.MutationFilters.Consequence)
-                );
-
-                _filters.Add(new SimilarityFilter<MutationIndex, string>(
-                    MutationFilterNames.Gene,
-                    mutation => mutation.AffectedTranscripts.First().Gene.Symbol,
-                    criteria.MutationFilters.Gene)
                 );
             }
         }

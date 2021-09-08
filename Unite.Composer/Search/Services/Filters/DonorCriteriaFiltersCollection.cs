@@ -6,7 +6,7 @@ using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Constants;
 using Unite.Indices.Entities.Donors;
 
-namespace Unite.Composer.Search.Services.Search
+namespace Unite.Composer.Search.Services.Filters
 {
     public class DonorCriteriaFiltersCollection : CriteriaFiltersCollection<DonorIndex>
     {
@@ -358,6 +358,35 @@ namespace Unite.Composer.Search.Services.Search
                 );
             }
 
+            if (criteria.GeneFilters != null)
+            {
+                _filters.Add(new EqualityFilter<DonorIndex, int>(
+                    GeneFilterNames.Id,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Id,
+                    criteria.GeneFilters.Id)
+                );
+
+                _filters.Add(new SimilarityFilter<DonorIndex, string>(
+                    GeneFilterNames.Symbol,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Symbol,
+                    criteria.GeneFilters.Symbol)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    GeneFilterNames.Chromosome,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Chromosome.Suffix(_keywordSuffix),
+                    criteria.GeneFilters.Chromosome)
+                );
+
+                _filters.Add(new MultiPropertyRangeFilter<DonorIndex, int?>(
+                    GeneFilterNames.Position,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Start,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.End,
+                    criteria.GeneFilters.Position?.From,
+                    criteria.GeneFilters.Position?.To)
+                );
+            }
+
             if (criteria.MutationFilters != null)
             {
                 _filters.Add(new EqualityFilter<DonorIndex, long>(
@@ -402,12 +431,6 @@ namespace Unite.Composer.Search.Services.Search
                     MutationFilterNames.Consequence,
                     donor => donor.Mutations.First().AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix),
                     criteria.MutationFilters.Consequence)
-                );
-
-                _filters.Add(new SimilarityFilter<DonorIndex, string>(
-                    MutationFilterNames.Gene,
-                    donor => donor.Mutations.First().AffectedTranscripts.First().Gene.Symbol,
-                    criteria.MutationFilters.Gene)
                 );
             }
         }

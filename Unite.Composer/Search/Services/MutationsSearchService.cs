@@ -1,7 +1,7 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Search;
+using Unite.Composer.Search.Services.Filters;
 using Unite.Indices.Entities.Mutations;
 using Unite.Indices.Services.Configuration.Options;
 

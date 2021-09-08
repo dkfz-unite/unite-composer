@@ -8,6 +8,7 @@ using Unite.Composer.Web.Resources.Donors;
 using Unite.Composer.Web.Resources.Specimens;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
+using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
@@ -38,6 +39,15 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             return From(index);
         }
 
+        [HttpPost("{id}/genes")]
+        [CookieAuthorize]
+        public SearchResult<DonorGeneResource> SearchGenes(int id, [FromBody] SearchCriteria searchCriteria)
+        {
+            var searchResult = _donorsSearchService.SearchGenes(id, searchCriteria);
+
+            return From(id, searchResult);
+        }
+
         [HttpPost("{id}/mutations")]
         [CookieAuthorize]
         public SearchResult<DonorMutationResource> SearchMutations(int id, [FromBody] SearchCriteria searchCriteria)
@@ -65,6 +75,15 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             }
 
             return new DonorResource(index);
+        }
+
+        private static SearchResult<DonorGeneResource> From(int donorId, SearchResult<GeneIndex> searchResult)
+        {
+            return new SearchResult<DonorGeneResource>()
+            {
+                Total = searchResult.Total,
+                Rows = searchResult.Rows.Select(index => new DonorGeneResource(donorId, index)).ToArray()
+            };
         }
 
         private static SearchResult<DonorMutationResource> From(int donorId, SearchResult<MutationIndex> searchResult)

@@ -12,6 +12,5 @@
 
         public static readonly string Impact = $"{_prefix}.Impact";
         public static readonly string Consequence = $"{_prefix}.Consequence";
-        public static readonly string Gene = $"{_prefix}.Gene";
     }
 }

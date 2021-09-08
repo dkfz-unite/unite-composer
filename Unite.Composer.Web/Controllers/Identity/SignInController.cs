@@ -5,7 +5,7 @@ using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Services.Validation;
-using Unite.Data.Entities.Identity;
+using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {

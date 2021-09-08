@@ -17,7 +17,7 @@ namespace Unite.Composer.Web.Resources.Mutations
             AminoAcidChange = index.AminoAcidChange;
             CodonChange = index.CodonChange;
 
-            Gene = new GeneResource(index.Gene);
+            Gene = new GeneResource(index.Transcript.Gene);
             Transcript = new TranscriptResource(index.Transcript);
             Consequences = index.Consequences.Select(index => new ConsequenceResource(index)).ToArray();
         }

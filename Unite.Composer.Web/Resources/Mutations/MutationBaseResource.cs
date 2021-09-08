@@ -55,7 +55,7 @@ namespace Unite.Composer.Web.Resources.Mutations
                 {
                     AminoAcidChange = affectedTranscript.AminoAcidChange,
                     CodonChange = affectedTranscript.CodonChange,
-                    Gene = affectedTranscript.Gene,
+                    Gene = affectedTranscript.Transcript.Gene,
                     Transcript = affectedTranscript.Transcript,
                     Consequence = affectedTranscript.Consequences.OrderBy(consequence => consequence.Severity).First()
                 })

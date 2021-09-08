@@ -4,11 +4,12 @@ using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Search;
+using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Visualization.Oncogrid.Data;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
+using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 
 namespace Unite.Composer.Visualization.Oncogrid
@@ -16,12 +17,14 @@ namespace Unite.Composer.Visualization.Oncogrid
     public class OncoGridDataService
     {
         private readonly IIndexService<DonorIndex> _donorsIndexService;
+        private readonly IIndexService<GeneIndex> _genesIndexService;
         private readonly IIndexService<MutationIndex> _mutationsIndexService;
 
 
         public OncoGridDataService(IElasticOptions options)
         {
             _donorsIndexService = new DonorsIndexService(options);
+            _genesIndexService = new GenesIndexService(options);
             _mutationsIndexService = new MutationsIndexService(options);
         }
 
@@ -36,12 +39,18 @@ namespace Unite.Composer.Visualization.Oncogrid
                 .Select(donor => donor.Id)
                 .ToArray();
 
-            var mutationsSearchResult = FindMutations(criteria, donorIds);
+            var genesSearchResult = FindGenes(criteria, donorIds);
+
+            var geneIds = genesSearchResult.Rows
+                .Select(gene => gene.Id)
+                .ToArray();
+
+            var mutationsSearchResult = FindMutations(criteria, donorIds, geneIds);
 
             var data = GetOncoGridData(
                 donorsSearchResult.Rows,
-                mutationsSearchResult.Rows,
-                searchCriteria.OncoGridFilters.MostAffectedGeneCount
+                genesSearchResult.Rows,
+                mutationsSearchResult.Rows
             );
 
             return data;
@@ -65,13 +74,38 @@ namespace Unite.Composer.Visualization.Oncogrid
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations)
-                .AddExclusion(donor => donor.Mutations);
-            // TODO: exclude all unnecessary information as soon as multiple exclusions work.
-            // .AddExclusion(donor => donor.Treatments)
-            // .AddExclusion(donor => donor.WorkPackages)
-            // .AddExclusion(donor => donor.Studies);
+                .AddExclusion(donor => donor.Mutations)
+                .AddExclusion(donor => donor.Treatments)
+                .AddExclusion(donor => donor.WorkPackages)
+                .AddExclusion(donor => donor.Studies);
 
             return _donorsIndexService.SearchAsync(query).Result;
+        }
+
+        /// <summary>
+        /// Retrieves genes of given donors with highest number of mutations filtered by given search criteria.
+        /// </summary>
+        /// <param name="searchCriteria">Search criteria</param>
+        /// <param name="donorIds">Id's of donors</param>
+        /// <returns>Search result with genes and number of total available rows.</returns>
+        private SearchResult<GeneIndex> FindGenes(
+            SearchCriteria searchCriteria,
+            IEnumerable<int> donorIds)
+        {
+            var criteria = new SearchCriteria();
+            criteria.DonorFilters = new DonorCriteria();
+            criteria.DonorFilters.Id = donorIds.ToArray();
+            criteria.GeneFilters = searchCriteria.GeneFilters;
+
+            var criteriaFilters = new GeneCriteriaFiltersCollection(criteria).All();
+
+            var query = new SearchQuery<GeneIndex>()
+                .AddPagination(0, criteria.OncoGridFilters.MostAffectedGeneCount)
+                .AddFilters(criteriaFilters)
+                .AddOrdering(gene => gene.NumberOfMutations)
+                .AddExclusion(gene => gene.Mutations);
+
+            return _genesIndexService.SearchAsync(query).Result;
         }
 
         /// <summary>
@@ -79,14 +113,18 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// </summary>
         /// <param name="searchCriteria">Search criteria</param>
         /// <param name="donorIds">Id's of donors</param>
+        /// <param name="geneIds">Id's of genes</param>
         /// <returns>Search result with mutations and number of total available rows.</returns>
         private SearchResult<MutationIndex> FindMutations(
             SearchCriteria searchCriteria,
-            IEnumerable<int> donorIds)
+            IEnumerable<int> donorIds,
+            IEnumerable<int> geneIds)
         {
             var criteria = new SearchCriteria();
             criteria.DonorFilters = new DonorCriteria();
             criteria.DonorFilters.Id = donorIds.ToArray();
+            criteria.GeneFilters = new GeneCriteria();
+            criteria.GeneFilters.Id = geneIds.ToArray();
             criteria.MutationFilters = searchCriteria.MutationFilters;
 
             var criteriaFilters = new MutationCriteriaFiltersCollection(criteria).All();
@@ -96,12 +134,11 @@ namespace Unite.Composer.Visualization.Oncogrid
                 .AddPagination(0, 10000)
                 .AddFilters(criteriaFilters)
                 .AddFilter(new NotNullFilter<MutationIndex, object>("Mutation.HasAffectedTranscripts", mutation => mutation.AffectedTranscripts))
-                .AddExclusion(mutation => mutation.Donors.First().Specimens);
-            // TODO: exclude all unnecessary information as soon as multiple exclusions work.
-            // .AddExclusion(mutation => mutation.Donors.First().Studies)
-            // .AddExclusion(mutation => mutation.Donors.First().Treatments)
-            // .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
-            // .AddExclusion(mutation => mutation.Donors.First().WorkPackages);
+                .AddExclusion(mutation => mutation.Donors.First().Specimens)
+                .AddExclusion(mutation => mutation.Donors.First().Studies)
+                .AddExclusion(mutation => mutation.Donors.First().Treatments)
+                .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
+                .AddExclusion(mutation => mutation.Donors.First().WorkPackages);
 
             return _mutationsIndexService.SearchAsync(query).Result;
         }
@@ -116,22 +153,22 @@ namespace Unite.Composer.Visualization.Oncogrid
         /// <returns><see cref="OncoGridData"/> object.</returns>
         private OncoGridData GetOncoGridData(
             IEnumerable<DonorIndex> donors,
-            IEnumerable<MutationIndex> mutations,
-            int numberOfGenes)
+            IEnumerable<GeneIndex> genes,
+            IEnumerable<MutationIndex> mutations)
         {
             var oncoGridData = new OncoGridData();
 
             // Collections will be enumerated in controller, when building JSON object to return.
             // If immediate enumeration required, call 'ToArray' method for required data set.
             oncoGridData.Donors = GetDonorsData(donors);
-            oncoGridData.Genes = GetGenesData(mutations, numberOfGenes);
+            oncoGridData.Genes = GetGenesData(genes);
             oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations);
 
             return oncoGridData;
         }
 
         /// <summary>
-        /// Build <see cref="OncoGridDonor"/> objects from donor indices.
+        /// Builds <see cref="OncoGridDonor"/> objects from donor indices.
         /// </summary>
         /// <param name="donors">Donor indices</param>
         /// <returns>Collection of <see cref="OncoGridDonor"/> objects.</returns>
@@ -143,21 +180,14 @@ namespace Unite.Composer.Visualization.Oncogrid
         }
 
         /// <summary>
-        /// Build <see cref="OncoGridGene"/> objects from mutation indices for given number of most affected genes.
+        /// Builds <see cref="OncoGridGene"/> objects from gene indices.
         /// </summary>
-        /// <param name="mutations">Mutation indices</param>
-        /// <param name="numberOfGenes">Number of most affected genes</param>
+        /// <param name="genes">Gene indices</param>
         /// <returns>Collection of <see cref="OncoGridGene"/> objects.</returns>
         private IEnumerable<OncoGridGene> GetGenesData(
-            IEnumerable<MutationIndex> mutations, int numberOfGenes)
+            IEnumerable<GeneIndex> genes)
         {
-            return mutations
-                .SelectMany(mutation => mutation.AffectedTranscripts)
-                .Select(affectedTranscript => affectedTranscript.Gene)
-                .GroupBy(gene => gene.Id)
-                .OrderByDescending(group => group.Count())
-                .Select(group => group.First())
-                .Take(numberOfGenes)
+            return genes
                 .Select(gene => new OncoGridGene(gene));
         }
 
@@ -184,7 +214,7 @@ namespace Unite.Composer.Visualization.Oncogrid
 
                     var observedMutations = mutations.Where(mutation =>
                         mutation.Donors.Any(mutationDonor => mutationDonor.Id == donorId) &&
-                        mutation.AffectedTranscripts.Any(mutationTranscript => mutationTranscript.Gene.Id == geneId)
+                        mutation.AffectedTranscripts.Any(mutationTranscript => mutationTranscript.Transcript.Gene.Id == geneId)
                     );
 
                     foreach (var mutation in observedMutations)
@@ -195,7 +225,7 @@ namespace Unite.Composer.Visualization.Oncogrid
                             Code = mutation.Code,
                             Type = mutation.Type,
                             Consequence = mutation.AffectedTranscripts
-                                .Where(affectedTranscript => affectedTranscript.Gene.Id == geneId)
+                                .Where(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
                                 .SelectMany(affectedTranscript => affectedTranscript.Consequences)
                                 .OrderBy(consequence => consequence.Severity)
                                 .First().Type,

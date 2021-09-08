@@ -12,6 +12,5 @@ namespace Unite.Composer.Search.Services.Criteria
         public Range<double?> Position { get; set; }
         public string[] Impact { get; set; }
         public string[] Consequence { get; set; }
-        public string[] Gene { get; set; }
     }
 }

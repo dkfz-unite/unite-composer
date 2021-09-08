@@ -2,25 +2,25 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Unite.Data.Entities.Identity;
-using Unite.Data.Services;
+using Unite.Identity.Entities;
+using Unite.Identity.Services;
 
 namespace Unite.Composer.Identity.Services
 {
     public class IdentityService : IIdentityService<User>
     {
-        private readonly UniteDbContext _database;
+        private readonly IdentityDbContext _dbContext;
 
-        public IdentityService(UniteDbContext database)
+        public IdentityService(IdentityDbContext dbContext)
         {
-            _database = database;
+            _dbContext = dbContext;
         }
 
         public User FindUser(string login)
         {
             var loginNormalised = login.ToLower().Trim();
 
-            var user = _database.Users
+            var user = _dbContext.Users
                 .Include(user => user.UserSessions)
                 .FirstOrDefault(user => user.Email == loginNormalised);
 
@@ -32,7 +32,7 @@ namespace Unite.Composer.Identity.Services
             var loginNormalised = login.ToLower().Trim();
             var passwordHash = GetStringHash(password);
 
-            var exists = _database.Users.Any(user =>
+            var exists = _dbContext.Users.Any(user =>
                 user.Email == loginNormalised
             );
 
@@ -44,8 +44,8 @@ namespace Unite.Composer.Identity.Services
                     Password = passwordHash
                 };
 
-                _database.Users.Add(user);
-                _database.SaveChanges();
+                _dbContext.Users.Add(user);
+                _dbContext.SaveChanges();
 
                 return user;
             }
@@ -60,7 +60,7 @@ namespace Unite.Composer.Identity.Services
             var loginNormalised = login.ToLower().Trim();
             var passwordHash = GetStringHash(password);
 
-            var user = _database.Users.FirstOrDefault(user =>
+            var user = _dbContext.Users.FirstOrDefault(user =>
                 user.Email == loginNormalised &&
                 user.Password == passwordHash
             );
@@ -76,8 +76,8 @@ namespace Unite.Composer.Identity.Services
             {
                 user.Password = GetStringHash(newPassword);
 
-                _database.Users.Update(user);
-                _database.SaveChanges();
+                _dbContext.Users.Update(user);
+                _dbContext.SaveChanges();
             }
 
             return user;

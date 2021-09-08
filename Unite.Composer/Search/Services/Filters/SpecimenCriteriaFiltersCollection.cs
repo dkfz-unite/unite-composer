@@ -82,6 +82,35 @@ namespace Unite.Composer.Search.Services
                 );
             }
 
+            if (criteria.GeneFilters != null)
+            {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    GeneFilterNames.Id,
+                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Id,
+                    criteria.GeneFilters.Id)
+                );
+
+                _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
+                    GeneFilterNames.Symbol,
+                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Symbol,
+                    criteria.GeneFilters.Symbol)
+                );
+
+                _filters.Add(new EqualityFilter<SpecimenIndex, object>(
+                    GeneFilterNames.Chromosome,
+                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Chromosome.Suffix(_keywordSuffix),
+                    criteria.GeneFilters.Chromosome)
+                );
+
+                _filters.Add(new MultiPropertyRangeFilter<SpecimenIndex, int?>(
+                    GeneFilterNames.Position,
+                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Start,
+                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.End,
+                    criteria.GeneFilters.Position?.From,
+                    criteria.GeneFilters.Position?.To)
+                );
+            }
+
             if (criteria.MutationFilters != null)
             {
                 _filters.Add(new EqualityFilter<SpecimenIndex, long>(
@@ -126,12 +155,6 @@ namespace Unite.Composer.Search.Services
                     MutationFilterNames.Consequence,
                     specimen => specimen.Mutations.First().AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix),
                     criteria.MutationFilters.Consequence)
-                );
-
-                _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
-                    MutationFilterNames.Gene,
-                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Gene.Symbol,
-                    criteria.MutationFilters.Gene)
                 );
             }
         }

@@ -24,6 +24,7 @@
     <Folder Include="Controllers\Search\Donors\" />
     <Folder Include="Controllers\Search\Mutations\" />
     <Folder Include="Controllers\Search\Specimens\" />
+    <Folder Include="Resources\Genes\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -31,7 +32,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.2.3" />
+    <PackageReference Include="FluentValidation" Version="10.3.3" />
     <PackageReference Include="Macross.Json.Extensions" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
@@ -39,5 +40,6 @@
     <None Remove="Controllers\Search\Mutations\" />
     <None Remove="Controllers\Search\Specimens\" />
     <None Remove="Macross.Json.Extensions" />
+    <None Remove="Resources\Genes\" />
   </ItemGroup>
 </Project>

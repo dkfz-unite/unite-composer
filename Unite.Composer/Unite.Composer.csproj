@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unite.Data" Version="1.7.2" />
-    <PackageReference Include="Unite.Indices" Version="1.7.0" />
+    <PackageReference Include="Unite.Indices" Version="1.7.2" />
+    <PackageReference Include="Unite.Identity" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
@@ -24,13 +24,10 @@
     <Folder Include="Search\Services\Context\" />
     <Folder Include="Search\Services\Context\Enums\" />
     <Folder Include="Visualization\Oncogrid\Data\" />
-    <Folder Include="Common\" />
-    <Folder Include="Common\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Search\Services\Context\" />
     <None Remove="Search\Services\Context\Enums\" />
-    <None Remove="Common\" />
-    <None Remove="Common\Extensions\" />
+    <None Remove="Unite.Identity" />
   </ItemGroup>
 </Project>

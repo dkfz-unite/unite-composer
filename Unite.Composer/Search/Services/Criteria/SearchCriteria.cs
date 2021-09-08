@@ -12,6 +12,7 @@
         public CellLineCriteria CellLineFilters { get; set; }
         public OrganoidCriteria OrganoidFilters { get; set; }
         public XenograftCriteria XenograftFilters { get; set; }
+        public GeneCriteria GeneFilters { get; set; }
         public MutationCriteria MutationFilters { get; set; }
         public OncoGridCriteria OncoGridFilters { get; set; }
 
