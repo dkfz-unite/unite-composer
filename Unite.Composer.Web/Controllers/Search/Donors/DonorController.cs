@@ -8,9 +8,9 @@ using Unite.Composer.Web.Resources.Donors;
 using Unite.Composer.Web.Resources.Specimens;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
+using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
-using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
 namespace Unite.Composer.Web.Controllers.Search.Donors
 {

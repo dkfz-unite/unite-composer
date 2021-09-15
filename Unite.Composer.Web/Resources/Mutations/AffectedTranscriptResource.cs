@@ -8,7 +8,6 @@ namespace Unite.Composer.Web.Resources.Mutations
         public string AminoAcidChange { get; set; }
         public string CodonChange { get; set; }
 
-        public GeneResource Gene { get; set; }
         public TranscriptResource Transcript { get; set; }
         public ConsequenceResource[] Consequences { get; set; }
 
@@ -17,7 +16,6 @@ namespace Unite.Composer.Web.Resources.Mutations
             AminoAcidChange = index.AminoAcidChange;
             CodonChange = index.CodonChange;
 
-            Gene = new GeneResource(index.Transcript.Gene);
             Transcript = new TranscriptResource(index.Transcript);
             Consequences = index.Consequences.Select(index => new ConsequenceResource(index)).ToArray();
         }

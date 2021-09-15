@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
@@ -30,9 +29,9 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddTransient<ISessionService<User, UserSession>, SessionService>();
 
             services.AddTransient<IDonorsSearchService, DonorsSearchService>();
-            services.AddTransient<ISearchService<Indices.Entities.Genes.GeneIndex>, GenesSearchService>();
-            services.AddTransient<ISearchService<Indices.Entities.Mutations.MutationIndex>, MutationsSearchService>();
-            services.AddTransient<ISearchService<Indices.Entities.Specimens.SpecimenIndex, SpecimenSearchContext>, SpecimensSearchService>();
+            services.AddTransient<ISpecimensSearchService, SpecimensSearchService>();
+            services.AddTransient<IGenesSearchService, GenesSearchService>();
+            services.AddTransient<IMutationsSearchService, MutationsSearchService>();
 
             services.AddTransient<OncoGridDataService>();
             services.AddTransient<OncoGridDataService1>();

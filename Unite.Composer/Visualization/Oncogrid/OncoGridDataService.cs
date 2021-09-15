@@ -70,7 +70,7 @@ namespace Unite.Composer.Visualization.Oncogrid
             var criteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
 
             var query = new SearchQuery<DonorIndex>()
-                .AddPagination(0, criteria.OncoGridFilters.MostAffectedDonorCount)
+                .AddPagination(0, criteria.OncoGridFilters.NumberOfDonors)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations)
@@ -101,9 +101,9 @@ namespace Unite.Composer.Visualization.Oncogrid
             var criteriaFilters = new GeneCriteriaFiltersCollection(criteria).All();
 
             var query = new SearchQuery<GeneIndex>()
-                .AddPagination(0, criteria.OncoGridFilters.MostAffectedGeneCount)
+                .AddPagination(0, criteria.OncoGridFilters.NumberOfGenes)
                 .AddFilters(criteriaFilters)
-                .AddOrdering(gene => gene.NumberOfMutations)
+                .AddOrdering(gene => gene.NumberOfDonors)
                 .AddExclusion(gene => gene.Mutations);
 
             return _genesIndexService.SearchAsync(query).Result;

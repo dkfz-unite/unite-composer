@@ -1,4 +1,6 @@
-﻿namespace Unite.Composer.Search.Services.Criteria
+﻿using Unite.Composer.Search.Services.Criteria.Visualizations;
+
+namespace Unite.Composer.Search.Services.Criteria
 {
     public class SearchCriteria
     {

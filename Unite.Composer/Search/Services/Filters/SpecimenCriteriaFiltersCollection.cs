@@ -97,6 +97,12 @@ namespace Unite.Composer.Search.Services
                 );
 
                 _filters.Add(new EqualityFilter<SpecimenIndex, object>(
+                    GeneFilterNames.Biotype,
+                    specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Biotype.Suffix(_keywordSuffix),
+                    criteria.GeneFilters.Biotype)
+                );
+
+                _filters.Add(new EqualityFilter<SpecimenIndex, object>(
                     GeneFilterNames.Chromosome,
                     specimen => specimen.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Chromosome.Suffix(_keywordSuffix),
                     criteria.GeneFilters.Chromosome)

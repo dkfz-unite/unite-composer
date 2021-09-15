@@ -16,15 +16,11 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
     [ApiController]
     public class MutationController : Controller
     {
-        private readonly IDonorsSearchService _donorsSearchService;
-        private readonly ISearchService<MutationIndex> _mutationsSearchService;
+        private readonly IMutationsSearchService _mutationsSearchService;
 
 
-        public MutationController(
-            IDonorsSearchService donorsSearchService,
-            ISearchService<MutationIndex> mutationsSearchService)
+        public MutationController(IMutationsSearchService mutationsSearchService)
         {
-            _donorsSearchService = donorsSearchService;
             _mutationsSearchService = mutationsSearchService;
         }
 
@@ -44,9 +40,7 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
         [CookieAuthorize]
         public SearchResult<DonorResource> GetDonors(long id, [FromBody] SearchCriteria searchCriteria)
         {
-            searchCriteria.MutationFilters = new MutationCriteria { Id = new[] { id } };
-
-            var searchResult = _donorsSearchService.Search(searchCriteria);
+            var searchResult = _mutationsSearchService.SearchDonors(id, searchCriteria);
 
             return From(searchResult);
         }

@@ -373,6 +373,12 @@ namespace Unite.Composer.Search.Services.Filters
                 );
 
                 _filters.Add(new EqualityFilter<DonorIndex, object>(
+                    GeneFilterNames.Biotype,
+                    donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Biotype.Suffix(_keywordSuffix),
+                    criteria.GeneFilters.Biotype)
+                );
+
+                _filters.Add(new EqualityFilter<DonorIndex, object>(
                     GeneFilterNames.Chromosome,
                     donor => donor.Mutations.First().AffectedTranscripts.First().Transcript.Gene.Chromosome.Suffix(_keywordSuffix),
                     criteria.GeneFilters.Chromosome)

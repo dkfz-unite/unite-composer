@@ -4,46 +4,45 @@ using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
-using Unite.Composer.Web.Resources.Specimens;
+using Unite.Composer.Web.Resources.Donors;
+using Unite.Composer.Web.Resources.Mutations;
 
-using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
+using GeneResource = Unite.Composer.Web.Resources.Genes.GeneResource;
+using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
-using GeneResource = Unite.Composer.Web.Resources.Genes.GeneResource;
-using MutationResource = Unite.Composer.Web.Resources.Mutations.MutationResource;
 
-namespace Unite.Composer.Web.Controllers.Search.Specimens
+namespace Unite.Composer.Web.Controllers.Search.Genes
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpecimenController : Controller
+    public class GeneController : Controller
     {
-        private readonly ISpecimensSearchService _specimensSearchService;
+        private readonly IGenesSearchService _genesSearchService;
 
 
-        public SpecimenController(
-            ISpecimensSearchService specimensSearchService)
+        public GeneController(IGenesSearchService genesSearchService)
         {
-            _specimensSearchService = specimensSearchService;
+            _genesSearchService = genesSearchService;
         }
 
 
         [HttpGet("{id}")]
         [CookieAuthorize]
-        public SpecimenResource Get(int id)
+        public GeneResource Get(long id)
         {
             var key = id.ToString();
 
-            var index = _specimensSearchService.Get(key);
+            var index = _genesSearchService.Get(key);
 
             return From(index);
         }
 
-        [HttpPost("{id}/genes")]
+        [HttpPost("{id}/donors")]
         [CookieAuthorize]
-        public SearchResult<GeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
+        public SearchResult<DonorResource> GetDonors(int id, [FromBody] SearchCriteria searchCriteria)
         {
-            var searchResult = _specimensSearchService.SearchGenes(id, searchCriteria);
+            var searchResult = _genesSearchService.SearchDonors(id, searchCriteria);
 
             return From(searchResult);
         }
@@ -52,28 +51,28 @@ namespace Unite.Composer.Web.Controllers.Search.Specimens
         [CookieAuthorize]
         public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
-            var searchResult = _specimensSearchService.SearchMutations(id, searchCriteria);
+            var searchResult = _genesSearchService.SearchMutations(id, searchCriteria);
 
             return From(searchResult);
         }
 
 
-        private static SpecimenResource From(SpecimenIndex index)
+        private static GeneResource From(GeneIndex index)
         {
             if (index == null)
             {
                 return null;
             }
 
-            return new SpecimenResource(index);
+            return new GeneResource(index);
         }
 
-        private static SearchResult<GeneResource> From(SearchResult<GeneIndex> searchResult)
+        private static SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)
         {
-            return new SearchResult<GeneResource>()
+            return new SearchResult<DonorResource>()
             {
                 Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new GeneResource(index)).ToArray()
+                Rows = searchResult.Rows.Select(index => new DonorResource(index)).ToArray()
             };
         }
 

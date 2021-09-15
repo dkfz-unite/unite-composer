@@ -9,6 +9,9 @@ namespace Unite.Composer.Web.Resources.Donors
     {
         public SpecimenBaseResource[] Specimens { get; }
 
+        public int NumberOfDonors { get; }
+        public int NumberOfSpecimens { get; }
+
 
         public DonorMutationResource(int donorId, MutationIndex index) : base(index)
         {
@@ -16,6 +19,9 @@ namespace Unite.Composer.Web.Resources.Donors
                 .First(donor => donor.Id == donorId).Specimens?
                 .Select(specimen => new SpecimenBaseResource(specimen))
                 .ToArray();
+
+            NumberOfDonors = index.NumberOfDonors;
+            NumberOfSpecimens = index.NumberOfSpecimens;
         }
     }
 }

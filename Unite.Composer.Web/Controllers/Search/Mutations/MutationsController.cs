@@ -13,10 +13,10 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
     [ApiController]
     public class MutationsController : Controller
     {
-        private readonly ISearchService<MutationIndex> _searchService;
+        private readonly IMutationsSearchService _searchService;
 
 
-        public MutationsController(ISearchService<MutationIndex> searchService)
+        public MutationsController(IMutationsSearchService searchService)
         {
             _searchService = searchService;
         }

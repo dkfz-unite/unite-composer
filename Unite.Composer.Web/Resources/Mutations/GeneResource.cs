@@ -1,24 +1,12 @@
-﻿using Unite.Indices.Entities.Basic.Mutations;
+﻿using Unite.Composer.Web.Resources.Genes;
+using Unite.Indices.Entities.Basic.Mutations;
 
 namespace Unite.Composer.Web.Resources.Mutations
 {
-    public class GeneResource
+    public class GeneResource : GeneBaseResource
     {
-        public int Id { get; set; }
-        public string Symbol { get; set; }
-        public string Biotype { get; set; }
-        public bool? Strand { get; set; }
-
-        public string EnsemblId { get; set; }
-
-        public GeneResource(GeneIndex index)
+        public GeneResource(GeneIndex index) : base(index)
         {
-            Id = index.Id;
-            Symbol = index.Symbol;
-            Biotype = index.Biotype;
-            Strand = index.Strand;
-
-            EnsemblId = index.EnsemblId;
         }
     }
 }

@@ -24,10 +24,12 @@
     <Folder Include="Search\Services\Context\" />
     <Folder Include="Search\Services\Context\Enums\" />
     <Folder Include="Visualization\Oncogrid\Data\" />
+    <Folder Include="Search\Services\Criteria\Visualizations\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Search\Services\Context\" />
     <None Remove="Search\Services\Context\Enums\" />
     <None Remove="Unite.Identity" />
+    <None Remove="Search\Services\Criteria\Visualizations\" />
   </ItemGroup>
 </Project>

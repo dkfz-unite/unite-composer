@@ -372,6 +372,12 @@ namespace Unite.Composer.Search.Services.Filters
                 );
 
                 _filters.Add(new EqualityFilter<GeneIndex, object>(
+                    GeneFilterNames.Biotype,
+                    gene => gene.Biotype.Suffix(_keywordSuffix),
+                    criteria.GeneFilters.Biotype)
+                );
+
+                _filters.Add(new EqualityFilter<GeneIndex, object>(
                     GeneFilterNames.Chromosome,
                     gene => gene.Chromosome.Suffix(_keywordSuffix),
                     criteria.GeneFilters.Chromosome)

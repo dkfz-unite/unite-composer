@@ -45,9 +45,9 @@ namespace Unite.Composer.Web.Resources.Mutations
 
             AffectedTranscripts = index.AffectedTranscripts?
                 .Select(index => new AffectedTranscriptResource(index))
-                .OrderBy(resource => resource.Gene.Symbol)
+                .OrderBy(resource => resource.Transcript.Gene.Symbol)
                 .ThenBy(resource => resource.Consequences.OrderBy(consequence => consequence.Severity).First().Severity)
-                .ThenBy(resource => resource.Transcript.EnsemblId)
+                .ThenBy(resource => resource.Transcript.Symbol)
                 .ToArray();
 
             TranscriptConsequences = index.AffectedTranscripts?
@@ -62,7 +62,6 @@ namespace Unite.Composer.Web.Resources.Mutations
                 .OrderBy(affectedTranscript => affectedTranscript.Consequence.Severity)
                 .GroupBy(
                     affectedTranscript => affectedTranscript.Consequence.Type,
-                    //affectedTranscript => affectedTranscript,
                     (key, group) => new { Value = group.First().Consequence, Elements = group })
                 .Select(consequenceGroup => new
                 {
@@ -72,11 +71,11 @@ namespace Unite.Composer.Web.Resources.Mutations
                     Genes = consequenceGroup.Elements
                         .GroupBy(
                             affectedTranscript => affectedTranscript.Gene.Symbol,
-                            //affectedTranscript => affectedTranscript,
                             (key, group) => new { Value = group.First().Gene, Elements = group })
                         .OrderBy(geneGroup => geneGroup.Value.Symbol)
                         .Select(geneGroup => new
                         {
+                            Id = geneGroup.Value.Id,
                             Symbol = geneGroup.Value.Symbol,
                             EnsemblId = geneGroup.Value.EnsemblId,
                             Transcripts = geneGroup.Elements

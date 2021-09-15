@@ -25,6 +25,7 @@
     <Folder Include="Controllers\Search\Mutations\" />
     <Folder Include="Controllers\Search\Specimens\" />
     <Folder Include="Resources\Genes\" />
+    <Folder Include="Controllers\Search\Genes\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -41,5 +42,6 @@
     <None Remove="Controllers\Search\Specimens\" />
     <None Remove="Macross.Json.Extensions" />
     <None Remove="Resources\Genes\" />
+    <None Remove="Controllers\Search\Genes\" />
   </ItemGroup>
 </Project>

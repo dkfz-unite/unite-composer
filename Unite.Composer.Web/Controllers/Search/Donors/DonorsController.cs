@@ -13,12 +13,12 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
     [ApiController]
     public class DonorsController : Controller
     {
-        private readonly IDonorsSearchService _searchService;
+        private readonly IDonorsSearchService _donorsSearchService;
 
 
-        public DonorsController(IDonorsSearchService searchService)
+        public DonorsController(IDonorsSearchService donorsSearchService)
         {
-            _searchService = searchService;
+            _donorsSearchService = donorsSearchService;
         }
 
 
@@ -26,7 +26,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         [CookieAuthorize]
         public SearchResult<DonorResource> Search([FromBody] SearchCriteria searchCriteria)
         {
-            var searchResult = _searchService.Search(searchCriteria);
+            var searchResult = _donorsSearchService.Search(searchCriteria);
 
             return From(searchResult);
         }

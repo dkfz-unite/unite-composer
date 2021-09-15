@@ -15,10 +15,10 @@ namespace Unite.Composer.Web.Controllers.Search.Specimens
     [ApiController]
     public class SpecimensController : Controller
     {
-        private readonly ISearchService<SpecimenIndex, SpecimenSearchContext> _searchService;
+        private readonly ISpecimensSearchService _searchService;
 
 
-        public SpecimensController(ISearchService<SpecimenIndex, SpecimenSearchContext> searchService)
+        public SpecimensController(ISpecimensSearchService searchService)
         {
             _searchService = searchService;
         }

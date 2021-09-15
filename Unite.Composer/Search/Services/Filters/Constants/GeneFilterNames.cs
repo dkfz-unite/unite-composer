@@ -6,6 +6,7 @@
 
         public static readonly string Id = $"{_prefix}.Id";
         public static readonly string Symbol = $"{_prefix}.Symbol";
+        public static readonly string Biotype = $"{_prefix}.Biotype";
         public static readonly string Chromosome = $"{_prefix}.Chromosome";
         public static readonly string Position = $"{_prefix}.Position";
     }
