@@ -13,6 +13,9 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
+        "UNITE_ENSEMBL_HOST": "https://grch37.rest.ensembl.org",
+        "UNITE_UNIPROT_HOST": "https://www.ebi.ac.uk",
+        "UNITE_PFAM_HOST": "https://pfam.xfam.org",
         "UNITE_SQL_HOST": "localhost",
         "UNITE_SQL_PORT": "5432",
         "UNITE_SQL_USER": "root",
@@ -30,6 +33,9 @@
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
+        "UNITE_ENSEMBL_HOST": "https://grch37.rest.ensembl.org",
+        "UNITE_UNIPROT_HOST": "https://www.ebi.ac.uk",
+        "UNITE_PFAM_HOST": "https://pfam.xfam.org",
         "UNITE_SQL_HOST": "localhost",
         "UNITE_SQL_PORT": "5432",
         "UNITE_SQL_USER": "root",

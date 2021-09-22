@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
+using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options;
+using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configuration.Options;
+using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.Models.Identity;
@@ -35,13 +38,16 @@ namespace Unite.Composer.Web.Configuration.Extensions
 
             services.AddTransient<OncoGridDataService>();
             services.AddTransient<OncoGridDataService1>();
-            services.AddTransient<LolliplotDataService>();
+            services.AddTransient<ProteinPlotDataService>();
         }
 
         private static void AddOptions(this IServiceCollection services)
         {
             services.AddTransient<IElasticOptions, ElasticOptions>();
             services.AddTransient<ISqlOptions, SqlOptions>();
+            services.AddTransient<IEnsemblOptions, EnsemblOptions>();
+            services.AddTransient<IUniprotOptions, UniprotOptions>();
+            services.AddTransient<IPfamOptions, PfamOptions>();
         }
 
         private static void AddValidation(this IServiceCollection services)

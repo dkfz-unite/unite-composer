@@ -189,16 +189,18 @@ namespace Unite.Composer.Visualization.Oncogrid
 
                     foreach (var mutation in observedMutations)
                     {
+                        var consequence = mutation.AffectedTranscripts
+                            .Where(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
+                            .SelectMany(affectedTranscript => affectedTranscript.Consequences)
+                            .OrderBy(consequence => consequence.Severity)
+                            .First();
+
                         yield return new OncoGridMutation
                         {
                             Id = mutation.Id.ToString(),
                             Code = mutation.Code,
-                            Type = mutation.Type,
-                            Consequence = mutation.AffectedTranscripts
-                                .Where(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
-                                .SelectMany(affectedTranscript => affectedTranscript.Consequences)
-                                .OrderBy(consequence => consequence.Severity)
-                                .First().Type,
+                            Consequence = consequence.Type,
+                            Impact = consequence.Impact,
                             DonorId = donor.Id,
                             GeneId = gene.Id
                         };
