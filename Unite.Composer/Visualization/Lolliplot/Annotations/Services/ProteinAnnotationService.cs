@@ -4,12 +4,9 @@ using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Models.Constants;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Resources;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configuration.Options;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Services.Models;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Services.Models.Enums;
 
 namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services
 {
@@ -17,17 +14,14 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services
     {
         private readonly EnsemblApiClient _ensemblApiClient;
         private readonly UniprotApiClient _uniprotApiClient;
-        private readonly PfamApiClient _pfamApiClient;
 
 
         public ProteinAnnotationService(
             IEnsemblOptions ensemblOptions,
-            IUniprotOptions uniprotOptions,
-            IPfamOptions pfamOptions)
+            IUniprotOptions uniprotOptions)
         {
             _ensemblApiClient = new EnsemblApiClient(ensemblOptions);
             _uniprotApiClient = new UniprotApiClient(uniprotOptions);
-            _pfamApiClient = new PfamApiClient(pfamOptions);
         }
 
 
@@ -37,23 +31,16 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services
         /// <param name="ensemblId">Ensembl identifier</param>
         /// <param name="source">Protein data source</param>
         /// <returns>Protein data.</returns>
-        public async Task<Protein> FindProtein(string ensemblId, AnnotationSource source)
+        public async Task<Protein> FindProtein(string ensemblId)
         {
             var references = await FindReferences(ensemblId);
 
-            if (references == null)
+            if (references?.Length < 1)
             {
                 return null;
             }
 
-            if (source == AnnotationSource.Pfam)
-            {
-                return await FindPfamProtein(references[0].Id);
-            }
-            else
-            {
-                return await FindUniprotProtein(references[0].Id);
-            }
+            return await FindUniprotProtein(references[0].Id);
         }
 
 
@@ -74,40 +61,6 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services
             return references;
         }
 
-        /// <summary>
-        /// Retrieves protein data from Pfam public API.
-        /// </summary>
-        /// <param name="accessionId">Accession identifier</param>
-        /// <returns>Protein data.</returns>
-        private async Task<Protein> FindPfamProtein(string accessionId)
-        {
-            var proteinResource = await _pfamApiClient.Protein(accessionId);
-
-            if (proteinResource == null)
-            {
-                return null;
-            }
-
-            var protein = new Protein
-            {
-                Id = proteinResource.Id,
-                Symbol = proteinResource.Symbol,
-                Description = proteinResource.Description,
-                Length = proteinResource.Sequence.Length,
-
-                Domains = proteinResource.Domains?
-                    .Select(domainResource => new ProteinDomain
-                    {
-                        Id = domainResource.Id,
-                        Symbol = domainResource.Symbol,
-                        Description = null,
-                        Start = domainResource.Location.Start,
-                        End = domainResource.Location.End
-                    })
-            };
-
-            return protein;
-        }
 
         /// <summary>
         /// Retrieves protein data from Uniprot public API.
@@ -131,15 +84,15 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services
                 Length = proteinResource.Metadata.Length,
 
                 Domains = proteinResource.Domains?
-                    .SelectMany(domainResource => domainResource.Locations
-                        .SelectMany(locationResource => locationResource.Fragments)
-                        .Select(fragmentResource => new ProteinDomain
+                    .SelectMany(domain => domain.Locations
+                        .SelectMany(location => location.Fragments)
+                        .Select(fragment => new ProteinDomain
                         {
-                            Id = domainResource.Id,
+                            Id = domain.Id,
                             Symbol = null,
                             Description = null,
-                            Start = fragmentResource.Start,
-                            End = fragmentResource.End
+                            Start = fragment.Start,
+                            End = fragment.End
                         })
                     )
             };

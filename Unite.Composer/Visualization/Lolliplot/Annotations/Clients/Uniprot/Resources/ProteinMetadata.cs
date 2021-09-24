@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Resources
 {
-    public class ProteinMetadataResource
+    public class ProteinMetadata
     {
         [JsonPropertyName("accession")]
         public string Id { get; set; }

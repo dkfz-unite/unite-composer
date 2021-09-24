@@ -5,10 +5,8 @@ using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configuration.Options;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
 using Unite.Composer.Visualization.Lolliplot.Annotations.Services;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Services.Models.Enums;
 using Unite.Composer.Visualization.Lolliplot.Data;
 using Unite.Indices.Services.Configuration.Options;
 
@@ -27,12 +25,11 @@ namespace Unite.Composer.Visualization.Lolliplot
         public ProteinPlotDataService(
             IElasticOptions elasticOptions,
             IEnsemblOptions ensemblOptions,
-            IUniprotOptions uniprotOptions,
-            IPfamOptions pfamOptions)
+            IUniprotOptions uniprotOptions)
         {
             _genesIndexService = new GenesIndexService(elasticOptions);
             _mutationsIndexService = new MutationsIndexService(elasticOptions);
-            _proteinAnnotationService = new ProteinAnnotationService(ensemblOptions, uniprotOptions, pfamOptions);
+            _proteinAnnotationService = new ProteinAnnotationService(ensemblOptions, uniprotOptions);
         }
 
         /// <summary>
@@ -114,16 +111,15 @@ namespace Unite.Composer.Visualization.Lolliplot
 
             var searchResult = await _mutationsIndexService.SearchAsync(query);
 
-            var proteinId = searchResult.Rows
+            var protein = searchResult.Rows
                 .First().AffectedTranscripts
                 .First(affectedTranscript => affectedTranscript.Transcript.Id == transcriptId)
                 .Transcript
-                .Protein
-                .EnsemblId;
+                .Protein;
 
-            var protein = await _proteinAnnotationService.FindProtein(proteinId, AnnotationSource.Uniprot);
+            var proteinInfo = await _proteinAnnotationService.FindProtein(protein.EnsemblId);
 
-            var proteinDomains = protein?.Domains?
+            var proteinDomains = proteinInfo?.Domains?
                 .Select(domain => new ProteinDomain
                 {
                     Id = domain.Id,

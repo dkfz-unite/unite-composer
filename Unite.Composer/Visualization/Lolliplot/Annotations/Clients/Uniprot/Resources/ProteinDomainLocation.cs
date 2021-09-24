@@ -2,9 +2,9 @@
 
 namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Resources
 {
-    public class ProteinDomainLocationResource
+    public class ProteinDomainLocation
     {
         [JsonPropertyName("fragments")]
-        public ProteinDomainFragmentResource[] Fragments { get; set; }
+        public ProteinDomainFragment[] Fragments { get; set; }
     }
 }

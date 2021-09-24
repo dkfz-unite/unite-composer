@@ -44,7 +44,6 @@
     <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\" />
     <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\Options\" />
     <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Resources\" />
-    <Folder Include="Visualization\Lolliplot\Annotations\Services\Models\Enums\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Search\Services\Context\" />
@@ -70,6 +69,5 @@
     <None Remove="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\" />
     <None Remove="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\Options\" />
     <None Remove="Visualization\Lolliplot\Annotations\Clients\Pfam\Resources\" />
-    <None Remove="Visualization\Lolliplot\Annotations\Services\Models\Enums\" />
   </ItemGroup>
 </Project>

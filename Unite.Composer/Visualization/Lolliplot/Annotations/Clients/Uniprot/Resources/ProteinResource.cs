@@ -5,9 +5,9 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Res
     public class ProteinResource
     {
         [JsonPropertyName("metadata")]
-        public ProteinMetadataResource Metadata { get; set; }
+        public ProteinMetadata Metadata { get; set; }
 
         [JsonPropertyName("entry_subset")]
-        public ProteinDomainResource[] Domains { get; set; }
+        public ProteinDomain[] Domains { get; set; }
     }
 }

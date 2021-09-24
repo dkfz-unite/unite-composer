@@ -2,12 +2,12 @@
 
 namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Resources
 {
-    public class ProteinDomainResource
+    public class ProteinDomain
     {
         [JsonPropertyName("accession")]
         public string Id { get; set; }
 
         [JsonPropertyName("entry_protein_locations")]
-        public ProteinDomainLocationResource[] Locations { get; set; }
+        public ProteinDomainLocation[] Locations { get; set; }
     }
 }
