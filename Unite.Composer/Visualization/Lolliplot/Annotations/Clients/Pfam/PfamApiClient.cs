@@ -76,7 +76,7 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam
         /// <returns>Job.</returns>
         private async Task<Job> SequenceSearch(string sequence)
         {
-            using var httpClient = new XmlHttpClient(_options.Host);
+            using var httpClient = new XmlHttpClient(_options.Host, true);
 
             var url = string.Format(_sequenceSearchUrl);
 
@@ -112,7 +112,7 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam
         /// <returns>Job result.</returns>
         private async Task<JobResult> SequenceSearchResults(string jobId)
         {
-            using var httpClient = new XmlHttpClient(_options.Host);
+            using var httpClient = new XmlHttpClient(_options.Host, true);
 
             var url = string.Format(_sequenceSearchResultsUrl, jobId);
 

@@ -10,13 +10,13 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients
         private readonly HttpClient _httpClient;
 
 
-        public XmlHttpClient()
+        public XmlHttpClient(bool useProxy = false)
         {
-            var handler = new HttpClientHandler { UseProxy = false };
+            var handler = new HttpClientHandler { UseProxy = useProxy };
             _httpClient = new HttpClient(handler);
         }
 
-        public XmlHttpClient(string baseUrl) : this()
+        public XmlHttpClient(string baseUrl, bool useProxy = false) : this(useProxy)
         {
             _httpClient.BaseAddress = new Uri(baseUrl);
         }

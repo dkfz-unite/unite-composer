@@ -35,7 +35,7 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot
         /// <returns>Protein with domains.</returns>
         public async Task<ProteinResource> Protein(string accessionId)
         {
-            using var httpClient = new JsonHttpClient(_options.Host);
+            using var httpClient = new JsonHttpClient(_options.Host, true);
 
             var url = string.Format(_proteinUrl, accessionId);
 

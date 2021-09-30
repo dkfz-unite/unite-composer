@@ -37,7 +37,7 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl
         /// <returns>Array of reference resources.</returns>
         public async Task<ReferenceResource[]> Xrefs(string ensemblId, string source = null)
         {
-            using var httpClient = new JsonHttpClient(_options.Host);
+            using var httpClient = new JsonHttpClient(_options.Host, true);
 
             var url = string.Format(_xrefsOneUrl, ensemblId);
 
@@ -67,7 +67,7 @@ namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl
         /// <returns>Sequence resource.</returns>
         public async Task<SequenceResource> Sequence(string ensemblId)
         {
-            using var httpClient = new JsonHttpClient(_options.Host);
+            using var httpClient = new JsonHttpClient(_options.Host, true);
 
             var url = string.Format(_sequenceUrl, ensemblId);
 
