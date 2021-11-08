@@ -73,7 +73,7 @@ namespace Unite.Composer.Visualization.Oncogrid
                 .AddPagination(0, criteria.OncoGridFilters.NumberOfDonors)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
-                .AddOrdering(donor => donor.NumberOfMutations)
+                .AddOrdering(donor => donor.NumberOfGenes)
                 .AddExclusion(donor => donor.Mutations)
                 .AddExclusion(donor => donor.Treatments)
                 .AddExclusion(donor => donor.WorkPackages)
@@ -103,7 +103,7 @@ namespace Unite.Composer.Visualization.Oncogrid
             var query = new SearchQuery<GeneIndex>()
                 .AddPagination(0, criteria.OncoGridFilters.NumberOfGenes)
                 .AddFilters(criteriaFilters)
-                .AddOrdering(gene => gene.NumberOfDonors)
+                .AddOrdering(gene => gene.NumberOfMutations)
                 .AddExclusion(gene => gene.Mutations);
 
             return _genesIndexService.SearchAsync(query).Result;
@@ -224,18 +224,22 @@ namespace Unite.Composer.Visualization.Oncogrid
                         var consequence = mutation.AffectedTranscripts
                             .Where(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
                             .SelectMany(affectedTranscript => affectedTranscript.Consequences)
+                            .Where(consequence => consequence.Impact != "Unknown")
                             .OrderBy(consequence => consequence.Severity)
-                            .First();
+                            .FirstOrDefault();
 
-                        yield return new OncoGridMutation
+                        if (consequence != null)
                         {
-                            Id = mutation.Id.ToString(),
-                            Code = mutation.Code,
-                            Consequence = consequence.Type,
-                            Impact = consequence.Impact,
-                            DonorId = donor.Id,
-                            GeneId = gene.Id
-                        };
+                            yield return new OncoGridMutation
+                            {
+                                Id = mutation.Id.ToString(),
+                                Code = mutation.Code,
+                                Consequence = consequence.Type,
+                                Impact = consequence.Impact,
+                                DonorId = donor.Id,
+                                GeneId = gene.Id
+                            };
+                        }
                     }
                 }
             }
