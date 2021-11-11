@@ -17,6 +17,12 @@ namespace Unite.Composer.Search.Services
 
             if (criteria.TissueFilters != null)
             {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    SpecimenFilterNames.Id,
+                    specimen => specimen.Id,
+                    criteria.TissueFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     TissueFilterNames.ReferenceId,
                     specimen => specimen.Tissue.ReferenceId,

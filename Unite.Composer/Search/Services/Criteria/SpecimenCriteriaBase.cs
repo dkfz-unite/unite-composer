@@ -2,6 +2,7 @@
 {
     public abstract class SpecimenCriteriaBase
     {
+        public int[] Id { get; set; }
         public string[] ReferenceId { get; set; }
 
         public string[] MgmtStatus { get; set; }

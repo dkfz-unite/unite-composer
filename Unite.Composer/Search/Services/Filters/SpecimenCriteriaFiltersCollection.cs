@@ -73,14 +73,14 @@ namespace Unite.Composer.Search.Services
                );
             }
 
-            if (criteria.SpecimenFilters != null)
-            {
-                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
-                    SpecimenFilterNames.Id,
-                    specimen => specimen.Id,
-                    criteria.SpecimenFilters.Id)
-                );
-            }
+            //if (criteria.SpecimenFilters != null)
+            //{
+            //    _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+            //        SpecimenFilterNames.Id,
+            //        specimen => specimen.Id,
+            //        criteria.SpecimenFilters.Id)
+            //    );
+            //}
 
             if (criteria.GeneFilters != null)
             {

@@ -17,6 +17,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.CellLineFilters != null)
             {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    SpecimenFilterNames.Id,
+                    specimen => specimen.Id,
+                    criteria.CellLineFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     CellLineFilterNames.ReferenceId,
                     specimen => specimen.CellLine.ReferenceId,

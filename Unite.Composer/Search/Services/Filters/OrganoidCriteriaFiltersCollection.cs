@@ -19,6 +19,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.OrganoidFilters != null)
             {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    SpecimenFilterNames.Id,
+                    specimen => specimen.Id,
+                    criteria.OrganoidFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     OrganoidFilterNames.ReferenceId,
                     specimen => specimen.Organoid.ReferenceId,

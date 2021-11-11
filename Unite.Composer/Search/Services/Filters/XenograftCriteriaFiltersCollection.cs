@@ -19,6 +19,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.XenograftFilters != null)
             {
+                _filters.Add(new EqualityFilter<SpecimenIndex, int>(
+                    SpecimenFilterNames.Id,
+                    specimen => specimen.Id,
+                    criteria.XenograftFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<SpecimenIndex, string>(
                     XenograftFilterNames.ReferenceId,
                     specimen => specimen.Xenograft.ReferenceId,

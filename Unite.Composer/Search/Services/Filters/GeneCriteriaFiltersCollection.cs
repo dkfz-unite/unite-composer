@@ -83,6 +83,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.TissueFilters != null)
             {
+                _filters.Add(new EqualityFilter<GeneIndex, int>(
+                    SpecimenFilterNames.Id,
+                    gene => gene.Mutations.First().Donors.First().Specimens.First().Id,
+                    criteria.TissueFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<GeneIndex, string>(
                     TissueFilterNames.ReferenceId,
                     gene => gene.Mutations.First().Donors.First().Specimens.First().Tissue.ReferenceId,
@@ -147,6 +153,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.CellLineFilters != null)
             {
+                _filters.Add(new EqualityFilter<GeneIndex, int>(
+                    SpecimenFilterNames.Id,
+                    gene => gene.Mutations.First().Donors.First().Specimens.First().Id,
+                    criteria.CellLineFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<GeneIndex, string>(
                     CellLineFilterNames.ReferenceId,
                     gene => gene.Mutations.First().Donors.First().Specimens.First().CellLine.ReferenceId,
@@ -217,6 +229,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.OrganoidFilters != null)
             {
+                _filters.Add(new EqualityFilter<GeneIndex, int>(
+                    SpecimenFilterNames.Id,
+                    gene => gene.Mutations.First().Donors.First().Specimens.First().Id,
+                    criteria.OrganoidFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<GeneIndex, string>(
                     OrganoidFilterNames.ReferenceId,
                     gene => gene.Mutations.First().Donors.First().Specimens.First().Organoid.ReferenceId,
@@ -281,6 +299,12 @@ namespace Unite.Composer.Search.Services.Filters
 
             if (criteria.XenograftFilters != null)
             {
+                _filters.Add(new EqualityFilter<GeneIndex, int>(
+                    SpecimenFilterNames.Id,
+                    gene => gene.Mutations.First().Donors.First().Specimens.First().Id,
+                    criteria.XenograftFilters.Id)
+                );
+
                 _filters.Add(new SimilarityFilter<GeneIndex, string>(
                     XenograftFilterNames.ReferenceId,
                     gene => gene.Mutations.First().Donors.First().Specimens.First().Xenograft.ReferenceId,
