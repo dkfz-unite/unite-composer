@@ -13,7 +13,9 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
                 session,
                 new()
                 {
-                    Expires = DateTime.Now.AddMonths(1)
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.Now.AddMonths(1),
+                    HttpOnly = false
                 }
             );
 
@@ -22,6 +24,7 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
                 token,
                 new()
                 {
+                    SameSite = SameSiteMode.Strict,
                     Expires = DateTime.Now.AddMonths(1),
                     HttpOnly = true
                 });
