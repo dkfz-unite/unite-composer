@@ -8,20 +8,20 @@ namespace Unite.Composer.Search.Engine.Filters
     {
         public string Name { get; }
 
-        protected Expression<Func<TIndex, TProp>> _property;
+        public Expression<Func<TIndex, TProp>> Property { get; }
 
 
         public NotNullFilter(string name, Expression<Func<TIndex, TProp>> property)
         {
             Name = name;
 
-            _property = property;
+            Property = property;
         }
 
 
         public void Apply(Nest.ISearchRequest<TIndex> request)
         {
-            request.AddExistsQuery(_property);
+            request.AddExistsQuery(Property);
         }
     }
 }

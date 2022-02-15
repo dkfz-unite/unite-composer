@@ -20,31 +20,31 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            _filters.Add(new EqualityFilter<TIndex, long>(
+            Add(new EqualityFilter<TIndex, long>(
                 MutationFilterNames.Id,
                 path.Join(mutation => mutation.Id),
                 criteria.Id)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 MutationFilterNames.Code,
                 path.Join(mutation => mutation.Code),
                 criteria.Code)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 MutationFilterNames.Type,
                 path.Join(mutation => mutation.Type.Suffix(_keywordSuffix)),
                 criteria.MutationType)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 MutationFilterNames.Chromosome,
                 path.Join(mutation => mutation.Chromosome.Suffix(_keywordSuffix)),
                 criteria.Chromosome)
             );
 
-            _filters.Add(new MultiPropertyRangeFilter<TIndex, int>(
+            Add(new MultiPropertyRangeFilter<TIndex, int>(
                 MutationFilterNames.Position,
                 path.Join(mutation => mutation.Start),
                 path.Join(mutation => mutation.End),
@@ -52,13 +52,13 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 criteria.Position?.To)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 MutationFilterNames.Impact,
                 path.Join(mutation => mutation.AffectedTranscripts.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
                 criteria.Impact)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 MutationFilterNames.Consequence,
                 path.Join(mutation => mutation.AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix)),
                 criteria.Consequence)

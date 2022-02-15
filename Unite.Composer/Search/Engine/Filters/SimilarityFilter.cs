@@ -10,22 +10,22 @@ namespace Unite.Composer.Search.Engine.Filters
     {
         public string Name { get; }
 
-        protected Expression<Func<TIndex, TProp>> _property;
-        protected IEnumerable<string> _values;
+        public Expression<Func<TIndex, TProp>> Property { get; }
+        public IEnumerable<string> Values { get; }
 
 
         public SimilarityFilter(string name, Expression<Func<TIndex, TProp>> property, IEnumerable<string> values)
         {
             Name = name;
 
-            _property = property;
-            _values = values;
+            Property = property;
+            Values = values;
         }
 
 
         public void Apply(ISearchRequest<TIndex> request)
         {
-            request.AddMatchQuery(_property, _values);
+            request.AddMatchQuery(Property, Values);
         }
     }
 }

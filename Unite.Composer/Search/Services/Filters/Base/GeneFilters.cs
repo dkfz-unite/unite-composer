@@ -19,31 +19,31 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            _filters.Add(new EqualityFilter<TIndex, int>(
+            Add(new EqualityFilter<TIndex, int>(
                 GeneFilterNames.Id,
                 path.Join(gene => gene.Id),
                 criteria.Id)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 GeneFilterNames.Symbol,
                 path.Join(gene => gene.Symbol),
                 criteria.Symbol)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 GeneFilterNames.Biotype,
                 path.Join(gene => gene.Biotype.Suffix(_keywordSuffix)),
                 criteria.Biotype)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 GeneFilterNames.Chromosome,
                 path.Join(gene => gene.Chromosome.Suffix(_keywordSuffix)),
                 criteria.Chromosome)
             );
 
-            _filters.Add(new MultiPropertyRangeFilter<TIndex, int?>(
+            Add(new MultiPropertyRangeFilter<TIndex, int?>(
                 GeneFilterNames.Position,
                 path.Join(gene => gene.Start),
                 path.Join(gene => gene.End),

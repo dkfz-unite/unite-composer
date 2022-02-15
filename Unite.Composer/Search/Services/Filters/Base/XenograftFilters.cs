@@ -20,42 +20,45 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            _filters.Add(new NotNullFilter<TIndex, XenograftIndex>(
-                SpecimenFilterNames.Type,
-                path.Join(specimen => specimen.Xenograft))
-            );
+            if (criteria.HasValues())
+            {
+                Add(new NotNullFilter<TIndex, XenograftIndex>(
+                    SpecimenFilterNames.Type,
+                    path.Join(specimen => specimen.Xenograft))
+                );
+            }
 
-            _filters.Add(new EqualityFilter<TIndex, int>(
+            Add(new EqualityFilter<TIndex, int>(
                 SpecimenFilterNames.Id,
                 path.Join(specimen => specimen.Id),
                 criteria.Id)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 XenograftFilterNames.ReferenceId,
                 path.Join(specimen => specimen.Xenograft.ReferenceId),
                 criteria.ReferenceId)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 XenograftFilterNames.MouseStrain,
                 path.Join(specimen => specimen.Xenograft.MouseStrain),
                 criteria.MouseStrain)
             );
 
-            _filters.Add(new BooleanFilter<TIndex>(
+            Add(new BooleanFilter<TIndex>(
                 XenograftFilterNames.Tumorigenicity,
                 path.Join(specimen => specimen.Xenograft.Tumorigenicity),
                 criteria.Tumorigenicity)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 XenograftFilterNames.TumorGrowthForm,
                 path.Join(specimen => specimen.Xenograft.TumorGrowthForm.Suffix(_keywordSuffix)),
                 criteria.TumorGrowthForm)
             );
 
-            _filters.Add(new MultiPropertyRangeFilter<TIndex, int?>(
+            Add(new MultiPropertyRangeFilter<TIndex, int?>(
                 XenograftFilterNames.SurvivalDays,
                 path.Join(specimen => specimen.Xenograft.SurvivalDaysFrom),
                 path.Join(specimen => specimen.Xenograft.SurvivalDaysTo),
@@ -63,46 +66,46 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 criteria.SurvivalDays?.To)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 XenograftFilterNames.Intervention,
                 path.Join(specimen => specimen.Xenograft.Interventions.First().Type),
                 criteria.Intervention)
             );
 
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 XenograftFilterNames.MgmtStatus,
-                path.Join(specimen => specimen.CellLine.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Xenograft.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
                 criteria.MgmtStatus)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 XenograftFilterNames.IdhStatus,
-                path.Join(specimen => specimen.CellLine.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Xenograft.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
                 criteria.IdhStatus)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 XenograftFilterNames.IdhMutation,
-                path.Join(specimen => specimen.CellLine.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Xenograft.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
                 criteria.IdhMutation)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 XenograftFilterNames.GeneExpressionSubtype,
-                path.Join(specimen => specimen.CellLine.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Xenograft.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
                 criteria.GeneExpressionSubtype)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 XenograftFilterNames.MethylationSubtype,
-                path.Join(specimen => specimen.CellLine.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Xenograft.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
                 criteria.MethylationSubtype)
             );
 
-            _filters.Add(new BooleanFilter<TIndex>(
+            Add(new BooleanFilter<TIndex>(
                 XenograftFilterNames.GcimpMethylation,
-                path.Join(specimen => specimen.CellLine.MolecularData.GcimpMethylation),
+                path.Join(specimen => specimen.Xenograft.MolecularData.GcimpMethylation),
                 criteria.GcimpMethylation)
             );
         }

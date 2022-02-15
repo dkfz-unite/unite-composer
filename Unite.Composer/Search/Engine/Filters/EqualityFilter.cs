@@ -10,30 +10,30 @@ namespace Unite.Composer.Search.Engine.Filters
     {
         public string Name { get; }
 
-        protected Expression<Func<TIndex, TProp>> _property;
-        protected IEnumerable<TProp> _values;
+        public Expression<Func<TIndex, TProp>> Property { get; }
+        public IEnumerable<TProp> Values { get; }
 
 
         public EqualityFilter(string name, Expression<Func<TIndex, TProp>> property, IEnumerable<TProp> values)
         {
             Name = name;
 
-            _property = property;
-            _values = values;
+            Property = property;
+            Values = values;
         }
 
         public EqualityFilter(string name, Expression<Func<TIndex, TProp>> property, TProp value)
         {
             Name = name;
 
-            _property = property;
-            _values = new TProp[] { value };
+            Property = property;
+            Values = new TProp[] { value };
         }
 
 
         public void Apply(ISearchRequest<TIndex> request)
         {
-            request.AddTermsQuery(_property, _values);
+            request.AddTermsQuery(Property, Values);
         }
     }
 }

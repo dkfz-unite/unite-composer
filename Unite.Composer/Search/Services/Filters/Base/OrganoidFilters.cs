@@ -20,75 +20,78 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            _filters.Add(new NotNullFilter<TIndex, OrganoidIndex>(
-                SpecimenFilterNames.Type,
-                path.Join(specimen => specimen.Organoid))
-            );
+            if (criteria.HasValues())
+            {
+                Add(new NotNullFilter<TIndex, OrganoidIndex>(
+                    SpecimenFilterNames.Type,
+                    path.Join(specimen => specimen.Organoid))
+                );
+            }
 
-            _filters.Add(new EqualityFilter<TIndex, int>(
+            Add(new EqualityFilter<TIndex, int>(
                 SpecimenFilterNames.Id,
                 path.Join(specimen => specimen.Id),
                 criteria.Id)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 OrganoidFilterNames.ReferenceId,
                 path.Join(specimen => specimen.Organoid.ReferenceId),
                 criteria.ReferenceId)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 OrganoidFilterNames.Medium,
                 path.Join(specimen => specimen.Organoid.Medium),
                 criteria.Medium)
             );
 
-            _filters.Add(new BooleanFilter<TIndex>(
+            Add(new BooleanFilter<TIndex>(
                 OrganoidFilterNames.Tumorigenicity,
                 path.Join(specimen => specimen.Organoid.Tumorigenicity),
                 criteria.Tumorigenicity)
             );
 
-            _filters.Add(new SimilarityFilter<TIndex, string>(
+            Add(new SimilarityFilter<TIndex, string>(
                 OrganoidFilterNames.Intervention,
                 path.Join(specimen => specimen.Organoid.Interventions.First().Type),
                 criteria.Intervention)
             );
 
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 OrganoidFilterNames.MgmtStatus,
-                path.Join(specimen => specimen.CellLine.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Organoid.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
                 criteria.MgmtStatus)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 OrganoidFilterNames.IdhStatus,
-                path.Join(specimen => specimen.CellLine.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Organoid.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
                 criteria.IdhStatus)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 OrganoidFilterNames.IdhMutation,
-                path.Join(specimen => specimen.CellLine.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Organoid.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
                 criteria.IdhMutation)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 OrganoidFilterNames.GeneExpressionSubtype,
-                path.Join(specimen => specimen.CellLine.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Organoid.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
                 criteria.GeneExpressionSubtype)
             );
 
-            _filters.Add(new EqualityFilter<TIndex, object>(
+            Add(new EqualityFilter<TIndex, object>(
                 OrganoidFilterNames.MethylationSubtype,
-                path.Join(specimen => specimen.CellLine.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
+                path.Join(specimen => specimen.Organoid.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
                 criteria.MethylationSubtype)
             );
 
-            _filters.Add(new BooleanFilter<TIndex>(
+            Add(new BooleanFilter<TIndex>(
                 OrganoidFilterNames.GcimpMethylation,
-                path.Join(specimen => specimen.CellLine.MolecularData.GcimpMethylation),
+                path.Join(specimen => specimen.Organoid.MolecularData.GcimpMethylation),
                 criteria.GcimpMethylation)
             );
         }

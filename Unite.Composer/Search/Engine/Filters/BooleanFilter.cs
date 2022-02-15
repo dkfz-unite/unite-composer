@@ -9,22 +9,22 @@ namespace Unite.Composer.Search.Engine.Filters
     {
         public string Name { get; }
 
-        protected Expression<Func<TIndex, bool?>> _property;
-        protected bool? _value;
+        public Expression<Func<TIndex, bool?>> Property { get; }
+        public bool? Value { get; }
 
 
         public BooleanFilter(string name, Expression<Func<TIndex, bool?>> property, bool? value)
         {
             Name = name;
 
-            _property = property;
-            _value = value;
+            Property = property;
+            Value = value;
         }
 
 
         public void Apply(ISearchRequest<TIndex> request)
         {
-            request.AddBoolQuery(_property, _value);
+            request.AddBoolQuery(Property, Value);
         }
     }
 }

@@ -10,31 +10,31 @@ namespace Unite.Composer.Search.Engine.Filters
         public string Name { get; }
 
 
-        protected Expression<Func<TIndex, TProp>> _propertyFrom;
-        protected Expression<Func<TIndex, TProp>> _propertyTo;
-        protected double? _from;
-        protected double? _to;
+        public Expression<Func<TIndex, TProp>> PropertyFrom { get; }
+        public Expression<Func<TIndex, TProp>> PropertyTo { get; }
+        public double? ValueFrom { get; }
+        public double? ValueTo { get; }
 
 
         public MultiPropertyRangeFilter(
             string name,
             Expression<Func<TIndex, TProp>> propertyFrom,
             Expression<Func<TIndex, TProp>> propertyTo,
-            double? from,
-            double? to)
+            double? valueFrom,
+            double? valueTo)
         {
             Name = name;
 
-            _propertyFrom = propertyFrom;
-            _propertyTo = propertyTo;
-            _from = from;
-            _to = to;
+            PropertyFrom = propertyFrom;
+            PropertyTo = propertyTo;
+            ValueFrom = valueFrom;
+            ValueTo = valueTo;
         }
 
 
         public void Apply(ISearchRequest<TIndex> request)
         {
-            request.AddRangeQuery(_propertyFrom, _propertyTo, _from, _to);
+            request.AddRangeQuery(PropertyFrom, PropertyTo, ValueFrom, ValueTo);
         }
     }
 }

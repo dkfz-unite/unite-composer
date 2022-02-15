@@ -9,24 +9,24 @@ namespace Unite.Composer.Search.Engine.Filters
     {
         public string Name { get; }
 
-        protected Expression<Func<TIndex, TProp>> _property;
-        protected double? _from;
-        protected double? _to;
+        public Expression<Func<TIndex, TProp>> Property { get; }
+        public double? From { get; }
+        public double? To { get; }
 
 
         public RangeFilter(string name, Expression<Func<TIndex, TProp>> property, double? from, double? to)
         {
             Name = name;
 
-            _property = property;
-            _from = from;
-            _to = to;
+            Property = property;
+            From = from;
+            To = to;
         }
 
 
         public void Apply(ISearchRequest<TIndex> request)
         {
-            request.AddRangeQuery(_property, _from, _to);
+            request.AddRangeQuery(Property, From, To);
         }
     }
 }

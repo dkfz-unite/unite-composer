@@ -17,15 +17,49 @@ namespace Unite.Composer.Search.Services.Filters.Base
             _filters = new List<IFilter<TIndex>>();
         }
 
+        public virtual void Add(BooleanFilter<TIndex> filter)
+        {
+            if (filter.Value != null)
+            {
+                _filters.Add(filter);
+            }
+        }
 
-        public virtual void AddFilter(IFilter<TIndex> filter)
+        public virtual void Add<TProp>(EqualityFilter<TIndex, TProp> filter)
+        {
+            if (filter.Values?.Any() == true)
+            {
+                _filters.Add(filter);
+            }
+        }
+
+        public virtual void Add<TProp>(MultiPropertyRangeFilter<TIndex, TProp> filter)
+        {
+            if (filter.ValueFrom != null || filter.ValueTo != null)
+            {
+                _filters.Add(filter);
+            }
+        }
+
+        public virtual void Add<TProp>(NotNullFilter<TIndex, TProp> filter)
         {
             _filters.Add(filter);
         }
 
-        public virtual void AddFilters(IEnumerable<IFilter<TIndex>> filters)
+        public virtual void Add<TProp>(RangeFilter<TIndex, TProp> filter)
         {
-            _filters.AddRange(filters);
+            if (filter.From != null || filter.To != null)
+            {
+                _filters.Add(filter);
+            }
+        }
+
+        public virtual void Add<TProp>(SimilarityFilter<TIndex, TProp> filter)
+        {
+            if (filter.Values?.Any() == true)
+            {
+                _filters.Add(filter);
+            }
         }
 
         public virtual IEnumerable<IFilter<TIndex>> All()

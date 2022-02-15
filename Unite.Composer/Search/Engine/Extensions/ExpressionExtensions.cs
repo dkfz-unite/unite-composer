@@ -19,15 +19,15 @@ namespace Unite.Composer.Search.Engine.Extensions
             this Expression<Func<T1, T2>> source,
             Expression<Func<T2, T3>> target)
         {
-            var memberExpression = source.Body as MemberExpression;
+            //var memberExpression = source.Body as MemberExpression;
 
-            if (memberExpression == null)
-            {
-                throw new ArgumentException(nameof(source));
-            }
+            //if (memberExpression == null)
+            //{
+            //    throw new ArgumentException(nameof(source));
+            //}
 
             var expression = Expression.Lambda<Func<T1, T3>>(target.Body, source.Parameters);
-            var visitor = new RecombinationVisitor(memberExpression, target.Parameters[0]);
+            var visitor = new RecombinationVisitor(source.Body, target.Parameters[0]);
 
             return (Expression<Func<T1, T3>>)visitor.Visit(expression);
         }
@@ -35,10 +35,25 @@ namespace Unite.Composer.Search.Engine.Extensions
 
         private class RecombinationVisitor : ExpressionVisitor
         {
-            private MemberExpression _memberExpression;
+            //private MemberExpression _memberExpression;
+            //private ParameterExpression _parameterExpression;
+
+            //public RecombinationVisitor(MemberExpression memberExpression, ParameterExpression parameterExpression)
+            //{
+            //    _memberExpression = memberExpression;
+            //    _parameterExpression = parameterExpression;
+            //}
+
+            //[return: NotNullIfNotNull("node")]
+            //public override Expression Visit(Expression node)
+            //{
+            //    return base.Visit(node == _parameterExpression ? _memberExpression : node);
+            //}
+
+            private Expression _memberExpression;
             private ParameterExpression _parameterExpression;
 
-            public RecombinationVisitor(MemberExpression memberExpression, ParameterExpression parameterExpression)
+            public RecombinationVisitor(Expression memberExpression, ParameterExpression parameterExpression)
             {
                 _memberExpression = memberExpression;
                 _parameterExpression = parameterExpression;
