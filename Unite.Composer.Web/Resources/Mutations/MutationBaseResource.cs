@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Unite.Indices.Entities.Basic.Mutations;
+using Unite.Indices.Entities.Basic.Genome.Mutations;
 
 namespace Unite.Composer.Web.Resources.Mutations
 {
@@ -37,7 +37,6 @@ namespace Unite.Composer.Web.Resources.Mutations
             Code = index.Code;
             Type = index.Type;
             Chromosome = index.Chromosome;
-            SequenceType = index.SequenceType;
             Start = index.Start;
             End = index.End;
             Ref = index.Ref;

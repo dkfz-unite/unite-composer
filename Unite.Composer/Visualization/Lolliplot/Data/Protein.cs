@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Mutations;
+﻿using Unite.Indices.Entities.Basic.Genome;
 
 namespace Unite.Composer.Visualization.Lolliplot.Data
 {

@@ -37,7 +37,7 @@ namespace Unite.Composer.Search.Services
         {
             var criteria = searchCriteria ?? new SearchCriteria();
 
-            var criteriaFilters = new GeneCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new GeneIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<GeneIndex>()
@@ -58,7 +58,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
 
-            var criteriaFilters = new DonorCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new DonorIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<DonorIndex>()
@@ -66,7 +66,7 @@ namespace Unite.Composer.Search.Services
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations)
-                .AddExclusion(donor => donor.Mutations);
+                .AddExclusion(donor => donor.Specimens);
 
             var result = _donorsIndexService.SearchAsync(query).Result;
 
@@ -79,7 +79,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
 
-            var criteriaFilters = new MutationCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new MutationIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<MutationIndex>()

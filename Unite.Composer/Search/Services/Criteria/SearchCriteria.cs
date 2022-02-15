@@ -9,6 +9,8 @@ namespace Unite.Composer.Search.Services.Criteria
         public string Term { get; set; }
 
         public DonorCriteria DonorFilters { get; set; }
+        public ImageCriteria ImageFilters { get; set; }
+        public MriImageCriteria MriImageFilters { get; set; }
         public SpecimenCriteria SpecimenFilters { get; set; }
         public TissueCriteria TissueFilters { get; set; }
         public CellLineCriteria CellLineFilters { get; set; }

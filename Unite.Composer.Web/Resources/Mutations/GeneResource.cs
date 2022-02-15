@@ -1,5 +1,5 @@
 ﻿using Unite.Composer.Web.Resources.Genes;
-using Unite.Indices.Entities.Basic.Mutations;
+using Unite.Indices.Entities.Basic.Genome;
 
 namespace Unite.Composer.Web.Resources.Mutations
 {

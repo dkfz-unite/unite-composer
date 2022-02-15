@@ -58,14 +58,14 @@ namespace Unite.Composer.Visualization.Oncogrid
         {
             var criteria = searchCriteria;
 
-            var criteriaFilters = new DonorCriteriaFiltersCollection(criteria).All();
+            var criteriaFilters = new DonorIndexFiltersCollection(criteria).All();
 
             var query = new SearchQuery<DonorIndex>()
                 .AddPagination(0, criteria.OncoGridFilters.NumberOfDonors)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations)
-                .AddExclusion(donor => donor.Mutations);
+                .AddExclusion(donor => donor.Specimens);
             // TODO: exclude all unnecessary information as soon as multiple exclusions work.
             // .AddExclusion(donor => donor.Treatments)
             // .AddExclusion(donor => donor.WorkPackages)
@@ -89,7 +89,7 @@ namespace Unite.Composer.Visualization.Oncogrid
             criteria.DonorFilters.Id = donorIds.ToArray();
             criteria.MutationFilters = searchCriteria.MutationFilters;
 
-            var criteriaFilters = new MutationCriteriaFiltersCollection(criteria).All();
+            var criteriaFilters = new MutationIndexFiltersCollection(criteria).All();
 
             var query = new SearchQuery<MutationIndex>()
                 // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations

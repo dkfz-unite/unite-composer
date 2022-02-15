@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Mutations;
+﻿using Unite.Indices.Entities.Basic.Genome.Mutations;
 
 namespace Unite.Composer.Web.Resources.Mutations
 {

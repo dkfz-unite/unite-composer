@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unite.Indices" Version="1.8.0" />
+    <PackageReference Include="Unite.Indices" Version="2.0.2" />
     <PackageReference Include="Unite.Identity" Version="1.0.1" />
-    <PackageReference Include="Macross.Json.Extensions" Version="2.0.0" />
+    <PackageReference Include="Macross.Json.Extensions" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Identity\" />
@@ -44,6 +44,7 @@
     <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\" />
     <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\Options\" />
     <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Resources\" />
+    <Folder Include="Search\Services\Filters\Base\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Search\Services\Context\" />
@@ -69,5 +70,6 @@
     <None Remove="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\" />
     <None Remove="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\Options\" />
     <None Remove="Visualization\Lolliplot\Annotations\Clients\Pfam\Resources\" />
+    <None Remove="Search\Services\Filters\Base\" />
   </ItemGroup>
 </Project>

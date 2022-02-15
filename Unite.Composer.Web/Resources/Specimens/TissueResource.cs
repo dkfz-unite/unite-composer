@@ -8,7 +8,6 @@ namespace Unite.Composer.Web.Resources.Specimens
         public string Type { get; set; }
         public string TumorType { get; set; }
         public string Source { get; set; }
-        public int? ExtractionDay { get; set; }
 
         public MolecularDataResource MolecularData { get; set; }
 
@@ -19,7 +18,6 @@ namespace Unite.Composer.Web.Resources.Specimens
             Type = index.Type;
             TumorType = index.TumorType;
             Source = index.Source;
-            ExtractionDay = index.ExtractionDay;
 
             if (index.MolecularData != null)
             {

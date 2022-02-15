@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Clinical;
+﻿using Unite.Indices.Entities.Basic.Donors.Clinical;
 
 namespace Unite.Composer.Web.Resources.Donors
 {

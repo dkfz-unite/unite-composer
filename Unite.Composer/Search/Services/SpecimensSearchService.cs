@@ -8,6 +8,7 @@ using Unite.Indices.Services.Configuration.Options;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using Unite.Composer.Search.Services.Filters.Base;
 
 namespace Unite.Composer.Search.Services
 {
@@ -65,7 +66,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { specimenId } };
 
-            var criteriaFilters = new GeneCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new GeneIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<GeneIndex>()
@@ -87,7 +88,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { specimenId } };
 
-            var criteriaFilters = new MutationCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new MutationIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<MutationIndex>()
@@ -102,27 +103,27 @@ namespace Unite.Composer.Search.Services
         }
 
 
-        private CriteriaFiltersCollection<SpecimenIndex> GetFiltersCollection(SearchCriteria criteria, SpecimenSearchContext context)
+        private FiltersCollection<SpecimenIndex> GetFiltersCollection(SearchCriteria criteria, SpecimenSearchContext context)
         {
             if (context.SpecimenType == Context.Enums.SpecimenType.Tissue)
             {
-                return new TissueCriteriaFiltersCollection(criteria);
+                return new TissueIndexFiltersCollection(criteria);
             }
             else if (context.SpecimenType == Context.Enums.SpecimenType.CellLine)
             {
-                return new CellLineCriteriaFiltersCollection(criteria);
+                return new CellLineIndexFiltersCollection(criteria);
             }
             else if (context.SpecimenType == Context.Enums.SpecimenType.Organoid)
             {
-                return new OrganoidCriteriaFiltersCollection(criteria);
+                return new OrganoidIndexFiltersCollection(criteria);
             }
             else if (context.SpecimenType == Context.Enums.SpecimenType.Xenograft)
             {
-                return new XenograftCriteriaFiltersCollection(criteria);
+                return new XenograftIndexFiltersCollection(criteria);
             }
             else
             {
-                return new SpecimenCriteriaFiltersCollection(criteria); 
+                return new SpecimenIndexFiltersCollection(criteria); 
             }
         }
     }

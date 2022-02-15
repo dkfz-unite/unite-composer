@@ -5,6 +5,7 @@ namespace Unite.Composer.Web.Resources.Specimens
     public class SpecimenBaseResource
     {
         public int Id { get; set; }
+        public int? CreationDay { get; set; }
 
         public TissueResource Tissue { get; set; }
         public CellLineResource CellLine { get; set; }
@@ -15,6 +16,7 @@ namespace Unite.Composer.Web.Resources.Specimens
         public SpecimenBaseResource(SpecimenIndex index)
         {
             Id = index.Id;
+            CreationDay = index.CreationDay;
 
             if (index.Tissue != null)
             {

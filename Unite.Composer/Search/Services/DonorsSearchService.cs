@@ -31,7 +31,7 @@ namespace Unite.Composer.Search.Services
         public DonorIndex Get(string key)
         {
             var query = new GetQuery<DonorIndex>(key)
-                .AddExclusion(donor => donor.Mutations);
+                .AddExclusion(donor => donor.Specimens);
 
             var result = _donorsIndexService.GetAsync(query).Result;
 
@@ -42,7 +42,7 @@ namespace Unite.Composer.Search.Services
         {
             var criteria = searchCriteria ?? new SearchCriteria();
 
-            var criteriaFilters = new DonorCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new DonorIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<DonorIndex>()
@@ -50,7 +50,7 @@ namespace Unite.Composer.Search.Services
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(criteriaFilters)
                 .AddOrdering(donor => donor.NumberOfMutations)
-                .AddExclusion(donor => donor.Mutations);
+                .AddExclusion(donor => donor.Specimens);
 
             var result = _donorsIndexService.SearchAsync(query).Result;
 
@@ -63,7 +63,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
 
-            var criteriaFilters = new GeneCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new GeneIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<GeneIndex>()
@@ -83,7 +83,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
 
-            var criteriaFilters = new MutationCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new MutationIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<MutationIndex>()
@@ -103,7 +103,7 @@ namespace Unite.Composer.Search.Services
 
             criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
 
-            var criteriaFilters = new SpecimenCriteriaFiltersCollection(criteria)
+            var criteriaFilters = new SpecimenIndexFiltersCollection(criteria)
                 .All();
 
             var query = new SearchQuery<SpecimenIndex>()
