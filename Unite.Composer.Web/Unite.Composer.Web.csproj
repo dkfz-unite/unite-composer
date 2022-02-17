@@ -26,6 +26,8 @@
     <Folder Include="Controllers\Search\Specimens\" />
     <Folder Include="Resources\Genes\" />
     <Folder Include="Controllers\Search\Genes\" />
+    <Folder Include="Controllers\Search\Images\" />
+    <Folder Include="Resources\Images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -43,5 +45,7 @@
     <None Remove="Macross.Json.Extensions" />
     <None Remove="Resources\Genes\" />
     <None Remove="Controllers\Search\Genes\" />
+    <None Remove="Controllers\Search\Images\" />
+    <None Remove="Resources\Images\" />
   </ItemGroup>
 </Project>

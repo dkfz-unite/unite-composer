@@ -3,12 +3,12 @@ using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
+using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Indices.Services.Configuration.Options;
 
-using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
-using Unite.Composer.Search.Services.Filters.Base;
+using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
 namespace Unite.Composer.Search.Services
 {
@@ -105,26 +105,14 @@ namespace Unite.Composer.Search.Services
 
         private FiltersCollection<SpecimenIndex> GetFiltersCollection(SearchCriteria criteria, SpecimenSearchContext context)
         {
-            if (context.SpecimenType == Context.Enums.SpecimenType.Tissue)
+            return context.SpecimenType switch
             {
-                return new TissueIndexFiltersCollection(criteria);
-            }
-            else if (context.SpecimenType == Context.Enums.SpecimenType.CellLine)
-            {
-                return new CellLineIndexFiltersCollection(criteria);
-            }
-            else if (context.SpecimenType == Context.Enums.SpecimenType.Organoid)
-            {
-                return new OrganoidIndexFiltersCollection(criteria);
-            }
-            else if (context.SpecimenType == Context.Enums.SpecimenType.Xenograft)
-            {
-                return new XenograftIndexFiltersCollection(criteria);
-            }
-            else
-            {
-                return new SpecimenIndexFiltersCollection(criteria); 
-            }
+                Context.Enums.SpecimenType.Tissue => new TissueIndexFiltersCollection(criteria),
+                Context.Enums.SpecimenType.CellLine => new CellLineIndexFiltersCollection(criteria),
+                Context.Enums.SpecimenType.Organoid => new OrganoidIndexFiltersCollection(criteria),
+                Context.Enums.SpecimenType.Xenograft => new XenograftIndexFiltersCollection(criteria),
+                _ => new SpecimenIndexFiltersCollection(criteria)
+            };
         }
     }
 }

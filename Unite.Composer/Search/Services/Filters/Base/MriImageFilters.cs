@@ -18,11 +18,6 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            Add(new NotNullFilter<TIndex, MriImageIndex>(
-                ImageFilterNames.Type,
-                path.Join(image => image.MriImage)
-            ));
-
             Add(new EqualityFilter<TIndex, int>(
                 ImageFilterNames.Id,
                 path.Join(image => image.Id),

@@ -20,14 +20,6 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            if (criteria.HasValues())
-            {
-                Add(new NotNullFilter<TIndex, XenograftIndex>(
-                    SpecimenFilterNames.Type,
-                    path.Join(specimen => specimen.Xenograft))
-                );
-            }
-
             Add(new EqualityFilter<TIndex, int>(
                 SpecimenFilterNames.Id,
                 path.Join(specimen => specimen.Id),

@@ -35,6 +35,7 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddTransient<ISpecimensSearchService, SpecimensSearchService>();
             services.AddTransient<IGenesSearchService, GenesSearchService>();
             services.AddTransient<IMutationsSearchService, MutationsSearchService>();
+            services.AddTransient<IImagesSearchService, ImagesSearchService>();
 
             services.AddTransient<OncoGridDataService>();
             services.AddTransient<OncoGridDataService1>();

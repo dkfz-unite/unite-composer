@@ -19,14 +19,6 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 return;
             }
 
-            if (criteria.HasValues())
-            {
-                Add(new NotNullFilter<TIndex, CellLineIndex>(
-                    SpecimenFilterNames.Type,
-                    path.Join(specimen => specimen.CellLine)
-                ));
-            }
-
             Add(new EqualityFilter<TIndex, int>(
                 SpecimenFilterNames.Id,
                 path.Join(specimen => specimen.Id),

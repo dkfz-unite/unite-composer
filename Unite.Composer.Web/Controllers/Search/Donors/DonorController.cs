@@ -5,12 +5,14 @@ using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
+using Unite.Composer.Web.Resources.Images;
 using Unite.Composer.Web.Resources.Specimens;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
-using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
+using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
 namespace Unite.Composer.Web.Controllers.Search.Donors
 {
@@ -66,6 +68,15 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             return From(searchResult);
         }
 
+        [HttpPost("{id}/images")]
+        [CookieAuthorize]
+        public SearchResult<ImageResource> SearchImages(int id, [FromBody] SearchCriteria searchCriteria)
+        {
+            var searchResult = _donorsSearchService.SearchImages(id, searchCriteria);
+
+            return From(searchResult);
+        }
+
 
         private static DonorResource From(DonorIndex index)
         {
@@ -101,6 +112,15 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             {
                 Total = searchResult.Total,
                 Rows = searchResult.Rows.Select(index => new SpecimenResource(index)).ToArray()
+            };
+        }
+
+        private static SearchResult<ImageResource> From(SearchResult<ImageIndex> searchResult)
+        {
+            return new SearchResult<ImageResource>()
+            {
+                Total = searchResult.Total,
+                Rows = searchResult.Rows.Select(index => new ImageResource(index)).ToArray()
             };
         }
     }
