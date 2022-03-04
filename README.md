@@ -41,7 +41,7 @@ UNITE_ELASTIC_PASSWORD|ES service password||
 ### Docker Compose
 The easies way to install the application is to use docker-compose:
 - Environment configuration and installation scripts: https://github.com/dkfz-unite/unite-environment
-- Web portal configuration and installation scripts: https://github.com/dkfz-unite/unite-environment/tree/main/applications/unite-composer
+- Composer api configuration and installation scripts: https://github.com/dkfz-unite/unite-environment/tree/main/applications/unite-composer
 
 ### Docker
 [Dockerfile](https://github.com/dkfz-unite/unite-composer/blob/main/Dockerfile) is used to build an image of the application.
