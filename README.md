@@ -8,7 +8,7 @@ Composer service - mediator between web application and other parts of the appli
 - Search service - provides api to query data using different search criteria.
 - Protein annotation service - provides annotation of protein coding transcripts to retrieve information about pfam protein domains of coded sequences.
 
-Composer web api is written in ASP.NET Core (.NET5)
+Composer web api is written in ASP.NET (.NET 5)
 
 ## Access
 Environment|Address|Port
