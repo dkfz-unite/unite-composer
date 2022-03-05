@@ -75,7 +75,7 @@ docker run \
 -e UNITE_SQL_PASSWORD=[sql_password] \
 -e UNITE_ENSEMBL_HOST=https://grch37.rest.ensembl.org \
 -e UNITE_UNIPROT_HOST=https://www.ebi.ac.uk \
--e UNITE_PFAM_HOST=https://pfam.xfam.org
+-e UNITE_PFAM_HOST=https://pfam.xfam.org \
 -d \
 unite.composer:latest
 ```
