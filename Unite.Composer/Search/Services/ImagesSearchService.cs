@@ -62,12 +62,46 @@ namespace Unite.Composer.Search.Services
 
         public SearchResult<GeneIndex> SearchGenes(int imageId, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
         {
-            throw new NotImplementedException();
+            var criteria = searchCriteria ?? new SearchCriteria();
+
+            var context = searchContext ?? new ImageSearchContext();
+
+            criteria.ImageFilters = new ImageCriteria { Id = new[] { imageId } };
+
+            var criteriaFilters = new GeneIndexFiltersCollection(criteria)
+                .All();
+
+            var query = new SearchQuery<GeneIndex>()
+                .AddPagination(criteria.From, criteria.Size)
+                .AddFullTextSearch(criteria.Term)
+                .AddFilters(criteriaFilters)
+                .AddOrdering(gene => gene.NumberOfDonors);
+
+            var result = _genesIndexService.SearchAsync(query).Result;
+
+            return result;
         }
 
         public SearchResult<MutationIndex> SearchMutations(int imageId, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
         {
-            throw new NotImplementedException();
+            var criteria = searchCriteria ?? new SearchCriteria();
+
+            var context = searchContext ?? new ImageSearchContext();
+
+            criteria.ImageFilters = new ImageCriteria { Id = new[] { imageId } };
+
+            var criteriaFilters = new MutationIndexFiltersCollection(criteria)
+                .All();
+
+            var query = new SearchQuery<MutationIndex>()
+                .AddPagination(criteria.From, criteria.Size)
+                .AddFullTextSearch(criteria.Term)
+                .AddFilters(criteriaFilters)
+                .AddOrdering(mutation => mutation.NumberOfDonors);
+
+            var result = _mutationsIndexService.SearchAsync(query).Result;
+
+            return result;
         }
 
 

@@ -29,6 +29,15 @@ namespace Unite.Composer.Search.Services.Filters
             _filters.AddRange(geneFilters.All());
             _filters.AddRange(mutationFilters.All());
 
+            if (criteria.ImageFilters != null)
+            {
+                _filters.Add(new EqualityFilter<GeneIndex, int>(
+                  ImageFilterNames.Id,
+                  gene => gene.Mutations.First().Donors.First().Images.First().Id,
+                  criteria.ImageFilters.Id)
+                );
+            }
+
             if (criteria.SpecimenFilters != null)
             {
                 _filters.Add(new EqualityFilter<GeneIndex, int>(

@@ -6,10 +6,15 @@ namespace Unite.Composer.Web.Resources.Images
     {
         public int DonorId { get; set; }
 
+        public int NumberOfGenes { get; set; }
+        public int NumberOfMutations { get; set; }
 
         public ImageResource(ImageIndex index) : base(index)
         {
             DonorId = index.Donor.Id;
+
+            NumberOfGenes = index.NumberOfGenes;
+            NumberOfMutations = index.NumberOfMutations;
         }
     }
 }

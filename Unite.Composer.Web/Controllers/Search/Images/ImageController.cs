@@ -7,10 +7,8 @@ using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Images;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using GeneResource = Unite.Composer.Web.Resources.Genes.GeneResource;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
-using MutationResource = Unite.Composer.Web.Resources.Mutations.MutationResource;
 
 namespace Unite.Composer.Web.Controllers.Search.Images
 {
@@ -40,20 +38,20 @@ namespace Unite.Composer.Web.Controllers.Search.Images
 
         [HttpPost("{id}/genes")]
         [CookieAuthorize]
-        public SearchResult<GeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
+        public SearchResult<ImageGeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.SearchGenes(id, searchCriteria);
 
-            return From(searchResult);
+            return From(id, searchResult);
         }
 
         [HttpPost("{id}/mutations")]
         [CookieAuthorize]
-        public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
+        public SearchResult<ImageMutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.SearchMutations(id, searchCriteria);
 
-            return From(searchResult);
+            return From(id, searchResult);
         }
 
 
@@ -67,21 +65,21 @@ namespace Unite.Composer.Web.Controllers.Search.Images
             return new ImageResource(index);
         }
 
-        private static SearchResult<GeneResource> From(SearchResult<GeneIndex> searchResult)
+        private static SearchResult<ImageGeneResource> From(int imageId, SearchResult<GeneIndex> searchResult)
         {
-            return new SearchResult<GeneResource>()
+            return new SearchResult<ImageGeneResource>()
             {
                 Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new GeneResource(index)).ToArray()
+                Rows = searchResult.Rows.Select(index => new ImageGeneResource(imageId, index)).ToArray()
             };
         }
 
-        private static SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
+        private static SearchResult<ImageMutationResource> From(int imageId, SearchResult<MutationIndex> searchResult)
         {
-            return new SearchResult<MutationResource>()
+            return new SearchResult<ImageMutationResource>()
             {
                 Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new MutationResource(index)).ToArray()
+                Rows = searchResult.Rows.Select(index => new ImageMutationResource(imageId, index)).ToArray()
             };
         }
     }

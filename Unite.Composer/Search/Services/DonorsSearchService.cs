@@ -1,12 +1,15 @@
-﻿using Unite.Composer.Search.Engine;
+﻿using System;
+using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
+using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Indices.Services.Configuration.Options;
 
-using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
+using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
@@ -121,13 +124,13 @@ namespace Unite.Composer.Search.Services
             return result;
         }
 
-        public SearchResult<ImageIndex> SearchImages(int donorId, SearchCriteria searchCriteria = null)
+        public SearchResult<ImageIndex> SearchImages(int donorId, ImageType type, SearchCriteria searchCriteria = null)
         {
             var criteria = searchCriteria ?? new SearchCriteria();
 
             criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
 
-            var criteriaFilters = new ImageIndexFiltersCollection(criteria)
+            var criteriaFilters = GetFiltersCollection(type, criteria)
                 .All();
 
             var query = new SearchQuery<ImageIndex>()
@@ -138,6 +141,17 @@ namespace Unite.Composer.Search.Services
             var result = _imagesIndexService.SearchAsync(query).Result;
 
             return result;
+        }
+
+
+        private FiltersCollection<ImageIndex> GetFiltersCollection(ImageType type, SearchCriteria criteria)
+        {
+            return type switch
+            {
+                ImageType.MRI => new MriImageIndexFiltersCollection(criteria),
+                ImageType.CT => throw new NotImplementedException(),
+                _ => new ImageIndexFiltersCollection(criteria)
+            };
         }
     }
 }

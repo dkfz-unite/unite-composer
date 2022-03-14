@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
@@ -68,11 +69,11 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
             return From(searchResult);
         }
 
-        [HttpPost("{id}/images")]
+        [HttpPost("{id}/images/{type}")]
         [CookieAuthorize]
-        public SearchResult<ImageResource> SearchImages(int id, [FromBody] SearchCriteria searchCriteria)
+        public SearchResult<ImageResource> SearchImages(int id, ImageType type, [FromBody] SearchCriteria searchCriteria)
         {
-            var searchResult = _donorsSearchService.SearchImages(id, searchCriteria);
+            var searchResult = _donorsSearchService.SearchImages(id, type, searchCriteria);
 
             return From(searchResult);
         }
