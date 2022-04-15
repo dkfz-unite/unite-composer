@@ -1,9 +1,7 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Models.Identity;
-using Unite.Composer.Web.Services.Validation;
 using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
@@ -11,21 +9,15 @@ namespace Unite.Composer.Web.Controllers.Identity
     [Route("api/identity/[controller]")]
     public class SignUpController : Controller
     {
-        private readonly IValidator<SignUpModel> _validator;
-        private readonly IValidationService _validationService;
         private readonly IAccessibilityService _accessibilityService;
         private readonly IIdentityService<User> _identityService;
         private ILogger _logger;
 
         public SignUpController(
-            IValidator<SignUpModel> validator,
-            IValidationService validationService,
             IAccessibilityService accessibilityService,
             IIdentityService<User> identityService,
             ILogger<SignUpController> logger)
         {
-            _validator = validator;
-            _validationService = validationService;
             _accessibilityService = accessibilityService;
             _identityService = identityService;
             _logger = logger;
@@ -34,13 +26,6 @@ namespace Unite.Composer.Web.Controllers.Identity
         [HttpPost]
         public IActionResult Post([FromBody] SignUpModel signUpModel)
         {
-            if (!_validationService.ValidateParameter(signUpModel, _validator, out var modelErrorMessage))
-            {
-                _logger.LogWarning(modelErrorMessage);
-
-                return BadRequest(modelErrorMessage);
-            }
-
             if (!_accessibilityService.IsConfigured())
             {
                 var notConfiguredErrorMessage = "Access list is not configured";

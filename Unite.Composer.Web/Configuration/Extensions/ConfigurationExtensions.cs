@@ -10,7 +10,6 @@ using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Models.Identity.Validators;
-using Unite.Composer.Web.Services.Validation;
 using Unite.Identity.Entities;
 using Unite.Identity.Services;
 using Unite.Identity.Services.Configuration.Options;
@@ -56,8 +55,6 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddTransient<IValidator<SignUpModel>, SignUpModelValidator>();
             services.AddTransient<IValidator<SignInModel>, SignInModelValidator>();
             services.AddTransient<IValidator<PasswordChangeModel>, PasswordChangeModelValidator>();
-
-            services.AddTransient<IValidationService, ValidationService>();
         }
     }
 }
