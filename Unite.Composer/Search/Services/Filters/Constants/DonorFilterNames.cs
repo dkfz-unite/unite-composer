@@ -10,6 +10,7 @@
         public static readonly string Gender = $"{_prefix}.Gender";
         public static readonly string Age = $"{_prefix}.Age";
         public static readonly string VitalStatus = $"{_prefix}.VitalStatus";
+        public static readonly string ProgressionStatus = $"{_prefix}.ProgressionStatus";
         public static readonly string Therapy = $"{_prefix}.Therapy";
 
         public static readonly string MtaProtected = $"{_prefix}.MtaProtected";

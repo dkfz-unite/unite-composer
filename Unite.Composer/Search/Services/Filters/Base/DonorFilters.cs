@@ -57,6 +57,12 @@ namespace Unite.Composer.Search.Services.Filters.Base
                 criteria.VitalStatus)
             );
 
+            Add(new BooleanFilter<TIndex>(
+                DonorFilterNames.ProgressionStatus,
+                path.Join(donor => donor.ClinicalData.ProgressionStatus),
+                criteria.VitalStatus)
+            );
+
             Add(new SimilarityFilter<TIndex, object>(
                DonorFilterNames.Therapy,
                path.Join(donor => donor.Treatments.First().Therapy.Suffix(_keywordSuffix)),
