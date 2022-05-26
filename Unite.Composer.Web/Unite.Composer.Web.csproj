@@ -6,9 +6,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Configuration\Filters\Attributes\" />
     <Folder Include="Controllers\Identity\" />
-    <Folder Include="Controllers\Identity\Helpers\" />
     <Folder Include="Resources\" />
     <Folder Include="Resources\Donors\" />
     <Folder Include="Resources\Mutations\" />
@@ -26,6 +24,7 @@
     <Folder Include="Controllers\Search\Genes\" />
     <Folder Include="Controllers\Search\Images\" />
     <Folder Include="Resources\Images\" />
+    <Folder Include="Controllers\Identity\Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -35,6 +34,8 @@
   <ItemGroup>
     <PackageReference Include="Macross.Json.Extensions" Version="2.2.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controllers\Search\Donors\" />
@@ -46,5 +47,8 @@
     <None Remove="Controllers\Search\Images\" />
     <None Remove="Resources\Images\" />
     <None Remove="FluentValidation.AspNetCore" />
+    <None Remove="System.IdentityModel.Tokens.Jwt" />
+    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <None Remove="Controllers\Identity\Helpers\" />
   </ItemGroup>
 </Project>

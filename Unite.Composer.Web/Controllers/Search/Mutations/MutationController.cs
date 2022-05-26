@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
 using Unite.Composer.Web.Resources.Mutations;
 
@@ -14,6 +14,7 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MutationController : Controller
     {
         private readonly IMutationsSearchService _mutationsSearchService;
@@ -26,7 +27,6 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
 
 
         [HttpGet("{id}")]
-        [CookieAuthorize]
         public MutationResource Get(long id)
         {
             var key = id.ToString();
@@ -37,7 +37,6 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
         }
 
         [HttpPost("{id}/donors")]
-        [CookieAuthorize]
         public SearchResult<DonorResource> GetDonors(long id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _mutationsSearchService.SearchDonors(id, searchCriteria);

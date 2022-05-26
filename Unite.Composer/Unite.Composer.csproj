@@ -12,7 +12,6 @@
   <ItemGroup>
     <Folder Include="Identity\" />
     <Folder Include="Identity\Services\" />
-    <Folder Include="Identity\Constants\" />
     <Folder Include="Search\Engine\" />
     <Folder Include="Search\Engine\Extensions\" />
     <Folder Include="Search\Engine\Filters\" />

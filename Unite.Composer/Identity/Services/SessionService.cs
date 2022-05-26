@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Unite.Identity.Entities;
 using Unite.Identity.Services;
 
@@ -28,21 +27,19 @@ namespace Unite.Composer.Identity.Services
                 Token = token
             };
 
-            _dbContext.UserSessions.Add(userSession);
+            _dbContext.Add(userSession);
             _dbContext.SaveChanges();
 
             return userSession;
         }
 
-        public UserSession GetSession(UserSession session)
+        public UserSession FindSession(User identity, UserSession session)
         {
-            var userSession = _dbContext.UserSessions
-                .Include(
-                    userSession => userSession.User
-                )
+            var userSession = _dbContext
+                .Set<UserSession>()
                 .FirstOrDefault(userSession =>
-                    userSession.Session == session.Session &&
-                    userSession.Token == session.Token
+                    userSession.UserId == identity.Id &&
+                    userSession.Session == session.Session
                 );
 
             return userSession;
@@ -50,7 +47,7 @@ namespace Unite.Composer.Identity.Services
 
         public void RemoveSession(UserSession session)
         {
-            _dbContext.UserSessions.Remove(session);
+            _dbContext.Remove(session);
             _dbContext.SaveChanges();
         }
     }

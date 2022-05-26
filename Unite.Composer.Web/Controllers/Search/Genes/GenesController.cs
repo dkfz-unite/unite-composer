@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Genes;
 using Unite.Indices.Entities.Genes;
 
@@ -11,6 +11,7 @@ namespace Unite.Composer.Web.Controllers.Search.Genes
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class GenesController : Controller
     {
         private readonly IGenesSearchService _searchService;
@@ -23,7 +24,6 @@ namespace Unite.Composer.Web.Controllers.Search.Genes
 
 
         [HttpPost("")]
-        [CookieAuthorize]
         public SearchResult<GeneResource> Search([FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.Search(searchCriteria);

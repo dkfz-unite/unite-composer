@@ -43,6 +43,8 @@ namespace Unite.Composer.Web.Configuration.Extensions
 
         private static void AddOptions(this IServiceCollection services)
         {
+            services.AddTransient<ApiOptions>();
+            services.AddTransient<AdminOptions>();
             services.AddTransient<IElasticOptions, ElasticOptions>();
             services.AddTransient<ISqlOptions, SqlOptions>();
             services.AddTransient<IEnsemblOptions, EnsemblOptions>();

@@ -2,8 +2,8 @@
 {
     public interface ISessionService<TIdentity, TSession>
     {
+        TSession FindSession(TIdentity identity, TSession session);
         TSession CreateSession(TIdentity identity, string client);
-        TSession GetSession(TSession session);
         void RemoveSession(TSession session);
     }
 }

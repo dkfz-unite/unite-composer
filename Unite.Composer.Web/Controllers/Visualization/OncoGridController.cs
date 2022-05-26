@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Visualization.Oncogrid.Data;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 
 namespace Unite.Composer.Web.Controllers.Visualization
 {
     [Route("api/[controller]")]
+    [Authorize]
     public class OncoGridController : Controller
     {
         private readonly OncoGridDataService _dataService;
@@ -17,14 +18,12 @@ namespace Unite.Composer.Web.Controllers.Visualization
         }
 
         [HttpGet]
-        [CookieAuthorize]
         public OncoGridData Get()
         {
             return _dataService.LoadData();
         }
 
         [HttpPost]
-        [CookieAuthorize]
         public OncoGridData Post([FromBody] SearchCriteria searchCriteria)
         {
             return _dataService.LoadData(searchCriteria);

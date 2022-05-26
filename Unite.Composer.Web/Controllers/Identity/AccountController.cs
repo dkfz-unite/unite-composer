@@ -1,10 +1,10 @@
 ﻿using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
-using Unite.Composer.Web.Controllers.Identity.Helpers;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Resources.Identity;
 using Unite.Identity.Entities;
@@ -12,29 +12,26 @@ using Unite.Identity.Entities;
 namespace Unite.Composer.Web.Controllers.Identity
 {
     [Route("api/identity/[controller]")]
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly IIdentityService<User> _identityService;
-        private readonly ISessionService<User, UserSession> _sessionService;
         private readonly ILogger _logger;
 
 
         public AccountController(
             IIdentityService<User> identityService,
-            ISessionService<User, UserSession> sessionService,
             ILogger<AccountController> logger)
         {
             _identityService = identityService;
-            _sessionService = sessionService;
             _logger = logger;
         }
 
 
         [HttpGet]
-        [CookieAuthorize]
         public IActionResult Get()
         {
-            var currentUser = GetCurrentUser(Request);
+            var currentUser = GetCurrentUser();
 
             var account = CreateFrom(currentUser);
 
@@ -42,10 +39,9 @@ namespace Unite.Composer.Web.Controllers.Identity
         }
 
         [HttpPut]
-        [CookieAuthorize]
         public IActionResult Put([FromBody] PasswordChangeModel model)
         {
-            var currentUser = GetCurrentUser(Request);
+            var currentUser = GetCurrentUser();
 
             var updatedUser = _identityService.ChangePassword(currentUser.Email, model.OldPassword, model.NewPassword);
 
@@ -64,16 +60,11 @@ namespace Unite.Composer.Web.Controllers.Identity
         }
 
 
-        private User GetCurrentUser(HttpRequest request)
+        private User GetCurrentUser()
         {
-            // Should never be null since CookieAuthorize filter was passed
-            var cookies = CookiesHelper.GetAuthorizationCookies(request.Cookies);
+            var email = HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
-            // Should never be null since CookieAuthorize filter was passed
-            var session = _sessionService.GetSession(new() { Session = cookies.Value.Session, Token = cookies.Value.Token });
-
-            // Should never be null since CookieAuthorize filter was passed
-            var user = _identityService.FindUser(session.User.Email);
+            var user = _identityService.FindUser(email);
 
             return user;
         }

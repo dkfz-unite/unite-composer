@@ -1,45 +1,68 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
 using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
     [Route("api/identity/[controller]")]
+    [Authorize]
     public class SignOutController : Controller
     {
+        private readonly IIdentityService<User> _identityService;
         private readonly ISessionService<User, UserSession> _sessionService;
+        private readonly ILogger _logger;
 
         public SignOutController(
-            ISessionService<User, UserSession> sessionService)
+            IIdentityService<User> identityService,
+            ISessionService<User, UserSession> sessionService,
+            ILogger<SignOutController> logger)
         {
+            _identityService = identityService;
             _sessionService = sessionService;
+            _logger = logger;
         }
 
         [HttpPost]
-        [CookieAuthorize]
         public IActionResult Post()
         {
-            var session = GetCurrentSession(Request);
+            //return Ok();
 
-            _sessionService.RemoveSession(session);
+            // Refresh token functionality is not yet implemented
 
-            CookiesHelper.RemoveAuthorizationCookies(Response.Cookies);
+            var session = CookieHelper.GetSessionCookie(Request);
+
+            if (session != null)
+            {
+                var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
+
+                var user = _identityService.FindUser(email);
+
+                if (user == null)
+                {
+                    _logger.LogWarning("Invalid attempt to sign out not existing user");
+
+                    return BadRequest();
+                }
+
+                var userSession = _sessionService.FindSession(user, new() { Session = session });
+
+                if (userSession == null)
+                {
+                    _logger.LogWarning("Invalid attempt to remove not existing session");
+
+                    return BadRequest();
+                }
+
+                _sessionService.RemoveSession(userSession);
+
+                CookieHelper.DeleteSessionCookie(Response);
+            }
 
             return Ok();
-        }
-
-        private UserSession GetCurrentSession(HttpRequest request)
-        {
-            // Should neven be null since CookieAuthorize filter was passed
-            var cookies = CookiesHelper.GetAuthorizationCookies(request.Cookies);
-
-            // Should neven be null since CookieAuthorize filter was passed
-            var session = _sessionService.GetSession(new() { Session = cookies.Value.Session, Token = cookies.Value.Token });
-
-            return session;
         }
     }
 }

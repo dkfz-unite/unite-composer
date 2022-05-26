@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
 using Unite.Indices.Entities.Donors;
 
@@ -11,6 +11,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DonorsController : Controller
     {
         private readonly IDonorsSearchService _donorsSearchService;
@@ -23,7 +24,6 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
 
 
         [HttpPost("")]
-        [CookieAuthorize]
         public SearchResult<DonorResource> Search([FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _donorsSearchService.Search(searchCriteria);

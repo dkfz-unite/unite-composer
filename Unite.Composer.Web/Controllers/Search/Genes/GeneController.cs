@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
 using Unite.Composer.Web.Resources.Mutations;
 
@@ -11,11 +10,13 @@ using GeneResource = Unite.Composer.Web.Resources.Genes.GeneResource;
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Unite.Composer.Web.Controllers.Search.Genes
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class GeneController : Controller
     {
         private readonly IGenesSearchService _genesSearchService;
@@ -28,7 +29,6 @@ namespace Unite.Composer.Web.Controllers.Search.Genes
 
 
         [HttpGet("{id}")]
-        [CookieAuthorize]
         public GeneResource Get(long id)
         {
             var key = id.ToString();
@@ -39,7 +39,6 @@ namespace Unite.Composer.Web.Controllers.Search.Genes
         }
 
         [HttpPost("{id}/donors")]
-        [CookieAuthorize]
         public SearchResult<DonorResource> GetDonors(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _genesSearchService.SearchDonors(id, searchCriteria);
@@ -48,7 +47,6 @@ namespace Unite.Composer.Web.Controllers.Search.Genes
         }
 
         [HttpPost("{id}/mutations")]
-        [CookieAuthorize]
         public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _genesSearchService.SearchMutations(id, searchCriteria);

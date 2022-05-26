@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Mutations;
 using Unite.Indices.Entities.Mutations;
 
@@ -11,6 +11,7 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MutationsController : Controller
     {
         private readonly IMutationsSearchService _searchService;
@@ -23,7 +24,6 @@ namespace Unite.Composer.Web.Controllers.Search.Mutations
 
 
         [HttpPost("")]
-        [CookieAuthorize]
         public SearchResult<MutationResource> Search([FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.Search(searchCriteria);

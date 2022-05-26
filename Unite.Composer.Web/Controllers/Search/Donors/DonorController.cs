@@ -1,10 +1,10 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Donors;
 using Unite.Composer.Web.Resources.Images;
 using Unite.Composer.Web.Resources.Specimens;
@@ -19,6 +19,7 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DonorController : Controller
     {
         private readonly IDonorsSearchService _donorsSearchService;
@@ -32,7 +33,6 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
 
 
         [HttpGet("{id}")]
-        [CookieAuthorize]
         public DonorResource Get(int id)
         {
             var key = id.ToString();
@@ -43,7 +43,6 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
         [HttpPost("{id}/genes")]
-        [CookieAuthorize]
         public SearchResult<DonorGeneResource> SearchGenes(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _donorsSearchService.SearchGenes(id, searchCriteria);
@@ -52,7 +51,6 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
         [HttpPost("{id}/mutations")]
-        [CookieAuthorize]
         public SearchResult<DonorMutationResource> SearchMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _donorsSearchService.SearchMutations(id, searchCriteria);
@@ -61,7 +59,6 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
         [HttpPost("{id}/specimens")]
-        [CookieAuthorize]
         public SearchResult<SpecimenResource> SearchSpecimens(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _donorsSearchService.SearchSpecimens(id, searchCriteria);
@@ -70,7 +67,6 @@ namespace Unite.Composer.Web.Controllers.Search.Donors
         }
 
         [HttpPost("{id}/images/{type}")]
-        [CookieAuthorize]
         public SearchResult<ImageResource> SearchImages(int id, ImageType type, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _donorsSearchService.SearchImages(id, type, searchCriteria);

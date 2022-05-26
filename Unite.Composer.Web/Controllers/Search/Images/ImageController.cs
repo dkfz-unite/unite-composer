@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Images;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -14,6 +14,7 @@ namespace Unite.Composer.Web.Controllers.Search.Images
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ImageController : Controller
     {
         private readonly IImagesSearchService _searchService;
@@ -26,7 +27,6 @@ namespace Unite.Composer.Web.Controllers.Search.Images
 
 
         [HttpGet("{id}")]
-        [CookieAuthorize]
         public ImageResource Get(int id)
         {
             var key = id.ToString();
@@ -37,7 +37,6 @@ namespace Unite.Composer.Web.Controllers.Search.Images
         }
 
         [HttpPost("{id}/genes")]
-        [CookieAuthorize]
         public SearchResult<ImageGeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.SearchGenes(id, searchCriteria);
@@ -46,7 +45,6 @@ namespace Unite.Composer.Web.Controllers.Search.Images
         }
 
         [HttpPost("{id}/mutations")]
-        [CookieAuthorize]
         public SearchResult<ImageMutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
         {
             var searchResult = _searchService.SearchMutations(id, searchCriteria);

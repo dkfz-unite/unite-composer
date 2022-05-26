@@ -3,50 +3,61 @@ using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
-using Unite.Composer.Web.Models.Identity;
 using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
     [Route("api/identity/[controller]")]
-    public class SignInController : Controller
+    public class TokenController : Controller
     {
         private readonly ApiOptions _apiOptions;
-        private readonly AdminOptions _adminOptions;
         private readonly IIdentityService<User> _identityService;
         private readonly ISessionService<User, UserSession> _sessionService;
         private readonly ILogger _logger;
 
 
-        public SignInController(
+        public TokenController(
             ApiOptions apiOptions,
-            AdminOptions adminOptions,
             IIdentityService<User> identityService,
             ISessionService<User, UserSession> sessionService,
-            ILogger<SignInController> logger)
+            ILogger<TokenController> logger)
         {
             _apiOptions = apiOptions;
-            _adminOptions = adminOptions;
             _identityService = identityService;
             _sessionService = sessionService;
             _logger = logger;
         }
 
 
-        public IActionResult Post([FromBody] SignInModel model, [FromHeader(Name = "User-Agent")] string client)
+        [HttpPost]
+        public IActionResult Post(string login)
         {
-            var user = _identityService.SignInUser(model.Email, model.Password);
+            var session = CookieHelper.GetSessionCookie(Request);
+
+            if (session == null)
+            {
+                _logger.LogWarning("Invalid attempt to refresh authorization token");
+
+                return Unauthorized();
+            }
+
+            var user = _identityService.FindUser(login);
 
             if (user == null)
             {
-                var invalidCredentialsErrorMessage = $"Invalid login or password";
+                _logger.LogWarning("Invalid attempt to refresh authorization token for not existing user");
 
-                _logger.LogWarning($"{invalidCredentialsErrorMessage} for user '{model.Email}'");
-
-                return BadRequest(invalidCredentialsErrorMessage);
+                return BadRequest();
             }
 
-            var userSession = _sessionService.CreateSession(user, client);
+            var userSession = _sessionService.FindSession(user, new() { Session = session });
+
+            if (userSession == null)
+            {
+                _logger.LogWarning("Invalid attempt to refresh authorization token for not existing session");
+
+                return BadRequest();
+            }
 
             var identity = ClaimsHelper.GetIdentity(user);
 

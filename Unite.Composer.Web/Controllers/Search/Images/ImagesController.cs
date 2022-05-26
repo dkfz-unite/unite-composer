@@ -1,11 +1,11 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Configuration.Filters.Attributes;
 using Unite.Composer.Web.Resources.Images;
 using Unite.Indices.Entities.Images;
 
@@ -13,6 +13,7 @@ namespace Unite.Composer.Web.Controllers.Search.Images
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ImagesController : Controller
     {
         private readonly IImagesSearchService _searchService;
@@ -25,7 +26,6 @@ namespace Unite.Composer.Web.Controllers.Search.Images
 
 
         [HttpPost("{type}")]
-        [CookieAuthorize]
         public SearchResult<ImageResource> Search(ImageType type, [FromBody] SearchCriteria searchCriteria)
         {
             var searchContext = new ImageSearchContext(type);
