@@ -60,7 +60,7 @@ namespace Unite.Composer.Search.Services.Filters.Base
             Add(new BooleanFilter<TIndex>(
                 DonorFilterNames.ProgressionStatus,
                 path.Join(donor => donor.ClinicalData.ProgressionStatus),
-                criteria.VitalStatus)
+                criteria.ProgressionStatus)
             );
 
             Add(new SimilarityFilter<TIndex, object>(
