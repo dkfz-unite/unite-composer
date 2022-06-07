@@ -13,7 +13,7 @@ namespace Unite.Composer.Web.Controllers.Search.Images
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class ImagesController : Controller
     {
         private readonly IImagesSearchService _searchService;
