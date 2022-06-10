@@ -39,6 +39,7 @@ namespace Unite.Composer.Identity.Services
             {
                 user.Password = passwordHash;
                 user.IsRoot = isRoot;
+                user.IsRegistered = true;
 
                 _dbContext.Update(user);
                 _dbContext.SaveChanges();
