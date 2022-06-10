@@ -25,6 +25,10 @@
     <Folder Include="Controllers\Search\Images\" />
     <Folder Include="Resources\Images\" />
     <Folder Include="Controllers\Identity\Helpers\" />
+    <Folder Include="HostedServices\" />
+    <Folder Include="Controllers\Admin\" />
+    <Folder Include="Models\Admin\" />
+    <Folder Include="Models\Admin\Validators\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -50,5 +54,9 @@
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <None Remove="Controllers\Identity\Helpers\" />
+    <None Remove="HostedServices\" />
+    <None Remove="Controllers\Admin\" />
+    <None Remove="Models\Admin\" />
+    <None Remove="Models\Admin\Validators\" />
   </ItemGroup>
 </Project>

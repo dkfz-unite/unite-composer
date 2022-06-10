@@ -1,21 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Unite.Composer.Identity.Services;
+using Unite.Composer.Admin.Services;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
     [Route("api/[controller]")]
     public class AccessibilityController : Controller
     {
-        private readonly IAccessibilityService _accessibilityService;
-        private readonly ILogger _logger;
+        private readonly UserService _userService;
 
-        public AccessibilityController(
-            IAccessibilityService accessibilityService,
-            ILogger<AccessibilityController> logger)
+
+        public AccessibilityController(UserService userService)
         {
-            _accessibilityService = accessibilityService;
-            _logger = logger;
+            _userService = userService;
         }
 
 
@@ -24,34 +20,14 @@ namespace Unite.Composer.Web.Controllers.Identity
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                var modelErrorMessage = $"Request parameter {nameof(email)} is missing";
-
-                _logger.LogWarning(modelErrorMessage);
-
-                return BadRequest(modelErrorMessage);
+                return BadRequest($"Request parameter {nameof(email)} is missing");
             }
 
-            if (!_accessibilityService.IsConfigured())
-            {
-                var notConfiguredErrorMessage = "Access list is not configured";
+            var emailNormalized = email.Trim().ToLower();
 
-                _logger.LogCritical(notConfiguredErrorMessage);
+            var candidate = _userService.GetUser(user => user.Email == emailNormalized && user.IsRegistered == false);
 
-                return NotFound(notConfiguredErrorMessage);
-            }
-
-            var accessAllowed = _accessibilityService.IsAllowed(email);
-
-            if (!accessAllowed)
-            {
-                var notInAccessListErrorMessage = $"Email '{email}' is not in access list.";
-
-                _logger.LogWarning(notInAccessListErrorMessage);
-
-                return NotFound(notInAccessListErrorMessage);
-            }
-
-            return Ok();
+            return candidate != null ? Ok() : NotFound($"Email '{emailNormalized}' is not in access list.");
         }
     }
 }

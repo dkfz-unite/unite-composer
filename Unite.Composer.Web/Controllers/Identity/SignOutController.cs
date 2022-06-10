@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
-using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
@@ -12,13 +11,13 @@ namespace Unite.Composer.Web.Controllers.Identity
     [Authorize]
     public class SignOutController : Controller
     {
-        private readonly IIdentityService<User> _identityService;
-        private readonly ISessionService<User, UserSession> _sessionService;
+        private readonly IdentityService _identityService;
+        private readonly SessionService _sessionService;
         private readonly ILogger _logger;
 
         public SignOutController(
-            IIdentityService<User> identityService,
-            ISessionService<User, UserSession> sessionService,
+            IdentityService identityService,
+            SessionService sessionService,
             ILogger<SignOutController> logger)
         {
             _identityService = identityService;
@@ -29,17 +28,13 @@ namespace Unite.Composer.Web.Controllers.Identity
         [HttpPost]
         public IActionResult Post()
         {
-            //return Ok();
-
-            // Refresh token functionality is not yet implemented
-
             var session = CookieHelper.GetSessionCookie(Request);
 
             if (session != null)
             {
                 var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-                var user = _identityService.FindUser(email);
+                var user = _identityService.GetUser(email);
 
                 if (user == null)
                 {
@@ -48,7 +43,7 @@ namespace Unite.Composer.Web.Controllers.Identity
                     return BadRequest();
                 }
 
-                var userSession = _sessionService.FindSession(user, new() { Session = session });
+                var userSession = _sessionService.FindSession(user, session);
 
                 if (userSession == null)
                 {

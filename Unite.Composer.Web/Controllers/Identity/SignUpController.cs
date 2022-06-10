@@ -1,61 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Models.Identity;
-using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
     [Route("api/identity/[controller]")]
     public class SignUpController : Controller
     {
-        private readonly IAccessibilityService _accessibilityService;
-        private readonly IIdentityService<User> _identityService;
-        private ILogger _logger;
+        private readonly IdentityService _identityService;
 
-        public SignUpController(
-            IAccessibilityService accessibilityService,
-            IIdentityService<User> identityService,
-            ILogger<SignUpController> logger)
+        public SignUpController(IdentityService identityService)
         {
-            _accessibilityService = accessibilityService;
             _identityService = identityService;
-            _logger = logger;
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] SignUpModel signUpModel)
         {
-            if (!_accessibilityService.IsConfigured())
-            {
-                var notConfiguredErrorMessage = "Access list is not configured";
-
-                _logger.LogCritical(notConfiguredErrorMessage);
-
-                return NotFound(notConfiguredErrorMessage);
-            }
-
-            if (!_accessibilityService.IsAllowed(signUpModel.Email))
-            {
-                var notInListErrorMessage = $"Email address '{signUpModel.Email}' is not in access list";
-
-                _logger.LogWarning(notInListErrorMessage);
-
-                return NotFound(notInListErrorMessage);
-            }
-
             var user = _identityService.SignUpUser(signUpModel.Email, signUpModel.Password);
 
-            if (user == null)
-            {
-                var userExistsErrorMessage = $"User with email '{signUpModel.Email}' already exists";
-
-                _logger.LogWarning(userExistsErrorMessage);
-
-                return BadRequest(userExistsErrorMessage);
-            }
-
-            return Ok();
+            return user != null ? Ok() : BadRequest($"Email address '{signUpModel.Email}' is not in access list or already registered");
         }
     }
 }

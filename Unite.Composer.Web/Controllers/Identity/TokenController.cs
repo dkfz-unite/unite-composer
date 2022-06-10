@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
-using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
@@ -11,15 +10,15 @@ namespace Unite.Composer.Web.Controllers.Identity
     public class TokenController : Controller
     {
         private readonly ApiOptions _apiOptions;
-        private readonly IIdentityService<User> _identityService;
-        private readonly ISessionService<User, UserSession> _sessionService;
+        private readonly IdentityService _identityService;
+        private readonly SessionService _sessionService;
         private readonly ILogger _logger;
 
 
         public TokenController(
             ApiOptions apiOptions,
-            IIdentityService<User> identityService,
-            ISessionService<User, UserSession> sessionService,
+            IdentityService identityService,
+            SessionService sessionService,
             ILogger<TokenController> logger)
         {
             _apiOptions = apiOptions;
@@ -41,7 +40,7 @@ namespace Unite.Composer.Web.Controllers.Identity
                 return Unauthorized();
             }
 
-            var user = _identityService.FindUser(login);
+            var user = _identityService.GetUser(login);
 
             if (user == null)
             {
@@ -50,7 +49,7 @@ namespace Unite.Composer.Web.Controllers.Identity
                 return BadRequest();
             }
 
-            var userSession = _sessionService.FindSession(user, new() { Session = session });
+            var userSession = _sessionService.FindSession(user, session);
 
             if (userSession == null)
             {

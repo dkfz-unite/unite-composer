@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
@@ -8,9 +9,11 @@ using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configurat
 using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
+using Unite.Composer.Web.HostedServices;
+using Unite.Composer.Web.Models.Admin;
+using Unite.Composer.Web.Models.Admin.Validators;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Models.Identity.Validators;
-using Unite.Identity.Entities;
 using Unite.Identity.Services;
 using Unite.Identity.Services.Configuration.Options;
 using Unite.Indices.Services.Configuration.Options;
@@ -26,9 +29,9 @@ namespace Unite.Composer.Web.Configuration.Extensions
 
             services.AddScoped<IdentityDbContext>();
 
-            services.AddTransient<IAccessibilityService, AccessibilityService>();
-            services.AddTransient<IIdentityService<User>, IdentityService>();
-            services.AddTransient<ISessionService<User, UserSession>, SessionService>();
+            services.AddTransient<UserService>();
+            services.AddTransient<IdentityService>();
+            services.AddTransient<SessionService>();
 
             services.AddTransient<IDonorsSearchService, DonorsSearchService>();
             services.AddTransient<ISpecimensSearchService, SpecimensSearchService>();
@@ -39,12 +42,14 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddTransient<OncoGridDataService>();
             services.AddTransient<OncoGridDataService1>();
             services.AddTransient<ProteinPlotDataService>();
+
+            services.AddHostedService<RootHostedService>();
         }
 
         private static void AddOptions(this IServiceCollection services)
         {
             services.AddTransient<ApiOptions>();
-            services.AddTransient<AdminOptions>();
+            services.AddTransient<RootOptions>();
             services.AddTransient<IElasticOptions, ElasticOptions>();
             services.AddTransient<ISqlOptions, SqlOptions>();
             services.AddTransient<IEnsemblOptions, EnsemblOptions>();
@@ -54,6 +59,8 @@ namespace Unite.Composer.Web.Configuration.Extensions
 
         private static void AddValidation(this IServiceCollection services)
         {
+            services.AddTransient<IValidator<AddUserModel>, AddUserModelValidator>();
+            services.AddTransient<IValidator<EditUserModel>, EditUserModelValidator>();
             services.AddTransient<IValidator<SignUpModel>, SignUpModelValidator>();
             services.AddTransient<IValidator<SignInModel>, SignInModelValidator>();
             services.AddTransient<IValidator<PasswordChangeModel>, PasswordChangeModelValidator>();

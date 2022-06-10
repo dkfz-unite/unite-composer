@@ -15,12 +15,12 @@ namespace Unite.Composer.Web.Controllers.Identity
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly IIdentityService<User> _identityService;
+        private readonly IdentityService _identityService;
         private readonly ILogger _logger;
 
 
         public AccountController(
-            IIdentityService<User> identityService,
+            IdentityService identityService,
             ILogger<AccountController> logger)
         {
             _identityService = identityService;
@@ -47,11 +47,7 @@ namespace Unite.Composer.Web.Controllers.Identity
 
             if (updatedUser == null)
             {
-                var invalidPasswordMessage = $"Invalid old password";
-
-                _logger.LogWarning($"{invalidPasswordMessage} for user '{currentUser.Email}'");
-
-                return BadRequest(invalidPasswordMessage);
+                return BadRequest($"Invalid old password");
             }
 
             var account = CreateFrom(currentUser);
@@ -64,7 +60,7 @@ namespace Unite.Composer.Web.Controllers.Identity
         {
             var email = HttpContext.User.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
 
-            var user = _identityService.FindUser(email);
+            var user = _identityService.GetUser(email);
 
             return user;
         }

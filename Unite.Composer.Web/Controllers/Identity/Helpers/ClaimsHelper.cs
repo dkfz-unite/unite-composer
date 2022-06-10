@@ -2,17 +2,34 @@
 using System.Linq;
 using System.Security.Claims;
 using Unite.Identity.Entities;
+using Unite.Identity.Extensions;
 
 namespace Unite.Composer.Web.Controllers.Identity.Helpers
 {
     public class ClaimsHelper
     {
+        public const string PermissionClaimType = "permission";
+
         public static ClaimsIdentity GetIdentity(User user)
         {
-            var identity = new ClaimsIdentity(new Claim[]
+            var claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+
+            if (user.IsRoot)
             {
-                new Claim(ClaimTypes.Email, user.Email)
-            });
+                claims.Add(new Claim(ClaimTypes.Role, "Root"));
+            }
+
+            if (user.UserPermissions != null)
+            {
+                foreach (var userPermission in user.UserPermissions)
+                {
+                    claims.Add(new Claim(PermissionClaimType, userPermission.PermissionId.ToDefinitionString()));
+                }
+            }
+
+            var identity = new ClaimsIdentity(claims);
 
             return identity;
         }

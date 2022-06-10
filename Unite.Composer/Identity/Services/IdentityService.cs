@@ -7,7 +7,7 @@ using Unite.Identity.Services;
 
 namespace Unite.Composer.Identity.Services
 {
-    public class IdentityService : IIdentityService<User>
+    public class IdentityService
     {
         private readonly IdentityDbContext _dbContext;
 
@@ -16,74 +16,71 @@ namespace Unite.Composer.Identity.Services
             _dbContext = dbContext;
         }
 
-        public User FindUser(string login)
+        public User GetUser(string email)
         {
-            var loginNormalised = login.ToLower().Trim();
-
-            var user = _dbContext.Users
+            var user = _dbContext.Set<User>()
                 .Include(user => user.UserSessions)
-                .FirstOrDefault(user => user.Email == loginNormalised);
+                .Include(user => user.UserPermissions)
+                .FirstOrDefault(user => user.Email == email);
 
             return user;
         }
 
-        public User SignUpUser(string login, string password)
+        public User SignUpUser(string email, string password, bool isRoot = false)
         {
-            var loginNormalised = login.ToLower().Trim();
             var passwordHash = GetStringHash(password);
 
-            var exists = _dbContext.Users.Any(user =>
-                user.Email == loginNormalised
+            var user = _dbContext.Set<User>().FirstOrDefault(user =>
+                user.Email == email &&
+                user.IsRegistered == false
             );
 
-            if (!exists)
+            if (user != null)
             {
-                var user = new User()
-                {
-                    Email = loginNormalised,
-                    Password = passwordHash
-                };
+                user.Password = passwordHash;
+                user.IsRoot = isRoot;
 
-                _dbContext.Users.Add(user);
+                _dbContext.Update(user);
                 _dbContext.SaveChanges();
 
                 return user;
             }
-            else
-            {
-                return null;
-            }
-        }
-
-        public User SignInUser(string login, string password)
-        {
-            var loginNormalised = login.ToLower().Trim();
-            var passwordHash = GetStringHash(password);
-
-            var user = _dbContext.Users.FirstOrDefault(user =>
-                user.Email == loginNormalised &&
-                user.Password == passwordHash
-            );
 
             return user;
         }
 
-        public User ChangePassword(string login, string oldPassword, string newPassword)
+        public User SignInUser(string email, string password)
         {
-            var user = SignInUser(login, oldPassword);
+            var passwordHash = GetStringHash(password);
 
-            if(user != null)
+            var user = _dbContext.Set<User>()
+                .Include(user => user.UserPermissions)
+                .FirstOrDefault(user =>
+                    user.Email == email &&
+                    user.Password == passwordHash
+                );
+
+            return user;
+        }
+
+        public User ChangePassword(string email, string oldPassword, string newPassword)
+        {
+            var passwordHash = GetStringHash(newPassword);
+
+            var user = SignInUser(email, oldPassword);
+
+            if (user != null)
             {
-                user.Password = GetStringHash(newPassword);
+                user.Password = passwordHash;
 
-                _dbContext.Users.Update(user);
+                _dbContext.Update(user);
                 _dbContext.SaveChanges();
             }
 
             return user;
         }
 
-        private string GetStringHash(string value)
+        private static string GetStringHash(string value)
         {
             var md5 = new MD5CryptoServiceProvider();
 

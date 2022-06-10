@@ -13,8 +13,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "UNITE_ADMIN_USER": "admin@mail.com",
-        "UNITE_ADMIN_PASSWORD": "Long-pa55w0rd",
+        "UNITE_ROOT_USER": "admin@unite.net",
+        "UNITE_ROOT_PASSWORD": "Long-pa55w0rd",
         "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
         "UNITE_ENSEMBL_HOST": "https://grch37.rest.ensembl.org",
         "UNITE_UNIPROT_HOST": "https://www.ebi.ac.uk",
@@ -36,8 +36,8 @@
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "UNITE_ADMIN_USER": "admin@mail.com",
-        "UNITE_ADMIN_PASSWORD": "Long-pa55w0rd",
+        "UNITE_ROOT_USER": "admin@unite.net",
+        "UNITE_ROOT_PASSWORD": "Long-pa55w0rd",
         "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
         "UNITE_ENSEMBL_HOST": "https://grch37.rest.ensembl.org",
         "UNITE_UNIPROT_HOST": "https://www.ebi.ac.uk",

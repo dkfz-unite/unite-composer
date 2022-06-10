@@ -5,7 +5,7 @@ using Unite.Identity.Services;
 
 namespace Unite.Composer.Identity.Services
 {
-    public class SessionService : ISessionService<User, UserSession>
+    public class SessionService
     {
         private readonly IdentityDbContext _dbContext;
 
@@ -14,17 +14,15 @@ namespace Unite.Composer.Identity.Services
             _dbContext = dbContext;
         }
 
-        public UserSession CreateSession(User identity, string client)
+        public UserSession CreateSession(User user, string client)
         {
             var session = Guid.NewGuid().ToString();
-            var token = Guid.NewGuid().ToString();
 
             var userSession = new UserSession()
             {
-                UserId = identity.Id,
+                UserId = user.Id,
                 Client = client,
-                Session = session,
-                Token = token
+                Session = session
             };
 
             _dbContext.Add(userSession);
@@ -33,13 +31,12 @@ namespace Unite.Composer.Identity.Services
             return userSession;
         }
 
-        public UserSession FindSession(User identity, UserSession session)
+        public UserSession FindSession(User user, string session)
         {
-            var userSession = _dbContext
-                .Set<UserSession>()
+            var userSession = _dbContext.Set<UserSession>()
                 .FirstOrDefault(userSession =>
-                    userSession.UserId == identity.Id &&
-                    userSession.Session == session.Session
+                    userSession.UserId == user.Id &&
+                    userSession.Session == session
                 );
 
             return userSession;

@@ -4,7 +4,6 @@ using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
 using Unite.Composer.Web.Models.Identity;
-using Unite.Identity.Entities;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
@@ -12,21 +11,18 @@ namespace Unite.Composer.Web.Controllers.Identity
     public class SignInController : Controller
     {
         private readonly ApiOptions _apiOptions;
-        private readonly AdminOptions _adminOptions;
-        private readonly IIdentityService<User> _identityService;
-        private readonly ISessionService<User, UserSession> _sessionService;
+        private readonly IdentityService _identityService;
+        private readonly SessionService _sessionService;
         private readonly ILogger _logger;
 
 
         public SignInController(
             ApiOptions apiOptions,
-            AdminOptions adminOptions,
-            IIdentityService<User> identityService,
-            ISessionService<User, UserSession> sessionService,
+            IdentityService identityService,
+            SessionService sessionService,
             ILogger<SignInController> logger)
         {
             _apiOptions = apiOptions;
-            _adminOptions = adminOptions;
             _identityService = identityService;
             _sessionService = sessionService;
             _logger = logger;
