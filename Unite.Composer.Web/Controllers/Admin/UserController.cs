@@ -5,21 +5,21 @@ using Unite.Composer.Web.Models.Admin;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/[controller]")]
+    [ApiController]
     [Authorize(Roles = "Root")]
     public class UserController : Controller
     {
         private readonly UserService _userService;
 
 
-        public UserController(
-            UserService userService)
+        public UserController(UserService userService)
         {
             _userService = userService;
         }
 
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
             var user = _userService.GetUser(id);
@@ -27,7 +27,7 @@ namespace Unite.Composer.Web.Controllers.Identity
             return user != null ? Json(user) : NotFound();
         }
 
-        [HttpPost]
+        [HttpPost("")]
         public IActionResult Post([FromBody] AddUserModel model)
         {
             var user = _userService.Add(model.Email, model.Permissions);
@@ -35,7 +35,7 @@ namespace Unite.Composer.Web.Controllers.Identity
             return user != null ? Json(user) : BadRequest($"User with email '{model.Email}' already exists");
         }
 
-        [HttpPut]
+        [HttpPut("")]
         public IActionResult Put([FromBody] EditUserModel model)
         {
             var user = _userService.Update(model.Id.Value, model.Permissions);
@@ -43,7 +43,7 @@ namespace Unite.Composer.Web.Controllers.Identity
             return user != null ? Json(user) : NotFound();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             var deleted = _userService.Delete(id);

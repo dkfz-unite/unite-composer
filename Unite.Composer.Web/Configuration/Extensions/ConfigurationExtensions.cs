@@ -27,7 +27,7 @@ namespace Unite.Composer.Web.Configuration.Extensions
             services.AddOptions();
             services.AddValidation();
 
-            services.AddScoped<IdentityDbContext>();
+            services.AddTransient<IdentityDbContext>();
 
             services.AddTransient<UserService>();
             services.AddTransient<IdentityService>();
