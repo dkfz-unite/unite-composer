@@ -29,6 +29,7 @@
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Models\Admin\" />
     <Folder Include="Models\Admin\Validators\" />
+    <Folder Include="Resources\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
@@ -58,5 +59,6 @@
     <None Remove="Controllers\Admin\" />
     <None Remove="Models\Admin\" />
     <None Remove="Models\Admin\Validators\" />
+    <None Remove="Resources\Admin\" />
   </ItemGroup>
 </Project>

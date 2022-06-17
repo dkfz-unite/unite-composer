@@ -34,13 +34,18 @@ namespace Unite.Composer.Admin.Services
                 .FirstOrDefault(predicate);
         }
 
-        public User[] GetUsers(Expression<Func<User, bool>> predicate = null)
+        public User[] GetUsers()
         {
-            var condition = predicate ?? GetDefaultPredicate();
-
             return _dbContext.Set<User>()
                 .Include(user => user.UserPermissions)
-                .Where(condition)
+                .ToArray();
+        }
+
+        public User[] GetUsers(Expression<Func<User, bool>> predicate)
+        {
+            return _dbContext.Set<User>()
+                .Include(user => user.UserPermissions)
+                .Where(predicate)
                 .ToArray();
         }
 
@@ -105,14 +110,6 @@ namespace Unite.Composer.Admin.Services
             }
         }
 
-
-        private static Expression<Func<User, bool>> GetDefaultPredicate()
-        {
-            Func<User, bool> function = (user) => true;
-            Expression<Func<User, bool>> expression = (user) => function(user);
-
-            return expression;
-        }
 
         private static UserPermission[] GetUserPermissions(Permission[] permissions = null)
         {

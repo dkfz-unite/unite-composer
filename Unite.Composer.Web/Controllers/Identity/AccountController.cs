@@ -8,6 +8,7 @@ using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Resources.Identity;
 using Unite.Identity.Entities;
+using Unite.Identity.Extensions;
 
 namespace Unite.Composer.Web.Controllers.Identity
 {
@@ -73,6 +74,10 @@ namespace Unite.Composer.Web.Controllers.Identity
 
             account.Devices = user.UserSessions?
                 .Select(session => session.Client)
+                .ToArray();
+
+            account.Permissions = user.UserPermissions?
+                .Select(userPermission => userPermission.PermissionId.ToDefinitionString())
                 .ToArray();
 
             return account;

@@ -27,7 +27,7 @@ namespace Unite.Composer.Web.Controllers.Identity.Helpers
             var options = new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddDays(SESSION_EXPIRY_DAYS),
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Lax,
                 HttpOnly = true,
                 Secure = true,
             };
