@@ -1,26 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using FluentValidation.AspNetCore;
+using Unite.Composer.Web.Configuration.Extensions;
 
-namespace Unite.Composer.Web
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Logging.ClearProviders();
+
+builder.Logging.AddConsole();
+
+
+builder.Services.AddServices();
+
+builder.Services.AddCors();
+
+builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOptions())
+                .AddJwtBearer(options => options.AddJwtBearerOptions());
+
+builder.Services.AddControllers(options => options.AddMvcOptions())
+                .AddJsonOptions(options => options.AddJsonOptions())
+                .AddFluentValidation();
+
+
+var app = builder.Build();
+
+app.UseRouting();
+
+app.UseCors(builder => builder
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials()
+);
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+
+app.Run();

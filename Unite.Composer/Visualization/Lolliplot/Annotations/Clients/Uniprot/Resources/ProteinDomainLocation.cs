@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Resources
+namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Resources;
+
+public class ProteinDomainLocation
 {
-    public class ProteinDomainLocation
-    {
-        [JsonPropertyName("fragments")]
-        public ProteinDomainFragment[] Fragments { get; set; }
-    }
+    [JsonPropertyName("fragments")]
+    public ProteinDomainFragment[] Fragments { get; set; }
 }

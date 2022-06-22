@@ -1,44 +1,43 @@
 ﻿using Unite.Indices.Entities.Basic.Genome;
 
-namespace Unite.Composer.Web.Resources.Mutations
+namespace Unite.Composer.Web.Resources.Mutations;
+
+public class TranscriptResource
 {
-    public class TranscriptResource
+    public int Id { get; set; }
+    public string Symbol { get; set; }
+    public string Biotype { get; set; }
+    public string Chromosome { get; set; }
+    public int? Start { get; set; }
+    public int? End { get; set; }
+    public bool? Strand { get; set; }
+
+    public string EnsemblId { get; set; }
+
+    public GeneResource Gene { get; set; }
+    public ProteinResource Protein { get; set; }
+
+
+    public TranscriptResource(TranscriptIndex index)
     {
-        public int Id { get; set; }
-        public string Symbol { get; set; }
-        public string Biotype { get; set; }
-        public string Chromosome { get; set; }
-        public int? Start { get; set; }
-        public int? End { get; set; }
-        public bool? Strand { get; set; }
+        Id = index.Id;
+        Symbol = index.Symbol;
+        Biotype = index.Biotype;
+        Chromosome = index.Chromosome;
+        Start = index.Start;
+        End = index.End;
+        Strand = index.Strand;
 
-        public string EnsemblId { get; set; }
+        EnsemblId = index.EnsemblId;
 
-        public GeneResource Gene { get; set; }
-        public ProteinResource Protein { get; set; }
-        
-
-        public TranscriptResource(TranscriptIndex index)
+        if (index.Gene != null)
         {
-            Id = index.Id;
-            Symbol = index.Symbol;
-            Biotype = index.Biotype;
-            Chromosome = index.Chromosome;
-            Start = index.Start;
-            End = index.End;
-            Strand = index.Strand;
+            Gene = new GeneResource(index.Gene);
+        }
 
-            EnsemblId = index.EnsemblId;
-
-            if (index.Gene != null)
-            {
-                Gene = new GeneResource(index.Gene);
-            }
-
-            if (index.Protein != null)
-            {
-                Protein = new ProteinResource(index.Protein);
-            }
+        if (index.Protein != null)
+        {
+            Protein = new ProteinResource(index.Protein);
         }
     }
 }

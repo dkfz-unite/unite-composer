@@ -4,76 +4,75 @@ using Unite.Composer.Admin.Services;
 using Unite.Composer.Web.Models.Admin;
 using Unite.Composer.Web.Resources.Admin;
 
-namespace Unite.Composer.Web.Controllers.Identity
+namespace Unite.Composer.Web.Controllers.Admin;
+
+[Route("api/admin/[controller]")]
+[ApiController]
+[Authorize(Roles = "Root")]
+public class UserController : Controller
 {
-    [Route("api/admin/[controller]")]
-    [ApiController]
-    [Authorize(Roles = "Root")]
-    public class UserController : Controller
+    private readonly UserService _userService;
+
+
+    public UserController(UserService userService)
     {
-        private readonly UserService _userService;
+        _userService = userService;
+    }
 
-
-        public UserController(UserService userService)
+    [HttpGet("")]
+    public IActionResult Check(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
         {
-            _userService = userService;
+            return BadRequest($"Parameter '{nameof(email)}' should be set");
         }
 
-        [HttpGet("")]
-        public IActionResult Check(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest($"Parameter '{nameof(email)}' should be set");
-            }
+        var emailNormalized = email.Trim().ToLower();
 
-            var emailNormalized = email.Trim().ToLower();
+        var user = _userService.GetUser(user => user.Email == emailNormalized);
 
-            var user = _userService.GetUser(user => user.Email == emailNormalized);
+        var available = user == null;
 
-            var available = user == null;
+        return Json(available);
+    }
 
-            return Json(available); 
-        }
+    [HttpGet("{id}")]
+    public IActionResult Get(int id)
+    {
+        var user = _userService.GetUser(id);
 
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            var user = _userService.GetUser(id);
+        return user != null
+            ? Json(new UserResource(user))
+            : NotFound();
+    }
 
-            return user != null
-                ? Json(new UserResource(user))
-                : NotFound();
-        }
+    [HttpPost("")]
+    public IActionResult Post([FromBody] AddUserModel model)
+    {
+        var user = _userService.Add(model.Email, model.Permissions);
 
-        [HttpPost("")]
-        public IActionResult Post([FromBody] AddUserModel model)
-        {
-            var user = _userService.Add(model.Email, model.Permissions);
+        return user != null
+            ? Json(new UserResource(user))
+            : BadRequest($"User with email '{model.Email}' already exists");
+    }
 
-            return user != null
-                ? Json(new UserResource(user))
-                : BadRequest($"User with email '{model.Email}' already exists");
-        }
+    [HttpPut("")]
+    public IActionResult Put([FromBody] EditUserModel model)
+    {
+        var user = _userService.Update(model.Id.Value, model.Permissions);
 
-        [HttpPut("")]
-        public IActionResult Put([FromBody] EditUserModel model)
-        {
-            var user = _userService.Update(model.Id.Value, model.Permissions);
+        return user != null
+            ? Json(new UserResource(user))
+            : NotFound();
+    }
 
-            return user != null
-                ? Json(new UserResource(user))
-                : NotFound();
-        }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var deleted = _userService.Delete(id);
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var deleted = _userService.Delete(id);
-
-            return deleted
-                ? Ok()
-                : NotFound();
-        }
+        return deleted
+            ? Ok()
+            : NotFound();
     }
 }

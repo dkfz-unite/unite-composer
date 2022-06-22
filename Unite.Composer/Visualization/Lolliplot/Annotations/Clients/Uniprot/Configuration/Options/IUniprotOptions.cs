@@ -1,7 +1,6 @@
-﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options
+﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
+
+public interface IUniprotOptions
 {
-    public interface IUniprotOptions
-    {
-        string Host { get; }
-    }
+    string Host { get; }
 }

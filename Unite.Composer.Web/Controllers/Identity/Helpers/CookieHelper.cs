@@ -1,43 +1,38 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿namespace Unite.Composer.Web.Controllers.Identity.Helpers;
 
-
-namespace Unite.Composer.Web.Controllers.Identity.Helpers
+public class CookieHelper
 {
-    public class CookieHelper
+    public const string SESSION_COOKIE_NAME = "session";
+    public const int SESSION_EXPIRY_DAYS = 30;
+
+
+    public static string GetSessionCookie(HttpRequest request)
     {
-        public const string SESSION_COOKIE_NAME = "session";
-        public const int SESSION_EXPIRY_DAYS = 30;
-
-
-        public static string GetSessionCookie(HttpRequest request)
+        if (request.Cookies.TryGetValue(SESSION_COOKIE_NAME, out var session))
         {
-            if (request.Cookies.TryGetValue(SESSION_COOKIE_NAME, out var session))
-            {
-                return session;
-            }
-            else
-            {
-                return null;
-            }
+            return session;
         }
-
-        public static void SetSessionCookie(HttpResponse response, string session)
+        else
         {
-            var options = new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddDays(SESSION_EXPIRY_DAYS),
-                SameSite = SameSiteMode.Lax,
-                HttpOnly = true,
-                Secure = true,
-            };
-
-            response.Cookies.Append(SESSION_COOKIE_NAME, session, options);
+            return null;
         }
+    }
 
-        public static void DeleteSessionCookie(HttpResponse response)
+    public static void SetSessionCookie(HttpResponse response, string session)
+    {
+        var options = new CookieOptions
         {
-            response.Cookies.Delete(SESSION_COOKIE_NAME);
-        }
+            Expires = DateTimeOffset.UtcNow.AddDays(SESSION_EXPIRY_DAYS),
+            SameSite = SameSiteMode.Lax,
+            HttpOnly = true,
+            Secure = true,
+        };
+
+        response.Cookies.Append(SESSION_COOKIE_NAME, session, options);
+    }
+
+    public static void DeleteSessionCookie(HttpResponse response)
+    {
+        response.Cookies.Delete(SESSION_COOKIE_NAME);
     }
 }

@@ -1,33 +1,30 @@
-﻿using System;
+﻿namespace Unite.Composer.Web.Configuration.Options;
 
-namespace Unite.Composer.Web.Configuration.Options
+public class RootOptions
 {
-    public class RootOptions
+    public string User
     {
-        public string User
+        get
         {
-            get
-            {
-                var email = Environment.GetEnvironmentVariable("UNITE_ROOT_USER");
+            var email = Environment.GetEnvironmentVariable("UNITE_ROOT_USER");
 
-                if (string.IsNullOrWhiteSpace(email))
-                    throw new ArgumentNullException("'UNITE_ROOT_USER' environment variable has to be set");
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentNullException("'UNITE_ROOT_USER' environment variable has to be set");
 
-                return email.Trim().ToLower();
-            }
+            return email.Trim().ToLower();
         }
+    }
 
-        public string Password
+    public string Password
+    {
+        get
         {
-            get
-            {
-                var password = Environment.GetEnvironmentVariable("UNITE_ROOT_PASSWORD");
+            var password = Environment.GetEnvironmentVariable("UNITE_ROOT_PASSWORD");
 
-                if (string.IsNullOrWhiteSpace(password))
-                    throw new ArgumentNullException("'UNITE_ROOT_PASSWORD' environment variable has to be set");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentNullException("'UNITE_ROOT_PASSWORD' environment variable has to be set");
 
-                return password;
-            }
+            return password;
         }
     }
 }

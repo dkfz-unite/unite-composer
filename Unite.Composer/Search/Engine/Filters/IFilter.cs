@@ -1,12 +1,10 @@
 ﻿using Nest;
 
-namespace Unite.Composer.Search.Engine.Filters
-{
-    public interface IFilter<TIndex>
-        where TIndex : class
-    {
-        string Name { get; }
+namespace Unite.Composer.Search.Engine.Filters;
 
-        void Apply(ISearchRequest<TIndex> request);
-    }
+public interface IFilter<TIndex> where TIndex : class
+{
+    string Name { get; }
+
+    void Apply(ISearchRequest<TIndex> request);
 }

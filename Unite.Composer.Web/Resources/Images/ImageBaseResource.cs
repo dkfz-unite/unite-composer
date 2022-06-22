@@ -1,24 +1,23 @@
 ﻿using Unite.Indices.Entities.Basic.Images;
 
-namespace Unite.Composer.Web.Resources.Images
+namespace Unite.Composer.Web.Resources.Images;
+
+public class ImageBaseResource
 {
-    public class ImageBaseResource
+    public int Id { get; set; }
+    public int? ScanningDay { get; set; }
+
+    public MriImageResource MriImage { get; set; }
+
+
+    public ImageBaseResource(ImageIndex index)
     {
-        public int Id { get; set; }
-        public int? ScanningDay { get; set; }
+        Id = index.Id;
+        ScanningDay = index.ScanningDay;
 
-        public MriImageResource MriImage { get; set; }
-
-
-        public ImageBaseResource(ImageIndex index)
+        if (index.MriImage != null)
         {
-            Id = index.Id;
-            ScanningDay = index.ScanningDay;
-
-            if (index.MriImage != null)
-            {
-                MriImage = new MriImageResource(index.MriImage);
-            }
+            MriImage = new MriImageResource(index.MriImage);
         }
     }
 }

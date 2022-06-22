@@ -1,56 +1,54 @@
-﻿using System.Linq;
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace Unite.Composer.Web.Models.Identity.Validators
+namespace Unite.Composer.Web.Models.Identity.Validators;
+
+public class PasswordValidator : AbstractValidator<string>
 {
-    public class PasswordValidator : AbstractValidator<string>
+    public PasswordValidator()
     {
-        public PasswordValidator()
-        {
-            RuleFor(password => password)
-                .NotEmpty().WithMessage("Should not be empty")
-                .MinimumLength(8).WithMessage("Minimul length is 8")
-                .Must(HaveLetter).WithMessage("Should have at least 1 letter")
-                //.Must(HaveCapitalLetter).WithMessage("Should have at least 1 capital letter")
-                .Must(HaveNumber).WithMessage("Should have at least 1 number");
+        RuleFor(password => password)
+            .NotEmpty().WithMessage("Should not be empty")
+            .MinimumLength(8).WithMessage("Minimul length is 8")
+            .Must(HaveLetter).WithMessage("Should have at least 1 letter")
+            //.Must(HaveCapitalLetter).WithMessage("Should have at least 1 capital letter")
+            .Must(HaveNumber).WithMessage("Should have at least 1 number");
 
+    }
+
+    private bool HaveLetter(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value.Any(character =>
+                char.IsLetter(character)
+            );
         }
 
-        private bool HaveLetter(string value)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                return value.Any(character =>
-                    char.IsLetter(character)
-                );
-            }
+        return false;
+    }
 
-            return false;
+    private bool HaveCapitalLetter(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value.Any(character =>
+                char.IsLetter(character) &&
+                char.IsUpper(character)
+            );
         }
 
-        private bool HaveCapitalLetter(string value)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                return value.Any(character =>
-                    char.IsLetter(character) &&
-                    char.IsUpper(character)
-                );
-            }
+        return false;
+    }
 
-            return false;
+    private bool HaveNumber(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value.Any(character =>
+                char.IsNumber(character)
+            );
         }
 
-        private bool HaveNumber(string value)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                return value.Any(character =>
-                    char.IsNumber(character)
-                );
-            }
-
-            return false;
-        }
+        return false;
     }
 }

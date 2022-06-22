@@ -1,7 +1,6 @@
-﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options
+﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options;
+
+public interface IEnsemblOptions
 {
-    public interface IEnsemblOptions
-    {
-        string Host { get; }
-    }
+    string Host { get; }
 }

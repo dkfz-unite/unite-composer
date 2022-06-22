@@ -8,13 +8,12 @@ using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
-namespace Unite.Composer.Search.Services
+namespace Unite.Composer.Search.Services;
+
+public interface IDonorsSearchService : ISearchService<DonorIndex>
 {
-    public interface IDonorsSearchService : ISearchService<DonorIndex>
-    {
-        SearchResult<SpecimenIndex> SearchSpecimens(int donorId, SearchCriteria searchCriteria = null);
-        SearchResult<GeneIndex> SearchGenes(int donorId, SearchCriteria searchCriteria = null);
-        SearchResult<MutationIndex> SearchMutations(int donorId, SearchCriteria searchCriteria = null);
-        SearchResult<ImageIndex> SearchImages(int donorId, ImageType type, SearchCriteria searchCriteria = null);
-    }
+    SearchResult<SpecimenIndex> SearchSpecimens(int donorId, SearchCriteria searchCriteria = null);
+    SearchResult<GeneIndex> SearchGenes(int donorId, SearchCriteria searchCriteria = null);
+    SearchResult<MutationIndex> SearchMutations(int donorId, SearchCriteria searchCriteria = null);
+    SearchResult<ImageIndex> SearchImages(int donorId, ImageType type, SearchCriteria searchCriteria = null);
 }

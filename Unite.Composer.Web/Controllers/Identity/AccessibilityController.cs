@@ -1,33 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
 
-namespace Unite.Composer.Web.Controllers.Identity
+namespace Unite.Composer.Web.Controllers.Identity;
+
+[Route("api/[controller]")]
+public class AccessibilityController : Controller
 {
-    [Route("api/[controller]")]
-    public class AccessibilityController : Controller
+    private readonly UserService _userService;
+
+
+    public AccessibilityController(UserService userService)
     {
-        private readonly UserService _userService;
+        _userService = userService;
+    }
 
 
-        public AccessibilityController(UserService userService)
+    [HttpGet]
+    public IActionResult Get(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
         {
-            _userService = userService;
+            return BadRequest($"Request parameter {nameof(email)} is missing");
         }
 
+        var emailNormalized = email.Trim().ToLower();
 
-        [HttpGet]
-        public IActionResult Get(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return BadRequest($"Request parameter {nameof(email)} is missing");
-            }
+        var candidate = _userService.GetUser(user => user.Email == emailNormalized && user.IsRegistered == false);
 
-            var emailNormalized = email.Trim().ToLower();
-
-            var candidate = _userService.GetUser(user => user.Email == emailNormalized && user.IsRegistered == false);
-
-            return candidate != null ? Ok() : NotFound($"Email '{emailNormalized}' is not in access list.");
-        }
+        return candidate != null ? Ok() : NotFound($"Email '{emailNormalized}' is not in access list.");
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configuration.Options
+﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configuration.Options;
+
+public interface IPfamOptions
 {
-    public interface IPfamOptions
-    {
-        string Host { get; }
-    }
+    string Host { get; }
 }

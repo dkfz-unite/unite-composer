@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
@@ -15,110 +14,109 @@ using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 
-namespace Unite.Composer.Web.Controllers.Search.Donors
+namespace Unite.Composer.Web.Controllers.Search.Donors;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]
+public class DonorController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class DonorController : Controller
+    private readonly IDonorsSearchService _donorsSearchService;
+
+
+    public DonorController(
+        IDonorsSearchService donorsSearchService)
     {
-        private readonly IDonorsSearchService _donorsSearchService;
+        _donorsSearchService = donorsSearchService;
+    }
 
 
-        public DonorController(
-            IDonorsSearchService donorsSearchService)
+    [HttpGet("{id}")]
+    public DonorResource Get(int id)
+    {
+        var key = id.ToString();
+
+        var index = _donorsSearchService.Get(key);
+
+        return From(index);
+    }
+
+    [HttpPost("{id}/genes")]
+    public SearchResult<DonorGeneResource> SearchGenes(int id, [FromBody] SearchCriteria searchCriteria)
+    {
+        var searchResult = _donorsSearchService.SearchGenes(id, searchCriteria);
+
+        return From(id, searchResult);
+    }
+
+    [HttpPost("{id}/mutations")]
+    public SearchResult<DonorMutationResource> SearchMutations(int id, [FromBody] SearchCriteria searchCriteria)
+    {
+        var searchResult = _donorsSearchService.SearchMutations(id, searchCriteria);
+
+        return From(id, searchResult);
+    }
+
+    [HttpPost("{id}/specimens")]
+    public SearchResult<SpecimenResource> SearchSpecimens(int id, [FromBody] SearchCriteria searchCriteria)
+    {
+        var searchResult = _donorsSearchService.SearchSpecimens(id, searchCriteria);
+
+        return From(searchResult);
+    }
+
+    [HttpPost("{id}/images/{type}")]
+    public SearchResult<ImageResource> SearchImages(int id, ImageType type, [FromBody] SearchCriteria searchCriteria)
+    {
+        var searchResult = _donorsSearchService.SearchImages(id, type, searchCriteria);
+
+        return From(searchResult);
+    }
+
+
+    private static DonorResource From(DonorIndex index)
+    {
+        if (index == null)
         {
-            _donorsSearchService = donorsSearchService;
+            return null;
         }
 
+        return new DonorResource(index);
+    }
 
-        [HttpGet("{id}")]
-        public DonorResource Get(int id)
+    private static SearchResult<DonorGeneResource> From(int donorId, SearchResult<GeneIndex> searchResult)
+    {
+        return new SearchResult<DonorGeneResource>()
         {
-            var key = id.ToString();
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new DonorGeneResource(donorId, index)).ToArray()
+        };
+    }
 
-            var index = _donorsSearchService.Get(key);
-
-            return From(index);
-        }
-
-        [HttpPost("{id}/genes")]
-        public SearchResult<DonorGeneResource> SearchGenes(int id, [FromBody] SearchCriteria searchCriteria)
+    private static SearchResult<DonorMutationResource> From(int donorId, SearchResult<MutationIndex> searchResult)
+    {
+        return new SearchResult<DonorMutationResource>()
         {
-            var searchResult = _donorsSearchService.SearchGenes(id, searchCriteria);
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new DonorMutationResource(donorId, index)).ToArray()
+        };
+    }
 
-            return From(id, searchResult);
-        }
-
-        [HttpPost("{id}/mutations")]
-        public SearchResult<DonorMutationResource> SearchMutations(int id, [FromBody] SearchCriteria searchCriteria)
+    private static SearchResult<SpecimenResource> From(SearchResult<SpecimenIndex> searchResult)
+    {
+        return new SearchResult<SpecimenResource>()
         {
-            var searchResult = _donorsSearchService.SearchMutations(id, searchCriteria);
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new SpecimenResource(index)).ToArray()
+        };
+    }
 
-            return From(id, searchResult);
-        }
-
-        [HttpPost("{id}/specimens")]
-        public SearchResult<SpecimenResource> SearchSpecimens(int id, [FromBody] SearchCriteria searchCriteria)
+    private static SearchResult<ImageResource> From(SearchResult<ImageIndex> searchResult)
+    {
+        return new SearchResult<ImageResource>()
         {
-            var searchResult = _donorsSearchService.SearchSpecimens(id, searchCriteria);
-
-            return From(searchResult);
-        }
-
-        [HttpPost("{id}/images/{type}")]
-        public SearchResult<ImageResource> SearchImages(int id, ImageType type, [FromBody] SearchCriteria searchCriteria)
-        {
-            var searchResult = _donorsSearchService.SearchImages(id, type, searchCriteria);
-
-            return From(searchResult);
-        }
-
-
-        private static DonorResource From(DonorIndex index)
-        {
-            if (index == null)
-            {
-                return null;
-            }
-
-            return new DonorResource(index);
-        }
-
-        private static SearchResult<DonorGeneResource> From(int donorId, SearchResult<GeneIndex> searchResult)
-        {
-            return new SearchResult<DonorGeneResource>()
-            {
-                Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new DonorGeneResource(donorId, index)).ToArray()
-            };
-        }
-
-        private static SearchResult<DonorMutationResource> From(int donorId, SearchResult<MutationIndex> searchResult)
-        {
-            return new SearchResult<DonorMutationResource>()
-            {
-                Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new DonorMutationResource(donorId, index)).ToArray()
-            };
-        }
-
-        private static SearchResult<SpecimenResource> From(SearchResult<SpecimenIndex> searchResult)
-        {
-            return new SearchResult<SpecimenResource>()
-            {
-                Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new SpecimenResource(index)).ToArray()
-            };
-        }
-
-        private static SearchResult<ImageResource> From(SearchResult<ImageIndex> searchResult)
-        {
-            return new SearchResult<ImageResource>()
-            {
-                Total = searchResult.Total,
-                Rows = searchResult.Rows.Select(index => new ImageResource(index)).ToArray()
-            };
-        }
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new ImageResource(index)).ToArray()
+        };
     }
 }

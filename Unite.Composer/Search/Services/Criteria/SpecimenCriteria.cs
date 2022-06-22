@@ -1,7 +1,6 @@
-﻿namespace Unite.Composer.Search.Services.Criteria
+﻿namespace Unite.Composer.Search.Services.Criteria;
+
+public class SpecimenCriteria
 {
-    public class SpecimenCriteria
-    {
-        public int[] Id { get; set; }
-    }
+    public int[] Id { get; set; }
 }

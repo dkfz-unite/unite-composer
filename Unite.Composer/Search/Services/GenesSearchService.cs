@@ -8,90 +8,89 @@ using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 
-namespace Unite.Composer.Search.Services
+namespace Unite.Composer.Search.Services;
+
+public class GenesSearchService : IGenesSearchService
 {
-    public class GenesSearchService : IGenesSearchService
+    private readonly IIndexService<DonorIndex> _donorsIndexService;
+    private readonly IIndexService<GeneIndex> _genesIndexService;
+    private readonly IIndexService<MutationIndex> _mutationsIndexService;
+
+    public GenesSearchService(IElasticOptions options)
     {
-        private readonly IIndexService<DonorIndex> _donorsIndexService;
-        private readonly IIndexService<GeneIndex> _genesIndexService;
-        private readonly IIndexService<MutationIndex> _mutationsIndexService;
+        _donorsIndexService = new DonorsIndexService(options);
+        _genesIndexService = new GenesIndexService(options);
+        _mutationsIndexService = new MutationsIndexService(options);
+    }
 
-        public GenesSearchService(IElasticOptions options)
-        {
-            _donorsIndexService = new DonorsIndexService(options);
-            _genesIndexService = new GenesIndexService(options);
-            _mutationsIndexService = new MutationsIndexService(options);
-        }
+    public GeneIndex Get(string key)
+    {
+        var query = new GetQuery<GeneIndex>(key)
+            .AddExclusion(gene => gene.Mutations);
 
-        public GeneIndex Get(string key)
-        {
-            var query = new GetQuery<GeneIndex>(key)
-                .AddExclusion(gene => gene.Mutations);
+        var result = _genesIndexService.GetAsync(query).Result;
 
-            var result = _genesIndexService.GetAsync(query).Result;
+        return result;
+    }
 
-            return result;
-        }
+    public SearchResult<GeneIndex> Search(SearchCriteria searchCriteria = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
 
-        public SearchResult<GeneIndex> Search(SearchCriteria searchCriteria = null)
-        {
-            var criteria = searchCriteria ?? new SearchCriteria();
+        var criteriaFilters = new GeneIndexFiltersCollection(criteria)
+            .All();
 
-            var criteriaFilters = new GeneIndexFiltersCollection(criteria)
-                .All();
+        var query = new SearchQuery<GeneIndex>()
+            .AddPagination(criteria.From, criteria.Size)
+            .AddFullTextSearch(criteria.Term)
+            .AddFilters(criteriaFilters)
+            .AddOrdering(gene => gene.NumberOfDonors)
+            .AddExclusion(gene => gene.Mutations);
 
-            var query = new SearchQuery<GeneIndex>()
-                .AddPagination(criteria.From, criteria.Size)
-                .AddFullTextSearch(criteria.Term)
-                .AddFilters(criteriaFilters)
-                .AddOrdering(gene => gene.NumberOfDonors)
-                .AddExclusion(gene => gene.Mutations);
+        var result = _genesIndexService.SearchAsync(query).Result;
 
-            var result = _genesIndexService.SearchAsync(query).Result;
+        return result;
+    }
 
-            return result;
-        }
+    public SearchResult<DonorIndex> SearchDonors(int geneId, SearchCriteria searchCriteria = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
 
-        public SearchResult<DonorIndex> SearchDonors(int geneId, SearchCriteria searchCriteria = null)
-        {
-            var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
 
-            criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
+        var criteriaFilters = new DonorIndexFiltersCollection(criteria)
+            .All();
 
-            var criteriaFilters = new DonorIndexFiltersCollection(criteria)
-                .All();
+        var query = new SearchQuery<DonorIndex>()
+            .AddPagination(criteria.From, criteria.Size)
+            .AddFullTextSearch(criteria.Term)
+            .AddFilters(criteriaFilters)
+            .AddOrdering(donor => donor.NumberOfMutations)
+            .AddExclusion(donor => donor.Specimens);
 
-            var query = new SearchQuery<DonorIndex>()
-                .AddPagination(criteria.From, criteria.Size)
-                .AddFullTextSearch(criteria.Term)
-                .AddFilters(criteriaFilters)
-                .AddOrdering(donor => donor.NumberOfMutations)
-                .AddExclusion(donor => donor.Specimens);
+        var result = _donorsIndexService.SearchAsync(query).Result;
 
-            var result = _donorsIndexService.SearchAsync(query).Result;
+        return result;
+    }
 
-            return result;
-        }
+    public SearchResult<MutationIndex> SearchMutations(int geneId, SearchCriteria searchCriteria = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
 
-        public SearchResult<MutationIndex> SearchMutations(int geneId, SearchCriteria searchCriteria = null)
-        {
-            var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
 
-            criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
+        var criteriaFilters = new MutationIndexFiltersCollection(criteria)
+            .All();
 
-            var criteriaFilters = new MutationIndexFiltersCollection(criteria)
-                .All();
+        var query = new SearchQuery<MutationIndex>()
+            .AddPagination(criteria.From, criteria.Size)
+            .AddFullTextSearch(criteria.Term)
+            .AddFilters(criteriaFilters)
+            .AddOrdering(mutation => mutation.NumberOfDonors)
+            .AddExclusion(mutation => mutation.Donors);
 
-            var query = new SearchQuery<MutationIndex>()
-                .AddPagination(criteria.From, criteria.Size)
-                .AddFullTextSearch(criteria.Term)
-                .AddFilters(criteriaFilters)
-                .AddOrdering(mutation => mutation.NumberOfDonors)
-                .AddExclusion(mutation => mutation.Donors);
+        var result = _mutationsIndexService.SearchAsync(query).Result;
 
-            var result = _mutationsIndexService.SearchAsync(query).Result;
-
-            return result;
-        }
+        return result;
     }
 }

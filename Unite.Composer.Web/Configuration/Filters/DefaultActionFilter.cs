@@ -1,29 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 
-namespace Unite.Composer.Web.Configuration.Filters
+namespace Unite.Composer.Web.Configuration.Filters;
+
+public class DefaultActionFilter : IActionFilter
 {
-    public class DefaultActionFilter : IActionFilter
+    private readonly ILogger _logger;
+
+    public DefaultActionFilter(ILogger<DefaultActionFilter> logger)
     {
-        private readonly ILogger _logger;
+        _logger = logger;
+    }
 
-        public DefaultActionFilter(ILogger<DefaultActionFilter> logger)
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
+        if (!context.ModelState.IsValid)
         {
-            _logger = logger;
+            context.Result = new BadRequestObjectResult(context.ModelState);
         }
+    }
 
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
-            if (!context.ModelState.IsValid)
-            {
-                context.Result = new BadRequestObjectResult(context.ModelState);
-            }
-        }
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
 
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-            
-        }
     }
 }

@@ -1,66 +1,63 @@
-﻿using System;
-using System.Threading.Tasks;
-using Nest;
+﻿using Nest;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Indices.Services.Configuration.Options;
 
-namespace Unite.Composer.Search.Engine
+namespace Unite.Composer.Search.Engine;
+
+public abstract class IndexService<TIndex> : IIndexService<TIndex>
+    where TIndex : class
 {
-    public abstract class IndexService<TIndex> : IIndexService<TIndex>
-        where TIndex : class
+    protected readonly IElasticClient _client;
+
+    protected abstract string DefaultIndex { get; }
+
+
+    public IndexService(IElasticOptions options)
     {
-        protected readonly IElasticClient _client;
+        var host = new Uri(options.Host);
 
-        protected abstract string DefaultIndex { get; }
+        var settings = new ConnectionSettings(host)
+            .BasicAuthentication(options.User, options.Password)
+            .DisableAutomaticProxyDetection()
+            .DefaultIndex(DefaultIndex);
+
+        _client = new ElasticClient(settings);
+    }
 
 
-        public IndexService(IElasticOptions options)
+    public virtual async Task<TIndex> GetAsync(GetQuery<TIndex> query)
+    {
+        var request = query.GetRequest();
+
+        var response = await _client.GetAsync<TIndex>(request);
+
+        if (response.IsValid)
         {
-            var host = new Uri(options.Host);
-
-            var settings = new ConnectionSettings(host)
-                .BasicAuthentication(options.User, options.Password)
-                .DisableAutomaticProxyDetection()
-                .DefaultIndex(DefaultIndex);
-
-            _client = new ElasticClient(settings);
+            return response.Source;
         }
-
-
-        public virtual async Task<TIndex> GetAsync(GetQuery<TIndex> query)
+        else
         {
-            var request = query.GetRequest();
-
-            var response = await _client.GetAsync<TIndex>(request);
-
-            if (response.IsValid)
-            {
-                return response.Source;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
+    }
 
-        public virtual async Task<SearchResult<TIndex>> SearchAsync(SearchQuery<TIndex> query)
+    public virtual async Task<SearchResult<TIndex>> SearchAsync(SearchQuery<TIndex> query)
+    {
+        var request = query.GetRequest();
+
+        var response = await _client.SearchAsync<TIndex>(request);
+
+        if (response.IsValid)
         {
-            var request = query.GetRequest();
-
-            var response = await _client.SearchAsync<TIndex>(request);
-
-            if (response.IsValid)
+            return new SearchResult<TIndex>()
             {
-                return new SearchResult<TIndex>()
-                {
-                    Total = response.Total,
-                    Rows = response.Documents
-                };
-            }
-            else
-            {
-                return new SearchResult<TIndex>();
-            }
+                Total = response.Total,
+                Rows = response.Documents
+            };
+        }
+        else
+        {
+            return new SearchResult<TIndex>();
         }
     }
 }

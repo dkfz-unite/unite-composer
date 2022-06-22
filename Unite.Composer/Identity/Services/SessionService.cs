@@ -1,51 +1,48 @@
-﻿using System;
-using System.Linq;
-using Unite.Identity.Entities;
+﻿using Unite.Identity.Entities;
 using Unite.Identity.Services;
 
-namespace Unite.Composer.Identity.Services
+namespace Unite.Composer.Identity.Services;
+
+public class SessionService
 {
-    public class SessionService
+    private readonly IdentityDbContext _dbContext;
+
+    public SessionService(IdentityDbContext dbContext)
     {
-        private readonly IdentityDbContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public SessionService(IdentityDbContext dbContext)
+    public UserSession CreateSession(User user, string client)
+    {
+        var session = Guid.NewGuid().ToString();
+
+        var userSession = new UserSession()
         {
-            _dbContext = dbContext;
-        }
+            UserId = user.Id,
+            Client = client,
+            Session = session
+        };
 
-        public UserSession CreateSession(User user, string client)
-        {
-            var session = Guid.NewGuid().ToString();
+        _dbContext.Add(userSession);
+        _dbContext.SaveChanges();
 
-            var userSession = new UserSession()
-            {
-                UserId = user.Id,
-                Client = client,
-                Session = session
-            };
+        return userSession;
+    }
 
-            _dbContext.Add(userSession);
-            _dbContext.SaveChanges();
+    public UserSession FindSession(User user, string session)
+    {
+        var userSession = _dbContext.Set<UserSession>()
+            .FirstOrDefault(userSession =>
+                userSession.UserId == user.Id &&
+                userSession.Session == session
+            );
 
-            return userSession;
-        }
+        return userSession;
+    }
 
-        public UserSession FindSession(User user, string session)
-        {
-            var userSession = _dbContext.Set<UserSession>()
-                .FirstOrDefault(userSession =>
-                    userSession.UserId == user.Id &&
-                    userSession.Session == session
-                );
-
-            return userSession;
-        }
-
-        public void RemoveSession(UserSession session)
-        {
-            _dbContext.Remove(session);
-            _dbContext.SaveChanges();
-        }
+    public void RemoveSession(UserSession session)
+    {
+        _dbContext.Remove(session);
+        _dbContext.SaveChanges();
     }
 }

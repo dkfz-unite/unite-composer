@@ -1,15 +1,14 @@
-﻿namespace Unite.Composer.Web.Models.Identity
-{
-    public class SignUpModel
-    {
-        private string _email;
+﻿namespace Unite.Composer.Web.Models.Identity;
 
-        public string Email
-        {
-            get { return _email?.Trim().ToLower(); }
-            set { _email = value; }
-        }
-        public string Password { get; set; }
-        public string PasswordRepeat { get; set; }
+public class SignUpModel
+{
+    private string _email;
+
+    public string Email
+    {
+        get { return _email?.Trim().ToLower(); }
+        set { _email = value; }
     }
+    public string Password { get; set; }
+    public string PasswordRepeat { get; set; }
 }

@@ -1,10 +1,8 @@
-﻿using System;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
+﻿using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
 
-namespace Unite.Composer.Web.Configuration.Options
+namespace Unite.Composer.Web.Configuration.Options;
+
+public class UniprotOptions : IUniprotOptions
 {
-    public class UniprotOptions : IUniprotOptions
-    {
-        public string Host => Environment.GetEnvironmentVariable("UNITE_UNIPROT_HOST");
-    }
+    public string Host => Environment.GetEnvironmentVariable("UNITE_UNIPROT_HOST");
 }

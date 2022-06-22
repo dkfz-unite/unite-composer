@@ -1,17 +1,15 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Unite.Composer.Web.Controllers
+namespace Unite.Composer.Web.Controllers;
+
+[Route("api/")]
+public class DefaultController : Controller
 {
-    [Route("api/")]
-    public class DefaultController : Controller
+    [HttpGet]
+    public IActionResult Get()
     {
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var date = DateTime.Now;
+        var date = DateTime.Now;
 
-            return Json(date);
-        }
+        return Json(date);
     }
 }

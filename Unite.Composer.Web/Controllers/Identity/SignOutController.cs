@@ -1,63 +1,61 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Web.Controllers.Identity.Helpers;
 
-namespace Unite.Composer.Web.Controllers.Identity
+namespace Unite.Composer.Web.Controllers.Identity;
+
+[Route("api/identity/[controller]")]
+[Authorize]
+public class SignOutController : Controller
 {
-    [Route("api/identity/[controller]")]
-    [Authorize]
-    public class SignOutController : Controller
+    private readonly IdentityService _identityService;
+    private readonly SessionService _sessionService;
+    private readonly ILogger _logger;
+
+    public SignOutController(
+        IdentityService identityService,
+        SessionService sessionService,
+        ILogger<SignOutController> logger)
     {
-        private readonly IdentityService _identityService;
-        private readonly SessionService _sessionService;
-        private readonly ILogger _logger;
+        _identityService = identityService;
+        _sessionService = sessionService;
+        _logger = logger;
+    }
 
-        public SignOutController(
-            IdentityService identityService,
-            SessionService sessionService,
-            ILogger<SignOutController> logger)
+    [HttpPost]
+    public IActionResult Post()
+    {
+        var session = CookieHelper.GetSessionCookie(Request);
+
+        if (session != null)
         {
-            _identityService = identityService;
-            _sessionService = sessionService;
-            _logger = logger;
-        }
+            var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
 
-        [HttpPost]
-        public IActionResult Post()
-        {
-            var session = CookieHelper.GetSessionCookie(Request);
+            var user = _identityService.GetUser(email);
 
-            if (session != null)
+            if (user == null)
             {
-                var email = ClaimsHelper.GetValue(User.Claims, ClaimTypes.Email);
+                _logger.LogWarning("Invalid attempt to sign out not existing user");
 
-                var user = _identityService.GetUser(email);
-
-                if (user == null)
-                {
-                    _logger.LogWarning("Invalid attempt to sign out not existing user");
-
-                    return BadRequest();
-                }
-
-                var userSession = _sessionService.FindSession(user, session);
-
-                if (userSession == null)
-                {
-                    _logger.LogWarning("Invalid attempt to remove not existing session");
-
-                    return BadRequest();
-                }
-
-                _sessionService.RemoveSession(userSession);
-
-                CookieHelper.DeleteSessionCookie(Response);
+                return BadRequest();
             }
 
-            return Ok();
+            var userSession = _sessionService.FindSession(user, session);
+
+            if (userSession == null)
+            {
+                _logger.LogWarning("Invalid attempt to remove not existing session");
+
+                return BadRequest();
+            }
+
+            _sessionService.RemoveSession(userSession);
+
+            CookieHelper.DeleteSessionCookie(Response);
         }
+
+        return Ok();
     }
 }

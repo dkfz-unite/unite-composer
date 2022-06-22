@@ -1,38 +1,37 @@
 using Unite.Indices.Entities.Basic.Genome;
 
-namespace Unite.Composer.Visualization.Lolliplot.Data
+namespace Unite.Composer.Visualization.Lolliplot.Data;
+
+public class Transcript
 {
-    public class Transcript
+    /// <summary>
+    /// Unite transcript id
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Transcript symbol
+    /// </summary>
+    public string Symbol { get; set; }
+
+    /// <summary>
+    /// Protein Ensemb id
+    /// </summary>
+    public string EnsemblId { get; set; }
+
+
+    /// <summary>
+    /// Protein coded by the transcript
+    /// </summary>
+    public Protein Protein { get; set; }
+
+
+    public Transcript(TranscriptIndex index)
     {
-        /// <summary>
-        /// Unite transcript id
-        /// </summary>
-        public int Id { get; set; }
+        Id = index.Id;
+        Symbol = index.Symbol;
+        EnsemblId = index.EnsemblId;
 
-        /// <summary>
-        /// Transcript symbol
-        /// </summary>
-        public string Symbol { get; set; }
-
-        /// <summary>
-        /// Protein Ensemb id
-        /// </summary>
-        public string EnsemblId { get; set; }
-
-
-        /// <summary>
-        /// Protein coded by the transcript
-        /// </summary>
-        public Protein Protein { get; set; }
-
-
-        public Transcript(TranscriptIndex index)
-        {
-            Id = index.Id;
-            Symbol = index.Symbol;
-            EnsemblId = index.EnsemblId;
-
-            Protein = new Protein(index.Protein);
-        }
+        Protein = new Protein(index.Protein);
     }
 }

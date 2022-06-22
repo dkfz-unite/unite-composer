@@ -1,31 +1,30 @@
 ﻿using Unite.Indices.Entities.Basic.Genome;
 
-namespace Unite.Composer.Web.Resources.Genes
+namespace Unite.Composer.Web.Resources.Genes;
+
+public class GeneBaseResource
 {
-    public class GeneBaseResource
+    public long Id { get; }
+    public string Symbol { get; }
+    public string Biotype { get; }
+    public string Chromosome { get; }
+    public int? Start { get; }
+    public int? End { get; }
+    public bool? Strand { get; }
+
+    public string EnsemblId { get; }
+
+
+    public GeneBaseResource(GeneIndex index)
     {
-        public long Id { get; }
-        public string Symbol { get; }
-        public string Biotype { get; }
-        public string Chromosome { get; }
-        public int? Start { get; }
-        public int? End { get; }
-        public bool? Strand { get; }
+        Id = index.Id;
+        Symbol = index.Symbol;
+        Biotype = index.Biotype;
+        Chromosome = index.Chromosome;
+        Start = index.Start;
+        End = index.End;
+        Strand = index.Strand;
 
-        public string EnsemblId { get; }
-
-
-        public GeneBaseResource(GeneIndex index)
-        {
-            Id = index.Id;
-            Symbol = index.Symbol;
-            Biotype = index.Biotype;
-            Chromosome = index.Chromosome;
-            Start = index.Start;
-            End = index.End;
-            Strand = index.Strand;
-
-            EnsemblId = index.EnsemblId;
-        }
+        EnsemblId = index.EnsemblId;
     }
 }
