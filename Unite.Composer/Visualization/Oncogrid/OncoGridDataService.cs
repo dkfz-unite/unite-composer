@@ -31,6 +31,9 @@ public class OncoGridDataService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
+        var impacts = criteria.MutationFilters.Impact;
+        var consequences = criteria.MutationFilters.Consequence;
+
         var donorsSearchResult = FindDonors(criteria);
 
         var donorIds = donorsSearchResult.Rows
@@ -48,7 +51,8 @@ public class OncoGridDataService
         var data = GetOncoGridData(
             donorsSearchResult.Rows,
             genesSearchResult.Rows,
-            mutationsSearchResult.Rows
+            mutationsSearchResult.Rows,
+            impacts, consequences
         );
 
         return data;
@@ -94,6 +98,7 @@ public class OncoGridDataService
         criteria.DonorFilters = new DonorCriteria();
         criteria.DonorFilters.Id = donorIds.ToArray();
         criteria.GeneFilters = searchCriteria.GeneFilters;
+        criteria.MutationFilters = searchCriteria.MutationFilters;
         criteria.OncoGridFilters = searchCriteria.OncoGridFilters;
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria).All();
@@ -154,7 +159,9 @@ public class OncoGridDataService
     private OncoGridData GetOncoGridData(
         IEnumerable<DonorIndex> donors,
         IEnumerable<GeneIndex> genes,
-        IEnumerable<MutationIndex> mutations)
+        IEnumerable<MutationIndex> mutations,
+        IEnumerable<string> impacts,
+        IEnumerable<string> consequences)
     {
         var oncoGridData = new OncoGridData();
 
@@ -162,7 +169,7 @@ public class OncoGridDataService
         // If immediate enumeration required, call 'ToArray' method for required data set.
         oncoGridData.Donors = GetDonorsData(donors);
         oncoGridData.Genes = GetGenesData(genes);
-        oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations);
+        oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations, impacts, consequences);
 
         return oncoGridData;
     }
@@ -202,7 +209,9 @@ public class OncoGridDataService
     private IEnumerable<OncoGridMutation> GetObservationsData(
         IEnumerable<OncoGridDonor> donors,
         IEnumerable<OncoGridGene> genes,
-        IEnumerable<MutationIndex> mutations)
+        IEnumerable<MutationIndex> mutations,
+        IEnumerable<string> impacts,
+        IEnumerable<string> consequences)
     {
         foreach (var donor in donors)
         {
@@ -222,7 +231,8 @@ public class OncoGridDataService
                     var consequence = mutation.AffectedTranscripts
                         .Where(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
                         .SelectMany(affectedTranscript => affectedTranscript.Consequences)
-                        .Where(consequence => consequence.Impact != "Unknown")
+                        .Where(consequence => HasMatchingImpact(consequence.Impact, impacts))
+                        .Where(consequence => HasMatchingConsequence(consequence.Type, consequences))
                         .OrderBy(consequence => consequence.Severity)
                         .FirstOrDefault();
 
@@ -241,5 +251,16 @@ public class OncoGridDataService
                 }
             }
         }
+    }
+
+
+    private static bool HasMatchingImpact(string impact, IEnumerable<string> impacts)
+    {
+        return impacts == null || !impacts.Any() || impacts.Contains(impact);
+    }
+
+    private static bool HasMatchingConsequence(string consequence, IEnumerable<string> consequences)
+    {
+        return consequences == null || !consequences.Any() || consequences.Contains(consequence);
     }
 }
