@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Data.Projects;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
@@ -13,9 +14,12 @@ using Unite.Composer.Web.Models.Admin;
 using Unite.Composer.Web.Models.Admin.Validators;
 using Unite.Composer.Web.Models.Identity;
 using Unite.Composer.Web.Models.Identity.Validators;
+using Unite.Data.Services;
 using Unite.Identity.Services;
-using Unite.Identity.Services.Configuration.Options;
 using Unite.Indices.Services.Configuration.Options;
+
+using IDomainSqlOptions = Unite.Data.Services.Configuration.Options.ISqlOptions;
+using IIdentitySqlOptions = Unite.Identity.Services.Configuration.Options.ISqlOptions;
 
 namespace Unite.Composer.Web.Configuration.Extensions;
 
@@ -27,6 +31,7 @@ public static class ConfigurationExtensions
         services.AddValidation();
 
         services.AddTransient<IdentityDbContext>();
+        services.AddTransient<DomainDbContext>();
 
         services.AddTransient<UserService>();
         services.AddTransient<IdentityService>();
@@ -38,6 +43,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IMutationsSearchService, MutationsSearchService>();
         services.AddTransient<IImagesSearchService, ImagesSearchService>();
 
+        services.AddTransient<ProjectService>();
         services.AddTransient<OncoGridDataService>();
         services.AddTransient<OncoGridDataService1>();
         services.AddTransient<ProteinPlotDataService>();
@@ -50,7 +56,8 @@ public static class ConfigurationExtensions
         services.AddTransient<ApiOptions>();
         services.AddTransient<RootOptions>();
         services.AddTransient<IElasticOptions, ElasticOptions>();
-        services.AddTransient<ISqlOptions, SqlOptions>();
+        services.AddTransient<IIdentitySqlOptions, SqlOptions>();
+        services.AddTransient<IDomainSqlOptions, SqlOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
         services.AddTransient<IUniprotOptions, UniprotOptions>();
         services.AddTransient<IPfamOptions, PfamOptions>();

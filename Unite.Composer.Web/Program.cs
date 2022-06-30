@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FluentValidation.AspNetCore;
 using Unite.Composer.Web.Configuration.Extensions;
 
@@ -16,6 +17,8 @@ builder.Services.AddCors();
 
 builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOptions())
                 .AddJwtBearer(options => options.AddJwtBearerOptions());
+
+builder.Services.AddAuthorization(options => options.AddAuthorizationOptions());
 
 builder.Services.AddControllers(options => options.AddMvcOptions())
                 .AddJsonOptions(options => options.AddJsonOptions())
