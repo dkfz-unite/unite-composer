@@ -20,6 +20,8 @@ public class CellLineResource
 
     public MolecularDataResource MolecularData { get; set; }
 
+    public DrugScreeningResource[] DrugScreenings { get; set; }
+
 
     public CellLineResource(CellLineIndex index)
     {
@@ -40,6 +42,13 @@ public class CellLineResource
         if (index.MolecularData != null)
         {
             MolecularData = new MolecularDataResource(index.MolecularData);
+        }
+
+        if (index.DrugScreenings != null && index.DrugScreenings.Any())
+        {
+            DrugScreenings = index.DrugScreenings
+                .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
+                .ToArray();
         }
     }
 }

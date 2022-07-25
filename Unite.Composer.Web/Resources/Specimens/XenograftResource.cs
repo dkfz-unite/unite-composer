@@ -16,6 +16,7 @@ public class XenograftResource
 
     public MolecularDataResource MolecularData { get; set; }
 
+    public DrugScreeningResource[] DrugScreenings { get; set; }
     public XenograftInterventionResource[] Interventions { get; set; }
 
 
@@ -34,6 +35,13 @@ public class XenograftResource
         if (index.MolecularData != null)
         {
             MolecularData = new MolecularDataResource(index.MolecularData);
+        }
+
+        if (index.DrugScreenings != null && index.DrugScreenings.Any())
+        {
+            DrugScreenings = index.DrugScreenings
+                .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
+                .ToArray();
         }
 
         if (index.Interventions != null && index.Interventions.Any())

@@ -89,5 +89,26 @@ public class CellLineFilters<TIndex> : FiltersCollection<TIndex> where TIndex : 
             path.Join(specimen => specimen.CellLine.MolecularData.GcimpMethylation),
             criteria.GcimpMethylation)
         );
+
+
+        Add(new SimilarityFilter<TIndex, string>(
+            CellLineFilterNames.Drug,
+            path.Join(specimen => specimen.CellLine.DrugScreenings.First().Drug),
+            criteria.Drug)
+        );
+
+        Add(new RangeFilter<TIndex, double?>(
+            CellLineFilterNames.Dss,
+            path.Join(specimen => specimen.CellLine.DrugScreenings.First().Dss),
+            criteria.Dss.From,
+            criteria.Dss.To)
+        );
+
+        Add(new RangeFilter<TIndex, double?>(
+            CellLineFilterNames.DssSelective,
+            path.Join(specimen => specimen.CellLine.DrugScreenings.First().DssSelective),
+            criteria.DssSelective.From,
+            criteria.DssSelective.To)
+        );
     }
 }

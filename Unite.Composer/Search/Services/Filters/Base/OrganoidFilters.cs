@@ -83,5 +83,26 @@ public class OrganoidFilters<TIndex> : FiltersCollection<TIndex> where TIndex : 
             path.Join(specimen => specimen.Organoid.MolecularData.GcimpMethylation),
             criteria.GcimpMethylation)
         );
+
+
+        Add(new SimilarityFilter<TIndex, string>(
+            OrganoidFilterNames.Drug,
+            path.Join(specimen => specimen.Organoid.DrugScreenings.First().Drug),
+            criteria.Drug)
+        );
+
+        Add(new RangeFilter<TIndex, double?>(
+            OrganoidFilterNames.Dss,
+            path.Join(specimen => specimen.Organoid.DrugScreenings.First().Dss),
+            criteria.Dss.From,
+            criteria.Dss.To)
+        );
+
+        Add(new RangeFilter<TIndex, double?>(
+            OrganoidFilterNames.DssSelective,
+            path.Join(specimen => specimen.Organoid.DrugScreenings.First().DssSelective),
+            criteria.DssSelective.From,
+            criteria.DssSelective.To)
+        );
     }
 }

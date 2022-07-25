@@ -97,5 +97,26 @@ public class XenograftFilters<TIndex> : FiltersCollection<TIndex> where TIndex :
             path.Join(specimen => specimen.Xenograft.MolecularData.GcimpMethylation),
             criteria.GcimpMethylation)
         );
+
+
+        Add(new SimilarityFilter<TIndex, string>(
+            XenograftFilterNames.Drug,
+            path.Join(specimen => specimen.Xenograft.DrugScreenings.First().Drug),
+            criteria.Drug)
+        );
+
+        Add(new RangeFilter<TIndex, double?>(
+            XenograftFilterNames.Dss,
+            path.Join(specimen => specimen.Xenograft.DrugScreenings.First().Dss),
+            criteria.Dss.From,
+            criteria.Dss.To)
+        );
+
+        Add(new RangeFilter<TIndex, double?>(
+            XenograftFilterNames.DssSelective,
+            path.Join(specimen => specimen.Xenograft.DrugScreenings.First().DssSelective),
+            criteria.DssSelective.From,
+            criteria.DssSelective.To)
+        );
     }
 }

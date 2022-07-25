@@ -11,6 +11,7 @@ public class OrganoidResource
 
     public MolecularDataResource MolecularData { get; set; }
 
+    public DrugScreeningResource[] DrugScreenings { get; set; }
     public OrganoidInterventionResource[] Interventions { get; set; }
 
 
@@ -24,6 +25,13 @@ public class OrganoidResource
         if (index.MolecularData != null)
         {
             MolecularData = new MolecularDataResource(index.MolecularData);
+        }
+
+        if (index.DrugScreenings != null && index.DrugScreenings.Any())
+        {
+            DrugScreenings = index.DrugScreenings
+                .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
+                .ToArray();
         }
 
         if (index.Interventions != null && index.Interventions.Any())
