@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Unite.Composer.Admin.Services;
 using Unite.Composer.Data.Projects;
+using Unite.Composer.Data.Specimens;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
@@ -44,6 +45,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IImagesSearchService, ImagesSearchService>();
 
         services.AddTransient<ProjectService>();
+        services.AddTransient<DrugScreeningService>();
         services.AddTransient<OncoGridDataService>();
         services.AddTransient<OncoGridDataService1>();
         services.AddTransient<ProteinPlotDataService>();

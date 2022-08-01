@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Basic.Specimens;
+﻿using Unite.Composer.Data.Specimens.Models;
+using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Specimens;
 
@@ -13,9 +14,17 @@ public class DrugScreeningResource
     public double? AbsIC25 { get; set; }
     public double? AbsIC50 { get; set; }
     public double? AbsIC75 { get; set; }
-    public double[] Inhibition { get; set; }
+    public double[] Concentrations;
+    public double[] Inhibitions;
+    public double[] InhibitionsControl;
+    public double[] InhibitionsSample;
 
 
+    /// <summary>
+    /// Initialises drug screening resource from index.
+    /// Does not include drug response curve data.
+    /// </summary>
+    /// <param name="index">Drug screening index</param>
     public DrugScreeningResource(DrugScreeningIndex index)
     {
         Drug = index.Drug;
@@ -27,6 +36,27 @@ public class DrugScreeningResource
         AbsIC25 = index.AbsIC25;
         AbsIC50 = index.AbsIC50;
         AbsIC75 = index.AbsIC75;
-        Inhibition = index.Inhibition;
+    }
+
+    /// <summary>
+    /// Initialises drug screening resource from database model.
+    /// Includes drug response curve data.
+    /// </summary>
+    /// <param name="model">Drug screening model</param>
+    public DrugScreeningResource(DrugScreeningModel model)
+    {
+        Drug = model.Drug;
+        Dss = model.Dss;
+        DssSelective = model.DssSelective;
+        Gof = model.Gof;
+        MinConcentration = model.MinConcentration;
+        MaxConcentration = model.MaxConcentration;
+        AbsIC25 = model.AbsIC25;
+        AbsIC50 = model.AbsIC50;
+        AbsIC75 = model.AbsIC75;
+        Concentrations = model.Concentrations;
+        Inhibitions = model.Inhibitions;
+        InhibitionsControl = model.InhibitionsControl;
+        InhibitionsSample = model.InhibitionsSample;
     }
 }

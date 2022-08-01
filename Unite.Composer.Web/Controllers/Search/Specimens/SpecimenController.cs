@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Data.Specimens;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
@@ -19,12 +20,15 @@ namespace Unite.Composer.Web.Controllers.Search.Specimens;
 public class SpecimenController : Controller
 {
     private readonly ISpecimensSearchService _specimensSearchService;
+    private readonly DrugScreeningService _drugScreeningService;
 
 
     public SpecimenController(
-        ISpecimensSearchService specimensSearchService)
+        ISpecimensSearchService specimensSearchService,
+        DrugScreeningService drugScreeningService)
     {
         _specimensSearchService = specimensSearchService;
+        _drugScreeningService = drugScreeningService;
     }
 
 
@@ -34,6 +38,8 @@ public class SpecimenController : Controller
         var key = id.ToString();
 
         var index = _specimensSearchService.Get(key);
+
+        var drugsScreeningData = _drugScreeningService.GetAll(id).ToArray();
 
         return From(index);
     }
