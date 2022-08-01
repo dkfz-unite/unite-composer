@@ -1,4 +1,5 @@
-﻿using Unite.Composer.Data.Specimens.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Unite.Composer.Data.Specimens.Models;
 using Unite.Data.Entities.Specimens;
 using Unite.Data.Services;
 
@@ -18,6 +19,7 @@ public class DrugScreeningService
     public IEnumerable<DrugScreeningModel> GetAll(int specimenId)
     {
         var screenings = _dbContext.Set<DrugScreening>()
+            .Include(screening => screening.Drug)
             .Where(screening => screening.SpecimenId == specimenId)
             .ToArray();
 

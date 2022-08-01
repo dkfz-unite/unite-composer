@@ -8,17 +8,19 @@ public class SpecimenResource : SpecimenBaseResource
     public int DonorId { get; set; }
 
     public SpecimenResource Parent { get; set; }
+    public SpecimenResource[] Children { get; set; }
 
     public int NumberOfMutations { get; set; }
     public int NumberOfGenes { get; set; }
+    public int NumberOfDrugs { get; set; }
 
     /// <summary>
     /// Initialises specimen resource with drugs screening data from the index.
     /// </summary>
     /// <param name="index">Specimen index</param>
-    public SpecimenResource(SpecimenIndex index) : base(index)
+    public SpecimenResource(SpecimenIndex index) : this(index, false, false)
     {
-        Map(index);
+        DonorId = index.Donor.Id;
     }
 
     /// <summary>
@@ -26,25 +28,39 @@ public class SpecimenResource : SpecimenBaseResource
     /// </summary>
     /// <param name="index">Specimen index</param>
     /// <param name="drugScreenings">Drugs sreening data models</param>
-    public SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings) : base(index, drugScreenings)
+    public SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings) : this(index, drugScreenings, false, false)
     {
-        Map(index);
+        DonorId = index.Donor.Id;
     }
 
 
-    private void Map(SpecimenIndex index)
+    private SpecimenResource(SpecimenIndex index, bool skipParent, bool skipChildren) : base(index)
     {
-        if (index.Donor != null)
+        Map(index, skipParent, skipChildren);
+    }
+
+    private SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings, bool skipParent, bool skipChildren) : base(index, drugScreenings)
+    {
+        Map(index, skipParent, skipChildren);
+    }
+
+
+    private void Map(SpecimenIndex index, bool skipParent, bool skipChildren)
+    {
+        if (index.Parent != null && !skipParent)
         {
-            DonorId = index.Donor.Id;
+            Parent = new SpecimenResource(index.Parent, false, true);
         }
 
-        if (index.Parent != null)
+        if (index.Children != null && !skipChildren)
         {
-            Parent = new SpecimenResource(index.Parent);
+            Children = index.Children
+                .Select(childIndex => new SpecimenResource(childIndex, true, false))
+                .ToArray();
         }
 
         NumberOfMutations = index.NumberOfMutations;
         NumberOfGenes = index.NumberOfGenes;
+        NumberOfDrugs = index.NumberOfDrugs;
     }
 }

@@ -14,10 +14,10 @@ public class DrugScreeningResource
     public double? AbsIC25 { get; set; }
     public double? AbsIC50 { get; set; }
     public double? AbsIC75 { get; set; }
-    public double[] Concentrations;
-    public double[] Inhibitions;
-    public double[] InhibitionsControl;
-    public double[] InhibitionsSample;
+    public double[] Concentrations { get; set; }
+    public double[] Inhibitions { get; set; }
+    public double[] InhibitionsControl { get; set; }
+    public double[] InhibitionsSample { get; set; }
 
 
     /// <summary>
