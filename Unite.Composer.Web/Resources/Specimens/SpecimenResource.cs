@@ -1,37 +1,45 @@
-﻿using Unite.Indices.Entities.Specimens;
+﻿using Unite.Composer.Data.Specimens.Models;
+using Unite.Indices.Entities.Specimens;
 
 namespace Unite.Composer.Web.Resources.Specimens;
 
 public class SpecimenResource : SpecimenBaseResource
 {
-    public int DonorId { get; }
+    public int DonorId { get; set; }
 
-    public SpecimenResource Parent { get; }
-    public SpecimenResource[] Children { get; }
+    public SpecimenResource Parent { get; set; }
 
-    public int NumberOfMutations { get; }
-    public int NumberOfGenes { get; }
+    public int NumberOfMutations { get; set; }
+    public int NumberOfGenes { get; set; }
 
-
-    public SpecimenResource(SpecimenIndex index) : this(index, false, false)
+    /// <summary>
+    /// Initialises specimen resource with drugs screening data from the index.
+    /// </summary>
+    /// <param name="index">Specimen index</param>
+    public SpecimenResource(SpecimenIndex index) : base(index)
     {
-        DonorId = index.Donor.Id;
+        Map(index);
     }
 
-    private SpecimenResource(SpecimenIndex index, bool skipParent, bool skipChildren) : base(index)
+    /// <summary>
+    /// Initialises specimen resource with drug screening data from database model.
+    /// </summary>
+    /// <param name="index">Specimen index</param>
+    /// <param name="drugScreenings">Drugs sreening data models</param>
+    public SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings) : base(index, drugScreenings)
     {
-        if (index.Parent != null && !skipParent)
-        {
-            Parent = new SpecimenResource(index.Parent, false, true);
-        }
+        Map(index);
+    }
 
-        if (index.Children != null && !skipChildren)
-        {
-            Children = index.Children
-                .Select(childIndex => new SpecimenResource(childIndex, true, false))
-                .ToArray();
-        }
 
+    private void Map(SpecimenIndex index)
+    {
+        DonorId = index.Donor.Id;
+
+        if (index.Parent != null)
+        {
+            Parent = new SpecimenResource(index.Parent);
+        }
 
         NumberOfMutations = index.NumberOfMutations;
         NumberOfGenes = index.NumberOfGenes;

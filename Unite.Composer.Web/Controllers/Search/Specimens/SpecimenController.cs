@@ -39,8 +39,6 @@ public class SpecimenController : Controller
 
         var index = _specimensSearchService.Get(key);
 
-        var drugsScreeningData = _drugScreeningService.GetAll(id).ToArray();
-
         return From(index);
     }
 
@@ -58,6 +56,17 @@ public class SpecimenController : Controller
         var searchResult = _specimensSearchService.SearchMutations(id, searchCriteria);
 
         return From(searchResult);
+    }
+
+    [HttpPost("{id}/drugs")]
+    public DrugScreeningResource[] GetDrugsScreeningData(int id)
+    {
+        var result = _drugScreeningService
+            .GetAll(id)
+            .Select(model => new DrugScreeningResource(model))
+            .ToArray();
+
+        return result;
     }
 
 
