@@ -36,10 +36,10 @@ public class DrugScreeningService
                 AbsIC25 = screening.AbsIC25,
                 AbsIC50 = screening.AbsIC50,
                 AbsIC75 = screening.AbsIC75,
-                Concentrations = screening.Concentrations,
-                Inhibitions = screening.Inhibitions,
-                InhibitionsControl = screening.InhibitionsControl,
-                InhibitionsSample = screening.InhibitionsSample
+                Concentration = screening.Concentration,
+                Inhibition = screening.Inhibition,
+                Dose = screening.Dose,
+                Response = screening.Response
             };
         }
     }

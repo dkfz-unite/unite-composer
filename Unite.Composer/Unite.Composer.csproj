@@ -8,7 +8,7 @@
 		<PackageReference Include="Unite.Indices" Version="3.2.3" />
 		<PackageReference Include="Unite.Identity" Version="2.0.0" />
 		<PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
-		<PackageReference Include="Unite.Data" Version="3.2.3" />
+		<PackageReference Include="Unite.Data" Version="3.2.4" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Identity\" />

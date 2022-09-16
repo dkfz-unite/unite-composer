@@ -11,8 +11,8 @@ public class DrugScreeningModel
     public double? AbsIC25;
     public double? AbsIC50;
     public double? AbsIC75;
-    public double[] Concentrations;
-    public double[] Inhibitions;
-    public double[] InhibitionsControl;
-    public double[] InhibitionsSample;
+    public double[] Concentration;
+    public double[] Inhibition;
+    public double[] Dose;
+    public double[] Response;
 }

@@ -14,10 +14,10 @@ public class DrugScreeningResource
     public double? AbsIC25 { get; set; }
     public double? AbsIC50 { get; set; }
     public double? AbsIC75 { get; set; }
-    public double[] Concentrations { get; set; }
-    public double[] Inhibitions { get; set; }
-    public double[] InhibitionsControl { get; set; }
-    public double[] InhibitionsSample { get; set; }
+    public double[] Concentration { get; set; }
+    public double[] Inhibition { get; set; }
+    public double[] Dose { get; set; }
+    public double[] Response { get; set; }
 
 
     /// <summary>
@@ -54,9 +54,9 @@ public class DrugScreeningResource
         AbsIC25 = model.AbsIC25;
         AbsIC50 = model.AbsIC50;
         AbsIC75 = model.AbsIC75;
-        Concentrations = model.Concentrations;
-        Inhibitions = model.Inhibitions;
-        InhibitionsControl = model.InhibitionsControl;
-        InhibitionsSample = model.InhibitionsSample;
+        Concentration = model.Concentration;
+        Inhibition = model.Inhibition;
+        Dose = model.Dose;
+        Response = model.Response;
     }
 }
