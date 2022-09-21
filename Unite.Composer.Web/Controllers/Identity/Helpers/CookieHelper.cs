@@ -2,7 +2,7 @@
 
 public class CookieHelper
 {
-    public const string SESSION_COOKIE_NAME = "session";
+    public const string SESSION_COOKIE_NAME = "unite_session";
     public const int SESSION_EXPIRY_DAYS = 30;
 
 
