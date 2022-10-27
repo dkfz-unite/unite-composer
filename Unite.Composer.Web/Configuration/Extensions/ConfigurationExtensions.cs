@@ -41,7 +41,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IDonorsSearchService, DonorsSearchService>();
         services.AddTransient<ISpecimensSearchService, SpecimensSearchService>();
         services.AddTransient<IGenesSearchService, GenesSearchService>();
-        services.AddTransient<IMutationsSearchService, MutationsSearchService>();
+        services.AddTransient<IVariantsSearchService, VariantsSearchService>();
         services.AddTransient<IImagesSearchService, ImagesSearchService>();
 
         services.AddTransient<ProjectService>();

@@ -1,14 +1,15 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Indices.Services.Configuration.Options;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
@@ -16,21 +17,21 @@ public class SpecimensSearchService : ISpecimensSearchService
 {
     private readonly IIndexService<SpecimenIndex> _specimensIndexService;
     private readonly IIndexService<GeneIndex> _genesIndexService;
-    private readonly IIndexService<MutationIndex> _mutationsIndexService;
+    private readonly IIndexService<VariantIndex> _variantsIndexService;
 
 
     public SpecimensSearchService(IElasticOptions options)
     {
         _specimensIndexService = new SpecimensIndexService(options);
         _genesIndexService = new GenesIndexService(options);
-        _mutationsIndexService = new MutationsIndexService(options);
+        _variantsIndexService = new VariantsIndexService(options);
     }
 
 
     public SpecimenIndex Get(string key, SpecimenSearchContext searchContext = null)
     {
         var query = new GetQuery<SpecimenIndex>(key)
-            .AddExclusion(specimen => specimen.Mutations);
+            .AddExclusion(specimen => specimen.Variants);
 
         var result = _specimensIndexService.GetAsync(query).Result;
 
@@ -51,10 +52,9 @@ public class SpecimensSearchService : ISpecimensSearchService
             .AddFullTextSearch(criteria.Term)
             .AddFilters(filters)
             .AddOrdering(specimen => specimen.NumberOfMutations)
-            .AddExclusion(specimen => specimen.CellLine.DrugScreenings)
-            .AddExclusion(specimen => specimen.Organoid.DrugScreenings)
-            .AddExclusion(specimen => specimen.Xenograft.DrugScreenings)
-            .AddExclusion(specimen => specimen.Mutations);
+            .AddExclusion(specimen => specimen.DrugScreenings)
+            .AddExclusion(specimen => specimen.Images)
+            .AddExclusion(specimen => specimen.Variants);
 
         var result = _specimensIndexService.SearchAsync(query).Result;
 
@@ -83,7 +83,7 @@ public class SpecimensSearchService : ISpecimensSearchService
         return result;
     }
 
-    public SearchResult<MutationIndex> SearchMutations(int specimenId, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
+    public SearchResult<VariantIndex> SearchVariants(int specimenId, VariantType type, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
@@ -91,16 +91,16 @@ public class SpecimensSearchService : ISpecimensSearchService
 
         criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { specimenId } };
 
-        var criteriaFilters = new MutationIndexFiltersCollection(criteria)
+        var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();
 
-        var query = new SearchQuery<MutationIndex>()
+        var query = new SearchQuery<VariantIndex>()
             .AddPagination(criteria.From, criteria.Size)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(mutation => mutation.NumberOfDonors);
 
-        var result = _mutationsIndexService.SearchAsync(query).Result;
+        var result = _variantsIndexService.SearchAsync(query).Result;
 
         return result;
     }
@@ -115,6 +115,17 @@ public class SpecimensSearchService : ISpecimensSearchService
             Context.Enums.SpecimenType.Organoid => new OrganoidIndexFiltersCollection(criteria),
             Context.Enums.SpecimenType.Xenograft => new XenograftIndexFiltersCollection(criteria),
             _ => new SpecimenIndexFiltersCollection(criteria)
+        };
+    }
+
+    private FiltersCollection<VariantIndex> GetFiltersCollection(VariantType type, SearchCriteria criteria)
+    {
+        return type switch
+        {
+            VariantType.SSM => new MutationIndexFiltersCollection(criteria),
+            VariantType.CNV => new CopyNumberVariantFiltersCollection(criteria),
+            VariantType.SV => new StructuralVariantFiltersCollection(criteria),
+            _ => new VariantFiltersCollection(criteria)
         };
     }
 }

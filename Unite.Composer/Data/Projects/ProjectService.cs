@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Projects.Models;
 using Unite.Data.Entities.Donors;
-using Unite.Data.Entities.Genome.Mutations;
 using Unite.Data.Entities.Images;
 using Unite.Data.Entities.Specimens;
 using Unite.Data.Services;
+
+using CNV = Unite.Data.Entities.Genome.Variants.CNV;
+using SSM = Unite.Data.Entities.Genome.Variants.SSM;
+using SV = Unite.Data.Entities.Genome.Variants.SV;
 
 namespace Unite.Composer.Data.Projects;
 
@@ -20,13 +23,13 @@ public class ProjectService
 
     public ProjectModel Get(int id)
     {
-        var project = _dbContext.Set<WorkPackage>()
+        var project = _dbContext.Set<Project>()
             .FirstOrDefault(project => project.Id == id);
 
         if (project != null)
         {
-            var projectDonorIds = _dbContext.Set<WorkPackageDonor>()
-                .Where(projectDonor => projectDonor.WorkPackageId == project.Id)
+            var projectDonorIds = _dbContext.Set<ProjectDonor>()
+                .Where(projectDonor => projectDonor.ProjectId == project.Id)
                 .Select(projectDonor => projectDonor.DonorId)
                 .Distinct()
                 .ToArray();
@@ -49,7 +52,7 @@ public class ProjectService
 
     public ProjectModel Update(ProjectModel projectModel)
     {
-        var project = _dbContext.Set<WorkPackage>()
+        var project = _dbContext.Set<Project>()
             .FirstOrDefault(project => project.Id == projectModel.Id);
 
         if (project != null)
@@ -69,14 +72,14 @@ public class ProjectService
 
     public IEnumerable<ProjectModel> GetAll()
     {
-        var projects = _dbContext.Set<WorkPackage>()
+        var projects = _dbContext.Set<Project>()
             .OrderBy(project => project.Name)
             .ToArray();
 
         foreach (var project in projects)
         {
-            var projectDonorIds = _dbContext.Set<WorkPackageDonor>()
-                .Where(projectDonor => projectDonor.WorkPackageId == project.Id)
+            var projectDonorIds = _dbContext.Set<ProjectDonor>()
+                .Where(projectDonor => projectDonor.ProjectId == project.Id)
                 .Select(projectDonor => projectDonor.DonorId)
                 .Distinct()
                 .ToArray();
@@ -94,7 +97,7 @@ public class ProjectService
         }
 
         var emptyProjectDonorIds = _dbContext.Set<Donor>()
-            .Where(donor => donor.DonorWorkPackages.Count == 0)
+            .Where(donor => donor.DonorProjects.Count == 0)
             .Select(donor => donor.Id)
             .Distinct()
             .ToArray();
@@ -158,15 +161,23 @@ public class ProjectService
             .Distinct()
             .Count();
 
-        var withSimpleSomaticMutations = _dbContext.Set<MutationOccurrence>()
+        var withSimpleSomaticMutations = _dbContext.Set<SSM.VariantOccurrence>()
             .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.Sample.Specimen.DonorId))
             .Select(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId)
             .Distinct()
             .Count();
 
-        var withCopyNumberVariants = 0;
+        var withCopyNumberVariants = _dbContext.Set<CNV.VariantOccurrence>()
+            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.Sample.Specimen.DonorId))
+            .Select(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId)
+            .Distinct()
+            .Count();
 
-        var withStructuralVariants = 0;
+        var withStructuralVariants = _dbContext.Set<SV.VariantOccurrence>()
+            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.Sample.Specimen.DonorId))
+            .Select(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId)
+            .Distinct()
+            .Count();
 
 
         return new ProjectDataModel

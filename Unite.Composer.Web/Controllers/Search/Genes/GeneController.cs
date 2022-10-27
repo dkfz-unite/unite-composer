@@ -2,14 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Donors;
-using Unite.Composer.Web.Resources.Mutations;
+using Unite.Composer.Web.Resources.Search.Donors;
+using Unite.Composer.Web.Resources.Search.Genes;
+using Unite.Composer.Web.Resources.Search.Variants;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using GeneResource = Unite.Composer.Web.Resources.Genes.GeneResource;
-using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Web.Controllers.Search.Genes;
 
@@ -45,10 +46,10 @@ public class GeneController : Controller
         return From(searchResult);
     }
 
-    [HttpPost("{id}/mutations")]
-    public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/{type}")]
+    public SearchResult<VariantResource> GetMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _genesSearchService.SearchMutations(id, searchCriteria);
+        var searchResult = _genesSearchService.SearchVariants(id, type, searchCriteria);
 
         return From(searchResult);
     }
@@ -73,12 +74,12 @@ public class GeneController : Controller
         };
     }
 
-    private static SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
+    private static SearchResult<VariantResource> From(SearchResult<VariantIndex> searchResult)
     {
-        return new SearchResult<MutationResource>()
+        return new SearchResult<VariantResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new MutationResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
         };
     }
 }

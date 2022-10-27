@@ -5,7 +5,7 @@ using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Images;
+using Unite.Composer.Web.Resources.Search.Images;
 using Unite.Indices.Entities.Images;
 
 namespace Unite.Composer.Web.Controllers.Search.Images;

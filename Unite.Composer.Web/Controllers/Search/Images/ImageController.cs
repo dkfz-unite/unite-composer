@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Images;
+using Unite.Composer.Web.Resources.Search.Images;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
-using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Web.Controllers.Search.Images;
 
@@ -43,10 +44,10 @@ public class ImageController : Controller
         return From(id, searchResult);
     }
 
-    [HttpPost("{id}/mutations")]
-    public SearchResult<ImageMutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/{type}")]
+    public SearchResult<ImageVariantResource> GetMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _searchService.SearchMutations(id, searchCriteria);
+        var searchResult = _searchService.SearchVariants(id, type, searchCriteria);
 
         return From(id, searchResult);
     }
@@ -71,12 +72,12 @@ public class ImageController : Controller
         };
     }
 
-    private static SearchResult<ImageMutationResource> From(int imageId, SearchResult<MutationIndex> searchResult)
+    private static SearchResult<ImageVariantResource> From(int imageId, SearchResult<VariantIndex> searchResult)
     {
-        return new SearchResult<ImageMutationResource>()
+        return new SearchResult<ImageVariantResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new ImageMutationResource(imageId, index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new ImageVariantResource(imageId, index)).ToArray()
         };
     }
 }

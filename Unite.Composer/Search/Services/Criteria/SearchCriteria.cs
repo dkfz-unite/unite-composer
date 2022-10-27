@@ -17,7 +17,10 @@ public class SearchCriteria
     public OrganoidCriteria OrganoidFilters { get; set; }
     public XenograftCriteria XenograftFilters { get; set; }
     public GeneCriteria GeneFilters { get; set; }
+    public VariantCriteria VariantFilters { get; set; }
     public MutationCriteria MutationFilters { get; set; }
+    public CopyNumberVariantCriteria CopyNumberVariantFilters { get; set; }
+    public StructuralVariantCriteria StructuralVariantFilters { get; set; }
     public OncoGridCriteria OncoGridFilters { get; set; }
 
     public SearchCriteria()

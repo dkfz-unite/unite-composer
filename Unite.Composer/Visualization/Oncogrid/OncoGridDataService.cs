@@ -8,7 +8,7 @@ using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Visualization.Oncogrid;
 
@@ -16,14 +16,14 @@ public class OncoGridDataService
 {
     private readonly IIndexService<DonorIndex> _donorsIndexService;
     private readonly IIndexService<GeneIndex> _genesIndexService;
-    private readonly IIndexService<MutationIndex> _mutationsIndexService;
+    private readonly IIndexService<VariantIndex> _variantsIndexService;
 
 
     public OncoGridDataService(IElasticOptions options)
     {
         _donorsIndexService = new DonorsIndexService(options);
         _genesIndexService = new GenesIndexService(options);
-        _mutationsIndexService = new MutationsIndexService(options);
+        _variantsIndexService = new VariantsIndexService(options);
     }
 
 
@@ -78,7 +78,7 @@ public class OncoGridDataService
             .AddOrdering(donor => donor.NumberOfGenes)
             .AddExclusion(donor => donor.Specimens)
             .AddExclusion(donor => donor.Treatments)
-            .AddExclusion(donor => donor.WorkPackages)
+            .AddExclusion(donor => donor.Projects)
             .AddExclusion(donor => donor.Studies);
 
         return _donorsIndexService.SearchAsync(query).Result;
@@ -107,7 +107,7 @@ public class OncoGridDataService
             .AddPagination(0, criteria.OncoGridFilters.NumberOfGenes)
             .AddFilters(criteriaFilters)
             .AddOrdering(gene => gene.NumberOfMutations)
-            .AddExclusion(gene => gene.Mutations);
+            .AddExclusion(gene => gene.Specimens);
 
         return _genesIndexService.SearchAsync(query).Result;
     }
@@ -119,7 +119,7 @@ public class OncoGridDataService
     /// <param name="donorIds">Id's of donors</param>
     /// <param name="geneIds">Id's of genes</param>
     /// <returns>Search result with mutations and number of total available rows.</returns>
-    private SearchResult<MutationIndex> FindMutations(
+    private SearchResult<VariantIndex> FindMutations(
         SearchCriteria searchCriteria,
         IEnumerable<int> donorIds,
         IEnumerable<int> geneIds)
@@ -134,18 +134,18 @@ public class OncoGridDataService
 
         var criteriaFilters = new MutationIndexFiltersCollection(criteria).All();
 
-        var query = new SearchQuery<MutationIndex>()
+        var query = new SearchQuery<VariantIndex>()
             // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
-            .AddFilter(new NotNullFilter<MutationIndex, object>("Mutation.HasAffectedTranscripts", mutation => mutation.AffectedTranscripts))
-            .AddExclusion(mutation => mutation.Donors.First().Specimens)
-            .AddExclusion(mutation => mutation.Donors.First().Studies)
-            .AddExclusion(mutation => mutation.Donors.First().Treatments)
-            .AddExclusion(mutation => mutation.Donors.First().ClinicalData)
-            .AddExclusion(mutation => mutation.Donors.First().WorkPackages);
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.AffectedFeatures))
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.ClinicalData)
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.Treatments)
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.Projects)
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.Studies);
 
-        return _mutationsIndexService.SearchAsync(query).Result;
+        return _variantsIndexService.SearchAsync(query).Result;
     }
 
 
@@ -159,7 +159,7 @@ public class OncoGridDataService
     private OncoGridData GetOncoGridData(
         IEnumerable<DonorIndex> donors,
         IEnumerable<GeneIndex> genes,
-        IEnumerable<MutationIndex> mutations,
+        IEnumerable<VariantIndex> mutations,
         IEnumerable<string> impacts,
         IEnumerable<string> consequences)
     {
@@ -209,7 +209,7 @@ public class OncoGridDataService
     private IEnumerable<OncoGridMutation> GetObservationsData(
         IEnumerable<OncoGridDonor> donors,
         IEnumerable<OncoGridGene> genes,
-        IEnumerable<MutationIndex> mutations,
+        IEnumerable<VariantIndex> mutations,
         IEnumerable<string> impacts,
         IEnumerable<string> consequences)
     {
@@ -222,15 +222,20 @@ public class OncoGridDataService
                 var geneId = int.Parse(gene.Id);
 
                 var observedMutations = mutations.Where(mutation =>
-                    mutation.Donors.Any(mutationDonor => mutationDonor.Id == donorId) &&
-                    mutation.AffectedTranscripts.Any(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
+                    mutation.Specimens.Any(mutationSpecimen => mutationSpecimen.Donor.Id == donorId) &&
+                    mutation.AffectedFeatures.Any(affectedFeature =>
+                        affectedFeature.Transcript != null &&
+                        affectedFeature.Gene != null &&
+                        affectedFeature.Gene.Id == geneId)
                 );
 
                 foreach (var mutation in observedMutations)
                 {
-                    var consequence = mutation.AffectedTranscripts
-                        .Where(affectedTranscript => affectedTranscript.Transcript.Gene.Id == geneId)
-                        .SelectMany(affectedTranscript => affectedTranscript.Consequences)
+                    var consequence = mutation.AffectedFeatures
+                        .Where(affectedFeature => affectedFeature.Transcript != null)
+                        .Where(affectedFeature => affectedFeature.Gene != null)
+                        .Where(affectedFeature => affectedFeature.Gene.Id == geneId)
+                        .SelectMany(affectedFeature => affectedFeature.Consequences)
                         .Where(consequence => HasMatchingImpact(consequence.Impact, impacts))
                         .Where(consequence => HasMatchingConsequence(consequence.Type, consequences))
                         .OrderBy(consequence => consequence.Severity)
@@ -240,8 +245,7 @@ public class OncoGridDataService
                     {
                         yield return new OncoGridMutation
                         {
-                            Id = mutation.Id.ToString(),
-                            Code = mutation.Code,
+                            Id = mutation.Id,
                             Consequence = consequence.Type,
                             Impact = consequence.Impact,
                             DonorId = donor.Id,

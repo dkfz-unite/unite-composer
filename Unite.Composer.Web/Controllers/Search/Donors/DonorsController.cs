@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Donors;
+using Unite.Composer.Web.Resources.Search.Donors;
 using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Controllers.Search.Donors;

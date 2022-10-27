@@ -16,5 +16,5 @@ public class DonorCriteria
     public string[] Therapy { get; set; }
 
     public bool? MtaProtected { get; set; }
-    public string[] WorkPackage { get; set; }
+    public string[] Project { get; set; }
 }

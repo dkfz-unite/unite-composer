@@ -16,8 +16,10 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
         var cellLineFilters = new CellLineFilters<DonorIndex>(criteria.CellLineFilters, donor => donor.Specimens.First());
         var organoidFilters = new OrganoidFilters<DonorIndex>(criteria.OrganoidFilters, donor => donor.Specimens.First());
         var xenograftFilters = new XenograftFilters<DonorIndex>(criteria.XenograftFilters, donor => donor.Specimens.First());
-        var geneFilters = new GeneFilters<DonorIndex>(criteria.GeneFilters, donor => donor.Specimens.First().Mutations.First().AffectedTranscripts.First().Transcript.Gene);
-        var mutationFilters = new MutationFilters<DonorIndex>(criteria.MutationFilters, donor => donor.Specimens.First().Mutations.First());
+        var geneFilters = new GeneFilters<DonorIndex>(criteria.GeneFilters, donor => donor.Specimens.First().Variants.First().AffectedFeatures.First().Gene);
+        var mutationFilters = new MutationFilters<DonorIndex>(criteria.MutationFilters, donor => donor.Specimens.First().Variants.First());
+        var copyNumberVariantFilters = new CopyNumberVariantFilters<DonorIndex>(criteria.CopyNumberVariantFilters, donor => donor.Specimens.First().Variants.First());
+        var structuralVariantFilters = new StructuralVariantFilters<DonorIndex>(criteria.StructuralVariantFilters, donor => donor.Specimens.First().Variants.First());
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -27,6 +29,8 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
         _filters.AddRange(xenograftFilters.All());
         _filters.AddRange(geneFilters.All());
         _filters.AddRange(mutationFilters.All());
+        _filters.AddRange(copyNumberVariantFilters.All());
+        _filters.AddRange(structuralVariantFilters.All());
 
         if (criteria.SpecimenFilters != null)
         {

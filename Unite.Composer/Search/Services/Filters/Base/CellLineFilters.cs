@@ -8,20 +8,20 @@ using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Search.Services.Filters.Base;
 
-public class CellLineFilters<TIndex> : FiltersCollection<TIndex> where TIndex : class
+public class CellLineFilters<TIndex> : SpecimenFilters<TIndex> where TIndex : class //FiltersCollection<TIndex> where TIndex : class
 {
-    public CellLineFilters(CellLineCriteria criteria, Expression<Func<TIndex, SpecimenIndex>> path)
+    public CellLineFilters(CellLineCriteria criteria, Expression<Func<TIndex, SpecimenIndex>> path) : base(criteria, path)
     {
-        if (criteria == null)
-        {
-            return;
-        }
+        //if (criteria == null)
+        //{
+        //    return;
+        //}
 
-        Add(new EqualityFilter<TIndex, int>(
-            SpecimenFilterNames.Id,
-            path.Join(specimen => specimen.Id),
-            criteria.Id)
-        );
+        //Add(new EqualityFilter<TIndex, int>(
+        //    SpecimenFilterNames.Id,
+        //    path.Join(specimen => specimen.Id),
+        //    criteria.Id)
+        //);
 
         Add(new SimilarityFilter<TIndex, string>(
             CellLineFilterNames.ReferenceId,
@@ -54,61 +54,61 @@ public class CellLineFilters<TIndex> : FiltersCollection<TIndex> where TIndex : 
         );
 
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.MgmtStatus,
-            path.Join(specimen => specimen.CellLine.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
-            criteria.MgmtStatus)
-        );
+        //Add(new EqualityFilter<TIndex, object>(
+        //    CellLineFilterNames.MgmtStatus,
+        //    path.Join(specimen => specimen.CellLine.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
+        //    criteria.MgmtStatus)
+        //);
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.IdhStatus,
-            path.Join(specimen => specimen.CellLine.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
-            criteria.IdhStatus)
-        );
+        //Add(new EqualityFilter<TIndex, object>(
+        //    CellLineFilterNames.IdhStatus,
+        //    path.Join(specimen => specimen.CellLine.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
+        //    criteria.IdhStatus)
+        //);
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.IdhMutation,
-            path.Join(specimen => specimen.CellLine.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
-            criteria.IdhMutation)
-        );
+        //Add(new EqualityFilter<TIndex, object>(
+        //    CellLineFilterNames.IdhMutation,
+        //    path.Join(specimen => specimen.CellLine.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
+        //    criteria.IdhMutation)
+        //);
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.GeneExpressionSubtype,
-            path.Join(specimen => specimen.CellLine.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
-            criteria.GeneExpressionSubtype)
-        );
+        //Add(new EqualityFilter<TIndex, object>(
+        //    CellLineFilterNames.GeneExpressionSubtype,
+        //    path.Join(specimen => specimen.CellLine.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
+        //    criteria.GeneExpressionSubtype)
+        //);
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.MethylationSubtype,
-            path.Join(specimen => specimen.CellLine.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
-            criteria.MethylationSubtype)
-        );
+        //Add(new EqualityFilter<TIndex, object>(
+        //    CellLineFilterNames.MethylationSubtype,
+        //    path.Join(specimen => specimen.CellLine.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
+        //    criteria.MethylationSubtype)
+        //);
 
-        Add(new BooleanFilter<TIndex>(
-            CellLineFilterNames.GcimpMethylation,
-            path.Join(specimen => specimen.CellLine.MolecularData.GcimpMethylation),
-            criteria.GcimpMethylation)
-        );
+        //Add(new BooleanFilter<TIndex>(
+        //    CellLineFilterNames.GcimpMethylation,
+        //    path.Join(specimen => specimen.CellLine.MolecularData.GcimpMethylation),
+        //    criteria.GcimpMethylation)
+        //);
 
 
-        Add(new SimilarityFilter<TIndex, string>(
-            CellLineFilterNames.Drug,
-            path.Join(specimen => specimen.CellLine.DrugScreenings.First().Drug),
-            criteria.Drug)
-        );
+        //Add(new SimilarityFilter<TIndex, string>(
+        //    CellLineFilterNames.Drug,
+        //    path.Join(specimen => specimen.CellLine.DrugScreenings.First().Drug),
+        //    criteria.Drug)
+        //);
 
-        Add(new RangeFilter<TIndex, double?>(
-            CellLineFilterNames.Dss,
-            path.Join(specimen => specimen.CellLine.DrugScreenings.First().Dss),
-            criteria.Dss.From,
-            criteria.Dss.To)
-        );
+        //Add(new RangeFilter<TIndex, double?>(
+        //    CellLineFilterNames.Dss,
+        //    path.Join(specimen => specimen.CellLine.DrugScreenings.First().Dss),
+        //    criteria.Dss.From,
+        //    criteria.Dss.To)
+        //);
 
-        Add(new RangeFilter<TIndex, double?>(
-            CellLineFilterNames.DssSelective,
-            path.Join(specimen => specimen.CellLine.DrugScreenings.First().DssSelective),
-            criteria.DssSelective.From,
-            criteria.DssSelective.To)
-        );
+        //Add(new RangeFilter<TIndex, double?>(
+        //    CellLineFilterNames.DssSelective,
+        //    path.Join(specimen => specimen.CellLine.DrugScreenings.First().DssSelective),
+        //    criteria.DssSelective.From,
+        //    criteria.DssSelective.To)
+        //);
     }
 }

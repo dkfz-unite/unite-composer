@@ -3,14 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Specimens;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Specimens;
+using Unite.Composer.Web.Resources.Search.Specimens;
 
-using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using GeneResource = Unite.Composer.Web.Resources.Genes.GeneResource;
-using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
-using MutationResource = Unite.Composer.Web.Resources.Mutations.MutationResource;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
+using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+
+using DrugScreeningResource = Unite.Composer.Web.Resources.Search.Basic.Specimens.DrugScreeningResource;
+using GeneResource = Unite.Composer.Web.Resources.Search.Genes.GeneResource;
+using VariantResource = Unite.Composer.Web.Resources.Search.Variants.VariantResource;
 
 namespace Unite.Composer.Web.Controllers.Search.Specimens;
 
@@ -50,10 +53,10 @@ public class SpecimenController : Controller
         return From(searchResult);
     }
 
-    [HttpPost("{id}/mutations")]
-    public SearchResult<MutationResource> GetMutations(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/{type}")]
+    public SearchResult<VariantResource> GetVariants(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _specimensSearchService.SearchMutations(id, searchCriteria);
+        var searchResult = _specimensSearchService.SearchVariants(id, type, searchCriteria);
 
         return From(searchResult);
     }
@@ -89,12 +92,12 @@ public class SpecimenController : Controller
         };
     }
 
-    private static SearchResult<MutationResource> From(SearchResult<MutationIndex> searchResult)
+    private static SearchResult<VariantResource> From(SearchResult<VariantIndex> searchResult)
     {
-        return new SearchResult<MutationResource>()
+        return new SearchResult<VariantResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new MutationResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
         };
     }
 }

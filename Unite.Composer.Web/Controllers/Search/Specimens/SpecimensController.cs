@@ -5,7 +5,7 @@ using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Specimens;
+using Unite.Composer.Web.Resources.Search.Specimens;
 using Unite.Indices.Entities.Specimens;
 
 namespace Unite.Composer.Web.Controllers.Search.Specimens;

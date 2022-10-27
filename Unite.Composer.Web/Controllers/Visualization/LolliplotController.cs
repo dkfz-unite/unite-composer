@@ -30,7 +30,7 @@ public class LolliplotController : Controller
     }
 
     [HttpGet("mutation/{id}/transcripts")]
-    public async Task<Transcript[]> GetMutationTranscripts(long id)
+    public async Task<Transcript[]> GetMutationTranscripts(string id)
     {
         return await _dataService.GetMutationTranscripts(id);
     }

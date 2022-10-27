@@ -73,9 +73,9 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
         );
 
         Add(new SimilarityFilter<TIndex, object>(
-           DonorFilterNames.WorkPackage,
-           path.Join(donor => donor.WorkPackages.First().Name.Suffix(_keywordSuffix)),
-           criteria.WorkPackage)
+           DonorFilterNames.Project,
+           path.Join(donor => donor.Projects.First().Name.Suffix(_keywordSuffix)),
+           criteria.Project)
        );
     }
 }

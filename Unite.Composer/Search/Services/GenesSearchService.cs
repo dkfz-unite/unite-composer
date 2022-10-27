@@ -1,12 +1,14 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
+using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using MutationIndex = Unite.Indices.Entities.Mutations.MutationIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
@@ -14,19 +16,19 @@ public class GenesSearchService : IGenesSearchService
 {
     private readonly IIndexService<DonorIndex> _donorsIndexService;
     private readonly IIndexService<GeneIndex> _genesIndexService;
-    private readonly IIndexService<MutationIndex> _mutationsIndexService;
+    private readonly IIndexService<VariantIndex> _variantsIndexService;
 
     public GenesSearchService(IElasticOptions options)
     {
         _donorsIndexService = new DonorsIndexService(options);
         _genesIndexService = new GenesIndexService(options);
-        _mutationsIndexService = new MutationsIndexService(options);
+        _variantsIndexService = new VariantsIndexService(options);
     }
 
     public GeneIndex Get(string key)
     {
         var query = new GetQuery<GeneIndex>(key)
-            .AddExclusion(gene => gene.Mutations);
+            .AddExclusion(gene => gene.Specimens);
 
         var result = _genesIndexService.GetAsync(query).Result;
 
@@ -45,7 +47,7 @@ public class GenesSearchService : IGenesSearchService
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(gene => gene.NumberOfDonors)
-            .AddExclusion(gene => gene.Mutations);
+            .AddExclusion(gene => gene.Specimens);
 
         var result = _genesIndexService.SearchAsync(query).Result;
 
@@ -73,24 +75,36 @@ public class GenesSearchService : IGenesSearchService
         return result;
     }
 
-    public SearchResult<MutationIndex> SearchMutations(int geneId, SearchCriteria searchCriteria = null)
+    public SearchResult<VariantIndex> SearchVariants(int geneId, VariantType type, SearchCriteria searchCriteria = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
         criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
 
-        var criteriaFilters = new MutationIndexFiltersCollection(criteria)
+        var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();
 
-        var query = new SearchQuery<MutationIndex>()
+        var query = new SearchQuery<VariantIndex>()
             .AddPagination(criteria.From, criteria.Size)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(mutation => mutation.NumberOfDonors)
-            .AddExclusion(mutation => mutation.Donors);
+            .AddExclusion(mutation => mutation.Specimens);
 
-        var result = _mutationsIndexService.SearchAsync(query).Result;
+        var result = _variantsIndexService.SearchAsync(query).Result;
 
         return result;
+    }
+
+
+    private FiltersCollection<VariantIndex> GetFiltersCollection(VariantType type, SearchCriteria criteria)
+    {
+        return type switch
+        {
+            VariantType.SSM => new MutationIndexFiltersCollection(criteria),
+            VariantType.CNV => new CopyNumberVariantFiltersCollection(criteria),
+            VariantType.SV => new StructuralVariantFiltersCollection(criteria),
+            _ => new VariantFiltersCollection(criteria)
+        };
     }
 }

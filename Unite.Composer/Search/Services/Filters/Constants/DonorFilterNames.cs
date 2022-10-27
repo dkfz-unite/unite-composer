@@ -14,5 +14,5 @@ public static class DonorFilterNames
     public static readonly string Therapy = $"{_prefix}.Therapy";
 
     public static readonly string MtaProtected = $"{_prefix}.MtaProtected";
-    public static readonly string WorkPackage = $"{_prefix}.WorkPackage";
+    public static readonly string Project = $"{_prefix}.Project";
 }

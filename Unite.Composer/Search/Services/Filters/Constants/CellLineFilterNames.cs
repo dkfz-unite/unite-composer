@@ -12,14 +12,14 @@ public static class CellLineFilterNames
 
     public static readonly string Name = $"{_prefix}.Name";
 
-    public static readonly string MgmtStatus = $"{_prefix}.MgmtStatus";
-    public static readonly string IdhStatus = $"{_prefix}.IhdStatus";
-    public static readonly string IdhMutation = $"{_prefix}.IdhMutation";
-    public static readonly string GeneExpressionSubtype = $"{_prefix}.GeneExpressionSubtype";
-    public static readonly string MethylationSubtype = $"{_prefix}.MethylationSubtype";
-    public static readonly string GcimpMethylation = $"{_prefix}.GcimpMethylation";
+    //public static readonly string MgmtStatus = $"{_prefix}.MgmtStatus";
+    //public static readonly string IdhStatus = $"{_prefix}.IhdStatus";
+    //public static readonly string IdhMutation = $"{_prefix}.IdhMutation";
+    //public static readonly string GeneExpressionSubtype = $"{_prefix}.GeneExpressionSubtype";
+    //public static readonly string MethylationSubtype = $"{_prefix}.MethylationSubtype";
+    //public static readonly string GcimpMethylation = $"{_prefix}.GcimpMethylation";
 
-    public static readonly string Drug = $"{_prefix}.Drug";
-    public static readonly string Dss = $"{_prefix}.Dss";
-    public static readonly string DssSelective = $"{_prefix}.DssSelective";
+    //public static readonly string Drug = $"{_prefix}.Drug";
+    //public static readonly string Dss = $"{_prefix}.Dss";
+    //public static readonly string DssSelective = $"{_prefix}.DssSelective";
 }

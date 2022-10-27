@@ -11,7 +11,7 @@ public class SpecimenSearchContext
     {
     }
 
-    public SpecimenSearchContext(SpecimenType specimenType) : base()
+    public SpecimenSearchContext(SpecimenType specimenType) : this()
     {
         SpecimenType = specimenType;
     }

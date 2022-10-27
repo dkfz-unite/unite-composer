@@ -10,14 +10,16 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
 {
     public GeneIndexFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<GeneIndex>(criteria.DonorFilters, gene => gene.Mutations.First().Donors.First());
-        var mriImageFilters = new MriImageFilters<GeneIndex>(criteria.MriImageFilters, gene => gene.Mutations.First().Donors.First().Images.First());
-        var tissueFilters = new TissueFilters<GeneIndex>(criteria.TissueFilters, gene => gene.Mutations.First().Donors.First().Specimens.First());
-        var cellLineFilters = new CellLineFilters<GeneIndex>(criteria.CellLineFilters, gene => gene.Mutations.First().Donors.First().Specimens.First());
-        var organoidFilters = new OrganoidFilters<GeneIndex>(criteria.OrganoidFilters, gene => gene.Mutations.First().Donors.First().Specimens.First());
-        var xenograftFilters = new XenograftFilters<GeneIndex>(criteria.XenograftFilters, gene => gene.Mutations.First().Donors.First().Specimens.First());
+        var donorFilters = new DonorFilters<GeneIndex>(criteria.DonorFilters, gene => gene.Specimens.First().Donor);
+        var mriImageFilters = new MriImageFilters<GeneIndex>(criteria.MriImageFilters, gene => gene.Specimens.First().Images.First());
+        var tissueFilters = new TissueFilters<GeneIndex>(criteria.TissueFilters, gene => gene.Specimens.First());
+        var cellLineFilters = new CellLineFilters<GeneIndex>(criteria.CellLineFilters, gene => gene.Specimens.First());
+        var organoidFilters = new OrganoidFilters<GeneIndex>(criteria.OrganoidFilters, gene => gene.Specimens.First());
+        var xenograftFilters = new XenograftFilters<GeneIndex>(criteria.XenograftFilters, gene => gene.Specimens.First());
         var geneFilters = new GeneFilters<GeneIndex>(criteria.GeneFilters, gene => gene);
-        var mutationFilters = new MutationFilters<GeneIndex>(criteria.MutationFilters, gene => gene.Mutations.First());
+        var mutationFilters = new MutationFilters<GeneIndex>(criteria.MutationFilters, gene => gene.Specimens.First().Variants.First());
+        var copyNumberVariantFilters = new CopyNumberVariantFilters<GeneIndex>(criteria.CopyNumberVariantFilters, gene => gene.Specimens.First().Variants.First());
+        var structuralVariantFilters = new StructuralVariantFilters<GeneIndex>(criteria.StructuralVariantFilters, gene => gene.Specimens.First().Variants.First());
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -27,12 +29,14 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
         _filters.AddRange(xenograftFilters.All());
         _filters.AddRange(geneFilters.All());
         _filters.AddRange(mutationFilters.All());
+        _filters.AddRange(copyNumberVariantFilters.All());
+        _filters.AddRange(structuralVariantFilters.All());
 
         if (criteria.ImageFilters != null)
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
               ImageFilterNames.Id,
-              gene => gene.Mutations.First().Donors.First().Images.First().Id,
+              gene => gene.Specimens.First().Images.First().Id,
               criteria.ImageFilters.Id)
             );
         }
@@ -41,7 +45,7 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
                 SpecimenFilterNames.Id,
-                gene => gene.Mutations.First().Donors.First().Specimens.First().Id,
+                gene => gene.Specimens.First().Id,
                 criteria.SpecimenFilters.Id)
             );
         }
