@@ -246,6 +246,7 @@ public class OncoGridDataService
                         yield return new OncoGridMutation
                         {
                             Id = mutation.Id,
+                            Code = GetVariantCode(mutation),
                             Consequence = consequence.Type,
                             Impact = consequence.Impact,
                             DonorId = donor.Id,
@@ -266,5 +267,10 @@ public class OncoGridDataService
     private static bool HasMatchingConsequence(string consequence, IEnumerable<string> consequences)
     {
         return consequences == null || !consequences.Any() || consequences.Contains(consequence);
+    }
+
+    private string GetVariantCode(VariantIndex variant)
+    {
+        return $"{variant.Chromosome}:g.{variant.Start}{variant.Mutation.Ref ?? "-"}>{variant.Mutation.Alt ?? "-"}";
     }
 }

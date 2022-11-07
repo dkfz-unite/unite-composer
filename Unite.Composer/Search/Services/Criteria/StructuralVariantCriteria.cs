@@ -3,4 +3,5 @@
 public class StructuralVariantCriteria : VariantCriteriaBase
 {
     public string[] Type { get; set; }
+    public bool? Inverted { get; set; }
 }

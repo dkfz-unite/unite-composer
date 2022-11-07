@@ -11,6 +11,11 @@ public class DrugScreeningFilters<TIndex> : FiltersCollection<TIndex> where TInd
 {
     public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, SpecimenIndex>> path)
     {
+        if (criteria == null)
+        {
+            return;
+        }
+
         Add(new SimilarityFilter<TIndex, string>(
             SpecimenFilterNames.Drug,
             path.Join(specimen => specimen.DrugScreenings.First().Drug),

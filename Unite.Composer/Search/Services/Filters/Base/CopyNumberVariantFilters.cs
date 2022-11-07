@@ -8,28 +8,14 @@ using Unite.Indices.Entities.Basic.Genome.Variants;
 
 namespace Unite.Composer.Search.Services.Filters.Base;
 
-public class CopyNumberVariantFilters<TIndex> : VariantFilters<TIndex> where TIndex : class //FiltersCollection<TIndex> where TIndex : class
+public class CopyNumberVariantFilters<TIndex> : VariantFilters<TIndex> where TIndex : class
 {
     public CopyNumberVariantFilters(CopyNumberVariantCriteria criteria, Expression<Func<TIndex, VariantIndex>> path) : base(criteria, path)
     {
-        //if (criteria == null)
-        //{
-        //    return;
-        //}
-
-        //Add(new EqualityFilter<TIndex, object>(
-        //    CopyNumberVariantFilterNames.Chromosome,
-        //    path.Join(variant => variant.CopyNumberVariant.Chromosome.Suffix(_keywordSuffix)),
-        //    criteria.Chromosome)
-        //);
-
-        //Add(new MultiPropertyRangeFilter<TIndex, int>(
-        //    CopyNumberVariantFilterNames.Position,
-        //    path.Join(variant => variant.CopyNumberVariant.Start),
-        //    path.Join(variant => variant.CopyNumberVariant.End),
-        //    criteria.Position?.From,
-        //    criteria.Position?.To)
-        //);
+        if (criteria == null)
+        {
+            return;
+        }
 
         Add(new EqualityFilter<TIndex, object>(
             CopyNumberVariantFilterNames.SvType,
@@ -54,17 +40,5 @@ public class CopyNumberVariantFilters<TIndex> : VariantFilters<TIndex> where TIn
             path.Join(variant => variant.CopyNumberVariant.HomoDel),
             criteria.HomoDel)
         );
-
-        //Add(new EqualityFilter<TIndex, object>(
-        //    CopyNumberVariantFilterNames.Impact,
-        //    path.Join(variant => variant.AffectedTranscripts.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
-        //    criteria.Impact)
-        //);
-
-        //Add(new EqualityFilter<TIndex, object>(
-        //    CopyNumberVariantFilterNames.Consequence,
-        //    path.Join(variant => variant.AffectedTranscripts.First().Consequences.First().Type.Suffix(_keywordSuffix)),
-        //    criteria.Consequence)
-        //);
     }
 }

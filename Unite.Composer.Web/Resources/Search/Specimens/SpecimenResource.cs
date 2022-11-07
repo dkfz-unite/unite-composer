@@ -38,7 +38,10 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
 
     private void Map(SpecimenIndex index)
     {
-        DonorId = index.Donor.Id;
+        if (index.Donor != null)
+        {
+            DonorId = index.Donor.Id;
+        }
 
         if (index.Parent != null)
         {

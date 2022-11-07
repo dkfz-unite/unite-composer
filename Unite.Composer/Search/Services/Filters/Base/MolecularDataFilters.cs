@@ -12,6 +12,11 @@ public class MolecularDataFilters<TIndex> : FiltersCollection<TIndex> where TInd
 {
     public MolecularDataFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, SpecimenIndex>> path)
     {
+        if (criteria == null)
+        {
+            return;
+        }
+
         Add(new EqualityFilter<TIndex, object>(
             SpecimenFilterNames.MgmtStatus,
             path.Join(specimen => specimen.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),

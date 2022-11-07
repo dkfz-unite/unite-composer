@@ -18,6 +18,14 @@ public class VariantFilters<TIndex> : FiltersCollection<TIndex> where TIndex : c
         }
 
         Add(new EqualityFilter<TIndex, object>(
+            VariantFilterNames.Id,
+            path.Join(variant => variant.Id.Suffix(_keywordSuffix)),
+            criteria.Id)
+        );
+
+        //TODO: Add variant type filter
+
+        Add(new EqualityFilter<TIndex, object>(
             VariantFilterNames.Chromosome,
             path.Join(variant => variant.Chromosome.Suffix(_keywordSuffix)),
             criteria.Chromosome)

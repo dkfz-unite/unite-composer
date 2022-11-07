@@ -10,13 +10,14 @@ public class StructuralVariantResource
     public int Start { get; set; }
     public int End { get; set; }
 
-    public string NewChromosome { get; set; }
-    public double? NewStart { get; set; }
-    public double? NewEnd { get; set; }
+    public string OtherChromosome { get; set; }
+    public double? OtherStart { get; set; }
+    public double? OtherEnd { get; set; }
 
     public string Type { get; set; }
-    public string Ref { get; set; }
-    public string Alt { get; set; }
+    public bool? Inverted { get; set; }
+    public string FlankingSequenceFrom { get; set; }
+    public string FlankingSequenceTo { get; set; }
 
 
     public StructuralVariantResource(StructuralVariantIndex index)
@@ -27,12 +28,13 @@ public class StructuralVariantResource
         Start = index.Start;
         End = index.End;
 
-        NewChromosome = index.NewChromosome;
-        NewStart = index.NewStart;
-        NewEnd = index.NewEnd;
+        OtherChromosome = index.OtherChromosome;
+        OtherStart = index.OtherStart;
+        OtherEnd = index.OtherEnd;
 
         Type = index.Type;
-        Ref = index.Ref;
-        Alt = index.Alt;
+        Inverted = index.Inverted;
+        FlankingSequenceFrom = index.FlankingSequenceFrom;
+        FlankingSequenceTo = index.FlankingSequenceTo;
     }
 }
