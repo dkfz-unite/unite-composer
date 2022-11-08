@@ -11,7 +11,7 @@ public class AffectedTranscriptResource
 
     public int? Distance { get; set; }
     public int? OverlapBpNumber { get; set; }
-    public int? OverlapPercentage { get; set; }
+    public double? OverlapPercentage { get; set; }
 
     public AffectedTranscriptResource(AffectedTranscriptIndex index)
     {
