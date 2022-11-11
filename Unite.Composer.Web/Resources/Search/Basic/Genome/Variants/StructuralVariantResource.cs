@@ -14,6 +14,8 @@ public class StructuralVariantResource
     public double? OtherStart { get; set; }
     public double? OtherEnd { get; set; }
 
+    public int? Length { get; set; }
+
     public string Type { get; set; }
     public bool? Inverted { get; set; }
     public string FlankingSequenceFrom { get; set; }
@@ -31,6 +33,8 @@ public class StructuralVariantResource
         OtherChromosome = index.OtherChromosome;
         OtherStart = index.OtherStart;
         OtherEnd = index.OtherEnd;
+
+        Length = index.Length;
 
         Type = index.Type;
         Inverted = index.Inverted;

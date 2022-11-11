@@ -9,6 +9,7 @@ public class CopyNumberVariantResource
     public string Chromosome { get; set; }
     public int Start { get; set; }
     public int End { get; set; }
+    public int Length { get; set; }
 
     public string SvType { get; set; }
     public string CnaType { get; set; }
@@ -17,6 +18,7 @@ public class CopyNumberVariantResource
     public double? C1Mean { get; set; }
     public double? C2Mean { get; set; }
     public double? TcnMean { get; set; }
+    public double? TcnRatio { get; set; }
     public int? C1 { get; set; }
     public int? C2 { get; set; }
     public int? Tcn { get; set; }
@@ -30,6 +32,7 @@ public class CopyNumberVariantResource
         Chromosome = index.Chromosome;
         Start = index.Start;
         End = index.End;
+        Length = index.Length;
 
         SvType = index.SvType;
         CnaType = index.CnaType;
@@ -41,6 +44,7 @@ public class CopyNumberVariantResource
         C1 = index.C1;
         C2 = index.C2;
         Tcn = index.Tcn;
+        TcnRatio = index.TcnRatio;
         DhMax = index.DhMax;
     }
 }
