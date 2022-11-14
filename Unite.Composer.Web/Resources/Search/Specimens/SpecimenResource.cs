@@ -52,6 +52,6 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
         NumberOfGenes = index.NumberOfGenes;
         NumberOfMutations = index.NumberOfMutations;
         NumberOfCopyNumberVariants = index.NumberOfCopyNumberVariants;
-        NumberOfStructuralVariants = index.NumberOfCopyNumberVariants;
+        NumberOfStructuralVariants = index.NumberOfStructuralVariants;
     }
 }
