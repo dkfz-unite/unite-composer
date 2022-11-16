@@ -10,4 +10,7 @@ public class GeneCriteria
     public string[] Biotype { get; set; }
     public string[] Chromosome { get; set; }
     public Range<double?> Position { get; set; }
+    public bool? HasMutations { get; set; }
+    public bool? HasCopyNumberVariants { get; set; }
+    public bool? HasStructuralVariants { get; set; }
 }

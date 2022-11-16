@@ -52,7 +52,9 @@ public class SpecimensSearchService : ISpecimensSearchService
             .AddFullTextSearch(criteria.Term)
             .AddFilters(filters)
             .AddOrdering(specimen => specimen.NumberOfMutations)
-            .AddExclusion(specimen => specimen.DrugScreenings)
+            .AddExclusion(specimen => specimen.CellLine.DrugScreenings)
+            .AddExclusion(specimen => specimen.Organoid.DrugScreenings)
+            .AddExclusion(specimen => specimen.Xenograft.DrugScreenings)
             .AddExclusion(specimen => specimen.Images)
             .AddExclusion(specimen => specimen.Variants);
 

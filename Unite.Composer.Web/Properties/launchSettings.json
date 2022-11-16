@@ -10,7 +10,6 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "UNITE_ROOT_USER": "admin@unite.net",
@@ -30,7 +29,6 @@
     },
     "Unite.Composer.Web": {
       "commandName": "Project",
-      "launchBrowser": true,
       "launchUrl": "api",
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {

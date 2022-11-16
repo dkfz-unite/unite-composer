@@ -16,7 +16,6 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
         var cellLineFilters = new CellLineFilters<VariantIndex>(criteria.CellLineFilters, variant => variant.Specimens.First());
         var organoidFilters = new OrganoidFilters<VariantIndex>(criteria.OrganoidFilters, variant => variant.Specimens.First());
         var xenograftFilters = new XenograftFilters<VariantIndex>(criteria.XenograftFilters, variant => variant.Specimens.First());
-        var geneFilters = new GeneFilters<VariantIndex>(criteria.GeneFilters, variant => variant.AffectedFeatures.First().Gene);
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -24,7 +23,6 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
         _filters.AddRange(cellLineFilters.All());
         _filters.AddRange(organoidFilters.All());
         _filters.AddRange(xenograftFilters.All());
-        _filters.AddRange(geneFilters.All());
 
         if (criteria.ImageFilters != null)
         {

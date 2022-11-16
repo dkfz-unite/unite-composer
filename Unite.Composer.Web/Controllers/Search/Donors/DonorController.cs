@@ -5,8 +5,10 @@ using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Resources.Search.Donors;
+using Unite.Composer.Web.Resources.Search.Genes;
 using Unite.Composer.Web.Resources.Search.Images;
 using Unite.Composer.Web.Resources.Search.Specimens;
+using Unite.Composer.Web.Resources.Search.Variants;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -66,7 +68,7 @@ public class DonorController : Controller
     }
 
     [HttpPost("{id}/variants/{type}")]
-    public SearchResult<DonorVariantResource> SearchMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<VariantResource> SearchMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _donorsSearchService.SearchVariants(id, type, searchCriteria);
 
@@ -107,16 +109,16 @@ public class DonorController : Controller
         return new SearchResult<DonorGeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new DonorGeneResource(donorId, index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new DonorGeneResource(index, donorId)).ToArray()
         };
     }
 
-    private static SearchResult<DonorVariantResource> From(int donorId, SearchResult<VariantIndex> searchResult)
+    private static SearchResult<VariantResource> From(int donorId, SearchResult<VariantIndex> searchResult)
     {
-        return new SearchResult<DonorVariantResource>()
+        return new SearchResult<VariantResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new DonorVariantResource(donorId, index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
         };
     }
 }

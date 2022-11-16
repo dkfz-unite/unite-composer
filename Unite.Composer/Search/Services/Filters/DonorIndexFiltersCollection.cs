@@ -16,10 +16,12 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
         var cellLineFilters = new CellLineFilters<DonorIndex>(criteria.CellLineFilters, donor => donor.Specimens.First());
         var organoidFilters = new OrganoidFilters<DonorIndex>(criteria.OrganoidFilters, donor => donor.Specimens.First());
         var xenograftFilters = new XenograftFilters<DonorIndex>(criteria.XenograftFilters, donor => donor.Specimens.First());
-        var geneFilters = new GeneFilters<DonorIndex>(criteria.GeneFilters, donor => donor.Specimens.First().Variants.First().AffectedFeatures.First().Gene);
         var mutationFilters = new MutationFilters<DonorIndex>(criteria.MutationFilters, donor => donor.Specimens.First().Variants.First());
+        var mutationGeneFilters = new GeneFilters<DonorIndex>(criteria.GeneFilters, donor => donor.Specimens.First().Variants.First().Mutation.AffectedFeatures.First().Gene);
         var copyNumberVariantFilters = new CopyNumberVariantFilters<DonorIndex>(criteria.CopyNumberVariantFilters, donor => donor.Specimens.First().Variants.First());
+        var copyNumberVariantGeneFilters = new GeneFilters<DonorIndex>(criteria.GeneFilters, donor => donor.Specimens.First().Variants.First().CopyNumberVariant.AffectedFeatures.First().Gene);
         var structuralVariantFilters = new StructuralVariantFilters<DonorIndex>(criteria.StructuralVariantFilters, donor => donor.Specimens.First().Variants.First());
+        var structuralVariantGeneFilters = new GeneFilters<DonorIndex>(criteria.GeneFilters, donor => donor.Specimens.First().Variants.First().StructuralVariant.AffectedFeatures.First().Gene);
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -27,10 +29,12 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
         _filters.AddRange(cellLineFilters.All());
         _filters.AddRange(organoidFilters.All());
         _filters.AddRange(xenograftFilters.All());
-        _filters.AddRange(geneFilters.All());
         _filters.AddRange(mutationFilters.All());
+        _filters.AddRange(mutationGeneFilters.All());
         _filters.AddRange(copyNumberVariantFilters.All());
+        _filters.AddRange(copyNumberVariantGeneFilters.All());
         _filters.AddRange(structuralVariantFilters.All());
+        _filters.AddRange(structuralVariantGeneFilters.All());
 
         if (criteria.SpecimenFilters != null)
         {

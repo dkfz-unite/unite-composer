@@ -11,8 +11,10 @@ public class StructuralVariantFiltersCollection : VariantFiltersCollection
     public StructuralVariantFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new StructuralVariantFilters<VariantIndex>(criteria.StructuralVariantFilters, variant => variant);
+        var geneFilters = new GeneFilters<VariantIndex>(criteria.GeneFilters, variant => variant.StructuralVariant.AffectedFeatures.First().Gene);
 
         _filters.AddRange(filters.All());
+        _filters.AddRange(geneFilters.All());
 
         Add(new NotNullFilter<VariantIndex, Indices.Entities.Basic.Genome.Variants.StructuralVariantIndex>(
             VariantFilterNames.Type,

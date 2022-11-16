@@ -10,6 +10,7 @@ public static class VariantFilterNames
 
     public static readonly string Chromosome = $"{_prefix}.Chromosome";
     public static readonly string Position = $"{_prefix}.Position";
+    public static readonly string Length = $"{_prefix}.Length";
 
     public static readonly string Impact = $"{_prefix}.Impact";
     public static readonly string Consequence = $"{_prefix}.Consequence";

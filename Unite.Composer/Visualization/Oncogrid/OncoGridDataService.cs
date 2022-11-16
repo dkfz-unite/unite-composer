@@ -139,7 +139,7 @@ public class OncoGridDataService
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
             .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.AffectedFeatures))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Mutation.AffectedFeatures))
             .AddExclusion(mutation => mutation.Specimens.First().Donor.ClinicalData)
             .AddExclusion(mutation => mutation.Specimens.First().Donor.Treatments)
             .AddExclusion(mutation => mutation.Specimens.First().Donor.Projects)
@@ -223,7 +223,7 @@ public class OncoGridDataService
 
                 var observedMutations = mutations.Where(mutation =>
                     mutation.Specimens.Any(mutationSpecimen => mutationSpecimen.Donor.Id == donorId) &&
-                    mutation.AffectedFeatures.Any(affectedFeature =>
+                    mutation.Mutation.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
                         affectedFeature.Gene.Id == geneId)
@@ -231,7 +231,7 @@ public class OncoGridDataService
 
                 foreach (var mutation in observedMutations)
                 {
-                    var consequence = mutation.AffectedFeatures
+                    var consequence = mutation.Mutation.AffectedFeatures
                         .Where(affectedFeature => affectedFeature.Transcript != null)
                         .Where(affectedFeature => affectedFeature.Gene != null)
                         .Where(affectedFeature => affectedFeature.Gene.Id == geneId)
@@ -271,6 +271,6 @@ public class OncoGridDataService
 
     private string GetVariantCode(VariantIndex variant)
     {
-        return $"{variant.Chromosome}:g.{variant.Start}{variant.Mutation.Ref ?? "-"}>{variant.Mutation.Alt ?? "-"}";
+        return $"{variant.Mutation.Chromosome}:g.{variant.Mutation.Start}{variant.Mutation.Ref ?? "-"}>{variant.Mutation.Alt ?? "-"}";
     }
 }

@@ -94,7 +94,7 @@ public class OncoGridDataService1
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
             .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.AffectedFeatures))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Mutation.AffectedFeatures))
             .AddExclusion(variant => variant.Specimens.First().Donor.ClinicalData)
             .AddExclusion(variant => variant.Specimens.First().Donor.Treatments)
             .AddExclusion(variant => variant.Specimens.First().Donor.Studies)
@@ -154,8 +154,8 @@ public class OncoGridDataService1
         IEnumerable<VariantIndex> variants, int numberOfGenes)
     {
         return variants
-            .Where(variant => variant.Mutation != null && variant.AffectedFeatures != null)
-            .SelectMany(variant => variant.AffectedFeatures)
+            .Where(variant => variant.Mutation != null && variant.Mutation.AffectedFeatures != null)
+            .SelectMany(variant => variant.Mutation.AffectedFeatures)
             .Where(affectedFeature => affectedFeature.Transcript != null && affectedFeature.Gene != null)
             .Select(affectedFeature => affectedFeature.Gene)
             .GroupBy(gene => gene.Id)
@@ -189,7 +189,7 @@ public class OncoGridDataService1
                 var observedVariants = variants.Where(variant =>
                     variant.Mutation != null &&
                     variant.Specimens.Any(specimen => specimen.Donor.Id == donorId) &&
-                    variant.AffectedFeatures.Any(affectedFeature =>
+                    variant.Mutation.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
                         affectedFeature.Gene.Id == geneId)
@@ -197,7 +197,7 @@ public class OncoGridDataService1
 
                 foreach (var variant in observedVariants)
                 {
-                    var consequence = variant.AffectedFeatures
+                    var consequence = variant.Mutation.AffectedFeatures
                         .Where(affectedFeature => affectedFeature.Transcript != null)
                         .Where(affectedFeature => affectedFeature.Gene != null)
                         .Where(affectedFeature => affectedFeature.Gene.Id == geneId)

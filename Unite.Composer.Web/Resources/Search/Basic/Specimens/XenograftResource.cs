@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Basic.Specimens;
+﻿using Unite.Composer.Data.Specimens.Models;
+using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Search.Basic.Specimens;
 
@@ -14,6 +15,8 @@ public class XenograftResource
     public string TumorGrowthForm { get; set; }
     public string SurvivalDays { get; set; }
 
+    public MolecularDataResource MolecularData { get; set; }
+    public DrugScreeningResource[] DrugScreenings { get; set; }
     public XenograftInterventionResource[] Interventions { get; set; }
 
 
@@ -29,10 +32,32 @@ public class XenograftResource
         TumorGrowthForm = index.TumorGrowthForm;
         SurvivalDays = GetSurvivalDays(index.SurvivalDaysFrom, index.SurvivalDaysTo);
 
+        if (index.MolecularData != null)
+        {
+            MolecularData = new MolecularDataResource(index.MolecularData);
+        }
+
+        if (index.DrugScreenings?.Any() == true)
+        {
+            DrugScreenings = index.DrugScreenings
+                .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
+                .ToArray();
+        }
+
         if (index.Interventions?.Any() == true)
         {
             Interventions = index.Interventions
                 .Select(interventionIndex => new XenograftInterventionResource(interventionIndex))
+                .ToArray();
+        }
+    }
+
+    public XenograftResource(XenograftIndex index, DrugScreeningModel[] drugScreenings) : this(index)
+    {
+        if (drugScreenings?.Any() == true)
+        {
+            DrugScreenings = drugScreenings
+                .Select(screeningModel => new DrugScreeningResource(screeningModel))
                 .ToArray();
         }
     }

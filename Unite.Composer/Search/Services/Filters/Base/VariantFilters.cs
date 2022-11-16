@@ -22,34 +22,5 @@ public class VariantFilters<TIndex> : FiltersCollection<TIndex> where TIndex : c
             path.Join(variant => variant.Id.Suffix(_keywordSuffix)),
             criteria.Id)
         );
-
-        //TODO: Add variant type filter
-
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Chromosome,
-            path.Join(variant => variant.Chromosome.Suffix(_keywordSuffix)),
-            criteria.Chromosome)
-        );
-
-        Add(new MultiPropertyRangeFilter<TIndex, int>(
-            VariantFilterNames.Position,
-            path.Join(variant => variant.Start),
-            path.Join(variant => variant.End),
-            criteria.Position?.From,
-            criteria.Position?.To)
-        );
-
-
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Impact,
-            path.Join(variant => variant.AffectedFeatures.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
-            criteria.Impact)
-        );
-
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Consequence,
-            path.Join(variant => variant.AffectedFeatures.First().Consequences.First().Type.Suffix(_keywordSuffix)),
-            criteria.Consequence)
-        );
     }
 }

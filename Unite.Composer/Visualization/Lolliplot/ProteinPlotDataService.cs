@@ -36,24 +36,24 @@ public class ProteinPlotDataService
     /// <returns>Array of transcripts</returns>
     public async Task<Transcript[]> GetGeneTranscripts(int geneId)
     {
-        var query = new GetQuery<GeneIndex>(geneId.ToString())
-            .AddExclusion(gene => gene.Specimens.First().Donor)
-            .AddExclusion(gene => gene.Specimens.First().Images);
+        var query = new SearchQuery<VariantIndex>()
+            .AddPagination(0, 10000)
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
+            .AddFilter(new EqualityFilter<VariantIndex, int>("Gene.Id", variant => variant.Mutation.AffectedFeatures.First().Gene.Id, geneId))
+            .AddExclusion(variant => variant.Specimens);
 
-        var index = await _genesIndexService.GetAsync(query);
+        var results = await _variantsIndexService.SearchAsync(query);
 
-        var transcripts = index.Specimens?
-            .SelectMany(specimen => specimen.Variants)?
-            .Where(variant => variant.Mutation != null)
-            .Where(variant => variant.AffectedFeatures != null)
-            .SelectMany(variant => variant.AffectedFeatures)
+        var indices = results.Rows;
+
+        var transcripts = indices.SelectMany(variant => variant.Mutation.AffectedFeatures)?
             .Where(affectedFeature => affectedFeature.Transcript != null)
             .Where(affectedFeature => affectedFeature.Transcript.AminoAcidChange != null)
             .Where(affectedFeature => affectedFeature.Transcript.Feature.Protein != null)
-            .GroupBy(affectedFeature => affectedFeature.Transcript.Feature.Id)
-            .Select(group => group.First())
-            .OrderBy(affectedFeature => affectedFeature.Transcript.Feature.Symbol)
-            .Select(affectedFeature => new Transcript(affectedFeature.Transcript.Feature))
+            .Select(affectedFeature => affectedFeature.Transcript.Feature)
+            .OrderBy(transcript => transcript.Symbol)
+            .DistinctBy(transcript => transcript.Id)
+            .Select(transcript => new Transcript(transcript))
             .ToArray();
 
         return transcripts;
@@ -71,7 +71,7 @@ public class ProteinPlotDataService
 
         var index = await _variantsIndexService.GetAsync(query);
 
-        var transcripts = index.AffectedFeatures?
+        var transcripts = index.Mutation.AffectedFeatures?
             .Where(affectedFeature => affectedFeature.Transcript != null)
             .Where(affectedFeature => affectedFeature.Transcript.AminoAcidChange != null)
             .Where(affectedFeature => affectedFeature.Transcript.Feature.Protein != null)
@@ -115,7 +115,7 @@ public class ProteinPlotDataService
         var searchResult = await _variantsIndexService.SearchAsync(query);
 
         var protein = searchResult.Rows
-            .First().AffectedFeatures
+            .First().Mutation.AffectedFeatures
             .First(affectedFeature => affectedFeature.Transcript.Feature.Id == transcriptId)
             .Transcript
             .Feature
@@ -155,7 +155,7 @@ public class ProteinPlotDataService
 
         foreach (var variant in searchResult.Rows)
         {
-            var affectedFeature = variant.AffectedFeatures?
+            var affectedFeature = variant.Mutation.AffectedFeatures?
                 .Where(affectedFeature => affectedFeature.Transcript.Feature.Biotype != null)
                 .Where(affectedFeature => affectedFeature.Transcript.AminoAcidChange != null)
                 .FirstOrDefault(affectedFeature => affectedFeature.Transcript.Feature.Id == transcriptId);
@@ -201,7 +201,7 @@ public class ProteinPlotDataService
         return new EqualityFilter<VariantIndex, long>
         (
             "Transcript.Id",
-            variant => variant.AffectedFeatures.First().Transcript.Feature.Id,
+            variant => variant.Mutation.AffectedFeatures.First().Transcript.Feature.Id,
             transcriptId
         );
     }

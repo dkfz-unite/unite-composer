@@ -4,7 +4,9 @@ using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Composer.Web.Resources.Search.Genes;
 using Unite.Composer.Web.Resources.Search.Images;
+using Unite.Composer.Web.Resources.Search.Variants;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
@@ -45,7 +47,7 @@ public class ImageController : Controller
     }
 
     [HttpPost("{id}/variants/{type}")]
-    public SearchResult<ImageVariantResource> GetMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<VariantResource> GetMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _searchService.SearchVariants(id, type, searchCriteria);
 
@@ -68,16 +70,16 @@ public class ImageController : Controller
         return new SearchResult<ImageGeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new ImageGeneResource(imageId, index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new ImageGeneResource(index, imageId)).ToArray()
         };
     }
 
-    private static SearchResult<ImageVariantResource> From(int imageId, SearchResult<VariantIndex> searchResult)
+    private static SearchResult<VariantResource> From(int imageId, SearchResult<VariantIndex> searchResult)
     {
-        return new SearchResult<ImageVariantResource>()
+        return new SearchResult<VariantResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new ImageVariantResource(imageId, index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
         };
     }
 }

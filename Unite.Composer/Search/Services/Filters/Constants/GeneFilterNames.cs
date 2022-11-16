@@ -9,4 +9,7 @@ public static class GeneFilterNames
     public static readonly string Biotype = $"{_prefix}.Biotype";
     public static readonly string Chromosome = $"{_prefix}.Chromosome";
     public static readonly string Position = $"{_prefix}.Position";
+    public static readonly string HasMutations = $"{_prefix}.HasMutations";
+    public static readonly string HasCopyNumberVariants = $"{_prefix}.HasCopyNumberVariants";
+    public static readonly string HasStructuralVariants = $"{_prefix}.HasStructuralVariants";
 }

@@ -9,6 +9,7 @@ public class VariantResource
     public string Chromosome { get; set; }
     public int Start { get; set; }
     public int End { get; set; }
+    public int? Length { get; set; }
 
     public MutationResource Mutation { get; set; }
     public CopyNumberVariantResource CopyNumberVariant { get; set; }
@@ -33,30 +34,38 @@ public class VariantResource
     {
         Id = index.Id;
 
-        Chromosome = index.Chromosome;
-        Start = index.Start;
-        End = index.End;
-
         if (index.Mutation != null)
         {
             Mutation = new MutationResource(index.Mutation);
+            Chromosome = index.Mutation.Chromosome;
+            Start = index.Mutation.Start;
+            End = index.Mutation.End;
+            Length = index.Mutation.Length;
         }
         else if (index.CopyNumberVariant != null)
         {
             CopyNumberVariant = new CopyNumberVariantResource(index.CopyNumberVariant);
+            Chromosome = index.CopyNumberVariant.Chromosome;
+            Start = index.CopyNumberVariant.Start;
+            End = index.CopyNumberVariant.End;
+            Length = index.CopyNumberVariant.Length;
         }
         else if (index.StructuralVariant != null)
         {
             StructuralVariant = new StructuralVariantResource(index.StructuralVariant);
+            Chromosome = index.StructuralVariant.Chromosome;
+            Start = index.StructuralVariant.Start;
+            End = index.StructuralVariant.End;
+            Length = index.StructuralVariant.Length;
         }
 
-        if (index.AffectedFeatures?.Any() == true)
+        if (index.GetAffectedFeatures()?.Any() == true)
         {
-            AffectedFeatures = index.AffectedFeatures
+            AffectedFeatures = index.GetAffectedFeatures()
                 .Select(featureIndex => new AffectedFeatureResource(featureIndex))
                 .ToArray();
 
-            TranscriptConsequences = GetTranscriptConsequences(index.AffectedFeatures);
+            TranscriptConsequences = GetTranscriptConsequences(index.GetAffectedFeatures());
         }
     }
 

@@ -11,8 +11,12 @@ public class XenograftIndexFiltersCollection : SpecimenIndexFiltersCollection
     public XenograftIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new XenograftFilters<SpecimenIndex>(criteria.XenograftFilters, specimen => specimen);
+        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.XenograftFilters, specimen => specimen.Xenograft);
+        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.XenograftFilters, specimen => specimen.Xenograft);
 
         _filters.AddRange(filters.All());
+        _filters.AddRange(molecularDataFilters.All());
+        _filters.AddRange(drugScreeningFilters.All());
 
         Add(new NotNullFilter<SpecimenIndex, Indices.Entities.Basic.Specimens.XenograftIndex>(
             SpecimenFilterNames.Type,

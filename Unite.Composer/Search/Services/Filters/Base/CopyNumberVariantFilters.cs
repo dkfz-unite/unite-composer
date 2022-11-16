@@ -18,9 +18,24 @@ public class CopyNumberVariantFilters<TIndex> : VariantFilters<TIndex> where TIn
         }
 
         Add(new EqualityFilter<TIndex, object>(
-            CopyNumberVariantFilterNames.SvType,
-            path.Join(variant => variant.CopyNumberVariant.SvType.Suffix(_keywordSuffix)),
-            criteria.SvType)
+            VariantFilterNames.Chromosome,
+            path.Join(variant => variant.CopyNumberVariant.Chromosome.Suffix(_keywordSuffix)),
+            criteria.Chromosome)
+        );
+
+        Add(new MultiPropertyRangeFilter<TIndex, int>(
+            VariantFilterNames.Position,
+            path.Join(variant => variant.CopyNumberVariant.Start),
+            path.Join(variant => variant.CopyNumberVariant.End),
+            criteria.Position?.From,
+            criteria.Position?.To)
+        );
+
+        Add(new RangeFilter<TIndex, int>(
+            VariantFilterNames.Length,
+            path.Join(variant => variant.CopyNumberVariant.Length),
+            criteria.Length.From,
+            criteria.Length.To)
         );
 
         Add(new EqualityFilter<TIndex, object>(
@@ -39,6 +54,18 @@ public class CopyNumberVariantFilters<TIndex> : VariantFilters<TIndex> where TIn
             CopyNumberVariantFilterNames.HomoDel,
             path.Join(variant => variant.CopyNumberVariant.HomoDel),
             criteria.HomoDel)
+        );
+
+        Add(new EqualityFilter<TIndex, object>(
+            VariantFilterNames.Impact,
+            path.Join(variant => variant.CopyNumberVariant.AffectedFeatures.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
+            criteria.Impact)
+        );
+
+        Add(new EqualityFilter<TIndex, object>(
+            VariantFilterNames.Consequence,
+            path.Join(variant => variant.CopyNumberVariant.AffectedFeatures.First().Consequences.First().Type.Suffix(_keywordSuffix)),
+            criteria.Consequence)
         );
     }
 }
