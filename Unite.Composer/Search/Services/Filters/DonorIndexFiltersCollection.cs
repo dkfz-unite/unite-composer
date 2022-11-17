@@ -1,4 +1,5 @@
 ﻿using Unite.Composer.Search.Engine.Filters;
+using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Composer.Search.Services.Filters.Constants;

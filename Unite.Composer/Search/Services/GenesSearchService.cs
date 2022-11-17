@@ -1,4 +1,5 @@
 ﻿using Unite.Composer.Search.Engine;
+using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
@@ -58,17 +59,22 @@ public class GenesSearchService : IGenesSearchService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
-
         var criteriaFilters = new DonorIndexFiltersCollection(criteria)
             .All();
 
+        var geneFilter = new MultyPropertyEqualityFilter<DonorIndex, int>(
+            "Gene.Id",
+            donor => donor.Specimens.First().Variants.First().Mutation.AffectedFeatures.First().Gene.Id,
+            donor => donor.Specimens.First().Variants.First().CopyNumberVariant.AffectedFeatures.First().Gene.Id,
+            donor => donor.Specimens.First().Variants.First().StructuralVariant.AffectedFeatures.First().Gene.Id,
+            geneId
+        );
+
         var query = new SearchQuery<DonorIndex>()
             .AddPagination(criteria.From, criteria.Size)
-            .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
-            .AddOrdering(donor => donor.NumberOfMutations)
-            .AddExclusion(donor => donor.Specimens);
+            .AddFilter(geneFilter)
+            .AddOrdering(donor => donor.NumberOfMutations);
 
         var result = _donorsIndexService.SearchAsync(query).Result;
 

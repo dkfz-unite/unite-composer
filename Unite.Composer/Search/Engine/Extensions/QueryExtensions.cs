@@ -109,6 +109,65 @@ public static class QueryExtensions
         request.Query = SetOrAdd(request.Query, query);
     }
 
+    /// <summary>
+    /// Adds 'Match' query to given request if filter values are set.
+    /// Creates new query or adds query to existing request query with logical 'AND' operator.
+    /// Property queries are combined with logical 'OR' operator.
+    /// </summary>
+    /// <typeparam name="TIndex">Index type</typeparam>
+    /// <typeparam name="TProp">Property type</typeparam>
+    /// <param name="request">Source request</param>
+    /// <param name="property1">First filter property</param>
+    /// <param name="property2">Second filter property</param>
+    /// <param name="property3">Third filter property</param>
+    /// <param name="values">Filter values</param>
+    public static void AddMatchQuery<TIndex, TProp>(this ISearchRequest<TIndex> request,
+        Expression<Func<TIndex, TProp>> property1,
+        Expression<Func<TIndex, TProp>> property2,
+        Expression<Func<TIndex, TProp>> property3,
+        IEnumerable<string> values)
+        where TIndex : class
+    {
+        if (values == null || !values.Any())
+        {
+            return;
+        }
+
+        var query1 = values
+            .Select(value =>
+                Query<TIndex>.Match(match => match
+                    .Field(property1)
+                    .Query(value)
+                    .Operator(Operator.And)
+                )
+            )
+            .Aggregate((left, right) => left || right);
+
+        var query2 = values
+            .Select(value =>
+                Query<TIndex>.Match(match => match
+                    .Field(property2)
+                    .Query(value)
+                    .Operator(Operator.And)
+                )
+            )
+            .Aggregate((left, right) => left || right);
+
+        var query3 = values
+            .Select(value =>
+                Query<TIndex>.Match(match => match
+                    .Field(property3)
+                    .Query(value)
+                    .Operator(Operator.And)
+                )
+            )
+            .Aggregate((left, right) => left || right);
+
+        var query = query1 || query2 || query3;
+
+        request.Query = SetOrAdd(request.Query, query);
+    }
+
 
     /// <summary>
     /// Adds 'Terms' query to given request if filter values are set.
@@ -170,6 +229,50 @@ public static class QueryExtensions
         );
 
         var query = query1 || query2;
+
+        request.Query = SetOrAdd(request.Query, query);
+    }
+
+    /// <summary>
+    /// Adds 'Terms' query to given request if filter values are set.
+    /// Creates new query or adds query to existing request query with logical 'AND' operator.
+    /// Property queries are combined with logical 'OR' operator.
+    /// </summary>
+    /// <typeparam name="TIndex">Index type</typeparam>
+    /// <typeparam name="TProp">Property type</typeparam>
+    /// <param name="request">Source request</param>
+    /// <param name="property1">First filter property</param>
+    /// <param name="property2">Second filter property</param>
+    /// <param name="property3">Third filter property</param>
+    /// <param name="values">Filter values</param>
+    public static void AddTermsQuery<TIndex, TProp>(this ISearchRequest<TIndex> request,
+        Expression<Func<TIndex, TProp>> property1,
+        Expression<Func<TIndex, TProp>> property2,
+        Expression<Func<TIndex, TProp>> property3,
+        IEnumerable<TProp> values)
+        where TIndex : class
+    {
+        if (values == null || !values.Any())
+        {
+            return;
+        }
+
+        var query1 = Query<TIndex>.Terms(d => d
+            .Field(property1)
+            .Terms(values)
+        );
+
+        var query2 = Query<TIndex>.Terms(d => d
+            .Field(property2)
+            .Terms(values)
+        );
+
+        var query3 = Query<TIndex>.Terms(d => d
+            .Field(property3)
+            .Terms(values)
+        );
+
+        var query = query1 || query2 || query3;
 
         request.Query = SetOrAdd(request.Query, query);
     }

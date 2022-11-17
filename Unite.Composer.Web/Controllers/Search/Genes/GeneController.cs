@@ -39,11 +39,11 @@ public class GeneController : Controller
     }
 
     [HttpPost("{id}/donors")]
-    public SearchResult<DonorResource> GetDonors(int id, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<GeneDonorResource> GetDonors(int id, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _genesSearchService.SearchDonors(id, searchCriteria);
 
-        return From(searchResult);
+        return From(id, searchResult);
     }
 
     [HttpPost("{id}/variants/{type}")]
@@ -65,12 +65,12 @@ public class GeneController : Controller
         return new GeneResource(index);
     }
 
-    private static SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)
+    private static SearchResult<GeneDonorResource> From(int geneId, SearchResult<DonorIndex> searchResult)
     {
-        return new SearchResult<DonorResource>()
+        return new SearchResult<GeneDonorResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new DonorResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new GeneDonorResource(index, geneId)).ToArray()
         };
     }
 

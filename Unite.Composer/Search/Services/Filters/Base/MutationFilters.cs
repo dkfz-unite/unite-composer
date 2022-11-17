@@ -34,8 +34,8 @@ public class MutationFilters<TIndex> : VariantFilters<TIndex> where TIndex : cla
         Add(new RangeFilter<TIndex, int>(
             VariantFilterNames.Length,
             path.Join(variant => variant.Mutation.Length),
-            criteria.Length.From,
-            criteria.Length.To)
+            criteria.Length?.From,
+            criteria.Length?.To)
         );
 
         Add(new EqualityFilter<TIndex, object>(

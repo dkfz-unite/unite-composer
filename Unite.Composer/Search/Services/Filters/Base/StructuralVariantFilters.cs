@@ -34,8 +34,8 @@ public class StructuralVariantFilters<TIndex> : VariantFilters<TIndex> where TIn
         Add(new RangeFilter<TIndex, int?>(
             VariantFilterNames.Length,
             path.Join(variant => variant.StructuralVariant.Length),
-            criteria.Length.From,
-            criteria.Length.To)
+            criteria.Length?.From,
+            criteria.Length?.To)
         );
 
         Add(new EqualityFilter<TIndex, object>(
