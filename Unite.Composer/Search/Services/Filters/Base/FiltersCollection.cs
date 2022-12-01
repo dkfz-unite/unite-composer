@@ -13,6 +13,7 @@ public abstract class FiltersCollection<TIndex> where TIndex : class
         _filters = new List<IFilter<TIndex>>();
     }
 
+
     public virtual void Add(BooleanFilter<TIndex> filter)
     {
         if (filter.Value != null)
@@ -55,6 +56,24 @@ public abstract class FiltersCollection<TIndex> where TIndex : class
         if (filter.Values?.Any() == true)
         {
             _filters.Add(filter);
+        }
+    }
+
+    public virtual void AddWithAnd(params (IEnumerable<IFilter<TIndex>> Filters, bool HasCriteria)[] collections)
+    {
+        if (collections.All(collection => !collection.HasCriteria))
+        {
+            foreach (var collection in collections)
+            {
+                _filters.AddRange(collection.Filters);
+            }
+        }
+        else
+        {
+            foreach (var collection in collections.Where(collection => collection.HasCriteria))
+            {
+                _filters.AddRange(collection.Filters);
+            }
         }
     }
 

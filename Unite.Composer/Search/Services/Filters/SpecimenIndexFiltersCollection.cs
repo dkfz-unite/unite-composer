@@ -20,10 +20,16 @@ public class SpecimenIndexFiltersCollection : FiltersCollection<SpecimenIndex>
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
         _filters.AddRange(mutationFilters.All());
-        _filters.AddRange(mutationGeneFilters.All());
+        //_filters.AddRange(mutationGeneFilters.All());
         _filters.AddRange(copyNumberVariantFilters.All());
-        _filters.AddRange(copyNumberVariantGeneFilters.All());
+        //_filters.AddRange(copyNumberVariantGeneFilters.All());
         _filters.AddRange(structuralVariantFilters.All());
-        _filters.AddRange(structuralVariantGeneFilters.All());
+        //_filters.AddRange(structuralVariantGeneFilters.All());
+
+        AddWithAnd(
+            (mutationGeneFilters.All(), criteria.MutationFilters.IsNotEmpty()),
+            (copyNumberVariantGeneFilters.All(), criteria.CopyNumberVariantFilters.IsNotEmpty()),
+            (structuralVariantGeneFilters.All(), criteria.StructuralVariantFilters.IsNotEmpty())
+        );
     }
 }
