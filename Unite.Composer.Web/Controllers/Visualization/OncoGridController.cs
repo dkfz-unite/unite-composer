@@ -10,9 +10,9 @@ namespace Unite.Composer.Web.Controllers.Visualization;
 [Authorize]
 public class OncoGridController : Controller
 {
-    private readonly OncoGridDataService _dataService;
+    private readonly OncoGridDataService1 _dataService;
 
-    public OncoGridController(OncoGridDataService dataService)
+    public OncoGridController(OncoGridDataService1 dataService)
     {
         _dataService = dataService;
     }
