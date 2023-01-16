@@ -8,7 +8,7 @@ Composer service - mediator between web application and other parts of the appli
 - Search service - provides api to query data using different search criteria.
 - Protein annotation service - provides annotation of protein coding transcripts to retrieve information about pfam protein domains of coded sequences.
 
-Composer web api is written in ASP.NET (.NET 5)
+Composer web api is written in ASP.NET (.NET 6)
 
 ## Access
 Environment|Address|Port
@@ -25,6 +25,9 @@ To configure the application, change environment variables either in docker or i
 Variable|Description|Default(Local)|Default(Docker)
 --------|-----------|--------------|---------------
 ASPNETCORE_ENVIRONMENT|ASP.NET environment|Debug|Release
+UNITE_API_KEY|Unite 32 bit api key||
+UNITE_ROOT_USER|Unite web portal admin user email||
+UNITE_ROOT_PASSWORD|Unite web portal admin user password||
 UNITE_ENSEMBL_HOST|Ensembl web api|https://grch37.rest.ensembl.org|https://grch37.rest.ensembl.org
 UNITE_UNIPROT_HOST|Uniprot web api|https://www.ebi.ac.uk|https://www.ebi.ac.uk
 UNITE_PFAM_HOST|Pfam web api|https://pfam.xfam.org|https://pfam.xfam.org
@@ -65,7 +68,9 @@ docker run \
 --net-alias composer.unite.net \
 -p 127.0.0.1:5002:80 \
 -v [container_data_folder_absolute_path]:/app/data:rw \
--e ASPNETCORE_ENVIRONMENT=Release \
+-e UNITE_API_KEY=[32bit_api_key] \
+-e UNITE_ROOT_USER=[root_user_email] \
+-e UNITE_ROOT_PASSWORD=[root_user_password] \
 -e UNITE_ELASTIC_HOST=http://es.unite.net:9200 \
 -e UNITE_ELASTIC_USER=[elasticsearch_user] \
 -e UNITE_ELASTIC_PASSWORD=[elasticsearch_password] \
@@ -76,18 +81,7 @@ docker run \
 -e UNITE_ENSEMBL_HOST=https://grch37.rest.ensembl.org \
 -e UNITE_UNIPROT_HOST=https://www.ebi.ac.uk \
 -e UNITE_PFAM_HOST=https://pfam.xfam.org \
+-e ASPNETCORE_ENVIRONMENT=Release \
 -d \
 unite.composer:latest
-```
-
-## Access List
-Access to web portal is limited to users listed in the access list.
-To grant access for specific users their emails should be listed in **access-list.txt** file.
-The file has to be located in the folder bound to the container as a volume.
-The file has the following structure:
-```
-email-1@mail.com
-email-2@mail.com
-...
-email-n@mail.com
 ```
