@@ -27,9 +27,9 @@ public class SpecimenIndexFiltersCollection : FiltersCollection<SpecimenIndex>
         //_filters.AddRange(structuralVariantGeneFilters.All());
 
         AddWithAnd(
-            (mutationGeneFilters.All(), criteria.MutationFilters.IsNotEmpty()),
-            (copyNumberVariantGeneFilters.All(), criteria.CopyNumberVariantFilters.IsNotEmpty()),
-            (structuralVariantGeneFilters.All(), criteria.StructuralVariantFilters.IsNotEmpty())
+            (mutationGeneFilters.All(), criteria.MutationFilters?.IsNotEmpty() == true),
+            (copyNumberVariantGeneFilters.All(), criteria.CopyNumberVariantFilters?.IsNotEmpty() == true),
+            (structuralVariantGeneFilters.All(), criteria.StructuralVariantFilters?.IsNotEmpty() == true)
         );
     }
 }
