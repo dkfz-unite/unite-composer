@@ -255,7 +255,7 @@ public class ProfileService
         }
     }
 
-    private static GenomicRange[] GetRanges(int startChr = 1, int startChrStart = 0, int endChr = 24, int endChrEnd = 59373566, int density = 1024 + 512, int shift = 1)
+    private static GenomicRange[] GetRanges(int startChr = 1, int startChrStart = 0, int endChr = 24, int endChrEnd = 59373566, int density = 1024, int shift = 1)
     {
         var chromosomeRanges = _ranges
             .Where(range => range.Chr >= startChr && range.Chr <= endChr)
