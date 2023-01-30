@@ -43,6 +43,7 @@
 		<Folder Include="Data\Projects\Models\" />
 		<Folder Include="Data\Specimens\" />
 		<Folder Include="Data\Specimens\Models\" />
+		<Folder Include="Data\Variants\" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Unite.Identity" />
@@ -75,5 +76,6 @@
 		<None Remove="Data\Repository\Models\" />
 		<None Remove="Data\Specimens\" />
 		<None Remove="Data\Specimens\Models\" />
+		<None Remove="Data\Variants\" />
 	</ItemGroup>
 </Project>

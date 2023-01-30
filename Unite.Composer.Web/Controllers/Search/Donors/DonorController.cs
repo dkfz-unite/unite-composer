@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Data.Variants;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
@@ -24,12 +25,14 @@ namespace Unite.Composer.Web.Controllers.Search.Donors;
 public class DonorController : Controller
 {
     private readonly IDonorsSearchService _donorsSearchService;
-
+    private readonly ProfileService _profileService;
 
     public DonorController(
-        IDonorsSearchService donorsSearchService)
+        IDonorsSearchService donorsSearchService,
+        ProfileService profileService)
     {
         _donorsSearchService = donorsSearchService;
+        _profileService = profileService;
     }
 
 
@@ -68,11 +71,20 @@ public class DonorController : Controller
     }
 
     [HttpPost("{id}/variants/{type}")]
-    public SearchResult<VariantResource> SearchMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<VariantResource> SearchVariants(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _donorsSearchService.SearchVariants(id, type, searchCriteria);
 
         return From(id, searchResult);
+    }
+
+    [HttpGet("{id}/variants-profile")]
+    [AllowAnonymous]
+    public IActionResult GetVariantsProfile(int id)
+    {
+        var profile = _profileService.GetProfile(id);
+
+        return Json(profile);
     }
 
 
