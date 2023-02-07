@@ -44,6 +44,10 @@
 		<Folder Include="Data\Specimens\" />
 		<Folder Include="Data\Specimens\Models\" />
 		<Folder Include="Data\Variants\" />
+		<Folder Include="Data\Genome\" />
+		<Folder Include="Data\Genome\Models\" />
+		<Folder Include="Data\Genome\Models\Constants\" />
+		<Folder Include="Data\Variants\Models\" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Unite.Identity" />
@@ -77,5 +81,9 @@
 		<None Remove="Data\Specimens\" />
 		<None Remove="Data\Specimens\Models\" />
 		<None Remove="Data\Variants\" />
+		<None Remove="Data\Genome\" />
+		<None Remove="Data\Genome\Models\" />
+		<None Remove="Data\Genome\Models\Constants\" />
+		<None Remove="Data\Variants\Models\" />
 	</ItemGroup>
 </Project>

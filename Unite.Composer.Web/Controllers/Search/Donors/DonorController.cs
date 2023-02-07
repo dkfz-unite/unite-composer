@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Data.Genome.Models;
 using Unite.Composer.Data.Variants;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Resources.Search.Donors;
-using Unite.Composer.Web.Resources.Search.Genes;
 using Unite.Composer.Web.Resources.Search.Images;
 using Unite.Composer.Web.Resources.Search.Specimens;
 using Unite.Composer.Web.Resources.Search.Variants;
@@ -25,14 +25,14 @@ namespace Unite.Composer.Web.Controllers.Search.Donors;
 public class DonorController : Controller
 {
     private readonly IDonorsSearchService _donorsSearchService;
-    private readonly ProfileService _profileService;
+    private readonly GenomicProfileService _genomicProfileService;
 
     public DonorController(
         IDonorsSearchService donorsSearchService,
-        ProfileService profileService)
+        GenomicProfileService genomicProfileService)
     {
         _donorsSearchService = donorsSearchService;
-        _profileService = profileService;
+        _genomicProfileService = genomicProfileService;
     }
 
 
@@ -78,11 +78,10 @@ public class DonorController : Controller
         return From(id, searchResult);
     }
 
-    [HttpGet("{id}/variants-profile")]
-    [AllowAnonymous]
-    public IActionResult GetVariantsProfile(int id)
+    [HttpPost("{id}/variants-profile")]
+    public IActionResult GetVariantsProfile(int id, [FromBody] GenomicRangesFilterCriteria filterCriteria)
     {
-        var profile = _profileService.GetProfile(id);
+        var profile = _genomicProfileService.GetProfile(id, filterCriteria);
 
         return Json(profile);
     }

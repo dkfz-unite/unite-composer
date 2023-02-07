@@ -47,7 +47,7 @@ public static class ConfigurationExtensions
 
         services.AddTransient<ProjectService>();
         services.AddTransient<DrugScreeningService>();
-        services.AddTransient<ProfileService>();
+        services.AddTransient<GenomicProfileService>();
         services.AddTransient<OncoGridDataService>();
         services.AddTransient<OncoGridDataService1>();
         services.AddTransient<ProteinPlotDataService>();
