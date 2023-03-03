@@ -9,6 +9,7 @@ public class DonorGeneResource : GeneResource
     public int NumberOfMutations { get; }
     public int NumberOfCopyNumberVariants { get; }
     public int NumberOfStructuralVariants { get; }
+    public double? Reads { get; }
 
     public DonorGeneResource(GeneIndex index, int donorId) : base(index)
     {
@@ -33,5 +34,9 @@ public class DonorGeneResource : GeneResource
             .Where(variant => variant.StructuralVariant != null)
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
+
+        var averageReads = specimens.Average(specimen => specimen.Expression?.Reads);
+
+        Reads = averageReads != null ? Math.Round(averageReads.Value) : null;
     }
 }

@@ -41,7 +41,7 @@ public class CopyNumberVariantFilters<TIndex> : VariantFilters<TIndex> where TIn
         Add(new EqualityFilter<TIndex, object>(
             CopyNumberVariantFilterNames.Type,
             path.Join(variant => variant.CopyNumberVariant.Type.Suffix(_keywordSuffix)),
-            criteria.CnaType)
+            criteria.Type)
         );
 
         Add(new BooleanFilter<TIndex>(
