@@ -10,14 +10,14 @@ public class Transcript
     public int Id { get; set; }
 
     /// <summary>
+    /// Protein stable id
+    /// </summary>
+    public string StableId { get; set; }
+
+    /// <summary>
     /// Transcript symbol
     /// </summary>
     public string Symbol { get; set; }
-
-    /// <summary>
-    /// Protein Ensemb id
-    /// </summary>
-    public string EnsemblId { get; set; }
 
 
     /// <summary>
@@ -29,8 +29,8 @@ public class Transcript
     public Transcript(TranscriptIndex index)
     {
         Id = index.Id;
+        StableId = index.StableId;
         Symbol = index.Symbol;
-        EnsemblId = index.EnsemblId;
 
         Protein = new Protein(index.Protein);
     }

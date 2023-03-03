@@ -10,6 +10,11 @@ public class Protein
     public int Id { get; set; }
 
     /// <summary>
+    /// Protein stable id
+    /// </summary>
+    public string StableId { get; set; }
+
+    /// <summary>
     /// Protein symbol
     /// </summary>
     public string Symbol { get; set; }
@@ -29,19 +34,13 @@ public class Protein
     /// </summary>
     public int? Length { get; set; }
 
-    /// <summary>
-    /// Protein Ensemb id
-    /// </summary>
-    public string EnsemblId { get; set; }
-
 
     public Protein(ProteinIndex index)
     {
         Id = index.Id;
+        StableId = index.StableId;
         Start = index.Start;
         End = index.End;
         Length = index.Length;
-
-        EnsemblId = index.EnsemblId;
     }
 }

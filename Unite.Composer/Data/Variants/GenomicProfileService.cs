@@ -111,8 +111,8 @@ public class GenomicProfileService
                 range.Cnv = new CnvData();
 
                 var cnaType = rangeVariants
-                    .OrderBy(variant => (int)variant.Variant.CnaTypeId)
-                    .Select(variant => variant.Variant.CnaTypeId)
+                    .OrderBy(variant => (int)variant.Variant.TypeId)
+                    .Select(variant => variant.Variant.TypeId)
                     .FirstOrDefault();
 
                 range.Cnv.Cna = cnaType.ToDefinitionString();

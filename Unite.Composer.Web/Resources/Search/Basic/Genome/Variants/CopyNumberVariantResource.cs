@@ -11,8 +11,7 @@ public class CopyNumberVariantResource
     public int End { get; set; }
     public int Length { get; set; }
 
-    public string SvType { get; set; }
-    public string CnaType { get; set; }
+    public string Type { get; set; }
     public bool? Loh { get; set; }
     public bool? HomoDel { get; set; }
     public double? C1Mean { get; set; }
@@ -34,8 +33,7 @@ public class CopyNumberVariantResource
         End = index.End;
         Length = index.Length;
 
-        SvType = index.SvType;
-        CnaType = index.CnaType;
+        Type = index.Type;
         Loh = index.Loh;
         HomoDel = index.HomoDel;
         C1Mean = index.C1Mean;

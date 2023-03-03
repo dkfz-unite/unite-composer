@@ -101,7 +101,7 @@ public class VariantResource
                     {
                         Id = geneGroup.Value.Id,
                         Symbol = geneGroup.Value.Symbol,
-                        EnsemblId = geneGroup.Value.EnsemblId,
+                        EnsemblId = geneGroup.Value.StableId,
                         Transcripts = geneGroup.Elements
                             .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)
                             .Select(affectedTranscript => affectedTranscript.AminoAcidChange)

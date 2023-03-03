@@ -121,7 +121,7 @@ public class ProteinPlotDataService
             .Feature
             .Protein;
 
-        var proteinInfo = await _proteinAnnotationService.FindProtein(protein.EnsemblId);
+        var proteinInfo = await _proteinAnnotationService.FindProtein(protein.StableId);
 
         var proteinDomains = proteinInfo?.Domains?
             .Select(domain => new ProteinDomain
