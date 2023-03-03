@@ -35,8 +35,6 @@ public class DonorGeneResource : GeneResource
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
-        var averageReads = specimens.Average(specimen => specimen.Expression?.Reads);
-
-        Reads = averageReads != null ? Math.Round(averageReads.Value) : null;
+        Reads = Math.Round(specimens?.Average(specimen => specimen.Expression?.Reads) ?? 0);
     }
 }
