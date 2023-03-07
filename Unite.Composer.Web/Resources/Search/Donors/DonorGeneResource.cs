@@ -18,18 +18,21 @@ public class DonorGeneResource : GeneResource
         NumberOfDonors = index.NumberOfDonors;
 
         NumberOfMutations = specimens?
+            .Where(specimen => specimen.Variants != null)
             .SelectMany(specimen => specimen.Variants)
             .Where(variant => variant.Mutation != null)
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
         NumberOfCopyNumberVariants = specimens?
+            .Where(specimen => specimen.Variants != null)
             .SelectMany(specimen => specimen.Variants)
             .Where(variant => variant.CopyNumberVariant != null)
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
         NumberOfStructuralVariants = specimens?
+            .Where(specimen => specimen.Variants != null)
             .SelectMany(specimen => specimen.Variants)
             .Where(variant => variant.StructuralVariant != null)
             .DistinctBy(variant => variant.Id)

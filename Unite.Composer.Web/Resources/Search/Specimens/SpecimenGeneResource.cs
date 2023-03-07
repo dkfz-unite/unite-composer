@@ -19,15 +19,15 @@ public class SpecimenGeneResource : GeneResource
 
         NumberOfDonors = index.NumberOfDonors;
 
-        NumberOfMutations = specimen?.Variants
+        NumberOfMutations = specimen?.Variants?
             .Where(variant => variant.Mutation != null)
             .Count() ?? 0;
 
-        NumberOfCopyNumberVariants = specimen?.Variants
+        NumberOfCopyNumberVariants = specimen?.Variants?
             .Where(variant => variant.CopyNumberVariant != null)
             .Count() ?? 0;
 
-        NumberOfStructuralVariants = specimen?.Variants
+        NumberOfStructuralVariants = specimen?.Variants?
             .Where(variant => variant.StructuralVariant != null)
             .Count() ?? 0;
 
