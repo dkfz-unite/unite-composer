@@ -1,0 +1,16 @@
+using Unite.Indices.Entities.Basic.Genome.Transcriptomics;
+
+namespace Unite.Composer.Web.Resources.Search.Basic.Genome;
+
+public class GeneExpressionResource
+{
+    public int Reads { get; set; }
+    public double TPM { get; set; }
+    public double FPKM { get; set; }
+
+    public GeneExpressionResource(GeneExpressionIndex index){
+        Reads = index.Reads;
+        TPM = index.TPM;
+        FPKM = index.FPKM;
+    }
+}

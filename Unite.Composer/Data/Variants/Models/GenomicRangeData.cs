@@ -7,6 +7,7 @@ public class GenomicRangeData : GenomicRange
 {
     public SsmData Ssm { get; set; }
     public CnvData Cnv { get; set; }
+    public ExpressionData Exp { get; set; }
 
 	public GenomicRangeData(GenomicRange range) : base(range.Chr, range.Start, range.End)
 	{
@@ -30,11 +31,17 @@ public class SsmData
     public int Unknown { get; set; }
 }
 
-
 public class CnvData
 {
     public double? Tcn { get; set; }
     public string Cna { get; set; }
     public bool? Loh { get; set; }
     public bool? Del { get; set; }
+}
+
+public class ExpressionData
+{
+    public double Reads { get; set; }
+    public double TPM { get; set; }
+    public double FPKM { get; set; }
 }

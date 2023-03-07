@@ -12,7 +12,6 @@ using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 using DrugScreeningResource = Unite.Composer.Web.Resources.Search.Basic.Specimens.DrugScreeningResource;
-using GeneResource = Unite.Composer.Web.Resources.Search.Genes.GeneResource;
 using VariantResource = Unite.Composer.Web.Resources.Search.Variants.VariantResource;
 
 namespace Unite.Composer.Web.Controllers.Search.Specimens;
@@ -46,11 +45,11 @@ public class SpecimenController : Controller
     }
 
     [HttpPost("{id}/genes")]
-    public SearchResult<GeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<SpecimenGeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _specimensSearchService.SearchGenes(id, searchCriteria);
 
-        return From(searchResult);
+        return From(id, searchResult);
     }
 
     [HttpPost("{id}/variants/{type}")]
@@ -83,12 +82,12 @@ public class SpecimenController : Controller
         return new SpecimenResource(index);
     }
 
-    private static SearchResult<GeneResource> From(SearchResult<GeneIndex> searchResult)
+    private static SearchResult<SpecimenGeneResource> From(int specimenId, SearchResult<GeneIndex> searchResult)
     {
-        return new SearchResult<GeneResource>()
+        return new SearchResult<SpecimenGeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new GeneResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SpecimenGeneResource(index, specimenId)).ToArray()
         };
     }
 

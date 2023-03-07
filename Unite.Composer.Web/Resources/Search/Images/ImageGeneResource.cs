@@ -9,13 +9,13 @@ public class ImageGeneResource : GeneResource
     public int NumberOfMutations { get; }
     public int NumberOfCopyNumberVariants { get; }
     public int NumberOfStructuralVariants { get; }
-    public double? Reads { get; }
+    public GeneSpecimenResource[] Specimens { get; }
 
     public ImageGeneResource(GeneIndex index, int imageId) : base(index)
     {
-        NumberOfDonors = index.NumberOfDonors;
-
         var specimens = index.Specimens?.Where(specimen => specimen.Images.Any(image => image.Id == imageId));
+
+        NumberOfDonors = index.NumberOfDonors;
 
         NumberOfMutations = specimens?
             .SelectMany(specimen => specimen.Variants)
@@ -35,6 +35,8 @@ public class ImageGeneResource : GeneResource
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
-        Reads = Math.Round(specimens?.Average(specimen => specimen.Expression?.Reads) ?? 0);
+        Specimens = specimens?
+            .Select(specimen => new GeneSpecimenResource(specimen, specimen.Expression))
+            .ToArray();
     }
 }

@@ -7,4 +7,5 @@ public class GenomicRangesData
 
 	public bool HasSsm => Ranges?.Any(range => range.Ssm != null) == true;
 	public bool HasCnv => Ranges?.Any(range => range.Cnv != null) == true;
+	public bool HasExp => Ranges?.Any(range => range.Exp != null) == true;
 }

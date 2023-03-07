@@ -1,55 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Unite.Indices" Version="4.2.1" />
-		<PackageReference Include="Unite.Identity" Version="2.0.0" />
-		<PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
-		<PackageReference Include="Unite.Data" Version="4.5.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Identity\" />
-		<Folder Include="Identity\Services\" />
-		<Folder Include="Visualization\" />
-		<Folder Include="Visualization\Oncogrid\" />
-		<Folder Include="Visualization\Oncogrid\Data\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\Configuration\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\Configuration\Options\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\Resources\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Configuration\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Configuration\Options\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Resources\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Models\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Models\Constants\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Services\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Services\Models\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\Options\" />
-		<Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Resources\" />
-		<Folder Include="Admin\" />
-		<Folder Include="Admin\Services\" />
-		<Folder Include="Admin\Constants\" />
-		<Folder Include="Data\" />
-		<Folder Include="Search\" />
-		<Folder Include="Data\Projects\" />
-		<Folder Include="Data\Projects\Models\" />
-		<Folder Include="Data\Specimens\" />
-		<Folder Include="Data\Specimens\Models\" />
-		<Folder Include="Data\Variants\" />
-		<Folder Include="Data\Genome\" />
-		<Folder Include="Data\Genome\Models\" />
-		<Folder Include="Data\Genome\Models\Constants\" />
-		<Folder Include="Data\Variants\Models\" />
-	</ItemGroup>
-	<ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Unite.Indices" Version="4.2.1" />
+    <PackageReference Include="Unite.Identity" Version="2.0.0" />
+    <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
+    <PackageReference Include="Unite.Data" Version="4.5.0" />
+  </ItemGroup>
+  <!-- <ItemGroup>
+    <Folder Include="Identity\" />
+    <Folder Include="Identity\Services\" />
+    <Folder Include="Visualization\" />
+    <Folder Include="Visualization\Oncogrid\" />
+    <Folder Include="Visualization\Oncogrid\Data\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\Configuration\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\Configuration\Options\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Uniprot\Resources\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Configuration\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Configuration\Options\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Resources\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Models\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Ensembl\Models\Constants\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Services\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Services\Models\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Configuration\Options\" />
+    <Folder Include="Visualization\Lolliplot\Annotations\Clients\Pfam\Resources\" />
+    <Folder Include="Admin\" />
+    <Folder Include="Admin\Services\" />
+    <Folder Include="Admin\Constants\" />
+    <Folder Include="Search\" />
+  </ItemGroup> -->
+  <!-- <ItemGroup>
 		<None Remove="Unite.Identity" />
 		<None Remove="Visualization\Lolliplot\Annotations\" />
 		<None Remove="Visualization\Lolliplot\Annotations\Clients\" />
@@ -85,5 +74,5 @@
 		<None Remove="Data\Genome\Models\" />
 		<None Remove="Data\Genome\Models\Constants\" />
 		<None Remove="Data\Variants\Models\" />
-	</ItemGroup>
+	</ItemGroup> -->
 </Project>

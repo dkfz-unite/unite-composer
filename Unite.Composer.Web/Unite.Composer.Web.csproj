@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Controllers\Identity\" />
     <Folder Include="Resources\" />
@@ -34,17 +32,14 @@
     <Folder Include="Resources\Search\Donors\" />
     <Folder Include="Resources\Search\Basic\Specimens\" />
     <Folder Include="Resources\Search\Basic\Images\" />
-    <Folder Include="Resources\Search\Specimens\" />
     <Folder Include="Resources\Search\Images\" />
-    <Folder Include="Resources\Search\Basic\Genome\" />
-    <Folder Include="Resources\Search\Basic\Genome\Variants\" />
     <Folder Include="Resources\Admin\" />
     <Folder Include="Resources\Search\Variants\" />
     <Folder Include="Resources\Search\Genes\" />
-  </ItemGroup>
+  </ItemGroup> -->
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+      <GlobalPropertiesToRemove />
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +48,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
   </ItemGroup>
-  <ItemGroup>
+  <!-- <ItemGroup>
     <None Remove="Controllers\Search\Donors\" />
     <None Remove="Controllers\Search\Specimens\" />
     <None Remove="Macross.Json.Extensions" />
@@ -84,5 +79,5 @@
     <None Remove="Resources\Admin\" />
     <None Remove="Resources\Search\Variants\" />
     <None Remove="Resources\Search\Genes\" />
-  </ItemGroup>
+  </ItemGroup> -->
 </Project>
