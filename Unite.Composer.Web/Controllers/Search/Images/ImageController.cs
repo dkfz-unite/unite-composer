@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Data.Genome.Ranges;
+using Unite.Composer.Data.Genome.Ranges.Models;
+using Unite.Composer.Data.Images;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Web.Resources.Search.Genes;
 using Unite.Composer.Web.Resources.Search.Images;
 using Unite.Composer.Web.Resources.Search.Variants;
 
@@ -20,11 +22,18 @@ namespace Unite.Composer.Web.Controllers.Search.Images;
 public class ImageController : Controller
 {
     private readonly IImagesSearchService _searchService;
+    private readonly ImageDataService _dataService;
+    private readonly GenomicProfileService _genomicProfileService;
 
 
-    public ImageController(IImagesSearchService searchService)
+    public ImageController(
+        IImagesSearchService searchService,
+        ImageDataService dataService,
+        GenomicProfileService genomicProfileService)
     {
         _searchService = searchService;
+        _dataService = dataService;
+        _genomicProfileService = genomicProfileService;
     }
 
 
@@ -38,22 +47,37 @@ public class ImageController : Controller
         return From(index);
     }
 
-    [HttpPost("{id}/genes")]
-    public SearchResult<ImageGeneResource> GetGenes(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/genes/{sampleId}")]
+    public SearchResult<ImageGeneResource> GetGenes(int id, int sampleId, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _searchService.SearchGenes(id, searchCriteria);
+        var searchResult = _searchService.SearchGenes(sampleId, searchCriteria);
 
-        return From(id, searchResult);
+        return From(sampleId, searchResult);
     }
 
-    [HttpPost("{id}/variants/{type}")]
-    public SearchResult<VariantResource> GetMutations(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/{sampleId}/{type}")]
+    public SearchResult<VariantResource> GetVariants(int id, int sampleId, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _searchService.SearchVariants(id, type, searchCriteria);
+        var searchResult = _searchService.SearchVariants(sampleId, type, searchCriteria);
 
-        return From(id, searchResult);
+        return From(sampleId, searchResult);
     }
 
+    [HttpGet("{id}/samples")]
+    public IActionResult GetSamples(int id)
+    {
+        var samples = _dataService.GetAnalysedSamples(id).ToArray();
+
+        return Json(samples);
+    }
+
+    [HttpPost("{id}/profile/{sampleId}")]
+    public IActionResult GetProfile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
+    {
+        var profile = _genomicProfileService.GetProfile(sampleId, filterCriteria);
+
+        return Json(profile);
+    }
 
     private static ImageResource From(ImageIndex index)
     {
@@ -65,16 +89,16 @@ public class ImageController : Controller
         return new ImageResource(index);
     }
 
-    private static SearchResult<ImageGeneResource> From(int imageId, SearchResult<GeneIndex> searchResult)
+    private static SearchResult<ImageGeneResource> From(int sampleId, SearchResult<GeneIndex> searchResult)
     {
         return new SearchResult<ImageGeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new ImageGeneResource(index, imageId)).ToArray()
+            Rows = searchResult.Rows.Select(index => new ImageGeneResource(index, sampleId)).ToArray()
         };
     }
 
-    private static SearchResult<VariantResource> From(int imageId, SearchResult<VariantIndex> searchResult)
+    private static SearchResult<VariantResource> From(int sampleId, SearchResult<VariantIndex> searchResult)
     {
         return new SearchResult<VariantResource>()
         {

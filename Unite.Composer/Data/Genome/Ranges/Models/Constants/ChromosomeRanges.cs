@@ -1,4 +1,4 @@
-﻿namespace Unite.Composer.Data.Genome.Models.Constants;
+﻿namespace Unite.Composer.Data.Genome.Ranges.Models.Constants;
 
 public static class ChromosomeRanges
 {

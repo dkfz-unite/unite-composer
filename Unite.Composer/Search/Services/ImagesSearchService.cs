@@ -13,11 +13,14 @@ using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
-public class ImagesSearchService : IImagesSearchService
+public class ImagesSearchService : AggregatingSearchService, IImagesSearchService
 {
     private readonly IIndexService<ImageIndex> _imagesIndexService;
     private readonly IIndexService<GeneIndex> _genesIndexService;
     private readonly IIndexService<VariantIndex> _variantsIndexService;
+
+    public override IIndexService<GeneIndex> GenesIndexService => _genesIndexService;
+    public override IIndexService<VariantIndex> VariantsIndexService => _variantsIndexService;
 
 
     public ImagesSearchService(IElasticOptions options)
@@ -48,25 +51,43 @@ public class ImagesSearchService : IImagesSearchService
         var filters = GetFiltersCollection(criteria, context)
             .All();
 
-        var query = new SearchQuery<ImageIndex>()
-            .AddPagination(criteria.From, criteria.Size)
-            .AddFullTextSearch(criteria.Term)
-            .AddFilters(filters)
-            .AddOrdering(image => image.Id, true)
-            .AddExclusion(image => image.Specimens);
+        var ids = AggregateFromVariants(index => index.Specimens.First().Images.First().Id, criteria)
+               ?? AggregateFromGenes(index => index.Specimens.First().Images.First().Id, criteria)
+               ?? null;
 
-        var result = _imagesIndexService.SearchAsync(query).Result;
+        if (ids?.Length == 0)
+        {
+            return new SearchResult<ImageIndex>();
+        }
+        else
+        {
+            if (ids != null)
+            {
+                if (criteria.ImageFilters == null) 
+                    criteria.ImageFilters = new ImageCriteria { Id = ids };
+                else criteria.ImageFilters.Id = ids;
+            }
 
-        return result;
+            var query = new SearchQuery<ImageIndex>()
+                .AddPagination(criteria.From, criteria.Size)
+                .AddFullTextSearch(criteria.Term)
+                .AddFilters(filters)
+                .AddOrdering(image => image.Id, true)
+                .AddExclusion(image => image.Specimens);
+
+            var result = _imagesIndexService.SearchAsync(query).Result;
+
+            return result;
+        }
     }
 
-    public SearchResult<GeneIndex> SearchGenes(int imageId, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
+    public SearchResult<GeneIndex> SearchGenes(int sampleId, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
         var context = searchContext ?? new ImageSearchContext();
 
-        criteria.ImageFilters = new ImageCriteria { Id = new[] { imageId } };
+        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId } };
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -82,13 +103,13 @@ public class ImagesSearchService : IImagesSearchService
         return result;
     }
 
-    public SearchResult<VariantIndex> SearchVariants(int imageId, VariantType type, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
+    public SearchResult<VariantIndex> SearchVariants(int sampleId, VariantType type, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
         var context = searchContext ?? new ImageSearchContext();
 
-        criteria.ImageFilters = new ImageCriteria { Id = new[] { imageId } };
+        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId } };
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

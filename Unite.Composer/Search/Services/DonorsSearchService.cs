@@ -14,7 +14,7 @@ using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
-public class DonorsSearchService : IDonorsSearchService
+public class DonorsSearchService : AggregatingSearchService, IDonorsSearchService
 {
     private readonly IIndexService<DonorIndex> _donorsIndexService;
     private readonly IIndexService<ImageIndex> _imagesIndexService;
@@ -22,6 +22,9 @@ public class DonorsSearchService : IDonorsSearchService
     private readonly IIndexService<GeneIndex> _genesIndexService;
     private readonly IIndexService<VariantIndex> _variantsIndexService;
 
+    public override IIndexService<GeneIndex> GenesIndexService => _genesIndexService;
+    public override IIndexService<VariantIndex> VariantsIndexService => _variantsIndexService;
+    
 
     public DonorsSearchService(IElasticOptions options)
     {
@@ -47,20 +50,38 @@ public class DonorsSearchService : IDonorsSearchService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var criteriaFilters = new DonorIndexFiltersCollection(criteria)
-            .All();
+        var ids = AggregateFromVariants(index => index.Specimens.First().Donor.Id, criteria)
+               ?? AggregateFromGenes(index => index.Specimens.First().Donor.Id, criteria)
+               ?? null;
+        
+        if (ids?.Length == 0) 
+        {
+            return new SearchResult<DonorIndex>();
+        }
+        else
+        {
+            if (ids != null)
+            {
+                if (criteria.DonorFilters == null) 
+                    criteria.DonorFilters = new DonorCriteria { Id = ids };
+                else criteria.DonorFilters.Id = ids;
+            }
 
-        var query = new SearchQuery<DonorIndex>()
-            .AddPagination(criteria.From, criteria.Size)
-            .AddFullTextSearch(criteria.Term)
-            .AddFilters(criteriaFilters)
-            .AddOrdering(donor => donor.NumberOfMutations)
-            .AddExclusion(donor => donor.Specimens)
-            .AddExclusion(donor => donor.Images);
+            var filters = new DonorIndexFiltersCollection(criteria)
+                .All();
 
-        var result = _donorsIndexService.SearchAsync(query).Result;
+            var query = new SearchQuery<DonorIndex>()
+                .AddPagination(criteria.From, criteria.Size)
+                .AddFullTextSearch(criteria.Term)
+                .AddFilters(filters)
+                .AddOrdering(donor => donor.NumberOfMutations)
+                .AddExclusion(donor => donor.Specimens)
+                .AddExclusion(donor => donor.Images);
 
-        return result;
+            var result = _donorsIndexService.SearchAsync(query).Result;
+
+            return result;
+        }
     }
 
     public SearchResult<ImageIndex> SearchImages(int donorId, ImageType type, SearchCriteria searchCriteria = null)
@@ -102,11 +123,11 @@ public class DonorsSearchService : IDonorsSearchService
         return result;
     }
 
-    public SearchResult<GeneIndex> SearchGenes(int donorId, SearchCriteria searchCriteria = null)
+    public SearchResult<GeneIndex> SearchGenes(int sampleId, SearchCriteria searchCriteria = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
+        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -122,11 +143,11 @@ public class DonorsSearchService : IDonorsSearchService
         return result;
     }
 
-    public SearchResult<VariantIndex> SearchVariants(int donorId, VariantType type, SearchCriteria searchCriteria = null)
+    public SearchResult<VariantIndex> SearchVariants(int sampleId, VariantType type, SearchCriteria searchCriteria = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
+        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Data.Genome.Models;
-using Unite.Composer.Data.Variants;
+using Unite.Composer.Data.Donors;
+using Unite.Composer.Data.Genome.Ranges;
+using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
@@ -25,13 +26,16 @@ namespace Unite.Composer.Web.Controllers.Search.Donors;
 public class DonorController : Controller
 {
     private readonly IDonorsSearchService _donorsSearchService;
+    private readonly DonorDataService _donorDataService;
     private readonly GenomicProfileService _genomicProfileService;
 
     public DonorController(
         IDonorsSearchService donorsSearchService,
+        DonorDataService donorDataService,
         GenomicProfileService genomicProfileService)
     {
         _donorsSearchService = donorsSearchService;
+        _donorDataService = donorDataService;
         _genomicProfileService = genomicProfileService;
     }
 
@@ -42,7 +46,7 @@ public class DonorController : Controller
         var key = id.ToString();
 
         var index = _donorsSearchService.Get(key);
-
+        
         return From(index);
     }
 
@@ -62,26 +66,34 @@ public class DonorController : Controller
         return From(searchResult);
     }
 
-    [HttpPost("{id}/genes")]
-    public SearchResult<DonorGeneResource> SearchGenes(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/genes/{sampleId}")]
+    public SearchResult<DonorGeneResource> SearchGenes(int id, int sampleId, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _donorsSearchService.SearchGenes(id, searchCriteria);
+        var searchResult = _donorsSearchService.SearchGenes(sampleId, searchCriteria);
 
-        return From(id, searchResult);
+        return From(sampleId, searchResult);
     }
 
-    [HttpPost("{id}/variants/{type}")]
-    public SearchResult<VariantResource> SearchVariants(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/{sampleId}/{type}")]
+    public SearchResult<VariantResource> SearchVariants(int id, int sampleId, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _donorsSearchService.SearchVariants(id, type, searchCriteria);
+        var searchResult = _donorsSearchService.SearchVariants(sampleId, type, searchCriteria);
 
-        return From(id, searchResult);
+        return From(sampleId, searchResult);
     }
 
-    [HttpPost("{id}/variants-profile")]
-    public IActionResult GetVariantsProfile(int id, [FromBody] GenomicRangesFilterCriteria filterCriteria)
+    [HttpGet("{id}/samples")]
+    public IActionResult GetSamples(int id)
     {
-        var profile = _genomicProfileService.GetProfile(id, filterCriteria);
+        var samples = _donorDataService.GetAnalysedSamples(id).ToArray();
+
+        return Json(samples);
+    }
+
+    [HttpPost("{id}/profile/{sampleId}")]
+    public IActionResult GetProfile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
+    {
+        var profile = _genomicProfileService.GetProfile(sampleId, filterCriteria);
 
         return Json(profile);
     }
@@ -115,16 +127,16 @@ public class DonorController : Controller
         };
     }
 
-    private static SearchResult<DonorGeneResource> From(int donorId, SearchResult<GeneIndex> searchResult)
+    private static SearchResult<DonorGeneResource> From(int sampleId, SearchResult<GeneIndex> searchResult)
     {
         return new SearchResult<DonorGeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new DonorGeneResource(index, donorId)).ToArray()
+            Rows = searchResult.Rows.Select(index => new DonorGeneResource(index, sampleId)).ToArray()
         };
     }
 
-    private static SearchResult<VariantResource> From(int donorId, SearchResult<VariantIndex> searchResult)
+    private static SearchResult<VariantResource> From(int sampleId, SearchResult<VariantIndex> searchResult)
     {
         return new SearchResult<VariantResource>()
         {

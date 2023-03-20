@@ -13,11 +13,14 @@ using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
-public class SpecimensSearchService : ISpecimensSearchService
+public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearchService
 {
     private readonly IIndexService<SpecimenIndex> _specimensIndexService;
     private readonly IIndexService<GeneIndex> _genesIndexService;
     private readonly IIndexService<VariantIndex> _variantsIndexService;
+
+    public override IIndexService<GeneIndex> GenesIndexService => _genesIndexService;
+    public override IIndexService<VariantIndex> VariantsIndexService => _variantsIndexService;
 
 
     public SpecimensSearchService(IElasticOptions options)
@@ -44,23 +47,41 @@ public class SpecimensSearchService : ISpecimensSearchService
 
         var context = searchContext ?? new SpecimenSearchContext();
 
-        var filters = GetFiltersCollection(criteria, context)
-            .All();
+        var ids =  AggregateFromVariants(index => index.Specimens.First().Id, criteria)
+                ?? AggregateFromGenes(index => index.Specimens.First().Id, criteria)
+                ?? null;
 
-        var query = new SearchQuery<SpecimenIndex>()
-            .AddPagination(criteria.From, criteria.Size)
-            .AddFullTextSearch(criteria.Term)
-            .AddFilters(filters)
-            .AddOrdering(specimen => specimen.NumberOfMutations)
-            .AddExclusion(specimen => specimen.CellLine.DrugScreenings)
-            .AddExclusion(specimen => specimen.Organoid.DrugScreenings)
-            .AddExclusion(specimen => specimen.Xenograft.DrugScreenings)
-            .AddExclusion(specimen => specimen.Images)
-            .AddExclusion(specimen => specimen.Variants);
+        if (ids?.Length == 0)
+        {
+            return new SearchResult<SpecimenIndex>();
+        }
+        else
+        {
+            if (ids != null)
+            {
+                if (criteria.SpecimenFilters == null) 
+                    criteria.SpecimenFilters = new SpecimenCriteria { Id = ids };
+                else criteria.SpecimenFilters.Id = ids;
+            }
 
-        var result = _specimensIndexService.SearchAsync(query).Result;
+            var filters = GetFiltersCollection(criteria, context)
+                .All();
 
-        return result;
+            var query = new SearchQuery<SpecimenIndex>()
+                .AddPagination(criteria.From, criteria.Size)
+                .AddFullTextSearch(criteria.Term)
+                .AddFilters(filters)
+                .AddOrdering(specimen => specimen.NumberOfMutations)
+                .AddExclusion(specimen => specimen.CellLine.DrugScreenings)
+                .AddExclusion(specimen => specimen.Organoid.DrugScreenings)
+                .AddExclusion(specimen => specimen.Xenograft.DrugScreenings)
+                .AddExclusion(specimen => specimen.Images)
+                .AddExclusion(specimen => specimen.Variants);
+
+            var result = _specimensIndexService.SearchAsync(query).Result;
+
+            return result;
+        }
     }
 
     public SearchResult<GeneIndex> SearchGenes(int specimenId, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)

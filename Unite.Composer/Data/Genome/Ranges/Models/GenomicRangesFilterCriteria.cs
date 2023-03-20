@@ -1,6 +1,6 @@
-﻿using Unite.Composer.Data.Genome.Models.Constants;
+﻿using Unite.Composer.Data.Genome.Ranges.Models.Constants;
 
-namespace Unite.Composer.Data.Genome.Models;
+namespace Unite.Composer.Data.Genome.Ranges.Models;
 
 public class GenomicRangesFilterCriteria
 {
@@ -9,12 +9,7 @@ public class GenomicRangesFilterCriteria
     private int _endChr;
     private int _end;
     private int _density;
-    private bool _even = true;
     private bool _male = true;
-    private bool _ssm = true;
-    private bool _cnv = true;
-    private bool _sv = true;
-    private bool _exp = true;
 
     public int StartChr { get => GetStartChr(); set => _startChr = value; }
     public int Start { get => GetStart(); set => _start = value; }
@@ -22,13 +17,8 @@ public class GenomicRangesFilterCriteria
     public int End { get => GetEnd(); set => _end = value; }
     public long Length { get => GetLength(); }
     public int Density { get => GetDensity(); set => _density = value; }
-    public bool Even { get => _even; set => _even = value; }
     public bool Male { get => _male; set => _male = value; }
-    public bool Ssm { get => _ssm; set => _ssm = value; }
-    public bool Cnv { get => _cnv; set => _cnv = value; }
-    public bool Sv { get => _sv; set => _sv = value; }
-    public bool Exp { get => _exp; set => _exp = value; }
-
+    
 
     public GenomicRangesFilterCriteria()
     {

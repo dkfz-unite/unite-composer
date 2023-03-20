@@ -11,6 +11,6 @@ namespace Unite.Composer.Search.Services;
 
 public interface IImagesSearchService : ISearchService<ImageIndex, ImageSearchContext>
 {
-    SearchResult<GeneIndex> SearchGenes(int imageId, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null);
-    SearchResult<VariantIndex> SearchVariants(int imageId, VariantType type, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null);
+    SearchResult<GeneIndex> SearchGenes(int sampleId, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null);
+    SearchResult<VariantIndex> SearchVariants(int sampleId, VariantType type, SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null);
 }

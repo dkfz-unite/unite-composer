@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Search.Services.Criteria;
 
-public class SearchCriteria
+public record SearchCriteria
 {
     public int From { get; set; }
     public int Size { get; set; }
@@ -22,6 +22,14 @@ public class SearchCriteria
     public CopyNumberVariantCriteria CopyNumberVariantFilters { get; set; }
     public StructuralVariantCriteria StructuralVariantFilters { get; set; }
     public OncoGridCriteria OncoGridFilters { get; set; }
+
+    public bool HasGeneFilters => 
+        GeneFilters?.IsNotEmpty() == true;
+
+    public bool HasVariantFilters => 
+        MutationFilters?.IsNotEmpty() == true || 
+        CopyNumberVariantFilters?.IsNotEmpty() == true || 
+        StructuralVariantFilters?.IsNotEmpty() == true;
 
     public SearchCriteria()
     {

@@ -1,4 +1,4 @@
-﻿namespace Unite.Composer.Data.Genome.Models;
+﻿namespace Unite.Composer.Data.Genome.Ranges.Models;
 
 public class GenomicRange
 {
@@ -27,6 +27,6 @@ public class GenomicRange
     {
         var chromosome = chr == 23 ? "X" : chr == 24 ? "Y" : $"{chr}";
 
-        return $"{chromosome}.{start}-{end}";
+        return $"{chromosome}:{start}-{end}";
     }
 }

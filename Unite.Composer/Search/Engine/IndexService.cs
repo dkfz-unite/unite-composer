@@ -1,4 +1,5 @@
 ﻿using Nest;
+using Unite.Composer.Search.Engine.Extensions;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Indices.Services.Configuration.Options;
 
@@ -52,7 +53,11 @@ public abstract class IndexService<TIndex> : IIndexService<TIndex>
             return new SearchResult<TIndex>()
             {
                 Total = response.Total,
-                Rows = response.Documents
+                Rows = response.Documents,
+                Aggregations = query.Aggregations.ToDictionary(
+                    name => name, 
+                    name => response.GetTermsAggregationData<TIndex>(name)
+                )
             };
         }
         else

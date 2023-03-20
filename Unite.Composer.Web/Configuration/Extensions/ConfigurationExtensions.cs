@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Data.Donors;
+using Unite.Composer.Data.Genome.Ranges;
+using Unite.Composer.Data.Images;
 using Unite.Composer.Data.Projects;
 using Unite.Composer.Data.Specimens;
-using Unite.Composer.Data.Variants;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
@@ -40,10 +42,14 @@ public static class ConfigurationExtensions
         services.AddTransient<SessionService>();
 
         services.AddTransient<IDonorsSearchService, DonorsSearchService>();
+        services.AddTransient<IImagesSearchService, ImagesSearchService>();
         services.AddTransient<ISpecimensSearchService, SpecimensSearchService>();
         services.AddTransient<IGenesSearchService, GenesSearchService>();
         services.AddTransient<IVariantsSearchService, VariantsSearchService>();
-        services.AddTransient<IImagesSearchService, ImagesSearchService>();
+
+        services.AddTransient<DonorDataService>();
+        services.AddTransient<ImageDataService>();
+        services.AddTransient<SpecimenDataService>();
 
         services.AddTransient<ProjectService>();
         services.AddTransient<DrugScreeningService>();

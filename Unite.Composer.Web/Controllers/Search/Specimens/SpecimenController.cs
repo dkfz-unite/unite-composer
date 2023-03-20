@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Specimens;
+using Unite.Composer.Data.Genome.Ranges;
+using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
@@ -22,15 +24,21 @@ namespace Unite.Composer.Web.Controllers.Search.Specimens;
 public class SpecimenController : Controller
 {
     private readonly ISpecimensSearchService _specimensSearchService;
+    private readonly SpecimenDataService _specimenDataService;
     private readonly DrugScreeningService _drugScreeningService;
+    private readonly GenomicProfileService _genomicProfileService;
 
 
     public SpecimenController(
         ISpecimensSearchService specimensSearchService,
-        DrugScreeningService drugScreeningService)
+        SpecimenDataService specimenDataService,
+        DrugScreeningService drugScreeningService,
+        GenomicProfileService genomicProfileService)
     {
         _specimensSearchService = specimensSearchService;
+        _specimenDataService = specimenDataService;
         _drugScreeningService = drugScreeningService;
+        _genomicProfileService = genomicProfileService;
     }
 
 
@@ -58,6 +66,22 @@ public class SpecimenController : Controller
         var searchResult = _specimensSearchService.SearchVariants(id, type, searchCriteria);
 
         return From(searchResult);
+    }
+
+    [HttpGet("{id}/samples")]
+    public IActionResult GetSamples(int id)
+    {
+        var samples = _specimenDataService.GetAnalysedSamples(id).ToArray();
+
+        return Json(samples);
+    }
+
+    [HttpPost("{id}/profile/{sampleId}")]
+    public IActionResult GetProfile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
+    {
+        var profile = _genomicProfileService.GetProfile(sampleId, filterCriteria);
+
+        return Json(profile);
     }
 
     [HttpPost("{id}/drugs")]

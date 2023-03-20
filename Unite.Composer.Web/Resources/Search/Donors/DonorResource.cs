@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Donors;
+﻿using Unite.Composer.Data.Donors.Models;
+using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Resources.Search.Donors;
 
@@ -10,6 +11,7 @@ public class DonorResource : Basic.Donors.DonorResource
     public int NumberOfMutations { get; set; }
     public int NumberOfCopyNumberVariants { get; set; }
     public int NumberOfStructuralVariants { get; set; }
+    public AnalysedSampleModel[] AnalysedSamples { get; set; }
 
 
     public DonorResource(DonorIndex index) : base(index)
@@ -20,5 +22,10 @@ public class DonorResource : Basic.Donors.DonorResource
         NumberOfMutations = index.NumberOfMutations;
         NumberOfCopyNumberVariants = index.NumberOfCopyNumberVariants;
         NumberOfStructuralVariants = index.NumberOfStructuralVariants;
+    }
+
+    public DonorResource(DonorIndex index, AnalysedSampleModel[] samples) : this(index)
+    {
+        AnalysedSamples = samples;
     }
 }

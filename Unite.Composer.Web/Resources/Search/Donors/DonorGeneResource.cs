@@ -9,37 +9,32 @@ public class DonorGeneResource : GeneResource
     public int NumberOfMutations { get; }
     public int NumberOfCopyNumberVariants { get; }
     public int NumberOfStructuralVariants { get; }
-    public GeneSpecimenResource[] Specimens { get; }
-
-    public DonorGeneResource(GeneIndex index, int donorId) : base(index)
+    public GeneExpressionResource Expression { get; }
+    
+    public DonorGeneResource(GeneIndex index, int sampleId) : base(index)
     {
-        var specimens = index.Specimens?.Where(specimen => specimen.Donor.Id == donorId);
+        var specimen = index.Specimens?.FirstOrDefault(specimen => specimen.Id == sampleId);
 
         NumberOfDonors = index.NumberOfDonors;
 
-        NumberOfMutations = specimens?
-            .Where(specimen => specimen.Variants != null)
-            .SelectMany(specimen => specimen.Variants)
+        NumberOfMutations = specimen?.Variants?
             .Where(variant => variant.Mutation != null)
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
-        NumberOfCopyNumberVariants = specimens?
-            .Where(specimen => specimen.Variants != null)
-            .SelectMany(specimen => specimen.Variants)
+        NumberOfCopyNumberVariants = specimen?.Variants?
             .Where(variant => variant.CopyNumberVariant != null)
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
-        NumberOfStructuralVariants = specimens?
-            .Where(specimen => specimen.Variants != null)
-            .SelectMany(specimen => specimen.Variants)
+        NumberOfStructuralVariants = specimen?.Variants?
             .Where(variant => variant.StructuralVariant != null)
             .DistinctBy(variant => variant.Id)
             .Count() ?? 0;
 
-        Specimens = specimens?
-            .Select(specimen => new GeneSpecimenResource(specimen, specimen.Expression))
-            .ToArray();
+        if (specimen?.Expression != null)
+        {
+            Expression = new GeneExpressionResource(specimen.Expression);
+        }
     }
 }

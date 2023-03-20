@@ -1,17 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Unite.Composer.Data.Genome;
-using Unite.Composer.Data.Genome.Models;
-using Unite.Composer.Data.Variants.Models;
+using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Data.Entities.Genome.Enums;
 using Unite.Data.Entities.Genome.Transcriptomics;
-using Unite.Data.Extensions;
 using Unite.Data.Services;
 
 using SSM = Unite.Data.Entities.Genome.Variants.SSM;
 using CNV = Unite.Data.Entities.Genome.Variants.CNV;
 using SV = Unite.Data.Entities.Genome.Variants.SV;
 
-namespace Unite.Composer.Data.Variants;
+
+namespace Unite.Composer.Data.Genome.Ranges;
 
 public class GenomicProfileService
 {
@@ -24,7 +22,7 @@ public class GenomicProfileService
         _dbContext = dbContext;
     }
 
-    public GenomicRangesData GetProfile(int donorId, GenomicRangesFilterCriteria filterCriteria)
+    public GenomicRangesData GetProfile(int sampleId, GenomicRangesFilterCriteria filterCriteria)
     {
         var ranges = _rangesService.GetRanges(filterCriteria).Select(range => new GenomicRangeData(range)).ToArray();
 
@@ -33,27 +31,15 @@ public class GenomicProfileService
         var endChr = ranges.Max(range => range.Chr);
         var end = ranges.Where(range => range.Chr == endChr).Max(range => range.End);
 
-        if (filterCriteria.Ssm)
-        {
-            var variants = LoadMutations(donorId, startChr, start, endChr, end);
-            FillWithSsmData(in variants, ref ranges);
-        }
+        var ssms = LoadMutations(sampleId, startChr, start, endChr, end);
+        var cnvs = LoadCopyNumberVariants(sampleId, startChr, start, endChr, end);
+        var expressions = LoadGeneExpressions(sampleId, startChr, start, endChr, end);
 
-        if (filterCriteria.Cnv) 
-        {
-            var variants = LoadCopyNumberVariants(donorId, startChr, start, endChr, end);
-            FillWithCnvData(in variants, ref ranges);
-        }
+        FillWithSsmData(ssms, ref ranges);
+        FillWithCnvData(cnvs, ref ranges);
+        FillWithExpressionData(expressions, ref ranges);
 
-        if (filterCriteria.Exp)
-        {
-            var expressions = LoadGeneExpressions(donorId, startChr, start, endChr, end);
-            FillWithExpressionData(in expressions, ref ranges);
-        }
-
-        var profile = new GenomicRangesData() { Ranges = ranges.ToArray() };
-
-        return profile;
+        return new GenomicRangesData(ranges.ToArray());
     }
 
     private void FillWithSsmData(in SSM.Variant[] variants, ref GenomicRangeData[] ranges)
@@ -70,14 +56,13 @@ public class GenomicProfileService
 
             if (rangeVariants.Any())
             {
-                range.Ssm = new SsmData();
+                range.Ssm = new Models.Profile.MutationsData();
 
                 foreach (var variant in rangeVariants)
                 {
                     var impact = variant.AffectedTranscripts?
                         .SelectMany(affectedTranscript => affectedTranscript.Consequences)
                         .Select(consequence => GetImpactGrade(consequence.Impact))
-                        .Distinct()
                         .OrderBy(grade => grade)
                         .FirstOrDefault();
 
@@ -104,18 +89,19 @@ public class GenomicProfileService
                 (variant.Start >= range.Start && variant.Start <= range.End) ||
                 (variant.Start >= range.Start && variant.End <= range.End) ||
                 (variant.Start <= range.Start && variant.End >= range.End))
-            ).ToArray();
+            );
 
-            if (rangeVariants.Any())
+            var variant = rangeVariants.FirstOrDefault();
+
+            if (variant != null)
             {
-                range.Cnv = new CnvData();
-
-                var cnaType = rangeVariants
-                    .OrderBy(variant => (int)variant.TypeId)
-                    .Select(variant => variant.TypeId)
-                    .FirstOrDefault();
-
-                range.Cnv.Cna = cnaType.ToDefinitionString();
+                range.Cnv = new Models.Profile.CopyNumberVariantsData
+                {
+                    Cna = variant.TypeId,
+                    Loh = variant.Loh,
+                    Del = variant.HomoDel,
+                    Tcn = variant.TcnMean != null ? Math.Round(variant.TcnMean.Value, 2) : null
+                };
             }
         }
     }
@@ -132,49 +118,43 @@ public class GenomicProfileService
                 (expression.Gene.Start <= range.Start && expression.Gene.End >= range.End))
             ).ToArray();
 
-            if (rangeExpressions.Any()) 
+            if (rangeExpressions.Any())
             {
-                range.Exp = new ExpressionData();
-
-                foreach (var expression in rangeExpressions)
+                range.Exp = new Models.Profile.ExpressionsData
                 {
-                    range.Exp.Reads += expression.Reads;
-                    range.Exp.TPM += expression.TPM;
-                    range.Exp.FPKM += expression.FPKM;
-                }
-
-                range.Exp.TPM = Math.Round(range.Exp.TPM);
-                range.Exp.TPM = Math.Round(range.Exp.TPM);
-                range.Exp.FPKM = Math.Round(range.Exp.FPKM);
+                    Reads = rangeExpressions.Sum(expression => expression.Reads),
+                    TPM = Math.Round(rangeExpressions.Sum(expression => expression.TPM), 2),
+                    FPKM = Math.Round(rangeExpressions.Sum(expression => expression.FPKM), 2)
+                };
             }
         }
     }
 
-    private SSM.Variant[] LoadMutations(int donorId, int startChr, int start, int endChr, int end)
+    private SSM.Variant[] LoadMutations(int sampleId, int startChr, int start, int endChr, int end)
     {
         return _dbContext.Set<SSM.VariantOccurrence>()
             .Include(occurrence => occurrence.Variant).ThenInclude(variant => variant.AffectedTranscripts)
-            .Where(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId == donorId)
+            .Where(occurrence => occurrence.AnalysedSample.Sample.SpecimenId == sampleId)
             .Where(occurrence => (int)occurrence.Variant.ChromosomeId >= startChr && (int)occurrence.Variant.ChromosomeId <= endChr)
             .Select(occurrence => occurrence.Variant)
             .ToArray();
     }
 
-    private CNV.Variant[] LoadCopyNumberVariants(int donorId, int startChr, int start, int endChr, int end)
+    private CNV.Variant[] LoadCopyNumberVariants(int sampleId, int startChr, int start, int endChr, int end)
     {
         return _dbContext.Set<CNV.VariantOccurrence>()
             .Include(occurrence => occurrence.Variant).ThenInclude(variant => variant.AffectedTranscripts)
-            .Where(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId == donorId)
+            .Where(occurrence => occurrence.AnalysedSample.Sample.SpecimenId == sampleId)
             .Where(occurrence => (int)occurrence.Variant.ChromosomeId >= startChr && (int)occurrence.Variant.ChromosomeId <= endChr)
             .Select(occurrence => occurrence.Variant)
             .ToArray();
     }
 
-    private GeneExpression[] LoadGeneExpressions(int donorId, int startChr, int start, int endChr, int end)
+    private GeneExpression[] LoadGeneExpressions(int sampleId, int startChr, int start, int endChr, int end)
     {
         return _dbContext.Set<GeneExpression>()
             .Include(expression => expression.Gene)
-            .Where(expression => expression.AnalysedSample.Sample.Specimen.DonorId == donorId)
+            .Where(expression => expression.AnalysedSample.Sample.SpecimenId == sampleId)
             .Where(expression => (int)expression.Gene.ChromosomeId >= startChr && (int)expression.Gene.ChromosomeId <= endChr)
             .ToArray();
     }

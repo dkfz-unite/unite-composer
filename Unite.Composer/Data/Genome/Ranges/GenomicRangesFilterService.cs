@@ -1,7 +1,7 @@
-﻿using Unite.Composer.Data.Genome.Models;
-using Unite.Composer.Data.Genome.Models.Constants;
+﻿using Unite.Composer.Data.Genome.Ranges.Models;
+using Unite.Composer.Data.Genome.Ranges.Models.Constants;
 
-namespace Unite.Composer.Data.Genome;
+namespace Unite.Composer.Data.Genome.Ranges;
 
 public class GenomicRangesFilterService
 {
