@@ -29,7 +29,7 @@ public class GenesSearchService : IGenesSearchService
     public GeneIndex Get(string key)
     {
         var query = new GetQuery<GeneIndex>(key)
-            .AddExclusion(gene => gene.Specimens);
+            .AddExclusion(gene => gene.Samples);
 
         var result = _genesIndexService.GetAsync(query).Result;
 
@@ -48,7 +48,7 @@ public class GenesSearchService : IGenesSearchService
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(gene => gene.NumberOfDonors)
-            .AddExclusion(gene => gene.Specimens);
+            .AddExclusion(gene => gene.Samples);
 
         var result = _genesIndexService.SearchAsync(query).Result;
 
@@ -62,18 +62,9 @@ public class GenesSearchService : IGenesSearchService
         var criteriaFilters = new DonorIndexFiltersCollection(criteria)
             .All();
 
-        var geneFilter = new MultyPropertyEqualityFilter<DonorIndex, int>(
-            "Gene.Id",
-            donor => donor.Specimens.First().Variants.First().Mutation.AffectedFeatures.First().Gene.Id,
-            donor => donor.Specimens.First().Variants.First().CopyNumberVariant.AffectedFeatures.First().Gene.Id,
-            donor => donor.Specimens.First().Variants.First().StructuralVariant.AffectedFeatures.First().Gene.Id,
-            geneId
-        );
-
         var query = new SearchQuery<DonorIndex>()
             .AddPagination(criteria.From, criteria.Size)
             .AddFilters(criteriaFilters)
-            .AddFilter(geneFilter)
             .AddOrdering(donor => donor.NumberOfMutations);
 
         var result = _donorsIndexService.SearchAsync(query).Result;
@@ -95,7 +86,7 @@ public class GenesSearchService : IGenesSearchService
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(mutation => mutation.NumberOfDonors)
-            .AddExclusion(mutation => mutation.Specimens);
+            .AddExclusion(mutation => mutation.Samples);
 
         var result = _variantsIndexService.SearchAsync(query).Result;
 

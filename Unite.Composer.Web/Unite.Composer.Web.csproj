@@ -3,44 +3,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  <!-- <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Controllers\Identity\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Models\" />
-    <Folder Include="Models\Identity\" />
-    <Folder Include="Models\Identity\Validators\" />
-    <Folder Include="Resources\Identity\" />
-    <Folder Include="Controllers\Search\" />
-    <Folder Include="Controllers\Visualization\" />
-    <Folder Include="Controllers\Search\Donors\" />
-    <Folder Include="Controllers\Search\Specimens\" />
-    <Folder Include="Controllers\Search\Genes\" />
-    <Folder Include="Controllers\Search\Images\" />
-    <Folder Include="Controllers\Identity\Helpers\" />
-    <Folder Include="HostedServices\" />
-    <Folder Include="Controllers\Admin\" />
-    <Folder Include="Models\Admin\" />
-    <Folder Include="Models\Admin\Validators\" />
-    <Folder Include="Controllers\Data\" />
-    <Folder Include="Controllers\Data\Projects\" />
-    <Folder Include="Controllers\Data\Projects\Models\" />
-    <Folder Include="Resources\Data\" />
-    <Folder Include="Resources\Search\" />
-    <Folder Include="Resources\Search\Basic\" />
-    <Folder Include="Resources\Search\Basic\Donors\" />
-    <Folder Include="Resources\Search\Donors\" />
-    <Folder Include="Resources\Search\Basic\Specimens\" />
-    <Folder Include="Resources\Search\Basic\Images\" />
-    <Folder Include="Resources\Search\Images\" />
-    <Folder Include="Resources\Admin\" />
-    <Folder Include="Resources\Search\Variants\" />
-    <Folder Include="Resources\Search\Genes\" />
-  </ItemGroup> -->
   <ItemGroup>
-    <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj">
-      <GlobalPropertiesToRemove />
-    </ProjectReference>
+    <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
@@ -48,36 +12,4 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
   </ItemGroup>
-  <!-- <ItemGroup>
-    <None Remove="Controllers\Search\Donors\" />
-    <None Remove="Controllers\Search\Specimens\" />
-    <None Remove="Macross.Json.Extensions" />
-    <None Remove="Controllers\Search\Genes\" />
-    <None Remove="Controllers\Search\Images\" />
-    <None Remove="FluentValidation.AspNetCore" />
-    <None Remove="System.IdentityModel.Tokens.Jwt" />
-    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <None Remove="Controllers\Identity\Helpers\" />
-    <None Remove="HostedServices\" />
-    <None Remove="Controllers\Admin\" />
-    <None Remove="Models\Admin\" />
-    <None Remove="Models\Admin\Validators\" />
-    <None Remove="Controllers\Data\" />
-    <None Remove="Controllers\Data\Projects\" />
-    <None Remove="Controllers\Data\Projects\Models\" />
-    <None Remove="Resources\Data\" />
-    <None Remove="Resources\Search\" />
-    <None Remove="Resources\Search\Basic\" />
-    <None Remove="Resources\Search\Basic\Donors\" />
-    <None Remove="Resources\Search\Donors\" />
-    <None Remove="Resources\Search\Basic\Specimens\" />
-    <None Remove="Resources\Search\Basic\Images\" />
-    <None Remove="Resources\Search\Specimens\" />
-    <None Remove="Resources\Search\Images\" />
-    <None Remove="Resources\Search\Basic\Genome\" />
-    <None Remove="Resources\Search\Basic\Genome\Variants\" />
-    <None Remove="Resources\Admin\" />
-    <None Remove="Resources\Search\Variants\" />
-    <None Remove="Resources\Search\Genes\" />
-  </ItemGroup> -->
 </Project>

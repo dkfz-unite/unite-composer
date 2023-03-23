@@ -16,6 +16,7 @@ public record SearchCriteria
     public CellLineCriteria CellLineFilters { get; set; }
     public OrganoidCriteria OrganoidFilters { get; set; }
     public XenograftCriteria XenograftFilters { get; set; }
+    public SampleCriteria SampleFilters { get; set; }
     public GeneCriteria GeneFilters { get; set; }
     public VariantCriteria VariantFilters { get; set; }
     public MutationCriteria MutationFilters { get; set; }

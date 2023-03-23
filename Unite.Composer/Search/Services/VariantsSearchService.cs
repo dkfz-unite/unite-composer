@@ -28,7 +28,7 @@ public class VariantsSearchService : IVariantsSearchService
     public VariantIndex Get(string key, VariantSearchContext searchContext = null)
     {
         var query = new GetQuery<VariantIndex>(key)
-            .AddExclusion(variant => variant.Specimens);
+            .AddExclusion(variant => variant.Samples);
 
         var result = _variantsIndexService.GetAsync(query).Result;
 
@@ -49,7 +49,7 @@ public class VariantsSearchService : IVariantsSearchService
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(mutation => mutation.NumberOfDonors)
-            .AddExclusion(mutation => mutation.Specimens);
+            .AddExclusion(mutation => mutation.Samples);
 
         var result = _variantsIndexService.SearchAsync(query).Result;
 

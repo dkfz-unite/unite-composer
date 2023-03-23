@@ -10,16 +10,16 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
 {
     public GeneIndexFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<GeneIndex>(criteria.DonorFilters, gene => gene.Specimens.First().Donor);
-        var mriImageFilters = new MriImageFilters<GeneIndex>(criteria.MriImageFilters, gene => gene.Specimens.First().Images.First());
-        var tissueFilters = new TissueFilters<GeneIndex>(criteria.TissueFilters, gene => gene.Specimens.First());
-        var cellLineFilters = new CellLineFilters<GeneIndex>(criteria.CellLineFilters, gene => gene.Specimens.First());
-        var organoidFilters = new OrganoidFilters<GeneIndex>(criteria.OrganoidFilters, gene => gene.Specimens.First());
-        var xenograftFilters = new XenograftFilters<GeneIndex>(criteria.XenograftFilters, gene => gene.Specimens.First());
+        var donorFilters = new DonorFilters<GeneIndex>(criteria.DonorFilters, gene => gene.Samples.First().Donor);
+        var mriImageFilters = new MriImageFilters<GeneIndex>(criteria.MriImageFilters, gene => gene.Samples.First().Images.First());
+        var tissueFilters = new TissueFilters<GeneIndex>(criteria.TissueFilters, gene => gene.Samples.First().Specimen);
+        var cellLineFilters = new CellLineFilters<GeneIndex>(criteria.CellLineFilters, gene => gene.Samples.First().Specimen);
+        var organoidFilters = new OrganoidFilters<GeneIndex>(criteria.OrganoidFilters, gene => gene.Samples.First().Specimen);
+        var xenograftFilters = new XenograftFilters<GeneIndex>(criteria.XenograftFilters, gene => gene.Samples.First().Specimen);
         var geneFilters = new GeneFilters<GeneIndex>(criteria.GeneFilters, gene => gene);
-        var mutationFilters = new MutationFilters<GeneIndex>(criteria.MutationFilters, gene => gene.Specimens.First().Variants.First());
-        var copyNumberVariantFilters = new CopyNumberVariantFilters<GeneIndex>(criteria.CopyNumberVariantFilters, gene => gene.Specimens.First().Variants.First());
-        var structuralVariantFilters = new StructuralVariantFilters<GeneIndex>(criteria.StructuralVariantFilters, gene => gene.Specimens.First().Variants.First());
+        var mutationFilters = new MutationFilters<GeneIndex>(criteria.MutationFilters, gene => gene.Samples.First().Variants.First());
+        var copyNumberVariantFilters = new CopyNumberVariantFilters<GeneIndex>(criteria.CopyNumberVariantFilters, gene => gene.Samples.First().Variants.First());
+        var structuralVariantFilters = new StructuralVariantFilters<GeneIndex>(criteria.StructuralVariantFilters, gene => gene.Samples.First().Variants.First());
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -36,18 +36,27 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
               ImageFilterNames.Id,
-              gene => gene.Specimens.First().Images.First().Id,
-              criteria.ImageFilters.Id)
-            );
+              gene => gene.Samples.First().Images.First().Id,
+              criteria.ImageFilters.Id
+              ));
         }
 
         if (criteria.SpecimenFilters != null)
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
                 SpecimenFilterNames.Id,
-                gene => gene.Specimens.First().Id,
-                criteria.SpecimenFilters.Id)
-            );
+                gene => gene.Samples.First().Specimen.Id,
+                criteria.SpecimenFilters.Id
+            ));
+        }
+
+        if (criteria.SampleFilters != null)
+        {
+            _filters.Add(new EqualityFilter<GeneIndex, int>(
+                "Sample.Id",
+                gene => gene.Samples.First().Id,
+                criteria.SampleFilters.Id
+            ));
         }
     }
 }

@@ -122,9 +122,9 @@ public class GenomicProfileService
             {
                 range.Exp = new Models.Profile.ExpressionsData
                 {
-                    Reads = rangeExpressions.Sum(expression => expression.Reads),
-                    TPM = Math.Round(rangeExpressions.Sum(expression => expression.TPM), 2),
-                    FPKM = Math.Round(rangeExpressions.Sum(expression => expression.FPKM), 2)
+                    Reads = rangeExpressions.Average(expression => expression.Reads),
+                    TPM = Math.Round(rangeExpressions.Average(expression => expression.TPM), 2),
+                    FPKM = Math.Round(rangeExpressions.Average(expression => expression.FPKM), 2)
                 };
             }
         }
@@ -134,7 +134,7 @@ public class GenomicProfileService
     {
         return _dbContext.Set<SSM.VariantOccurrence>()
             .Include(occurrence => occurrence.Variant).ThenInclude(variant => variant.AffectedTranscripts)
-            .Where(occurrence => occurrence.AnalysedSample.Sample.SpecimenId == sampleId)
+            .Where(occurrence => occurrence.AnalysedSample.SampleId == sampleId)
             .Where(occurrence => (int)occurrence.Variant.ChromosomeId >= startChr && (int)occurrence.Variant.ChromosomeId <= endChr)
             .Select(occurrence => occurrence.Variant)
             .ToArray();
@@ -144,7 +144,7 @@ public class GenomicProfileService
     {
         return _dbContext.Set<CNV.VariantOccurrence>()
             .Include(occurrence => occurrence.Variant).ThenInclude(variant => variant.AffectedTranscripts)
-            .Where(occurrence => occurrence.AnalysedSample.Sample.SpecimenId == sampleId)
+            .Where(occurrence => occurrence.AnalysedSample.SampleId == sampleId)
             .Where(occurrence => (int)occurrence.Variant.ChromosomeId >= startChr && (int)occurrence.Variant.ChromosomeId <= endChr)
             .Select(occurrence => occurrence.Variant)
             .ToArray();
@@ -154,7 +154,7 @@ public class GenomicProfileService
     {
         return _dbContext.Set<GeneExpression>()
             .Include(expression => expression.Gene)
-            .Where(expression => expression.AnalysedSample.Sample.SpecimenId == sampleId)
+            .Where(expression => expression.AnalysedSample.SampleId == sampleId)
             .Where(expression => (int)expression.Gene.ChromosomeId >= startChr && (int)expression.Gene.ChromosomeId <= endChr)
             .ToArray();
     }

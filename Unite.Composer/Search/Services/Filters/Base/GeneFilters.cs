@@ -48,5 +48,7 @@ public class GeneFilters<TIndex> : FiltersCollection<TIndex> where TIndex : clas
             criteria.Position?.From,
             criteria.Position?.To)
         );
+
+        
     }
 }

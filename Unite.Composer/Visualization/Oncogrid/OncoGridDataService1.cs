@@ -95,10 +95,10 @@ public class OncoGridDataService1
             .AddFilters(criteriaFilters)
             .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
             .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Mutation.AffectedFeatures))
-            .AddExclusion(variant => variant.Specimens.First().Donor.ClinicalData)
-            .AddExclusion(variant => variant.Specimens.First().Donor.Treatments)
-            .AddExclusion(variant => variant.Specimens.First().Donor.Studies)
-            .AddExclusion(variant => variant.Specimens.First().Donor.Projects);
+            .AddExclusion(variant => variant.Samples.First().Donor.ClinicalData)
+            .AddExclusion(variant => variant.Samples.First().Donor.Treatments)
+            .AddExclusion(variant => variant.Samples.First().Donor.Studies)
+            .AddExclusion(variant => variant.Samples.First().Donor.Projects);
         // TODO: exclude all unnecessary information as soon as multiple exclusions work.
         // .AddExclusion(mutation => mutation.Donors.First().Studies)
         // .AddExclusion(mutation => mutation.Donors.First().Treatments)
@@ -188,7 +188,7 @@ public class OncoGridDataService1
 
                 var observedVariants = variants.Where(variant =>
                     variant.Mutation != null &&
-                    variant.Specimens.Any(specimen => specimen.Donor.Id == donorId) &&
+                    variant.Samples.Any(sample => sample.Donor.Id == donorId) &&
                     variant.Mutation.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&

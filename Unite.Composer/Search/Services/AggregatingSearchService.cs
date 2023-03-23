@@ -75,7 +75,7 @@ public abstract class AggregatingSearchService
             .AddFullTextSearch(term)
             .AddFilters(filters.All())
             .AddAggregation(aggregationName, property)
-            .AddExclusion(index => index.Specimens);
+            .AddExclusion(index => index.Samples);
 
         var result = GenesIndexService.SearchAsync(query).Result;
 
@@ -95,7 +95,7 @@ public abstract class AggregatingSearchService
             .AddFullTextSearch(term)
             .AddFilters(filters.All())
             .AddAggregation(aggregationName, property)
-            .AddExclusion(index => index.Specimens);
+            .AddExclusion(index => index.Samples);
 
         var result = VariantsIndexService.SearchAsync(query).Result;
 

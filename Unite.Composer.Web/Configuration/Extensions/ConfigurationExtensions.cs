@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data.Donors;
+using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Images;
 using Unite.Composer.Data.Projects;
@@ -8,9 +10,6 @@ using Unite.Composer.Data.Specimens;
 using Unite.Composer.Identity.Services;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Pfam.Configuration.Options;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Uniprot.Configuration.Options;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Composer.Web.HostedServices;
@@ -50,6 +49,9 @@ public static class ConfigurationExtensions
         services.AddTransient<DonorDataService>();
         services.AddTransient<ImageDataService>();
         services.AddTransient<SpecimenDataService>();
+        services.AddTransient<SampleDataService>();
+        services.AddTransient<GeneDataService>();
+        services.AddTransient<MutationDataService>();
 
         services.AddTransient<ProjectService>();
         services.AddTransient<DrugScreeningService>();
@@ -69,8 +71,6 @@ public static class ConfigurationExtensions
         services.AddTransient<IIdentitySqlOptions, SqlOptions>();
         services.AddTransient<IDomainSqlOptions, SqlOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
-        services.AddTransient<IUniprotOptions, UniprotOptions>();
-        services.AddTransient<IPfamOptions, PfamOptions>();
     }
 
     private static void AddValidation(this IServiceCollection services)

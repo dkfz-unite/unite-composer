@@ -1,37 +1,39 @@
-using Unite.Indices.Entities.Basic.Genome;
-
 namespace Unite.Composer.Visualization.Lolliplot.Data;
 
-public class Transcript
+public record Transcript
 {
-    /// <summary>
-    /// Unite transcript id
-    /// </summary>
     public int Id { get; set; }
-
-    /// <summary>
-    /// Protein stable id
-    /// </summary>
     public string StableId { get; set; }
-
-    /// <summary>
-    /// Transcript symbol
-    /// </summary>
     public string Symbol { get; set; }
+    public string Description { get; set; }
+    public string Biotype { get; set; }
+    public bool IsCanonical { get; set; }
+    public int Start { get; set; }
+    public int End { get; set; }
+    public bool Strand { get; set; }
 
-
-    /// <summary>
-    /// Protein coded by the transcript
-    /// </summary>
     public Protein Protein { get; set; }
 
-
-    public Transcript(TranscriptIndex index)
+    public Transcript() 
     {
-        Id = index.Id;
-        StableId = index.StableId;
-        Symbol = index.Symbol;
 
-        Protein = new Protein(index.Protein);
+    }
+
+    public Transcript(Unite.Data.Entities.Genome.Transcript transcript)
+    {
+        Id = transcript.Id;
+        StableId = transcript.StableId;
+        Symbol = transcript.Symbol;
+        Description = transcript.Description;
+        Biotype = transcript.Biotype;
+        IsCanonical = transcript.IsCanonical.Value;
+        Start = transcript.Start.Value;
+        End = transcript.End.Value;
+        Strand = transcript.Strand.Value;
+
+        if (transcript.Protein != null)
+        {
+            Protein = new Protein(transcript.Protein);
+        }
     }
 }

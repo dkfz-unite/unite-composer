@@ -51,8 +51,8 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
         var filters = GetFiltersCollection(criteria, context)
             .All();
 
-        var ids = AggregateFromVariants(index => index.Specimens.First().Images.First().Id, criteria)
-               ?? AggregateFromGenes(index => index.Specimens.First().Images.First().Id, criteria)
+        var ids = AggregateFromVariants(index => index.Samples.First().Images.First().Id, criteria)
+               ?? AggregateFromGenes(index => index.Samples.First().Images.First().Id, criteria)
                ?? null;
 
         if (ids?.Length == 0)
@@ -87,7 +87,7 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
 
         var context = searchContext ?? new ImageSearchContext();
 
-        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId } };
+        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -109,7 +109,7 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
 
         var context = searchContext ?? new ImageSearchContext();
 
-        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId } };
+        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

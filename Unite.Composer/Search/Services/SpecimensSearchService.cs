@@ -33,8 +33,7 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
 
     public SpecimenIndex Get(string key, SpecimenSearchContext searchContext = null)
     {
-        var query = new GetQuery<SpecimenIndex>(key)
-            .AddExclusion(specimen => specimen.Variants);
+        var query = new GetQuery<SpecimenIndex>(key);
 
         var result = _specimensIndexService.GetAsync(query).Result;
 
@@ -47,8 +46,8 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
 
         var context = searchContext ?? new SpecimenSearchContext();
 
-        var ids =  AggregateFromVariants(index => index.Specimens.First().Id, criteria)
-                ?? AggregateFromGenes(index => index.Specimens.First().Id, criteria)
+        var ids =  AggregateFromVariants(index => index.Samples.First().Id, criteria)
+                ?? AggregateFromGenes(index => index.Samples.First().Id, criteria)
                 ?? null;
 
         if (ids?.Length == 0)
@@ -75,8 +74,7 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
                 .AddExclusion(specimen => specimen.CellLine.DrugScreenings)
                 .AddExclusion(specimen => specimen.Organoid.DrugScreenings)
                 .AddExclusion(specimen => specimen.Xenograft.DrugScreenings)
-                .AddExclusion(specimen => specimen.Images)
-                .AddExclusion(specimen => specimen.Variants);
+                .AddExclusion(specimen => specimen.Images);
 
             var result = _specimensIndexService.SearchAsync(query).Result;
 
@@ -84,13 +82,13 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
         }
     }
 
-    public SearchResult<GeneIndex> SearchGenes(int specimenId, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
+    public SearchResult<GeneIndex> SearchGenes(int sampleId, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
         var context = searchContext ?? new SpecimenSearchContext();
 
-        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { specimenId } };
+        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId } };
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -106,13 +104,13 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
         return result;
     }
 
-    public SearchResult<VariantIndex> SearchVariants(int specimenId, VariantType type, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
+    public SearchResult<VariantIndex> SearchVariants(int sampleId, VariantType type, SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
         var context = searchContext ?? new SpecimenSearchContext();
 
-        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { specimenId } };
+        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId } };
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

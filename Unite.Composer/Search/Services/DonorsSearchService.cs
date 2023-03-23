@@ -50,8 +50,8 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var ids = AggregateFromVariants(index => index.Specimens.First().Donor.Id, criteria)
-               ?? AggregateFromGenes(index => index.Specimens.First().Donor.Id, criteria)
+        var ids = AggregateFromVariants(index => index.Samples.First().Donor.Id, criteria)
+               ?? AggregateFromGenes(index => index.Samples.First().Donor.Id, criteria)
                ?? null;
         
         if (ids?.Length == 0) 
@@ -127,7 +127,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId }};
+        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -147,7 +147,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.SpecimenFilters = new SpecimenCriteria { Id = new[] { sampleId }};
+        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

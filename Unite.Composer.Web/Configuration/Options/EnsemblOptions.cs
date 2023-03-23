@@ -1,4 +1,4 @@
-﻿using Unite.Composer.Visualization.Lolliplot.Annotations.Clients.Ensembl.Configuration.Options;
+﻿using Unite.Composer.Clients.Ensembl.Configuration.Options;
 
 namespace Unite.Composer.Web.Configuration.Options;
 

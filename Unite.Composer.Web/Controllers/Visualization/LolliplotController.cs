@@ -22,16 +22,4 @@ public class LolliplotController : Controller
     {
         return await _dataService.LoadData(id);
     }
-
-    [HttpGet("gene/{id}/transcripts")]
-    public async Task<Transcript[]> GetGeneTranscripts(int id)
-    {
-        return await _dataService.GetGeneTranscripts(id);
-    }
-
-    [HttpGet("mutation/{id}/transcripts")]
-    public async Task<Transcript[]> GetMutationTranscripts(string id)
-    {
-        return await _dataService.GetMutationTranscripts(id);
-    }
 }

@@ -107,7 +107,7 @@ public class OncoGridDataService
             .AddPagination(0, criteria.OncoGridFilters.NumberOfGenes)
             .AddFilters(criteriaFilters)
             .AddOrdering(gene => gene.NumberOfMutations)
-            .AddExclusion(gene => gene.Specimens);
+            .AddExclusion(gene => gene.Samples);
 
         return _genesIndexService.SearchAsync(query).Result;
     }
@@ -140,10 +140,10 @@ public class OncoGridDataService
             .AddFilters(criteriaFilters)
             .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
             .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Mutation.AffectedFeatures))
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.ClinicalData)
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.Treatments)
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.Projects)
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.Studies);
+            .AddExclusion(mutation => mutation.Samples.First().Donor.ClinicalData)
+            .AddExclusion(mutation => mutation.Samples.First().Donor.Treatments)
+            .AddExclusion(mutation => mutation.Samples.First().Donor.Projects)
+            .AddExclusion(mutation => mutation.Samples.First().Donor.Studies);
 
         return _variantsIndexService.SearchAsync(query).Result;
     }
@@ -222,7 +222,7 @@ public class OncoGridDataService
                 var geneId = int.Parse(gene.Id);
 
                 var observedMutations = mutations.Where(mutation =>
-                    mutation.Specimens.Any(mutationSpecimen => mutationSpecimen.Donor.Id == donorId) &&
+                    mutation.Samples.Any(mutationSample => mutationSample.Donor.Id == donorId) &&
                     mutation.Mutation.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
