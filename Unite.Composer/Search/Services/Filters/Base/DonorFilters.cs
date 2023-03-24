@@ -58,7 +58,7 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
             DonorFilterNames.VitalStatusChangeDay,
             path.Join(donor => donor.ClinicalData.VitalStatusChangeDay),
             criteria.VitalStatusChangeDay?.From,
-            criteria.VitalStatusChangeDay.To)
+            criteria.VitalStatusChangeDay?.To)
         );
 
         Add(new BooleanFilter<TIndex>(
@@ -71,7 +71,7 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
             DonorFilterNames.ProgressionStatusChangeDay,
             path.Join(donor => donor.ClinicalData.ProgressionStatusChangeDay),
             criteria.ProgressionStatusChangeDay?.From,
-            criteria.ProgressionStatusChangeDay.To)
+            criteria.ProgressionStatusChangeDay?.To)
         );
 
         Add(new SimilarityFilter<TIndex, object>(
