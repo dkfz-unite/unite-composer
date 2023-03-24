@@ -53,10 +53,31 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
         if (criteria.SampleFilters != null)
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
-                "Sample.Id",
+                SampleFilterNames.Id,
                 gene => gene.Samples.First().Id,
                 criteria.SampleFilters.Id
             ));
+        }
+
+        if (criteria.GeneFilters != null)
+        {
+            if (criteria.GeneFilters.HasVariants == true)
+            {
+                _filters.Add(new GreaterThanFilter<GeneIndex, double?>(
+                    GeneFilterNames.HasVariants, 1,
+                    gene => gene.NumberOfMutations,
+                    gene => gene.NumberOfCopyNumberVariants,
+                    gene => gene.NumberOfStructuralVariants
+                ));
+            }
+
+            if (criteria.GeneFilters.HasExpressions == true)
+            {
+                _filters.Add(new NotNullFilter<GeneIndex, object>(
+                    GeneFilterNames.HasExpressions,
+                    gene => gene.Samples.First().Expression
+                ));
+            }
         }
     }
 }

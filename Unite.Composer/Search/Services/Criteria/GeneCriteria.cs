@@ -13,6 +13,8 @@ public class GeneCriteria
     public bool? HasMutations { get; set; }
     public bool? HasCopyNumberVariants { get; set; }
     public bool? HasStructuralVariants { get; set; }
+    public bool? HasVariants { get; set; }
+    public bool? HasExpressions { get; set; }
 
 
     public bool IsNotEmpty()
@@ -25,6 +27,8 @@ public class GeneCriteria
             || Position?.To != null
             || HasMutations == true
             || HasCopyNumberVariants == true
-            || HasStructuralVariants == true;
+            || HasStructuralVariants == true
+            || HasVariants == true
+            || HasExpressions == true;
     }
 }

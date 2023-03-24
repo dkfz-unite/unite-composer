@@ -414,6 +414,66 @@ public static class QueryExtensions
     }
 
     /// <summary>
+    /// Adds 'Range' query to given request if any boundary value is set.
+    /// Creates new query or adds query to existing request query with logical 'AND' operator.
+    /// Property queries are combined with logical 'OR' operator.
+    /// </summary>
+    /// <param name="request">Source request.</param>
+    /// <param name="value">Boundary value.</param>
+    /// <param name="properties">Filter properties.</param>
+    /// <typeparam name="TIndex">Index Type.</typeparam>
+    /// <typeparam name="TProp">Property Type.</typeparam>
+    public static void AddGreaterThanQuery<TIndex, TProp>(this ISearchRequest<TIndex> request,
+        double? value,
+        params Expression<Func<TIndex, TProp>>[] properties)
+        where TIndex : class
+    {
+        if (!value.HasValue)
+        {
+            return;
+        }
+
+        var query = properties
+            .Select(property => Query<TIndex>.Range(d => d
+                .Field(property)
+                .GreaterThanOrEquals(value)
+            ))
+            .Aggregate((left, right) => left || right);
+
+        request.Query = SetOrAdd(request.Query, query);
+    }
+
+    /// <summary>
+    /// Adds 'Range' query to given request if any boundary value is set.
+    /// Creates new query or adds query to existing request query with logical 'AND' operator.
+    /// Property queries are combined with logical 'OR' operator.
+    /// </summary>
+    /// <param name="request">Source request.</param>
+    /// <param name="value">Boundary value.</param>
+    /// <param name="properties">Filter properties.</param>
+    /// <typeparam name="TIndex">Index Type.</typeparam>
+    /// <typeparam name="TProp">Property Type.</typeparam>
+    public static void AddLessThanQuery<TIndex, TProp>(this ISearchRequest<TIndex> request,
+        double? value,
+        params Expression<Func<TIndex, TProp>>[] properties)
+        where TIndex : class
+    {
+        if (!value.HasValue)
+        {
+            return;
+        }
+
+        var query = properties
+            .Select(property => Query<TIndex>.Range(d => d
+                .Field(property)
+                .LessThanOrEquals(value)
+            ))
+            .Aggregate((left, right) => left || right);
+
+        request.Query = SetOrAdd(request.Query, query);
+    }
+
+    /// <summary>
     /// Adds 'Exists' query to check that given property is set.
     /// Creates new query or adds query to existing request query with logical 'AND' operator.
     /// </summary>
