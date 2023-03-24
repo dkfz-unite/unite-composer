@@ -54,10 +54,24 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
             criteria.VitalStatus)
         );
 
+        Add(new RangeFilter<TIndex, int?>(
+            DonorFilterNames.VitalStatusChangeDay,
+            path.Join(donor => donor.ClinicalData.VitalStatusChangeDay),
+            criteria.VitalStatusChangeDay?.From,
+            criteria.VitalStatusChangeDay.To)
+        );
+
         Add(new BooleanFilter<TIndex>(
             DonorFilterNames.ProgressionStatus,
             path.Join(donor => donor.ClinicalData.ProgressionStatus),
             criteria.ProgressionStatus)
+        );
+
+        Add(new RangeFilter<TIndex, int?>(
+            DonorFilterNames.ProgressionStatusChangeDay,
+            path.Join(donor => donor.ClinicalData.ProgressionStatusChangeDay),
+            criteria.ProgressionStatusChangeDay?.From,
+            criteria.ProgressionStatusChangeDay.To)
         );
 
         Add(new SimilarityFilter<TIndex, object>(
