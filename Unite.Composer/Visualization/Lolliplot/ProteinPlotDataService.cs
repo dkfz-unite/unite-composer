@@ -2,7 +2,7 @@ using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Services;
+using Unite.Composer.Visualization.Lolliplot.Annotation;
 using Unite.Composer.Visualization.Lolliplot.Data;
 using Unite.Data.Services;
 using Unite.Indices.Entities.Variants;
@@ -125,7 +125,7 @@ public class ProteinPlotDataService
         );
     }
 
-    private static ProteinDomain Convert(Annotations.Services.Models.ProteinDomain domain)
+    private static ProteinDomain Convert(Annotation.Models.ProteinDomain domain)
     {
         return new ProteinDomain
         {

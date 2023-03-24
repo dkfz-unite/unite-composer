@@ -28,14 +28,12 @@ ASPNETCORE_ENVIRONMENT|ASP.NET environment|Debug|Release
 UNITE_API_KEY|Unite 32 bit api key||
 UNITE_ROOT_USER|Unite web portal admin user email||
 UNITE_ROOT_PASSWORD|Unite web portal admin user password||
-UNITE_ENSEMBL_HOST|Ensembl web api|https://grch37.rest.ensembl.org|https://grch37.rest.ensembl.org
-UNITE_UNIPROT_HOST|Uniprot web api|https://www.ebi.ac.uk|https://www.ebi.ac.uk
-UNITE_PFAM_HOST|Pfam web api|https://pfam.xfam.org|https://pfam.xfam.org
+UNITE_ENSEMBL_HOST|Ensembl web api|http://localhost:5202|http://ensembl.unite.net
 UNITE_SQL_HOST|SQL server host|localhost|sql.unite.net
 UNITE_SQL_PORT|SQL server port|5432|5432
 UNITE_SQL_USER|SQL server user||
 UNITE_SQL_PASSWORD|SQL server password||
-UNITE_ELASTIC_HOST|ES service host|http://localhost:9200|es.unite.net:9200
+UNITE_ELASTIC_HOST|ES service host|http://localhost:9200|http://es.unite.net:9200
 UNITE_ELASTIC_USER|ES service user||
 UNITE_ELASTIC_PASSWORD|ES service password||
 
@@ -78,9 +76,7 @@ docker run \
 -e UNITE_SQL_PORT=5432 \
 -e UNITE_SQL_USER=[sql_user] \
 -e UNITE_SQL_PASSWORD=[sql_password] \
--e UNITE_ENSEMBL_HOST=https://grch37.rest.ensembl.org \
--e UNITE_UNIPROT_HOST=https://www.ebi.ac.uk \
--e UNITE_PFAM_HOST=https://pfam.xfam.org \
+-e UNITE_ENSEMBL_HOST=http://ensembl.unite.net \
 -e ASPNETCORE_ENVIRONMENT=Release \
 -d \
 unite.composer:latest

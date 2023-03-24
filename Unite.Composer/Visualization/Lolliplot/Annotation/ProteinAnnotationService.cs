@@ -2,9 +2,9 @@
 using Unite.Composer.Clients.Ensembl;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Clients.Ensembl.Resources;
-using Unite.Composer.Visualization.Lolliplot.Annotations.Services.Models;
+using Unite.Composer.Visualization.Lolliplot.Annotation.Models;
 
-namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services;
+namespace Unite.Composer.Visualization.Lolliplot.Annotation;
 
 public class ProteinAnnotationService
 {

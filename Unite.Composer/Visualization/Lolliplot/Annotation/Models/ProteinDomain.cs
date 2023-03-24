@@ -1,4 +1,4 @@
-﻿namespace Unite.Composer.Visualization.Lolliplot.Annotations.Services.Models;
+﻿namespace Unite.Composer.Visualization.Lolliplot.Annotation.Models;
 
 public class ProteinDomain
 {
