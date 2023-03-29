@@ -25,7 +25,7 @@ public class TasksController : Controller
     public IActionResult GetSpecificTasksStats(string type)
     {
         if (string.Equals(type, "submission", StringComparison.InvariantCultureIgnoreCase))
-            return Json(_taskStatsService.GetTaskNumbersStats());
+            return Json(_taskStatsService.GetSubmissionTasksStats());
         else if (string.Equals(type, "annotation", StringComparison.InvariantCultureIgnoreCase))
             return Json(_taskStatsService.GetAnnotationTasksStats());
         else if (string.Equals(type, "indexing", StringComparison.InvariantCultureIgnoreCase))
