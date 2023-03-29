@@ -23,27 +23,16 @@ public class TasksController : Controller
         return Json(stats);
     }
 
-    [HttpGet("stats/submission")]
-    public IActionResult GetSubmissionTasksStats()
+    [HttpGet("stats/{type}")]
+    public IActionResult GetSpecificTasksStats(string type)
     {
-        var stats = _taskStatsService.GetTaskNumbersStats();
+        if (string.Equals(type, "submission", StringComparison.InvariantCultureIgnoreCase))
+            return Json(_taskStatsService.GetTaskNumbersStats());
+        else if (string.Equals(type, "annotation", StringComparison.InvariantCultureIgnoreCase))
+            return Json(_taskStatsService.GetAnnotationTasksStats());
+        else if (string.Equals(type, "indexing", StringComparison.InvariantCultureIgnoreCase))
+            return Json(_taskStatsService.GetIndexingTasksStats());
 
-        return Json(stats);
-    }
-
-    [HttpGet("stats/annotation")]
-    public IActionResult GetAnnotationTasksStats()
-    {
-        var stats = _taskStatsService.GetAnnotationTasksStats();
-
-        return Json(stats);
-    }
-
-    [HttpGet("stats/indexing")]
-    public IActionResult GetIndexingTasksStats()
-    {
-        var stats = _taskStatsService.GetIndexingTasksStats();
-
-        return Json(stats);
+        return NotFound();
     }
 }
