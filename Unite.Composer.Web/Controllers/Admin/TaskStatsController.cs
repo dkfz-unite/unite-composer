@@ -15,8 +15,14 @@ public class TasksController : Controller
         _taskStatsService = taskStatsService;
     }
 
+    [HttpGet("stats")]
+    public IActionResult GetGeneralTasksStats(string type)
+    {
+        return Json(_taskStatsService.GetTaskNumbersStats());
+    }
+
     [HttpGet("stats/{type}")]
-    public IActionResult GetTasksStats(string type)
+    public IActionResult GetSpecificTasksStats(string type)
     {
         if (string.Equals(type, "submission", StringComparison.InvariantCultureIgnoreCase))
             return Json(_taskStatsService.GetTaskNumbersStats());
@@ -25,6 +31,6 @@ public class TasksController : Controller
         else if (string.Equals(type, "indexing", StringComparison.InvariantCultureIgnoreCase))
             return Json(_taskStatsService.GetIndexingTasksStats());
         else
-            return Json(_taskStatsService.GetTaskNumbersStats());
+            return NotFound();
     }
 }
