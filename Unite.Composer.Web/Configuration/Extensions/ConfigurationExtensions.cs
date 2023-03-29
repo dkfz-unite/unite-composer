@@ -37,6 +37,7 @@ public static class ConfigurationExtensions
         services.AddTransient<DomainDbContext>();
 
         services.AddTransient<UserService>();
+        services.AddTransient<TaskStatsService>();
         services.AddTransient<IdentityService>();
         services.AddTransient<SessionService>();
 
