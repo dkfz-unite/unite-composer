@@ -31,7 +31,7 @@ public class EnsemblApiClient
     /// <returns>Ensembl object mapped to given type if was found.</returns>
     public async Task<T> Find<T>(string ensemblId, bool length = true, bool expand = false) where T : LookupResource
     {
-        using var httpClient = new JsonHttpClient(_options.Host, true);
+        using var httpClient = new JsonHttpClient(_options.Host);
 
         var url = $"{GetUrl<T>()}/id/{ensemblId}";
 
@@ -51,7 +51,7 @@ public class EnsemblApiClient
     /// <returns>Ensembl objects mapped to an array of given type if were found.</returns>
     public async Task<T[]> Find<T>(IEnumerable<string> ensemblIds, bool length = true, bool expand = false) where T : LookupResource
     {
-        using var httpClient = new JsonHttpClient(_options.Host, true);
+        using var httpClient = new JsonHttpClient(_options.Host);
 
         var url = $"{GetUrl<T>()}/id";
 
@@ -93,7 +93,7 @@ public class EnsemblApiClient
     /// <returns>Ensembl object mapped to given type if was found.</returns>
     public async Task<T> FindByName<T>(string symbol, bool length = true, bool expand = false) where T : LookupResource
     {
-        using var httpClient = new JsonHttpClient(_options.Host, true);
+        using var httpClient = new JsonHttpClient(_options.Host);
 
         var url = $"{GetUrl<T>()}/symbol/{symbol}";
 
@@ -113,7 +113,7 @@ public class EnsemblApiClient
     /// <returns>Ensembl objects mapped to an array of given type if were found.</returns>
     public async Task<T[]> FindByName<T>(IEnumerable<string> symbols, bool length = true, bool expand = false) where T : LookupResource
     {
-        using var httpClient = new JsonHttpClient(_options.Host, true);
+        using var httpClient = new JsonHttpClient(_options.Host);
 
         var url = $"{GetUrl<T>()}/symbol";
 
