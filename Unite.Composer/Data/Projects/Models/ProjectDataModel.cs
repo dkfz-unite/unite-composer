@@ -15,4 +15,5 @@ public class ProjectDataModel
     public int? SSM { get; set; }
     public int? CNV { get; set; }
     public int? SV { get; set; }
+    public int? TRA { get; set; }
 }

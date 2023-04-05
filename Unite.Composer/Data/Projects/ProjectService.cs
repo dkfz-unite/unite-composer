@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Projects.Models;
 using Unite.Data.Entities.Donors;
+using Unite.Data.Entities.Genome.Transcriptomics;
 using Unite.Data.Entities.Images;
 using Unite.Data.Entities.Specimens;
 using Unite.Data.Services;
@@ -179,6 +180,12 @@ public class ProjectService
             .Distinct()
             .Count();
 
+        var withGeneExpressions = _dbContext.Set<GeneExpression>()
+            .Where(geneExpression => donorIds.Contains(geneExpression.AnalysedSample.Sample.Specimen.DonorId))
+            .Select(geneExpression => geneExpression.AnalysedSample.Sample.Specimen.DonorId)
+            .Distinct()
+            .Count();
+
 
         return new ProjectDataModel
         {
@@ -191,7 +198,8 @@ public class ProjectService
             Xenografts = withXenografts,
             SSM = withSimpleSomaticMutations,
             CNV = withCopyNumberVariants,
-            SV = withStructuralVariants
+            SV = withStructuralVariants,
+            TRA = withGeneExpressions
         };
     }
 }
