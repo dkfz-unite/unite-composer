@@ -52,6 +52,9 @@ public class VariantController : Controller
     [HttpGet("{id}/translations")]
     public Transcript[] GetTranslations(string id)
     {
+        Console.WriteLine(id);
+        Console.WriteLine(id.StartsWith("SSM"));
+        Console.WriteLine(id.Substring(3));
         if (id.StartsWith("SSM"))
         {
             var mutationId = long.Parse(id.Substring(3));
@@ -73,7 +76,7 @@ public class VariantController : Controller
             return null;
         }
 
-        return new VariantResource(index);
+        return new VariantResource(index, true);
     }
 
     private static SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)

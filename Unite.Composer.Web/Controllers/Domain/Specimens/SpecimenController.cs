@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Specimens;
+using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Composer.Search.Engine.Queries;
@@ -15,7 +16,7 @@ using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 using DrugScreeningResource = Unite.Composer.Web.Resources.Domain.Basic.Specimens.DrugScreeningResource;
 using VariantResource = Unite.Composer.Web.Resources.Domain.Variants.VariantResource;
-using Unite.Composer.Data.Genome;
+
 
 namespace Unite.Composer.Web.Controllers.Domain.Specimens;
 
