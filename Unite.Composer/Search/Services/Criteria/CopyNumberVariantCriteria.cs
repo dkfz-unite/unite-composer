@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class CopyNumberVariantCriteria : VariantCriteriaBase
+public record CopyNumberVariantCriteria : VariantCriteriaBase
 {
     public string[] Type { get; set; }
     public bool? Loh { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class OrganoidCriteria : SpecimenCriteriaBase
+public record OrganoidCriteria : SpecimenCriteriaBase
 {
     public string[] Medium { get; set; }
     public string[] Intervention { get; set; }

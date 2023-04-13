@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Search.Services.Criteria;
 
-public class GeneCriteria
+public record GeneCriteria
 {
     public int[] Id { get; set; }
 

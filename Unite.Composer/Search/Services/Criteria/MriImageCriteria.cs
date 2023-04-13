@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Search.Services.Criteria;
 
-public class MriImageCriteria : ImageCriteriaBase
+public record MriImageCriteria : ImageCriteriaBase
 {
     public Range<double?> WholeTumor { get; set; }
     public Range<double?> ContrastEnhancing { get; set; }

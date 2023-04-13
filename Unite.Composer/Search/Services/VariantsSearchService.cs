@@ -8,23 +8,29 @@ using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
+using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
-public class VariantsSearchService : IVariantsSearchService
+public class VariantsSearchService : AggregatingSearchService, IVariantsSearchService
 {
     private readonly IIndexService<DonorIndex> _donorsIndexService;
+    private readonly IIndexService<GeneIndex> _genesIndexService;
     private readonly IIndexService<VariantIndex> _variantsIndexService;
+
+    public override IIndexService<GeneIndex> GenesIndexService => _genesIndexService;
+    public override IIndexService<VariantIndex> VariantsIndexService => _variantsIndexService;
 
 
     public VariantsSearchService(IElasticOptions options)
     {
         _donorsIndexService = new DonorsIndexService(options);
+        _genesIndexService = new GenesIndexService(options);
         _variantsIndexService = new VariantsIndexService(options);
     }
 
-
+    
     public VariantIndex Get(string key, VariantSearchContext searchContext = null)
     {
         var query = new GetQuery<VariantIndex>(key)
@@ -62,13 +68,18 @@ public class VariantsSearchService : IVariantsSearchService
 
         criteria.MutationFilters = new MutationCriteria { Id = new[] { variantId } };
 
-        var criteriaFilters = new DonorIndexFiltersCollection(criteria)
+        // Should never be null or empty
+        var ids = AggregateFromVariants(index => index.Samples.First().Donor.Id, criteria);
+
+        criteria.DonorFilters = (criteria.DonorFilters ?? new DonorCriteria()) with { Id = ids };
+
+        var filters = new DonorIndexFiltersCollection(criteria)
             .All();
 
         var query = new SearchQuery<DonorIndex>()
             .AddPagination(criteria.From, criteria.Size)
             .AddFullTextSearch(criteria.Term)
-            .AddFilters(criteriaFilters)
+            .AddFilters(filters)
             .AddOrdering(donor => donor.NumberOfMutations)
             .AddExclusion(donor => donor.Specimens);
 

@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class ImageCriteria
+public record ImageCriteria
 {
     public int[] Id { get; set; }
 }

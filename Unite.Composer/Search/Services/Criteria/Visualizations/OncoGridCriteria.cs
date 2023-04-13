@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria.Visualizations;
 
-public class OncoGridCriteria
+public record OncoGridCriteria
 {
     /// <summary>
     /// Number of donors with highest number of mutations

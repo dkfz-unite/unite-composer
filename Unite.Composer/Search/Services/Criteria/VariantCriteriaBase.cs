@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Search.Services.Criteria;
 
-public abstract class VariantCriteriaBase
+public abstract record VariantCriteriaBase
 {
     public string[] Id { get; set; }
 

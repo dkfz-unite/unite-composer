@@ -58,9 +58,7 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
         {
             if (ids != null)
             {
-                if (criteria.SpecimenFilters == null) 
-                    criteria.SpecimenFilters = new SpecimenCriteria { Id = ids };
-                else criteria.SpecimenFilters.Id = ids;
+                criteria.SpecimenFilters = (criteria.SpecimenFilters ?? new SpecimenCriteria()) with { Id = ids };
             }
 
             var filters = GetFiltersCollection(criteria, context)

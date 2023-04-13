@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class StructuralVariantCriteria : VariantCriteriaBase
+public record StructuralVariantCriteria : VariantCriteriaBase
 {
     public string[] Type { get; set; }
     public bool? Inverted { get; set; }

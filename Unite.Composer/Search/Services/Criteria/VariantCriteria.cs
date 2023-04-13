@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class VariantCriteria
+public record VariantCriteria
 {
     public string Id { get; set; }  
 }

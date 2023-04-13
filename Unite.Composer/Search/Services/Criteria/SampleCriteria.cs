@@ -1,6 +1,6 @@
 namespace Unite.Composer.Search.Services.Criteria;
 
-public class SampleCriteria
+public record SampleCriteria
 {
     public int[] Id { get; set; }
 }

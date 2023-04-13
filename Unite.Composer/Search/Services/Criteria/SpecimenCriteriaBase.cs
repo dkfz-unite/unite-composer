@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Search.Services.Criteria;
 
-public abstract class SpecimenCriteriaBase
+public abstract record SpecimenCriteriaBase
 {
     public int[] Id { get; set; }
     public string[] ReferenceId { get; set; }

@@ -1,5 +1,4 @@
 ﻿using Unite.Composer.Search.Engine;
-using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
@@ -13,11 +12,14 @@ using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Search.Services;
 
-public class GenesSearchService : IGenesSearchService
+public class GenesSearchService : AggregatingSearchService, IGenesSearchService
 {
     private readonly IIndexService<DonorIndex> _donorsIndexService;
     private readonly IIndexService<GeneIndex> _genesIndexService;
     private readonly IIndexService<VariantIndex> _variantsIndexService;
+
+    public override IIndexService<GeneIndex> GenesIndexService => _genesIndexService;
+    public override IIndexService<VariantIndex> VariantsIndexService => _variantsIndexService;
 
     public GenesSearchService(IElasticOptions options)
     {
@@ -59,12 +61,19 @@ public class GenesSearchService : IGenesSearchService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var criteriaFilters = new DonorIndexFiltersCollection(criteria)
+        criteria.GeneFilters = new GeneCriteria() { Id = new[] { geneId } };
+
+        // Should never be null or empty
+        var ids = AggregateFromGenes(index => index.Samples.First().Donor.Id, criteria);
+
+        criteria.DonorFilters = (criteria.DonorFilters ?? new DonorCriteria()) with { Id = ids };
+
+        var filters = new DonorIndexFiltersCollection(criteria)
             .All();
 
         var query = new SearchQuery<DonorIndex>()
             .AddPagination(criteria.From, criteria.Size)
-            .AddFilters(criteriaFilters)
+            .AddFilters(filters)
             .AddOrdering(donor => donor.NumberOfMutations);
 
         var result = _donorsIndexService.SearchAsync(query).Result;

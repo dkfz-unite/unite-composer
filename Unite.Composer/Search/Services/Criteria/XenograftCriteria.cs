@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Search.Services.Criteria;
 
-public class XenograftCriteria : SpecimenCriteriaBase
+public record XenograftCriteria : SpecimenCriteriaBase
 {
     public string[] MouseStrain { get; set; }
     public string[] Intervention { get; set; }

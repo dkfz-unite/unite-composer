@@ -63,9 +63,7 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
         {
             if (ids != null)
             {
-                if (criteria.ImageFilters == null) 
-                    criteria.ImageFilters = new ImageCriteria { Id = ids };
-                else criteria.ImageFilters.Id = ids;
+                criteria.ImageFilters = (criteria.ImageFilters ?? new ImageCriteria()) with { Id = ids };
             }
 
             var query = new SearchQuery<ImageIndex>()

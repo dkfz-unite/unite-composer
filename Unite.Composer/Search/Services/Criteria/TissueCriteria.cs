@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class TissueCriteria : SpecimenCriteriaBase
+public record TissueCriteria : SpecimenCriteriaBase
 {
     public string[] Type { get; set; }
     public string[] TumorType { get; set; }

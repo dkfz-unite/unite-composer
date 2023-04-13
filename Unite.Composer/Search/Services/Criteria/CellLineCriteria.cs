@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Search.Services.Criteria;
 
-public class CellLineCriteria : SpecimenCriteriaBase
+public record CellLineCriteria : SpecimenCriteriaBase
 {
     public string[] Species { get; set; }
     public string[] Type { get; set; }

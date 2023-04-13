@@ -62,9 +62,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
         {
             if (ids != null)
             {
-                if (criteria.DonorFilters == null) 
-                    criteria.DonorFilters = new DonorCriteria { Id = ids };
-                else criteria.DonorFilters.Id = ids;
+                criteria.DonorFilters = (criteria.DonorFilters ?? new DonorCriteria()) with { Id = ids };
             }
 
             var filters = new DonorIndexFiltersCollection(criteria)
