@@ -58,7 +58,7 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
         {
             if (ids != null)
             {
-                criteria.SpecimenFilters = (criteria.SpecimenFilters ?? new SpecimenCriteria()) with { Id = ids };
+                criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Id = ids };
             }
 
             var filters = GetFiltersCollection(criteria, context)
@@ -86,7 +86,7 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
 
         var context = searchContext ?? new SpecimenSearchContext();
 
-        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId } };
+        criteria.Sample = new SampleCriteria { Id = new[] { sampleId } };
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -108,7 +108,7 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
 
         var context = searchContext ?? new SpecimenSearchContext();
 
-        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId } };
+        criteria.Sample = new SampleCriteria { Id = new[] { sampleId } };
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

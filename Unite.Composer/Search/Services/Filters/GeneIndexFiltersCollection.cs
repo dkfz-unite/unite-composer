@@ -10,16 +10,16 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
 {
     public GeneIndexFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<GeneIndex>(criteria.DonorFilters, gene => gene.Samples.First().Donor);
-        var mriImageFilters = new MriImageFilters<GeneIndex>(criteria.MriImageFilters, gene => gene.Samples.First().Images.First());
-        var tissueFilters = new TissueFilters<GeneIndex>(criteria.TissueFilters, gene => gene.Samples.First().Specimen);
-        var cellLineFilters = new CellLineFilters<GeneIndex>(criteria.CellLineFilters, gene => gene.Samples.First().Specimen);
-        var organoidFilters = new OrganoidFilters<GeneIndex>(criteria.OrganoidFilters, gene => gene.Samples.First().Specimen);
-        var xenograftFilters = new XenograftFilters<GeneIndex>(criteria.XenograftFilters, gene => gene.Samples.First().Specimen);
-        var geneFilters = new GeneFilters<GeneIndex>(criteria.GeneFilters, gene => gene);
-        var mutationFilters = new MutationFilters<GeneIndex>(criteria.MutationFilters, gene => gene.Samples.First().Variants.First());
-        var copyNumberVariantFilters = new CopyNumberVariantFilters<GeneIndex>(criteria.CopyNumberVariantFilters, gene => gene.Samples.First().Variants.First());
-        var structuralVariantFilters = new StructuralVariantFilters<GeneIndex>(criteria.StructuralVariantFilters, gene => gene.Samples.First().Variants.First());
+        var donorFilters = new DonorFilters<GeneIndex>(criteria.Donor, gene => gene.Samples.First().Donor);
+        var mriImageFilters = new MriImageFilters<GeneIndex>(criteria.Mri, gene => gene.Samples.First().Images.First());
+        var tissueFilters = new TissueFilters<GeneIndex>(criteria.Tissue, gene => gene.Samples.First().Specimen);
+        var cellLineFilters = new CellLineFilters<GeneIndex>(criteria.Cell, gene => gene.Samples.First().Specimen);
+        var organoidFilters = new OrganoidFilters<GeneIndex>(criteria.Organoid, gene => gene.Samples.First().Specimen);
+        var xenograftFilters = new XenograftFilters<GeneIndex>(criteria.Xenograft, gene => gene.Samples.First().Specimen);
+        var geneFilters = new GeneFilters<GeneIndex>(criteria.Gene, gene => gene);
+        var mutationFilters = new MutationFilters<GeneIndex>(criteria.Ssm, gene => gene.Samples.First().Variants.First());
+        var copyNumberVariantFilters = new CopyNumberVariantFilters<GeneIndex>(criteria.Cnv, gene => gene.Samples.First().Variants.First());
+        var structuralVariantFilters = new StructuralVariantFilters<GeneIndex>(criteria.Sv, gene => gene.Samples.First().Variants.First());
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -32,36 +32,36 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
         _filters.AddRange(copyNumberVariantFilters.All());
         _filters.AddRange(structuralVariantFilters.All());
 
-        if (criteria.ImageFilters != null)
+        if (criteria.Image != null)
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
               ImageFilterNames.Id,
               gene => gene.Samples.First().Images.First().Id,
-              criteria.ImageFilters.Id
+              criteria.Image.Id
               ));
         }
 
-        if (criteria.SpecimenFilters != null)
+        if (criteria.Specimen != null)
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
                 SpecimenFilterNames.Id,
                 gene => gene.Samples.First().Specimen.Id,
-                criteria.SpecimenFilters.Id
+                criteria.Specimen.Id
             ));
         }
 
-        if (criteria.SampleFilters != null)
+        if (criteria.Sample != null)
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
                 SampleFilterNames.Id,
                 gene => gene.Samples.First().Id,
-                criteria.SampleFilters.Id
+                criteria.Sample.Id
             ));
         }
 
-        if (criteria.GeneFilters != null)
+        if (criteria.Gene != null)
         {
-            if (criteria.GeneFilters.HasVariants == true)
+            if (criteria.Gene.HasVariants == true)
             {
                 _filters.Add(new GreaterThanFilter<GeneIndex, double?>(
                     GeneFilterNames.HasVariants, 1,
@@ -71,7 +71,7 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
                 ));
             }
 
-            if (criteria.GeneFilters.HasExpressions == true)
+            if (criteria.Gene.HasExpressions == true)
             {
                 _filters.Add(new NotNullFilter<GeneIndex, object>(
                     GeneFilterNames.HasExpressions,

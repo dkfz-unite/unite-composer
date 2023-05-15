@@ -8,11 +8,11 @@ public class ImageIndexFiltersCollection : FiltersCollection<ImageIndex>
 {
     public ImageIndexFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<ImageIndex>(criteria.DonorFilters, image => image.Donor);
-        var tissueFilters = new TissueFilters<ImageIndex>(criteria.TissueFilters, image => image.Specimens.First());
-        var cellLineFilters = new CellLineFilters<ImageIndex>(criteria.CellLineFilters, image => image.Specimens.First());
-        var organoidFilters = new OrganoidFilters<ImageIndex>(criteria.OrganoidFilters, image => image.Specimens.First());
-        var xenograftFilters = new XenograftFilters<ImageIndex>(criteria.XenograftFilters, image => image.Specimens.First());
+        var donorFilters = new DonorFilters<ImageIndex>(criteria.Donor, image => image.Donor);
+        var tissueFilters = new TissueFilters<ImageIndex>(criteria.Tissue, image => image.Specimens.First());
+        var cellLineFilters = new CellLineFilters<ImageIndex>(criteria.Cell, image => image.Specimens.First());
+        var organoidFilters = new OrganoidFilters<ImageIndex>(criteria.Organoid, image => image.Specimens.First());
+        var xenograftFilters = new XenograftFilters<ImageIndex>(criteria.Xenograft, image => image.Specimens.First());
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(tissueFilters.All());

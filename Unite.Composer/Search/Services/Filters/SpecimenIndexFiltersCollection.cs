@@ -8,8 +8,8 @@ public class SpecimenIndexFiltersCollection : FiltersCollection<SpecimenIndex>
 {
     public SpecimenIndexFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<SpecimenIndex>(criteria.DonorFilters, specimen => specimen.Donor);
-        var mriImageFilters = new MriImageFilters<SpecimenIndex>(criteria.MriImageFilters, specimen => specimen.Images.First());
+        var donorFilters = new DonorFilters<SpecimenIndex>(criteria.Donor, specimen => specimen.Donor);
+        var mriImageFilters = new MriImageFilters<SpecimenIndex>(criteria.Mri, specimen => specimen.Images.First());
         
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());

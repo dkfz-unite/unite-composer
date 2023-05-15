@@ -31,8 +31,8 @@ public class OncoGridDataService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var impacts = criteria.MutationFilters.Impact;
-        var consequences = criteria.MutationFilters.Consequence;
+        var impacts = criteria.Ssm.Impact;
+        var consequences = criteria.Ssm.Consequence;
 
         var donorsSearchResult = FindDonors(criteria);
 
@@ -72,7 +72,7 @@ public class OncoGridDataService
         var criteriaFilters = new DonorIndexFiltersCollection(criteria).All();
 
         var query = new SearchQuery<DonorIndex>()
-            .AddPagination(0, criteria.OncoGridFilters.NumberOfDonors)
+            .AddPagination(0, criteria.OncoGrid.NumberOfDonors)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(donor => donor.NumberOfGenes)
@@ -95,16 +95,16 @@ public class OncoGridDataService
         IEnumerable<int> donorIds)
     {
         var criteria = new SearchCriteria();
-        criteria.DonorFilters = new DonorCriteria();
-        criteria.DonorFilters.Id = donorIds.ToArray();
-        criteria.GeneFilters = searchCriteria.GeneFilters;
-        criteria.MutationFilters = searchCriteria.MutationFilters;
-        criteria.OncoGridFilters = searchCriteria.OncoGridFilters;
+        criteria.Donor = new DonorCriteria();
+        criteria.Donor.Id = donorIds.ToArray();
+        criteria.Gene = searchCriteria.Gene;
+        criteria.Ssm = searchCriteria.Ssm;
+        criteria.OncoGrid = searchCriteria.OncoGrid;
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria).All();
 
         var query = new SearchQuery<GeneIndex>()
-            .AddPagination(0, criteria.OncoGridFilters.NumberOfGenes)
+            .AddPagination(0, criteria.OncoGrid.NumberOfGenes)
             .AddFilters(criteriaFilters)
             .AddOrdering(gene => gene.NumberOfMutations)
             .AddExclusion(gene => gene.Samples);
@@ -125,12 +125,12 @@ public class OncoGridDataService
         IEnumerable<int> geneIds)
     {
         var criteria = new SearchCriteria();
-        criteria.DonorFilters = new DonorCriteria();
-        criteria.DonorFilters.Id = donorIds.ToArray();
-        criteria.GeneFilters = new GeneCriteria();
-        criteria.GeneFilters.Id = geneIds.ToArray();
-        criteria.MutationFilters = searchCriteria.MutationFilters;
-        criteria.OncoGridFilters = searchCriteria.OncoGridFilters;
+        criteria.Donor = new DonorCriteria();
+        criteria.Donor.Id = donorIds.ToArray();
+        criteria.Gene = new GeneCriteria();
+        criteria.Gene.Id = geneIds.ToArray();
+        criteria.Ssm = searchCriteria.Ssm;
+        criteria.OncoGrid = searchCriteria.OncoGrid;
 
         var criteriaFilters = new MutationIndexFiltersCollection(criteria).All();
 

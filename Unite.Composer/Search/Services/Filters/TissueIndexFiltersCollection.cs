@@ -10,8 +10,8 @@ public class TissueIndexFiltersCollection : SpecimenIndexFiltersCollection
 {
     public TissueIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
-        var filters = new TissueFilters<SpecimenIndex>(criteria.TissueFilters, specimen => specimen);
-        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.TissueFilters, specimen => specimen.Tissue);
+        var filters = new TissueFilters<SpecimenIndex>(criteria.Tissue, specimen => specimen);
+        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Tissue, specimen => specimen.Tissue);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(molecularDataFilters.All());

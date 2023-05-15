@@ -66,12 +66,12 @@ public class VariantsSearchService : AggregatingSearchService, IVariantsSearchSe
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.MutationFilters = new MutationCriteria { Id = new[] { variantId } };
+        criteria.Ssm = new MutationCriteria { Id = new[] { variantId } };
 
         // Should never be null or empty
         var ids = AggregateFromVariants(index => index.Samples.First().Donor.Id, criteria);
 
-        criteria.DonorFilters = (criteria.DonorFilters ?? new DonorCriteria()) with { Id = ids };
+        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = ids };
 
         var filters = new DonorIndexFiltersCollection(criteria)
             .All();

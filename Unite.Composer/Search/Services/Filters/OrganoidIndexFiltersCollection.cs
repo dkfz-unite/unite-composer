@@ -10,9 +10,9 @@ public class OrganoidIndexFiltersCollection : SpecimenIndexFiltersCollection
 {
     public OrganoidIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
-        var filters = new OrganoidFilters<SpecimenIndex>(criteria.OrganoidFilters, specimen => specimen);
-        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.OrganoidFilters, specimen => specimen.Organoid);
-        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.OrganoidFilters, specimen => specimen.Organoid);
+        var filters = new OrganoidFilters<SpecimenIndex>(criteria.Organoid, specimen => specimen);
+        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Organoid, specimen => specimen.Organoid);
+        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.Organoid, specimen => specimen.Organoid);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(molecularDataFilters.All());
