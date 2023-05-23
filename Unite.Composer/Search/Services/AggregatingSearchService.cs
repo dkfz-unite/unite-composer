@@ -19,7 +19,7 @@ public abstract class AggregatingSearchService
     {
         IEnumerable<int> terms = null;
 
-        if (criteria.GeneFilters?.IsNotEmpty() == true)
+        if (criteria.Gene?.IsNotEmpty() == true)
         {
             var filters = new GeneIndexFiltersCollection(criteria);
 
@@ -35,27 +35,27 @@ public abstract class AggregatingSearchService
     {
         IEnumerable<int> terms = null;
 
-        if (criteria.MutationFilters?.IsNotEmpty() == true)
+        if (criteria.Ssm?.IsNotEmpty() == true)
         {
-            var filters = new MutationIndexFiltersCollection(criteria with { CopyNumberVariantFilters = null, StructuralVariantFilters = null });
+            var filters = new MutationIndexFiltersCollection(criteria with { Cnv = null, Sv = null });
 
             var termsFromVariants = AggregateFromVariants(property, criteria.Term, filters);
 
             terms = terms == null ? termsFromVariants : terms.Intersect(termsFromVariants);
         }
 
-        if (criteria.CopyNumberVariantFilters?.IsNotEmpty() == true)
+        if (criteria.Cnv?.IsNotEmpty() == true)
         {
-            var filters = new CopyNumberVariantFiltersCollection(criteria with { MutationFilters = null, StructuralVariantFilters = null });
+            var filters = new CopyNumberVariantFiltersCollection(criteria with { Ssm = null, Sv = null });
 
             var termsFromVariants = AggregateFromVariants(property, criteria.Term, filters);
 
             terms = terms == null ? termsFromVariants : terms.Intersect(termsFromVariants);
         }
 
-        if (criteria.StructuralVariantFilters?.IsNotEmpty() == true)
+        if (criteria.Sv?.IsNotEmpty() == true)
         {
-            var filters = new StructuralVariantFiltersCollection(criteria with { MutationFilters = null, CopyNumberVariantFilters = null });
+            var filters = new StructuralVariantFiltersCollection(criteria with { Ssm = null, Cnv = null });
             
             var termsFromVariants = AggregateFromVariants(property, criteria.Term, filters);
 

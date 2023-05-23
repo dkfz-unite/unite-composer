@@ -63,7 +63,7 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
         {
             if (ids != null)
             {
-                criteria.ImageFilters = (criteria.ImageFilters ?? new ImageCriteria()) with { Id = ids };
+                criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Id = ids };
             }
 
             var query = new SearchQuery<ImageIndex>()
@@ -85,7 +85,7 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
 
         var context = searchContext ?? new ImageSearchContext();
 
-        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
+        criteria.Sample = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -107,7 +107,7 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
 
         var context = searchContext ?? new ImageSearchContext();
 
-        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
+        criteria.Sample = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

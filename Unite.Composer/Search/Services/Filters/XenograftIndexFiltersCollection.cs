@@ -10,9 +10,9 @@ public class XenograftIndexFiltersCollection : SpecimenIndexFiltersCollection
 {
     public XenograftIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
-        var filters = new XenograftFilters<SpecimenIndex>(criteria.XenograftFilters, specimen => specimen);
-        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.XenograftFilters, specimen => specimen.Xenograft);
-        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.XenograftFilters, specimen => specimen.Xenograft);
+        var filters = new XenograftFilters<SpecimenIndex>(criteria.Xenograft, specimen => specimen);
+        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Xenograft, specimen => specimen.Xenograft);
+        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.Xenograft, specimen => specimen.Xenograft);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(molecularDataFilters.All());

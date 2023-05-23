@@ -10,8 +10,8 @@ public class CopyNumberVariantFiltersCollection : VariantFiltersCollection
 {
     public CopyNumberVariantFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
-        var filters = new CopyNumberVariantFilters<VariantIndex>(criteria.CopyNumberVariantFilters, variant => variant);
-        var geneFilters = new GeneFilters<VariantIndex>(criteria.GeneFilters, variant => variant.CopyNumberVariant.AffectedFeatures.First().Gene);
+        var filters = new CopyNumberVariantFilters<VariantIndex>(criteria.Cnv, variant => variant);
+        var geneFilters = new GeneFilters<VariantIndex>(criteria.Gene, variant => variant.CopyNumberVariant.AffectedFeatures.First().Gene);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(geneFilters.All());

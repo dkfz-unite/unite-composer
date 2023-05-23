@@ -10,12 +10,12 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
 {
     public DonorIndexFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<DonorIndex>(criteria.DonorFilters, donor => donor);
-        var mriImageFilters = new MriImageFilters<DonorIndex>(criteria.MriImageFilters, donor => donor.Images.First());
-        var tissueFilters = new TissueFilters<DonorIndex>(criteria.TissueFilters, donor => donor.Specimens.First());
-        var cellLineFilters = new CellLineFilters<DonorIndex>(criteria.CellLineFilters, donor => donor.Specimens.First());
-        var organoidFilters = new OrganoidFilters<DonorIndex>(criteria.OrganoidFilters, donor => donor.Specimens.First());
-        var xenograftFilters = new XenograftFilters<DonorIndex>(criteria.XenograftFilters, donor => donor.Specimens.First());
+        var donorFilters = new DonorFilters<DonorIndex>(criteria.Donor, donor => donor);
+        var mriImageFilters = new MriImageFilters<DonorIndex>(criteria.Mri, donor => donor.Images.First());
+        var tissueFilters = new TissueFilters<DonorIndex>(criteria.Tissue, donor => donor.Specimens.First());
+        var cellLineFilters = new CellLineFilters<DonorIndex>(criteria.Cell, donor => donor.Specimens.First());
+        var organoidFilters = new OrganoidFilters<DonorIndex>(criteria.Organoid, donor => donor.Specimens.First());
+        var xenograftFilters = new XenograftFilters<DonorIndex>(criteria.Xenograft, donor => donor.Specimens.First());
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -24,12 +24,12 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
         _filters.AddRange(organoidFilters.All());
         _filters.AddRange(xenograftFilters.All());
 
-        if (criteria.SpecimenFilters != null)
+        if (criteria.Specimen != null)
         {
             _filters.Add(new EqualityFilter<DonorIndex, int>(
                 SpecimenFilterNames.Id,
                 donor => donor.Specimens.First().Id,
-                criteria.SpecimenFilters.Id)
+                criteria.Specimen.Id)
             );
         }
     }

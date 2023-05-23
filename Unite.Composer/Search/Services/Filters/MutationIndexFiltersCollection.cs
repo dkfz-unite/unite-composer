@@ -10,8 +10,8 @@ public class MutationIndexFiltersCollection : VariantFiltersCollection
 {
     public MutationIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
-        var filters = new MutationFilters<VariantIndex>(criteria.MutationFilters, variant => variant);
-        var geneFilters = new GeneFilters<VariantIndex>(criteria.GeneFilters, variant => variant.Mutation.AffectedFeatures.First().Gene);
+        var filters = new MutationFilters<VariantIndex>(criteria.Ssm, variant => variant);
+        var geneFilters = new GeneFilters<VariantIndex>(criteria.Gene, variant => variant.Mutation.AffectedFeatures.First().Gene);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(geneFilters.All());

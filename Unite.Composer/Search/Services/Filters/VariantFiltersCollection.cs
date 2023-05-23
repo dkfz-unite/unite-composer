@@ -10,12 +10,12 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
 {
     public VariantFiltersCollection(SearchCriteria criteria) : base()
     {
-        var donorFilters = new DonorFilters<VariantIndex>(criteria.DonorFilters, variant => variant.Samples.First().Donor);
-        var mriImageFilters = new MriImageFilters<VariantIndex>(criteria.MriImageFilters, variant => variant.Samples.First().Images.First());
-        var tissueFilters = new TissueFilters<VariantIndex>(criteria.TissueFilters, variant => variant.Samples.First().Specimen);
-        var cellLineFilters = new CellLineFilters<VariantIndex>(criteria.CellLineFilters, variant => variant.Samples.First().Specimen);
-        var organoidFilters = new OrganoidFilters<VariantIndex>(criteria.OrganoidFilters, variant => variant.Samples.First().Specimen);
-        var xenograftFilters = new XenograftFilters<VariantIndex>(criteria.XenograftFilters, variant => variant.Samples.First().Specimen);
+        var donorFilters = new DonorFilters<VariantIndex>(criteria.Donor, variant => variant.Samples.First().Donor);
+        var mriImageFilters = new MriImageFilters<VariantIndex>(criteria.Mri, variant => variant.Samples.First().Images.First());
+        var tissueFilters = new TissueFilters<VariantIndex>(criteria.Tissue, variant => variant.Samples.First().Specimen);
+        var cellLineFilters = new CellLineFilters<VariantIndex>(criteria.Cell, variant => variant.Samples.First().Specimen);
+        var organoidFilters = new OrganoidFilters<VariantIndex>(criteria.Organoid, variant => variant.Samples.First().Specimen);
+        var xenograftFilters = new XenograftFilters<VariantIndex>(criteria.Xenograft, variant => variant.Samples.First().Specimen);
 
         _filters.AddRange(donorFilters.All());
         _filters.AddRange(mriImageFilters.All());
@@ -24,30 +24,30 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
         _filters.AddRange(organoidFilters.All());
         _filters.AddRange(xenograftFilters.All());
 
-        if (criteria.ImageFilters != null)
+        if (criteria.Image != null)
         {
             _filters.Add(new EqualityFilter<VariantIndex, int>(
               ImageFilterNames.Id,
               variant => variant.Samples.First().Images.First().Id,
-              criteria.ImageFilters.Id)
+              criteria.Image.Id)
             );
         }
 
-        if (criteria.SpecimenFilters != null)
+        if (criteria.Specimen != null)
         {
             _filters.Add(new EqualityFilter<VariantIndex, int>(
                 SpecimenFilterNames.Id,
                 variant => variant.Samples.First().Specimen.Id,
-                criteria.SpecimenFilters.Id)
+                criteria.Specimen.Id)
             );
         }
 
-        if (criteria.SampleFilters != null)
+        if (criteria.Sample != null)
         {
             _filters.Add(new EqualityFilter<VariantIndex, int>(
                 "Sample.Id",
                 variant => variant.Samples.First().Id,
-                criteria.SampleFilters.Id
+                criteria.Sample.Id
             ));
         }
     }

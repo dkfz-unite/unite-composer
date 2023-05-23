@@ -10,7 +10,7 @@ public class MriImageIndexFiltersCollection : ImageIndexFiltersCollection
 {
     public MriImageIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
-        var filters = new MriImageFilters<ImageIndex>(criteria.MriImageFilters, image => image);
+        var filters = new MriImageFilters<ImageIndex>(criteria.Mri, image => image);
 
         _filters.AddRange(filters.All());
 

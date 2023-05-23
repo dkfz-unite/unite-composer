@@ -39,7 +39,7 @@ public class OncoGridDataService1
         var data = GetOncoGridData(
             donorsSearchResult.Rows,
             mutationsSearchResult.Rows,
-            searchCriteria.OncoGridFilters.NumberOfGenes
+            searchCriteria.OncoGrid.NumberOfGenes
         );
 
         return data;
@@ -59,7 +59,7 @@ public class OncoGridDataService1
         var criteriaFilters = new DonorIndexFiltersCollection(criteria).All();
 
         var query = new SearchQuery<DonorIndex>()
-            .AddPagination(0, criteria.OncoGridFilters.NumberOfDonors)
+            .AddPagination(0, criteria.OncoGrid.NumberOfDonors)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
             .AddOrdering(donor => donor.NumberOfMutations)
@@ -83,9 +83,9 @@ public class OncoGridDataService1
         IEnumerable<int> donorIds)
     {
         var criteria = new SearchCriteria();
-        criteria.DonorFilters = new DonorCriteria();
-        criteria.DonorFilters.Id = donorIds.ToArray();
-        criteria.MutationFilters = searchCriteria.MutationFilters;
+        criteria.Donor = new DonorCriteria();
+        criteria.Donor.Id = donorIds.ToArray();
+        criteria.Ssm = searchCriteria.Ssm;
 
         var criteriaFilters = new MutationIndexFiltersCollection(criteria).All();
 

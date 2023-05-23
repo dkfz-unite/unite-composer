@@ -61,12 +61,12 @@ public class GenesSearchService : AggregatingSearchService, IGenesSearchService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.GeneFilters = new GeneCriteria() { Id = new[] { geneId } };
+        criteria.Gene = new GeneCriteria() { Id = new[] { geneId } };
 
         // Should never be null or empty
         var ids = AggregateFromGenes(index => index.Samples.First().Donor.Id, criteria);
 
-        criteria.DonorFilters = (criteria.DonorFilters ?? new DonorCriteria()) with { Id = ids };
+        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = ids };
 
         var filters = new DonorIndexFiltersCollection(criteria)
             .All();
@@ -85,7 +85,7 @@ public class GenesSearchService : AggregatingSearchService, IGenesSearchService
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.GeneFilters = new GeneCriteria { Id = new[] { geneId } };
+        criteria.Gene = new GeneCriteria { Id = new[] { geneId } };
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();

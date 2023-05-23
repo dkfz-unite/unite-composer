@@ -8,29 +8,29 @@ public record SearchCriteria
     public int Size { get; set; }
     public string Term { get; set; }
 
-    public DonorCriteria DonorFilters { get; set; }
-    public ImageCriteria ImageFilters { get; set; }
-    public MriImageCriteria MriImageFilters { get; set; }
-    public SpecimenCriteria SpecimenFilters { get; set; }
-    public TissueCriteria TissueFilters { get; set; }
-    public CellLineCriteria CellLineFilters { get; set; }
-    public OrganoidCriteria OrganoidFilters { get; set; }
-    public XenograftCriteria XenograftFilters { get; set; }
-    public SampleCriteria SampleFilters { get; set; }
-    public GeneCriteria GeneFilters { get; set; }
-    public VariantCriteria VariantFilters { get; set; }
-    public MutationCriteria MutationFilters { get; set; }
-    public CopyNumberVariantCriteria CopyNumberVariantFilters { get; set; }
-    public StructuralVariantCriteria StructuralVariantFilters { get; set; }
-    public OncoGridCriteria OncoGridFilters { get; set; }
+    public DonorCriteria Donor { get; set; }
+    public ImageCriteria Image { get; set; }
+    public MriImageCriteria Mri { get; set; }
+    public SpecimenCriteria Specimen { get; set; }
+    public TissueCriteria Tissue { get; set; }
+    public CellLineCriteria Cell { get; set; }
+    public OrganoidCriteria Organoid { get; set; }
+    public XenograftCriteria Xenograft { get; set; }
+    public SampleCriteria Sample { get; set; }
+    public GeneCriteria Gene { get; set; }
+    public VariantCriteria Variant { get; set; }
+    public MutationCriteria Ssm { get; set; }
+    public CopyNumberVariantCriteria Cnv { get; set; }
+    public StructuralVariantCriteria Sv { get; set; }
+    public OncoGridCriteria OncoGrid { get; set; }
 
     public bool HasGeneFilters => 
-        GeneFilters?.IsNotEmpty() == true;
+        Gene?.IsNotEmpty() == true;
 
     public bool HasVariantFilters => 
-        MutationFilters?.IsNotEmpty() == true || 
-        CopyNumberVariantFilters?.IsNotEmpty() == true || 
-        StructuralVariantFilters?.IsNotEmpty() == true;
+        Ssm?.IsNotEmpty() == true || 
+        Cnv?.IsNotEmpty() == true || 
+        Sv?.IsNotEmpty() == true;
 
     public SearchCriteria()
     {

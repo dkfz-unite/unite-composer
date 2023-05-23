@@ -62,7 +62,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
         {
             if (ids != null)
             {
-                criteria.DonorFilters = (criteria.DonorFilters ?? new DonorCriteria()) with { Id = ids };
+                criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = ids };
             }
 
             var filters = new DonorIndexFiltersCollection(criteria)
@@ -86,7 +86,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
+        criteria.Donor = new DonorCriteria { Id = new[] { donorId } };
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();
@@ -105,7 +105,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.DonorFilters = new DonorCriteria { Id = new[] { donorId } };
+        criteria.Donor = new DonorCriteria { Id = new[] { donorId } };
 
         var criteriaFilters = new SpecimenIndexFiltersCollection(criteria)
             .All();
@@ -125,7 +125,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
+        criteria.Sample = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = new GeneIndexFiltersCollection(criteria)
             .All();
@@ -145,7 +145,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        criteria.SampleFilters = new SampleCriteria { Id = new[] { sampleId }};
+        criteria.Sample = new SampleCriteria { Id = new[] { sampleId }};
 
         var criteriaFilters = GetFiltersCollection(type, criteria)
             .All();
