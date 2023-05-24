@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using FluentValidation.AspNetCore;
 using Unite.Composer.Web.Configuration.Extensions;
 
