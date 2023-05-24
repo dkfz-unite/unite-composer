@@ -1,4 +1,5 @@
-﻿using Unite.Composer.Admin.Services;
+﻿using FluentValidation;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data.Donors;
 using Unite.Composer.Data.Genome;
@@ -24,6 +25,7 @@ public static class ConfigurationExtensions
     public static void AddServices(this IServiceCollection services)
     {
         services.AddOptions();
+        services.AddValidation();
 
         services.AddTransient<IdentityDbContext>();
         services.AddTransient<DomainDbContext>();
@@ -58,5 +60,10 @@ public static class ConfigurationExtensions
         services.AddTransient<IIdentitySqlOptions, SqlOptions>();
         services.AddTransient<IDomainSqlOptions, SqlOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
+    }
+
+    private static void AddValidation(this IServiceCollection services)
+    {
+
     }
 }
