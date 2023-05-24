@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Unite.Composer.Web.Configuration.Extensions;
 
 
