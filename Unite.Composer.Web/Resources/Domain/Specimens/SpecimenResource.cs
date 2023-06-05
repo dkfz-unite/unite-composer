@@ -6,16 +6,15 @@ namespace Unite.Composer.Web.Resources.Domain.Specimens;
 public class SpecimenResource : Basic.Specimens.SpecimenResource
 {
     public int DonorId { get; set; }
+    public DateOnly? CollectionDate { get; set; }
 
     public SpecimenResource Parent { get; set; }
 
-    public int NumberOfDrugs { get; set; }
     public int NumberOfGenes { get; set; }
-    public int NumberOfMutations { get; set; }
-    public int NumberOfCopyNumberVariants { get; set; }
-    public int NumberOfStructuralVariants { get; set; }
-    public bool HasDrugScreenings { get; set; }
-    public bool HasGeneExpressions { get; set; }
+    public int NumberOfSsms { get; set; }
+    public int NumberOfCnvs { get; set; }
+    public int NumberOfSvs { get; set; }
+    public SpecimenDataResource Data { get; set; }
 
 
     /// <summary>
@@ -47,14 +46,18 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
 
         if (index.Parent != null)
         {
+            ParentId = index.Parent.Id;
             Parent = new SpecimenResource(index.Parent);
         }
 
         NumberOfGenes = index.NumberOfGenes;
-        NumberOfMutations = index.NumberOfMutations;
-        NumberOfCopyNumberVariants = index.NumberOfCopyNumberVariants;
-        NumberOfStructuralVariants = index.NumberOfStructuralVariants;
-        HasDrugScreenings = index.HasDrugScreenings;
-        HasGeneExpressions = index.HasGeneExpressions;
+        NumberOfSsms = index.NumberOfSsms;
+        NumberOfCnvs = index.NumberOfCnvs;
+        NumberOfSvs = index.NumberOfSvs;
+
+        if (index.Data != null)
+        {
+            Data = new SpecimenDataResource(index.Data);
+        }
     }
 }

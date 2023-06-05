@@ -19,40 +19,40 @@ public class MutationFilters<TIndex> : VariantFilters<TIndex> where TIndex : cla
 
         Add(new EqualityFilter<TIndex, object>(
             VariantFilterNames.Chromosome,
-            path.Join(variant => variant.Mutation.Chromosome.Suffix(_keywordSuffix)),
+            path.Join(variant => variant.Ssm.Chromosome.Suffix(_keywordSuffix)),
             criteria.Chromosome)
         );
 
         Add(new MultiPropertyRangeFilter<TIndex, int>(
             VariantFilterNames.Position,
-            path.Join(variant => variant.Mutation.Start),
-            path.Join(variant => variant.Mutation.End),
+            path.Join(variant => variant.Ssm.Start),
+            path.Join(variant => variant.Ssm.End),
             criteria.Position?.From,
             criteria.Position?.To)
         );
 
         Add(new RangeFilter<TIndex, int>(
             VariantFilterNames.Length,
-            path.Join(variant => variant.Mutation.Length),
+            path.Join(variant => variant.Ssm.Length),
             criteria.Length?.From,
             criteria.Length?.To)
         );
 
         Add(new EqualityFilter<TIndex, object>(
             MutationFilterNames.Type,
-            path.Join(variant => variant.Mutation.Type.Suffix(_keywordSuffix)),
+            path.Join(variant => variant.Ssm.Type.Suffix(_keywordSuffix)),
             criteria.Type)
         );
 
         Add(new EqualityFilter<TIndex, object>(
             VariantFilterNames.Impact,
-            path.Join(variant => variant.Mutation.AffectedFeatures.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
+            path.Join(variant => variant.Ssm.AffectedFeatures.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
             criteria.Impact)
         );
 
         Add(new EqualityFilter<TIndex, object>(
             VariantFilterNames.Consequence,
-            path.Join(variant => variant.Mutation.AffectedFeatures.First().Consequences.First().Type.Suffix(_keywordSuffix)),
+            path.Join(variant => variant.Ssm.AffectedFeatures.First().Consequences.First().Type.Suffix(_keywordSuffix)),
             criteria.Consequence)
         );
     }

@@ -16,7 +16,7 @@ public class MriImageIndexFiltersCollection : ImageIndexFiltersCollection
 
         Add(new NotNullFilter<ImageIndex, Indices.Entities.Basic.Images.MriImageIndex>(
             ImageFilterNames.Type,
-            image => image.MriImage)
+            image => image.Mri)
         );
     }
 }

@@ -72,7 +72,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
                 .AddPagination(criteria.From, criteria.Size)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(filters)
-                .AddOrdering(donor => donor.NumberOfMutations)
+                .AddOrdering(donor => donor.NumberOfGenes)
                 .AddExclusion(donor => donor.Specimens)
                 .AddExclusion(donor => donor.Images);
 
@@ -114,7 +114,7 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
             .AddPagination(criteria.From, criteria.Size)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
-            .AddOrdering(specimen => specimen.NumberOfMutations);
+            .AddOrdering(specimen => specimen.NumberOfGenes);
 
         var result = _specimensIndexService.SearchAsync(query).Result;
 

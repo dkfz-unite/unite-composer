@@ -65,4 +65,14 @@ public abstract class IndexService<TIndex> : IIndexService<TIndex>
             return new SearchResult<TIndex>();
         }
     }
+
+    public virtual async Task DeleteAsync()
+    {
+        var response = await _client.Indices.DeleteAsync(DefaultIndex);
+
+        if (!response.IsValid)
+        {
+            throw new Exception(response.DebugInformation);
+        }
+    }
 }

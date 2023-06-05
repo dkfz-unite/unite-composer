@@ -74,7 +74,7 @@ public class GenesSearchService : AggregatingSearchService, IGenesSearchService
         var query = new SearchQuery<DonorIndex>()
             .AddPagination(criteria.From, criteria.Size)
             .AddFilters(filters)
-            .AddOrdering(donor => donor.NumberOfMutations);
+            .AddOrdering(donor => donor.NumberOfGenes);
 
         var result = _donorsIndexService.SearchAsync(query).Result;
 

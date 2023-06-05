@@ -79,7 +79,7 @@ public class ProteinPlotDataService
 
         foreach (var variant in searchResult.Rows)
         {
-            var affectedFeature = variant.Mutation.AffectedFeatures?
+            var affectedFeature = variant.Ssm.AffectedFeatures?
                 .Where(affectedFeature => affectedFeature.Transcript.AminoAcidChange != null)
                 .FirstOrDefault(affectedFeature => affectedFeature.Transcript.Feature.Id == transcriptId);
 
@@ -91,7 +91,7 @@ public class ProteinPlotDataService
 
                 var proteinMutation = new ProteinMutation
                 {
-                    Id = variant.Mutation.Id,
+                    Id = variant.Ssm.Id,
                     Consequence = consequence.Type,
                     Impact = consequence.Impact,
                     AminoAcidChange = affectedFeature.Transcript.AminoAcidChange,
@@ -111,7 +111,7 @@ public class ProteinPlotDataService
         return new NotNullFilter<VariantIndex, Indices.Entities.Basic.Genome.Variants.MutationIndex>
         (
             "Variant.Mutation",
-            variant => variant.Mutation
+            variant => variant.Ssm
         );
     }
 
@@ -120,7 +120,7 @@ public class ProteinPlotDataService
         return new EqualityFilter<VariantIndex, long>
         (
             "Transcript.Id",
-            variant => variant.Mutation.AffectedFeatures.First().Transcript.Feature.Id,
+            variant => variant.Ssm.AffectedFeatures.First().Transcript.Feature.Id,
             transcriptId
         );
     }

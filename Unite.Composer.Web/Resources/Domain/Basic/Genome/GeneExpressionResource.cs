@@ -10,7 +10,7 @@ public class GeneExpressionResource
 
     public GeneExpressionResource(GeneExpressionIndex index){
         Reads = index.Reads;
-        TPM = index.TPM;
-        FPKM = index.FPKM;
+        TPM = index.Tpm;
+        FPKM = index.Fpkm;
     }
 }

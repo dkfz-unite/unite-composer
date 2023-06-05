@@ -65,9 +65,9 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
             {
                 _filters.Add(new GreaterThanFilter<GeneIndex, double?>(
                     GeneFilterNames.HasVariants, 1,
-                    gene => gene.NumberOfMutations,
-                    gene => gene.NumberOfCopyNumberVariants,
-                    gene => gene.NumberOfStructuralVariants
+                    gene => gene.NumberOfSsms,
+                    gene => gene.NumberOfCnvs,
+                    gene => gene.NumberOfSvs
                 ));
             }
 

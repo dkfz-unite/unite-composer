@@ -7,4 +7,5 @@ public interface IIndexService<TIndex>
 {
     Task<TIndex> GetAsync(GetQuery<TIndex> query);
     Task<SearchResult<TIndex>> SearchAsync(SearchQuery<TIndex> query);
+    Task DeleteAsync();
 }

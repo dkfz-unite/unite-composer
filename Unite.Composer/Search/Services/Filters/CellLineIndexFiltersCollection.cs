@@ -11,8 +11,8 @@ public class CellLineIndexFiltersCollection : SpecimenIndexFiltersCollection
     public CellLineIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new CellLineFilters<SpecimenIndex>(criteria.Cell, specimen => specimen);
-        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Cell, specimen => specimen.CellLine);
-        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.Cell, specimen => specimen.CellLine);
+        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Cell, specimen => specimen.Cell);
+        var drugScreeningFilters = new DrugScreeningFilters<SpecimenIndex>(criteria.Cell, specimen => specimen.Cell);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(molecularDataFilters.All());
@@ -20,7 +20,7 @@ public class CellLineIndexFiltersCollection : SpecimenIndexFiltersCollection
 
         Add(new NotNullFilter<SpecimenIndex, Indices.Entities.Basic.Specimens.CellLineIndex>(
             SpecimenFilterNames.Type,
-            specimen => specimen.CellLine
+            specimen => specimen.Cell
         ));
     }
 }

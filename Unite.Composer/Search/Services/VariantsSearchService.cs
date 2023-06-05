@@ -80,7 +80,7 @@ public class VariantsSearchService : AggregatingSearchService, IVariantsSearchSe
             .AddPagination(criteria.From, criteria.Size)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(filters)
-            .AddOrdering(donor => donor.NumberOfMutations)
+            .AddOrdering(donor => donor.NumberOfGenes)
             .AddExclusion(donor => donor.Specimens);
 
         var result = _donorsIndexService.SearchAsync(query).Result;

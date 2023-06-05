@@ -62,7 +62,7 @@ public class OncoGridDataService1
             .AddPagination(0, criteria.OncoGrid.NumberOfDonors)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(criteriaFilters)
-            .AddOrdering(donor => donor.NumberOfMutations)
+            .AddOrdering(donor => donor.NumberOfSsms)
             .AddExclusion(donor => donor.Specimens);
         // TODO: exclude all unnecessary information as soon as multiple exclusions work.
         // .AddExclusion(donor => donor.Treatments)
@@ -93,8 +93,8 @@ public class OncoGridDataService1
             // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Mutation.AffectedFeatures))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Ssm))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Ssm.AffectedFeatures))
             .AddExclusion(variant => variant.Samples.First().Donor.ClinicalData)
             .AddExclusion(variant => variant.Samples.First().Donor.Treatments)
             .AddExclusion(variant => variant.Samples.First().Donor.Studies)
@@ -154,8 +154,8 @@ public class OncoGridDataService1
         IEnumerable<VariantIndex> variants, int numberOfGenes)
     {
         return variants
-            .Where(variant => variant.Mutation != null && variant.Mutation.AffectedFeatures != null)
-            .SelectMany(variant => variant.Mutation.AffectedFeatures)
+            .Where(variant => variant.Ssm != null && variant.Ssm.AffectedFeatures != null)
+            .SelectMany(variant => variant.Ssm.AffectedFeatures)
             .Where(affectedFeature => affectedFeature.Transcript != null && affectedFeature.Gene != null)
             .Select(affectedFeature => affectedFeature.Gene)
             .GroupBy(gene => gene.Id)
@@ -187,9 +187,9 @@ public class OncoGridDataService1
                 var geneId = int.Parse(gene.Id);
 
                 var observedVariants = variants.Where(variant =>
-                    variant.Mutation != null &&
+                    variant.Ssm != null &&
                     variant.Samples.Any(sample => sample.Donor.Id == donorId) &&
-                    variant.Mutation.AffectedFeatures.Any(affectedFeature =>
+                    variant.Ssm.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
                         affectedFeature.Gene.Id == geneId)
@@ -197,7 +197,7 @@ public class OncoGridDataService1
 
                 foreach (var variant in observedVariants)
                 {
-                    var consequence = variant.Mutation.AffectedFeatures
+                    var consequence = variant.Ssm.AffectedFeatures
                         .Where(affectedFeature => affectedFeature.Transcript != null)
                         .Where(affectedFeature => affectedFeature.Gene != null)
                         .Where(affectedFeature => affectedFeature.Gene.Id == geneId)

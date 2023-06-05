@@ -7,7 +7,7 @@ public class ImageResource
     public int Id { get; set; }
     public int? ScanningDay { get; set; }
 
-    public MriImageResource MriImage { get; set; }
+    public MriImageResource Mri { get; set; }
 
 
     public ImageResource(ImageIndex index)
@@ -15,9 +15,9 @@ public class ImageResource
         Id = index.Id;
         ScanningDay = index.ScanningDay;
 
-        if (index.MriImage != null)
+        if (index.Mri != null)
         {
-            MriImage = new MriImageResource(index.MriImage);
+            Mri = new MriImageResource(index.Mri);
         }
     }
 }

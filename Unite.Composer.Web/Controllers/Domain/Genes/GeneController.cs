@@ -6,6 +6,7 @@ using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Variants;
 
@@ -42,7 +43,7 @@ public class GeneController : Controller
     }
 
     [HttpPost("{id}/donors")]
-    public SearchResult<GeneDonorResource> SearchDonors(int id, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<DonorResource> SearchDonors(int id, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _genesSearchService.SearchDonors(id, searchCriteria);
 
@@ -76,12 +77,12 @@ public class GeneController : Controller
         return new GeneResource(index);
     }
 
-    private static SearchResult<GeneDonorResource> From(int geneId, SearchResult<DonorIndex> searchResult)
+    private static SearchResult<DonorResource> From(int geneId, SearchResult<DonorIndex> searchResult)
     {
-        return new SearchResult<GeneDonorResource>()
+        return new SearchResult<DonorResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new GeneDonorResource(index, geneId)).ToArray()
+            Rows = searchResult.Rows.Select(index => new DonorResource(index)).ToArray()
         };
     }
 

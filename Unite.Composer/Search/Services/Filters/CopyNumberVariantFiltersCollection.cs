@@ -11,14 +11,14 @@ public class CopyNumberVariantFiltersCollection : VariantFiltersCollection
     public CopyNumberVariantFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new CopyNumberVariantFilters<VariantIndex>(criteria.Cnv, variant => variant);
-        var geneFilters = new GeneFilters<VariantIndex>(criteria.Gene, variant => variant.CopyNumberVariant.AffectedFeatures.First().Gene);
+        var geneFilters = new GeneFilters<VariantIndex>(criteria.Gene, variant => variant.Cnv.AffectedFeatures.First().Gene);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(geneFilters.All());
 
         Add(new NotNullFilter<VariantIndex, Indices.Entities.Basic.Genome.Variants.CopyNumberVariantIndex>(
             VariantFilterNames.Type,
-            variant => variant.CopyNumberVariant
+            variant => variant.Cnv
         ));
     }
 }

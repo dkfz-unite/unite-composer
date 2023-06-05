@@ -30,7 +30,7 @@ public class ProjectController : Controller
     }
 
     [HttpPut("{id}")]
-    [Authorize(Policy = Policies.Data.Manager)]
+    // [Authorize(Policy = Policies.Data.Manager)]
     public ProjectModel Put(int id, [FromBody] UpdateProjectModel model)
     {
         var projectModel = new ProjectModel

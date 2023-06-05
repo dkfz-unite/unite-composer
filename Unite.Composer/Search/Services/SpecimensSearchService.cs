@@ -68,8 +68,8 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
                 .AddPagination(criteria.From, criteria.Size)
                 .AddFullTextSearch(criteria.Term)
                 .AddFilters(filters)
-                .AddOrdering(specimen => specimen.NumberOfMutations)
-                .AddExclusion(specimen => specimen.CellLine.DrugScreenings)
+                .AddOrdering(specimen => specimen.NumberOfGenes)
+                .AddExclusion(specimen => specimen.Cell.DrugScreenings)
                 .AddExclusion(specimen => specimen.Organoid.DrugScreenings)
                 .AddExclusion(specimen => specimen.Xenograft.DrugScreenings)
                 .AddExclusion(specimen => specimen.Images);

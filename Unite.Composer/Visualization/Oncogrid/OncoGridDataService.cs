@@ -106,7 +106,7 @@ public class OncoGridDataService
         var query = new SearchQuery<GeneIndex>()
             .AddPagination(0, criteria.OncoGrid.NumberOfGenes)
             .AddFilters(criteriaFilters)
-            .AddOrdering(gene => gene.NumberOfMutations)
+            .AddOrdering(gene => gene.NumberOfSsms)
             .AddExclusion(gene => gene.Samples);
 
         return _genesIndexService.SearchAsync(query).Result;
@@ -138,8 +138,8 @@ public class OncoGridDataService
             // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Mutation))
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Mutation.AffectedFeatures))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Ssm))
+            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Ssm.AffectedFeatures))
             .AddExclusion(mutation => mutation.Samples.First().Donor.ClinicalData)
             .AddExclusion(mutation => mutation.Samples.First().Donor.Treatments)
             .AddExclusion(mutation => mutation.Samples.First().Donor.Projects)
@@ -223,7 +223,7 @@ public class OncoGridDataService
 
                 var observedMutations = mutations.Where(mutation =>
                     mutation.Samples.Any(mutationSample => mutationSample.Donor.Id == donorId) &&
-                    mutation.Mutation.AffectedFeatures.Any(affectedFeature =>
+                    mutation.Ssm.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
                         affectedFeature.Gene.Id == geneId)
@@ -231,7 +231,7 @@ public class OncoGridDataService
 
                 foreach (var mutation in observedMutations)
                 {
-                    var consequence = mutation.Mutation.AffectedFeatures
+                    var consequence = mutation.Ssm.AffectedFeatures
                         .Where(affectedFeature => affectedFeature.Transcript != null)
                         .Where(affectedFeature => affectedFeature.Gene != null)
                         .Where(affectedFeature => affectedFeature.Gene.Id == geneId)
@@ -271,6 +271,6 @@ public class OncoGridDataService
 
     private string GetVariantCode(VariantIndex variant)
     {
-        return $"{variant.Mutation.Chromosome}:g.{variant.Mutation.Start}{variant.Mutation.Ref ?? "-"}>{variant.Mutation.Alt ?? "-"}";
+        return $"{variant.Ssm.Chromosome}:g.{variant.Ssm.Start}{variant.Ssm.Ref ?? "-"}>{variant.Ssm.Alt ?? "-"}";
     }
 }

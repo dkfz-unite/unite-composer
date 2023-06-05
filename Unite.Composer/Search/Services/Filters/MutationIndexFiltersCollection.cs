@@ -11,14 +11,14 @@ public class MutationIndexFiltersCollection : VariantFiltersCollection
     public MutationIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new MutationFilters<VariantIndex>(criteria.Ssm, variant => variant);
-        var geneFilters = new GeneFilters<VariantIndex>(criteria.Gene, variant => variant.Mutation.AffectedFeatures.First().Gene);
+        var geneFilters = new GeneFilters<VariantIndex>(criteria.Gene, variant => variant.Ssm.AffectedFeatures.First().Gene);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(geneFilters.All());
 
         Add(new NotNullFilter<VariantIndex, Indices.Entities.Basic.Genome.Variants.MutationIndex>(
             VariantFilterNames.Type,
-            variant => variant.Mutation
+            variant => variant.Ssm
         ));
     }
 }

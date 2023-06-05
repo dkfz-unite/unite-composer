@@ -6,11 +6,13 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 public class SpecimenResource
 {
     public int Id { get; set; }
+    public string ReferenceId { get; set; }
+    public string Type { get; set; }
     public int? ParentId { get; set; }
     public int? CreationDay { get; set; }
 
     public TissueResource Tissue { get; set; }
-    public CellLineResource CellLine { get; set; }
+    public CellLineResource Cell { get; set; }
     public OrganoidResource Organoid { get; set; }
     public XenograftResource Xenograft { get; set; }
 
@@ -22,16 +24,17 @@ public class SpecimenResource
     public SpecimenResource(SpecimenIndex index)
     {
         Id = index.Id;
-        ParentId = index.ParentId;
+        ReferenceId = index.ReferenceId;
+        Type = index.Type;
         CreationDay = index.CreationDay;
 
         if (index.Tissue != null)
         {
             Tissue = new TissueResource(index.Tissue);
         }
-        else if (index.CellLine != null)
+        else if (index.Cell != null)
         {
-            CellLine = new CellLineResource(index.CellLine);
+            Cell = new CellLineResource(index.Cell);
         }
         else if (index.Organoid != null)
         {
@@ -52,16 +55,17 @@ public class SpecimenResource
     public SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings)
     {
         Id = index.Id;
-        ParentId = index.ParentId;
+        ReferenceId = index.ReferenceId;
+        Type = index.Type;
         CreationDay = index.CreationDay;
 
         if (index.Tissue != null)
         {
             Tissue = new TissueResource(index.Tissue);
         }
-        else if (index.CellLine != null)
+        else if (index.Cell != null)
         {
-            CellLine = new CellLineResource(index.CellLine, drugScreenings);
+            Cell = new CellLineResource(index.Cell, drugScreenings);
         }
         else if (index.Organoid != null)
         {

@@ -11,9 +11,9 @@ public class VariantResource
     public int End { get; set; }
     public int? Length { get; set; }
 
-    public MutationResource Mutation { get; set; }
-    public CopyNumberVariantResource CopyNumberVariant { get; set; }
-    public StructuralVariantResource StructuralVariant { get; set; }
+    public MutationResource Ssm { get; set; }
+    public CopyNumberVariantResource Cnv { get; set; }
+    public StructuralVariantResource Sv { get; set; }
     public AffectedFeatureResource[] AffectedFeatures { get; set; }
 
     /// <summary>
@@ -34,29 +34,29 @@ public class VariantResource
     {
         Id = index.Id;
 
-        if (index.Mutation != null)
+        if (index.Ssm != null)
         {
-            Mutation = new MutationResource(index.Mutation);
-            Chromosome = index.Mutation.Chromosome;
-            Start = index.Mutation.Start;
-            End = index.Mutation.End;
-            Length = index.Mutation.Length;
+            Ssm = new MutationResource(index.Ssm);
+            Chromosome = index.Ssm.Chromosome;
+            Start = index.Ssm.Start;
+            End = index.Ssm.End;
+            Length = index.Ssm.Length;
         }
-        else if (index.CopyNumberVariant != null)
+        else if (index.Cnv != null)
         {
-            CopyNumberVariant = new CopyNumberVariantResource(index.CopyNumberVariant);
-            Chromosome = index.CopyNumberVariant.Chromosome;
-            Start = index.CopyNumberVariant.Start;
-            End = index.CopyNumberVariant.End;
-            Length = index.CopyNumberVariant.Length;
+            Cnv = new CopyNumberVariantResource(index.Cnv);
+            Chromosome = index.Cnv.Chromosome;
+            Start = index.Cnv.Start;
+            End = index.Cnv.End;
+            Length = index.Cnv.Length;
         }
-        else if (index.StructuralVariant != null)
+        else if (index.Sv != null)
         {
-            StructuralVariant = new StructuralVariantResource(index.StructuralVariant);
-            Chromosome = index.StructuralVariant.Chromosome;
-            Start = index.StructuralVariant.Start;
-            End = index.StructuralVariant.End;
-            Length = index.StructuralVariant.Length;
+            Sv = new StructuralVariantResource(index.Sv);
+            Chromosome = index.Sv.Chromosome;
+            Start = index.Sv.Start;
+            End = index.Sv.End;
+            Length = index.Sv.Length;
         }
 
         if (index.GetAffectedFeatures()?.Any() == true)

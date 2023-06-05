@@ -12,11 +12,9 @@ using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Data.Services;
-using Unite.Identity.Services;
+using Unite.Data.Services.Configuration.Options;
 using Unite.Indices.Services.Configuration.Options;
 
-using IDomainSqlOptions = Unite.Data.Services.Configuration.Options.ISqlOptions;
-using IIdentitySqlOptions = Unite.Identity.Services.Configuration.Options.ISqlOptions;
 
 namespace Unite.Composer.Web.Configuration.Extensions;
 
@@ -27,7 +25,6 @@ public static class ConfigurationExtensions
         services.AddOptions();
         services.AddValidation();
 
-        services.AddTransient<IdentityDbContext>();
         services.AddTransient<DomainDbContext>();
 
         services.AddTransient<TaskStatsService>();
@@ -57,8 +54,7 @@ public static class ConfigurationExtensions
     {
         services.AddTransient<ApiOptions>();
         services.AddTransient<IElasticOptions, ElasticOptions>();
-        services.AddTransient<IIdentitySqlOptions, SqlOptions>();
-        services.AddTransient<IDomainSqlOptions, SqlOptions>();
+        services.AddTransient<ISqlOptions, SqlOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
     }
 

@@ -5,12 +5,23 @@ namespace Unite.Composer.Web.Resources.Domain.Variants;
 public class VariantResource : Basic.Genome.Variants.VariantResource
 {
     public int NumberOfDonors { get; }
+    public int NumberOfMris { get; set; }
+    public int NumberOfCts { get; set; }
+    public int NumberOfTissues { get; set; }
+    public int NumberOfCells { get; set; }
+    public int NumberOfOrganoids { get; set; }
+    public int NumberOfXenografts { get; set; }
     public int NumberOfGenes { get; }
-    public int NumberOfSpecimens { get; }
 
     public VariantResource(VariantIndex index, bool includeAffectedFeatures = false) : base(index, includeAffectedFeatures)
     {
         NumberOfDonors = index.NumberOfDonors;
+        NumberOfMris = index.NumberOfMris;
+        NumberOfCts = index.NumberOfCts;
+        NumberOfTissues = index.NumberOfTissues;
+        NumberOfCells = index.NumberOfCells;
+        NumberOfOrganoids = index.NumberOfOrganoids;
+        NumberOfXenografts = index.NumberOfXenografts;
         NumberOfGenes = index.NumberOfGenes;
     }
 }
