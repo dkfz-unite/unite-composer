@@ -9,7 +9,91 @@ namespace Unite.Composer.Search.Services.Filters.Base;
 
 public class DrugScreeningFilters<TIndex> : FiltersCollection<TIndex> where TIndex : class
 {
-    public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, CellLineIndex>> path)
+    // public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, CellLineIndex>> path)
+    // {
+    //     if (criteria == null)
+    //     {
+    //         return;
+    //     }
+
+    //     Add(new SimilarityFilter<TIndex, string>(
+    //         SpecimenFilterNames.Drug,
+    //         path.Join(specimen => specimen.DrugScreenings.First().Drug),
+    //         criteria.Drug)
+    //     );
+
+    //     Add(new RangeFilter<TIndex, double?>(
+    //         SpecimenFilterNames.Dss,
+    //         path.Join(specimen => specimen.DrugScreenings.First().Dss),
+    //         criteria.Dss.From,
+    //         criteria.Dss.To)
+    //     );
+
+    //     Add(new RangeFilter<TIndex, double?>(
+    //         SpecimenFilterNames.DssSelective,
+    //         path.Join(specimen => specimen.DrugScreenings.First().DssSelective),
+    //         criteria.DssSelective.From,
+    //         criteria.DssSelective.To)
+    //     );
+    // }
+
+    // public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, OrganoidIndex>> path)
+    // {
+    //     if (criteria == null)
+    //     {
+    //         return;
+    //     }
+
+    //     Add(new SimilarityFilter<TIndex, string>(
+    //         SpecimenFilterNames.Drug,
+    //         path.Join(specimen => specimen.DrugScreenings.First().Drug),
+    //         criteria.Drug)
+    //     );
+
+    //     Add(new RangeFilter<TIndex, double?>(
+    //         SpecimenFilterNames.Dss,
+    //         path.Join(specimen => specimen.DrugScreenings.First().Dss),
+    //         criteria.Dss.From,
+    //         criteria.Dss.To)
+    //     );
+
+    //     Add(new RangeFilter<TIndex, double?>(
+    //         SpecimenFilterNames.DssSelective,
+    //         path.Join(specimen => specimen.DrugScreenings.First().DssSelective),
+    //         criteria.DssSelective.From,
+    //         criteria.DssSelective.To)
+    //     );
+    // }
+
+    // public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, XenograftIndex>> path)
+    // {
+    //     if (criteria == null)
+    //     {
+    //         return;
+    //     }
+
+    //     Add(new SimilarityFilter<TIndex, string>(
+    //         SpecimenFilterNames.Drug,
+    //         path.Join(specimen => specimen.DrugScreenings.First().Drug),
+    //         criteria.Drug)
+    //     );
+
+    //     Add(new RangeFilter<TIndex, double?>(
+    //         SpecimenFilterNames.Dss,
+    //         path.Join(specimen => specimen.DrugScreenings.First().Dss),
+    //         criteria.Dss.From,
+    //         criteria.Dss.To)
+    //     );
+
+    //     Add(new RangeFilter<TIndex, double?>(
+    //         SpecimenFilterNames.DssSelective,
+    //         path.Join(specimen => specimen.DrugScreenings.First().DssSelective),
+    //         criteria.DssSelective.From,
+    //         criteria.DssSelective.To)
+    //     );
+    // }
+
+    public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, DrugScreeningIndex[]>> path)
     {
         if (criteria == null)
         {
@@ -18,76 +102,20 @@ public class DrugScreeningFilters<TIndex> : FiltersCollection<TIndex> where TInd
 
         Add(new SimilarityFilter<TIndex, string>(
             SpecimenFilterNames.Drug,
-            path.Join(specimen => specimen.DrugScreenings.First().Drug),
+            path.Join(screenings => screenings.First().Drug),
             criteria.Drug)
         );
 
         Add(new RangeFilter<TIndex, double?>(
             SpecimenFilterNames.Dss,
-            path.Join(specimen => specimen.DrugScreenings.First().Dss),
+            path.Join(screenings => screenings.First().Dss),
             criteria.Dss.From,
             criteria.Dss.To)
         );
 
         Add(new RangeFilter<TIndex, double?>(
             SpecimenFilterNames.DssSelective,
-            path.Join(specimen => specimen.DrugScreenings.First().DssSelective),
-            criteria.DssSelective.From,
-            criteria.DssSelective.To)
-        );
-    }
-
-    public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, OrganoidIndex>> path)
-    {
-        if (criteria == null)
-        {
-            return;
-        }
-
-        Add(new SimilarityFilter<TIndex, string>(
-            SpecimenFilterNames.Drug,
-            path.Join(specimen => specimen.DrugScreenings.First().Drug),
-            criteria.Drug)
-        );
-
-        Add(new RangeFilter<TIndex, double?>(
-            SpecimenFilterNames.Dss,
-            path.Join(specimen => specimen.DrugScreenings.First().Dss),
-            criteria.Dss.From,
-            criteria.Dss.To)
-        );
-
-        Add(new RangeFilter<TIndex, double?>(
-            SpecimenFilterNames.DssSelective,
-            path.Join(specimen => specimen.DrugScreenings.First().DssSelective),
-            criteria.DssSelective.From,
-            criteria.DssSelective.To)
-        );
-    }
-
-    public DrugScreeningFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, XenograftIndex>> path)
-    {
-        if (criteria == null)
-        {
-            return;
-        }
-
-        Add(new SimilarityFilter<TIndex, string>(
-            SpecimenFilterNames.Drug,
-            path.Join(specimen => specimen.DrugScreenings.First().Drug),
-            criteria.Drug)
-        );
-
-        Add(new RangeFilter<TIndex, double?>(
-            SpecimenFilterNames.Dss,
-            path.Join(specimen => specimen.DrugScreenings.First().Dss),
-            criteria.Dss.From,
-            criteria.Dss.To)
-        );
-
-        Add(new RangeFilter<TIndex, double?>(
-            SpecimenFilterNames.DssSelective,
-            path.Join(specimen => specimen.DrugScreenings.First().DssSelective),
+            path.Join(screenings => screenings.First().DssSelective),
             criteria.DssSelective.From,
             criteria.DssSelective.To)
         );

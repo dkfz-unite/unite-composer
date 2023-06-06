@@ -11,10 +11,12 @@ public class TissueIndexFiltersCollection : SpecimenIndexFiltersCollection
     public TissueIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new TissueFilters<SpecimenIndex>(criteria.Tissue, specimen => specimen);
-        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Tissue, specimen => specimen.Tissue);
+        var molecularDataFilters = new MolecularDataFilters<SpecimenIndex>(criteria.Tissue, specimen => specimen.Tissue.MolecularData);
+        var availableDataFilters = new SpecimenDataFilters<SpecimenIndex>(criteria.Tissue, specimen => specimen.Data);
 
         _filters.AddRange(filters.All());
         _filters.AddRange(molecularDataFilters.All());
+        _filters.AddRange(availableDataFilters.Except(SpecimenFilterNames.HasDrugs));
 
         Add(new NotNullFilter<SpecimenIndex, Indices.Entities.Basic.Specimens.TissueIndex>(
             SpecimenFilterNames.Type,

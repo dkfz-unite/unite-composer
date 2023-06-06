@@ -17,4 +17,10 @@ public abstract record SpecimenCriteriaBase
     public string[] Drug { get; set; }
     public Range<double?> Dss { get; set; }
     public Range<double?> DssSelective { get; set; }
+
+    public bool? HasDrugs { get; set; }
+    public bool? HasSsms { get; set; }
+    public bool? HasCnvs { get; set; }
+    public bool? HasSvs { get; set; }
+    public bool? HasGeneExp { get; set; }
 }

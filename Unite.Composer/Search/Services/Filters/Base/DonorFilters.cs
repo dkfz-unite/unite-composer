@@ -35,6 +35,18 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
             criteria.Diagnosis)
         );
 
+        Add(new SimilarityFilter<TIndex, string>(
+            DonorFilterNames.PrimarySite,
+            path.Join(donor => donor.ClinicalData.PrimarySite),
+            criteria.PrimarySite)
+        );
+
+        Add(new SimilarityFilter<TIndex, string>(
+            DonorFilterNames.Localization,
+            path.Join(donor => donor.ClinicalData.Localization),
+            criteria.Localization)
+        );
+
         Add(new EqualityFilter<TIndex, object>(
             DonorFilterNames.Gender,
             path.Join(donor => donor.ClinicalData.Gender.Suffix(_keywordSuffix)),
@@ -90,6 +102,12 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
            DonorFilterNames.Project,
            path.Join(donor => donor.Projects.First().Name.Suffix(_keywordSuffix)),
            criteria.Project)
+       );
+
+       Add(new SimilarityFilter<TIndex, object>(
+           DonorFilterNames.Study,
+           path.Join(donor => donor.Studies.First().Name.Suffix(_keywordSuffix)),
+           criteria.Study)
        );
     }
 }

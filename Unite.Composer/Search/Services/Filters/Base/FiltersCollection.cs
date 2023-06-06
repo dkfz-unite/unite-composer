@@ -82,7 +82,7 @@ public abstract class FiltersCollection<TIndex> where TIndex : class
         return _filters;
     }
 
-    public virtual IEnumerable<IFilter<TIndex>> Without(params string[] filterNames)
+    public virtual IEnumerable<IFilter<TIndex>> Except(params string[] filterNames)
     {
         return _filters.Where(filter => !filterNames.Contains(filter.Name));
     }

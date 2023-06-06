@@ -18,4 +18,10 @@ public class SpecimenFilterNames
     public static readonly string Drug = $"{_prefix}.Drug";
     public static readonly string Dss = $"{_prefix}.Dss";
     public static readonly string DssSelective = $"{_prefix}.DssSelective";
+
+    public static readonly string HasDrugs = $"{_prefix}.HasDrugs";
+    public static readonly string HasSsms = $"{_prefix}.HasSsms";
+    public static readonly string HasCnvs = $"{_prefix}.HasCnvs";
+    public static readonly string HasSvs = $"{_prefix}.HasSvs";
+    public static readonly string HasGeneExp = $"{_prefix}.HasGeneExp";
 }

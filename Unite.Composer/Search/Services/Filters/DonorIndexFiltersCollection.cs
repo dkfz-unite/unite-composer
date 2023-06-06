@@ -32,5 +32,30 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
                 criteria.Specimen.Id)
             );
         }
+
+        _filters.Add(new BooleanFilter<DonorIndex>(
+            DonorFilterNames.HasSsms,
+            donor => donor.Data.Ssms,
+            criteria.Donor.HasSsms)
+        );
+
+        _filters.Add(new BooleanFilter<DonorIndex>(
+            DonorFilterNames.HasCnvs,
+            donor => donor.Data.Cnvs,
+            criteria.Donor.HasCnvs)
+        );
+
+        _filters.Add(new BooleanFilter<DonorIndex>(
+            DonorFilterNames.HasSvs,
+            donor => donor.Data.Svs,
+            criteria.Donor.HasSvs)
+        );
+
+        _filters.Add(new BooleanFilter<DonorIndex>(
+            DonorFilterNames.HasGeneExp,
+            donor => donor.Data.GeneExp,
+            criteria.Donor.HasGeneExp)
+        );
+        
     }
 }

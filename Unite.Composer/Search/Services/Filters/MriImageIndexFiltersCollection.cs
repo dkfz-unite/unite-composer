@@ -11,8 +11,10 @@ public class MriImageIndexFiltersCollection : ImageIndexFiltersCollection
     public MriImageIndexFiltersCollection(SearchCriteria criteria) : base(criteria)
     {
         var filters = new MriImageFilters<ImageIndex>(criteria.Mri, image => image);
+        var availableDataFilters = new ImageDataFilters<ImageIndex>(criteria.Mri, image => image.Data);
 
         _filters.AddRange(filters.All());
+        _filters.AddRange(availableDataFilters.All());
 
         Add(new NotNullFilter<ImageIndex, Indices.Entities.Basic.Images.MriImageIndex>(
             ImageFilterNames.Type,
