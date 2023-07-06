@@ -10,6 +10,7 @@ using Unite.Indices.Services.Configuration.Options;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+using DataIndex = Unite.Indices.Entities.Images.DataIndex;
 
 namespace Unite.Composer.Search.Services;
 
@@ -40,6 +41,30 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
         var result = _imagesIndexService.GetAsync(query).Result;
 
         return result;
+    }
+
+    public IDictionary<int, DataIndex> Stats(SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        var context = searchContext ?? new ImageSearchContext();
+
+        var availableData = new Dictionary<int, DataIndex>();
+
+        criteria = criteria with { From = 0, Size = 0 };
+        var lookupResult = Search(criteria, context);
+
+        for (var from = 0; from < lookupResult.Total; from += 499)
+        {
+            criteria = criteria with { From = from, Size = 499 };
+            var searchResult = Search(criteria, context);
+
+            foreach (var index in searchResult.Rows)
+            {
+                availableData.Add(index.Id, index.Data);
+            }
+        }
+
+        return availableData;
     }
 
     public SearchResult<ImageIndex> Search(SearchCriteria searchCriteria = null, ImageSearchContext searchContext = null)

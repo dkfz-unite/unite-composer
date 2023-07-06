@@ -76,9 +76,9 @@ public class ImageController : Controller
     }
 
     [HttpPost("{id}/profile/{sampleId}")]
-    public IActionResult GetProfile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
+    public async Task<IActionResult> GetProfile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
     {
-        var profile = _genomicProfileService.GetProfile(sampleId, filterCriteria);
+        var profile = await _genomicProfileService.GetProfile(sampleId, filterCriteria);
 
         return Json(profile);
     }

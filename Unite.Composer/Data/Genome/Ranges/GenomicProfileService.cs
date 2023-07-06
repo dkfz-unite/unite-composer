@@ -8,21 +8,20 @@ using SSM = Unite.Data.Entities.Genome.Variants.SSM;
 using CNV = Unite.Data.Entities.Genome.Variants.CNV;
 using SV = Unite.Data.Entities.Genome.Variants.SV;
 
-
 namespace Unite.Composer.Data.Genome.Ranges;
 
 public class GenomicProfileService
 {
     private readonly GenomicRangesFilterService _rangesService;
-    private readonly DomainDbContext _dbContext;
+    private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
 
-    public GenomicProfileService(DomainDbContext dbContext)
+    public GenomicProfileService(IDbContextFactory<DomainDbContext> dbContextFactory)
     {
         _rangesService = new GenomicRangesFilterService();
-        _dbContext = dbContext;
+        _dbContextFactory = dbContextFactory;
     }
 
-    public GenomicRangesData GetProfile(int sampleId, GenomicRangesFilterCriteria filterCriteria)
+    public async Task<GenomicRangesData> GetProfile(int sampleId, GenomicRangesFilterCriteria filterCriteria)
     {
         var ranges = _rangesService.GetRanges(filterCriteria).Select(range => new GenomicRangeData(range)).ToArray();
 
@@ -31,9 +30,15 @@ public class GenomicProfileService
         var endChr = ranges.Max(range => range.Chr);
         var end = ranges.Where(range => range.Chr == endChr).Max(range => range.End);
 
-        var ssms = LoadMutations(sampleId, startChr, start, endChr, end);
-        var cnvs = LoadCopyNumberVariants(sampleId, startChr, start, endChr, end);
-        var expressions = LoadGeneExpressions(sampleId, startChr, start, endChr, end);
+        var ssmsTask = LoadMutations(sampleId, startChr, start, endChr, end);
+        var cnvsTask = LoadCopyNumberVariants(sampleId, startChr, start, endChr, end);
+        var expressionsTask = LoadGeneExpressions(sampleId, startChr, start, endChr, end);
+
+        await Task.WhenAll(ssmsTask, cnvsTask, expressionsTask);
+
+        var ssms = ssmsTask.Result;
+        var cnvs = cnvsTask.Result;
+        var expressions = expressionsTask.Result;
 
         FillWithSsmData(ssms, ref ranges);
         FillWithCnvData(cnvs, ref ranges);
@@ -130,33 +135,41 @@ public class GenomicProfileService
         }
     }
 
-    private SSM.Variant[] LoadMutations(int sampleId, int startChr, int start, int endChr, int end)
+    private async Task<SSM.Variant[]> LoadMutations(int sampleId, int startChr, int start, int endChr, int end)
     {
-        return _dbContext.Set<SSM.VariantOccurrence>()
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<SSM.VariantOccurrence>().AsNoTracking()
             .Include(occurrence => occurrence.Variant).ThenInclude(variant => variant.AffectedTranscripts)
             .Where(occurrence => occurrence.AnalysedSample.SampleId == sampleId)
             .Where(occurrence => (int)occurrence.Variant.ChromosomeId >= startChr && (int)occurrence.Variant.ChromosomeId <= endChr)
             .Select(occurrence => occurrence.Variant)
-            .ToArray();
+            .ToArrayAsync();
     }
 
-    private CNV.Variant[] LoadCopyNumberVariants(int sampleId, int startChr, int start, int endChr, int end)
+    private async Task<CNV.Variant[]> LoadCopyNumberVariants(int sampleId, int startChr, int start, int endChr, int end)
     {
-        return _dbContext.Set<CNV.VariantOccurrence>()
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<CNV.VariantOccurrence>()
+            .AsNoTracking()
             .Include(occurrence => occurrence.Variant).ThenInclude(variant => variant.AffectedTranscripts)
             .Where(occurrence => occurrence.AnalysedSample.SampleId == sampleId)
             .Where(occurrence => (int)occurrence.Variant.ChromosomeId >= startChr && (int)occurrence.Variant.ChromosomeId <= endChr)
             .Select(occurrence => occurrence.Variant)
-            .ToArray();
+            .ToArrayAsync();
     }
 
-    private GeneExpression[] LoadGeneExpressions(int sampleId, int startChr, int start, int endChr, int end)
+    private async Task<GeneExpression[]> LoadGeneExpressions(int sampleId, int startChr, int start, int endChr, int end)
     {
-        return _dbContext.Set<GeneExpression>()
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<GeneExpression>()
+            .AsNoTracking()
             .Include(expression => expression.Gene)
             .Where(expression => expression.AnalysedSample.SampleId == sampleId)
             .Where(expression => (int)expression.Gene.ChromosomeId >= startChr && (int)expression.Gene.ChromosomeId <= endChr)
-            .ToArray();
+            .ToArrayAsync();
     }
 
     private static int GetImpactGrade(string impactType)

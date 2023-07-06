@@ -10,6 +10,7 @@ using Unite.Indices.Services.Configuration.Options;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+using DataIndex = Unite.Indices.Entities.Specimens.DataIndex;
 
 namespace Unite.Composer.Search.Services;
 
@@ -38,6 +39,30 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
         var result = _specimensIndexService.GetAsync(query).Result;
 
         return result;
+    }
+
+    public IDictionary<int, DataIndex> Stats(SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        var context = searchContext ?? new SpecimenSearchContext();
+
+        var availableData = new Dictionary<int, DataIndex>();
+
+        criteria = criteria with { From = 0, Size = 0 };
+        var lookupResult = Search(criteria, context);
+
+        for (var from = 0; from < lookupResult.Total; from += 499)
+        {
+            criteria = criteria with { From = from, Size = 499 };
+            var searchResult = Search(criteria, context);
+
+            foreach (var index in searchResult.Rows)
+            {
+                availableData.Add(index.Id, index.Data);
+            }
+        }
+
+        return availableData;
     }
 
     public SearchResult<SpecimenIndex> Search(SearchCriteria searchCriteria = null, SpecimenSearchContext searchContext = null)

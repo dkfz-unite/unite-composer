@@ -11,6 +11,7 @@ using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+using DataIndex = Unite.Indices.Entities.Donors.DataIndex;
 
 namespace Unite.Composer.Search.Services;
 
@@ -44,6 +45,29 @@ public class DonorsSearchService : AggregatingSearchService, IDonorsSearchServic
         var result = _donorsIndexService.GetAsync(query).Result;
 
         return result;
+    }
+
+    public IDictionary<int, DataIndex> Stats(SearchCriteria searchCriteria = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+
+        var availableData = new Dictionary<int, DataIndex>();
+
+        criteria = criteria with { From = 0, Size = 0 };
+        var lookupResult = Search(criteria);
+
+        for (var from = 0; from < lookupResult.Total; from += 499)
+        {
+            criteria = criteria with { From = from, Size = 499 };
+            var searchResult = Search(criteria);
+
+            foreach (var index in searchResult.Rows)
+            {
+                availableData.Add(index.Id, index.Data);
+            }
+        }
+
+        return availableData;
     }
 
     public SearchResult<DonorIndex> Search(SearchCriteria searchCriteria = null)

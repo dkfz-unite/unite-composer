@@ -5,7 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
-    <PackageReference Include="Unite.Data" Version="4.6.0" />
-    <PackageReference Include="Unite.Indices" Version="4.11.0" />
+    <PackageReference Include="Unite.Data" Version="5.0.4" />
+    <PackageReference Include="Unite.Indices" Version="4.12.0" />
+    <PackageReference Include="Unite.Essentials.Tsv" Version="4.0.0" />
   </ItemGroup>
 </Project>
