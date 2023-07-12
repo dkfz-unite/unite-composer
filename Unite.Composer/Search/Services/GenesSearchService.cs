@@ -1,9 +1,9 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
+using Unite.Data.Entities.Genome.Variants.Enums;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;

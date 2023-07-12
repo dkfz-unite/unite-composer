@@ -1,10 +1,11 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
+using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Data.Entities.Specimens.Enums;
 using Unite.Indices.Services.Configuration.Options;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -154,10 +155,10 @@ public class SpecimensSearchService : AggregatingSearchService, ISpecimensSearch
     {
         return context.SpecimenType switch
         {
-            Context.Enums.SpecimenType.Tissue => new TissueIndexFiltersCollection(criteria),
-            Context.Enums.SpecimenType.CellLine => new CellLineIndexFiltersCollection(criteria),
-            Context.Enums.SpecimenType.Organoid => new OrganoidIndexFiltersCollection(criteria),
-            Context.Enums.SpecimenType.Xenograft => new XenograftIndexFiltersCollection(criteria),
+            SpecimenType.Tissue => new TissueIndexFiltersCollection(criteria),
+            SpecimenType.CellLine => new CellLineIndexFiltersCollection(criteria),
+            SpecimenType.Organoid => new OrganoidIndexFiltersCollection(criteria),
+            SpecimenType.Xenograft => new XenograftIndexFiltersCollection(criteria),
             _ => new SpecimenIndexFiltersCollection(criteria)
         };
     }

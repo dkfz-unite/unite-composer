@@ -3,8 +3,8 @@ using Unite.Composer.Search.Services.Criteria;
 
 namespace Unite.Composer.Web.Models;
 
-public record DownloadDataModel
+public record BulkDownloadModel
 {
-    public DataTypes Data { get; init; }
     public SearchCriteria Criteria { get; init; }
+    public DataTypes Data { get; init; }
 }

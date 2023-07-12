@@ -1,4 +1,5 @@
-﻿using Unite.Composer.Search.Services.Context.Enums;
+﻿
+using Unite.Data.Entities.Images.Enums;
 
 namespace Unite.Composer.Search.Services.Context;
 

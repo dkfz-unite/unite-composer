@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Genome.Models.Analysis;
 using Unite.Data.Services;
+using Unite.Data.Extensions;
 
 namespace Unite.Composer.Data.Genome;
 
@@ -15,33 +16,35 @@ public class SampleDataService
     }
 
 
-    public AnalysedSample[] GetDonorSamples(int donorId)
+    public async Task<AnalysedSample[]> GetDonorSamples(int donorId)
     {
-        var specimens = LoadDonorSpecimens(donorId);
+        var specimens = await LoadDonorSpecimens(donorId);
 
-        return GetAnalysedSamples(specimens).ToArray();
+        return await GetAnalysedSamples(specimens);
     }
 
-    public AnalysedSample[] GetImageSamples(int imageId)
+    public async Task<AnalysedSample[]> GetImageSamples(int imageId)
     {
-        var specimens = LoadImageSpecimens(imageId);
+        var specimens = await LoadImageSpecimens(imageId);
 
-        return GetAnalysedSamples(specimens).ToArray();
+        return await GetAnalysedSamples(specimens);
     }
 
-    public AnalysedSample[] GetSpecimenSamples(int specimenId)
+    public async Task<AnalysedSample[]> GetSpecimenSamples(int specimenId)
     {
-        var specimens = LoadSpecimens(specimenId);
+        var specimens = await LoadSpecimens(specimenId);
 
-        return GetAnalysedSamples(specimens).ToArray();
+        return await GetAnalysedSamples(specimens);
     }
 
 
-    private IEnumerable<AnalysedSample> GetAnalysedSamples(Unite.Data.Entities.Specimens.Specimen[] specimens)
+    private async Task<AnalysedSample[]> GetAnalysedSamples(Unite.Data.Entities.Specimens.Specimen[] specimens)
     {
+        var models = new List<AnalysedSample>();
+
         foreach (var specimen in specimens)
         {
-            var analysedSamples = LoadAnalysedSamples(specimen.Id)
+            var analysedSamples = (await LoadAnalysedSamples(specimen.Id))
                 .GroupBy(analysedSample => analysedSample.SampleId)
                 .ToArray();
 
@@ -59,63 +62,72 @@ public class SampleDataService
                     .Distinct()
                     .ToArray();
 
-                yield return new AnalysedSample
+                var model = new AnalysedSample
                 {
                     Id = sample.Id,
                     ReferenceId = sample.ReferenceId,
                     Ploidy = ploidy,
                     Purity = purity,
-                    Specimen = new() { Id = specimen.Id, ReferenceId = GetSpecimenReferenceId(specimen), Type = GetSpecimenType(specimen) },
+                    Specimen = new() { Id = specimen.Id, ReferenceId = specimen.ReferenceId, Type = specimen.Type?.ToDefinitionString() },
                     Analyses = analyses
                 };
+
+                models.Add(model);
             }
         }
+
+        return models.ToArray();
     }
 
-    private Unite.Data.Entities.Specimens.Specimen[] LoadDonorSpecimens(int donorId)
+    private async Task<Unite.Data.Entities.Specimens.Specimen[]> LoadDonorSpecimens(int donorId)
     {
-        var specimens = _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
+        var specimens = await _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
+            .AsNoTracking()
             .Include(specimen => specimen.Tissue)
             .Include(specimen => specimen.CellLine)
             .Include(specimen => specimen.Organoid)
             .Include(specimen => specimen.Xenograft)
             .Where(specimen => specimen.ParentId == null)
             .Where(specimen => specimen.DonorId == donorId)
-            .ToArray();
+            .ToArrayAsync();
 
         return specimens;
     }
 
-    private Unite.Data.Entities.Specimens.Specimen[] LoadImageSpecimens(int imageId)
+    private async Task<Unite.Data.Entities.Specimens.Specimen[]> LoadImageSpecimens(int imageId)
     {
-        var donorId = _dbContext.Set<Unite.Data.Entities.Images.Image>()
-            .First(image => image.Id == imageId).DonorId;
+        var donorId = await _dbContext.Set<Unite.Data.Entities.Images.Image>()
+            .AsNoTracking()
+            .Where(image => image.Id == imageId)
+            .Select(image => image.DonorId)
+            .FirstAsync();
 
-        var specimens = _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
+        var specimens = await _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
+            .AsNoTracking()
             .Include(specimen => specimen.Tissue)
             .Where(specimen => specimen.Tissue != null)
             .Where(specimen => specimen.ParentId == null)
             .Where(specimen => specimen.DonorId == donorId)
-            .ToArray();
+            .ToArrayAsync();
 
         return specimens;
     }
 
-    private Unite.Data.Entities.Specimens.Specimen[] LoadSpecimens(int specimenId)
+    private async Task<Unite.Data.Entities.Specimens.Specimen[]> LoadSpecimens(int specimenId)
     {
-        var specimens = _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
+        var specimens = await _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
             .Include(specimen => specimen.Tissue)
             .Where(specimen => specimen.Tissue != null)
             .Where(specimen => specimen.ParentId == null)
             .Where(specimen => specimen.Id == specimenId)
-            .ToArray();
+            .ToArrayAsync();
 
         return specimens;
     }
 
-    private Unite.Data.Entities.Genome.Analysis.AnalysedSample[] LoadAnalysedSamples(int specimenId)
+    private async Task<Unite.Data.Entities.Genome.Analysis.AnalysedSample[]> LoadAnalysedSamples(int specimenId)
     {
-        return _dbContext.Set<Unite.Data.Entities.Genome.Analysis.AnalysedSample>()
+        var samples = await _dbContext.Set<Unite.Data.Entities.Genome.Analysis.AnalysedSample>()
             .Include(analysedSample => analysedSample.Sample)
             .Include(analysedSample => analysedSample.Analysis)
             .Where(analysedSample => analysedSample.Sample.SpecimenId == specimenId)
@@ -124,24 +136,8 @@ public class SampleDataService
                 analysedSample.CopyNumberVariantOccurrences.Count() > 0 ||
                 analysedSample.StructuralVariantOccurrences.Count() > 0 ||
                 analysedSample.GeneExpressions.Count() > 0)
-            .ToArray();
-    }
+            .ToArrayAsync();
 
-    private static string GetSpecimenReferenceId(Unite.Data.Entities.Specimens.Specimen entity)
-    {
-        return entity.Tissue != null ? entity.Tissue.ReferenceId
-             : entity.CellLine != null ? entity.CellLine.ReferenceId
-             : entity.Organoid != null ? entity.Organoid.ReferenceId
-             : entity.Xenograft != null ? entity.Xenograft.ReferenceId
-             : throw new NotSupportedException("Specimen type is not supported");
-    }
-
-    private static string GetSpecimenType(Unite.Data.Entities.Specimens.Specimen entity)
-    {
-        return entity.Tissue != null ? "Tissue"
-             : entity.CellLine != null ? "CellLine"
-             : entity.Organoid != null ? "Organoid"
-             : entity.Xenograft != null ? "xenograft"
-             : throw new NotSupportedException("Specimen type is not supported");
+        return samples;
     }
 }

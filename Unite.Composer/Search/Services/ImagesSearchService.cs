@@ -1,7 +1,6 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
@@ -11,6 +10,8 @@ using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 using DataIndex = Unite.Indices.Entities.Images.DataIndex;
+using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Data.Entities.Images.Enums;
 
 namespace Unite.Composer.Search.Services;
 
@@ -153,8 +154,8 @@ public class ImagesSearchService : AggregatingSearchService, IImagesSearchServic
     {
         return context.ImageType switch
         {
-            Context.Enums.ImageType.MRI => new MriImageIndexFiltersCollection(criteria),
-            Context.Enums.ImageType.CT => throw new NotImplementedException(),
+            ImageType.MRI => new MriImageIndexFiltersCollection(criteria),
+            ImageType.CT => throw new NotImplementedException(),
             _ => new ImageIndexFiltersCollection(criteria),
         };
     }

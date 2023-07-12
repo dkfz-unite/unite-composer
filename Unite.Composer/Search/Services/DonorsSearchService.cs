@@ -1,10 +1,11 @@
 ﻿using Unite.Composer.Search.Engine;
 using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Indices.Services.Configuration.Options;
+using Unite.Data.Entities.Images.Enums;
+using Unite.Data.Entities.Genome.Variants.Enums;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -12,6 +13,7 @@ using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 using DataIndex = Unite.Indices.Entities.Donors.DataIndex;
+
 
 namespace Unite.Composer.Search.Services;
 

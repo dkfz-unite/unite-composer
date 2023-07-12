@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Composer.Web.Services.Download.Tsv;
+using Unite.Data.Entities.Images.Enums;
 using Unite.Indices.Entities.Images;
 
 namespace Unite.Composer.Web.Controllers.Domain.Images;
@@ -51,11 +51,11 @@ public class ImagesController : Controller
     }
 
     [HttpPost("{type}/data")]
-    public async Task<IActionResult> Data(ImageType type, [FromBody] DownloadDataModel model)
+    public async Task<IActionResult> Data(ImageType type, [FromBody] BulkDownloadModel model)
     {
         var context = new ImageSearchContext(type);
         var stats = _searchService.Stats(model.Criteria, context);
-        var bytes = await _imagesTsvDownloadService.Download(type, stats.Keys.ToArray(), model.Data);
+        var bytes = await _imagesTsvDownloadService.Download(stats.Keys.ToArray(), type, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }

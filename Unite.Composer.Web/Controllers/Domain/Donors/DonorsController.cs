@@ -29,7 +29,7 @@ public class DonorsController : Controller
 
 
     [HttpPost("")]
-    public SearchResult<DonorResource> Search([FromBody] SearchCriteria searchCriteria)
+    public SearchResult<DonorResource> Donors([FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _donorsSearchService.Search(searchCriteria);
 
@@ -45,7 +45,7 @@ public class DonorsController : Controller
     }
 
     [HttpPost("data")]
-    public async Task<IActionResult> Data([FromBody] DownloadDataModel model)
+    public async Task<IActionResult> Data([FromBody] BulkDownloadModel model)
     {
         var stats = _donorsSearchService.Stats(model.Criteria);
 

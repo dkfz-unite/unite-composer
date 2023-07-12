@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Specimens;
 using Unite.Composer.Web.Services.Download.Tsv;
+using Unite.Data.Entities.Specimens.Enums;
 using Unite.Indices.Entities.Specimens;
 
 namespace Unite.Composer.Web.Controllers.Domain.Specimens;
@@ -51,11 +51,11 @@ public class SpecimensController : Controller
     }
 
     [HttpPost("{type}/data")]
-    public async Task<ActionResult> Data(SpecimenType type, DownloadDataModel model)
+    public async Task<ActionResult> Data(SpecimenType type, BulkDownloadModel model)
     {
         var context = new SpecimenSearchContext(type);
         var stats = _searchService.Stats(model.Criteria, context);
-        var bytes = await _specimensTsvDownloadService.Download(type, stats.Keys.ToArray(), model.Data);
+        var bytes = await _specimensTsvDownloadService.Download(stats.Keys.ToArray(), type, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }

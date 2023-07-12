@@ -4,11 +4,11 @@ using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Models;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Variants;
+using Unite.Data.Entities.Genome.Variants.Enums;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;

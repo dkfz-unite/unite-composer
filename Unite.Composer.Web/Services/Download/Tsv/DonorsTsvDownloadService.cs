@@ -1,7 +1,6 @@
 using System.IO.Compression;
 using Unite.Composer.Download;
 using Unite.Composer.Download.Models;
-using Unite.Composer.Search.Services;
 using Unite.Composer.Web.Services.Download.Tsv.Constants;
 
 namespace Unite.Composer.Web.Services.Download.Tsv;

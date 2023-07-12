@@ -1,7 +1,7 @@
 ﻿using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Data.Entities.Genome.Variants.Enums;
 
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;

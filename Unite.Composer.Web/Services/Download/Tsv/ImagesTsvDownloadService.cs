@@ -1,9 +1,8 @@
 using System.IO.Compression;
 using Unite.Composer.Download;
 using Unite.Composer.Download.Models;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Context.Enums;
 using Unite.Composer.Web.Services.Download.Tsv.Constants;
+using Unite.Data.Entities.Images.Enums;
 
 namespace Unite.Composer.Web.Services.Download.Tsv;
 
@@ -31,14 +30,14 @@ public class ImagesTsvDownloadService : TsvDownloadService
     }
 
 
-    public async Task<byte[]> Download(ImageType type, int id, DataTypes dataTypes)
+    public async Task<byte[]> Download(int id, ImageType type, DataTypes dataTypes)
     {
         var ids = new[] { id };
 
-        return await Download(type, ids, dataTypes);
+        return await Download(ids, type, dataTypes);
     }
 
-    public async Task<byte[]> Download(ImageType type, IEnumerable<int> ids, DataTypes dataTypes)
+    public async Task<byte[]> Download(IEnumerable<int> ids, ImageType type, DataTypes dataTypes)
     {
         var archiveBytes = Array.Empty<byte>();
         using (var archiveStream = new MemoryStream())
