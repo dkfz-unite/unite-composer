@@ -11,7 +11,8 @@ public class VariantResource : Basic.Genome.Variants.VariantResource
     public int NumberOfCells { get; set; }
     public int NumberOfOrganoids { get; set; }
     public int NumberOfXenografts { get; set; }
-    public int NumberOfGenes { get; }
+    public int NumberOfGenes { get; set; }
+    public VariantDataResource Data { get; set; }
 
     public VariantResource(VariantIndex index, bool includeAffectedFeatures = false) : base(index, includeAffectedFeatures)
     {
@@ -23,5 +24,10 @@ public class VariantResource : Basic.Genome.Variants.VariantResource
         NumberOfOrganoids = index.NumberOfOrganoids;
         NumberOfXenografts = index.NumberOfXenografts;
         NumberOfGenes = index.NumberOfGenes;
+
+        if (index.Data != null)
+        {
+            Data = new VariantDataResource(index.Data);
+        }
     }
 }

@@ -1,16 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Converters;
+using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome;
+using Unite.Data.Entities.Specimens;
+using Unite.Data.Entities.Images;
+using Unite.Data.Entities.Specimens.Tissues.Enums;
 using Unite.Data.Services;
 using Unite.Essentials.Tsv;
 
 using SSM = Unite.Data.Entities.Genome.Variants.SSM;
 using CNV = Unite.Data.Entities.Genome.Variants.CNV;
 using SV = Unite.Data.Entities.Genome.Variants.SV;
-using Unite.Data.Entities.Genome.Variants;
-using Unite.Data.Entities.Genome;
-using Unite.Data.Entities.Specimens;
-using Unite.Data.Entities.Images;
-using Unite.Data.Entities.Specimens.Tissues.Enums;
 
 namespace Unite.Composer.Download;
 
@@ -45,7 +45,51 @@ public class VariantsTsvService
     }
 
 
-    public async Task<string> GetSsmsData(IEnumerable<int> ids, bool transcripts = false)
+    
+
+    public async Task<string> GetSsmsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
+    {
+        var specimenIds = await GetSpecimenIdsForDonors(ids);
+
+        return await GetSsmsDataForSpecimens(specimenIds, transcripts);
+    }
+
+    public async Task<string> GetCnvsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
+    {
+        var specimenIds = await GetSpecimenIdsForDonors(ids);
+
+        return await GetCnvsDataForSpecimens(specimenIds, transcripts);
+    }
+
+    public async Task<string> GetSvsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
+    {
+        var specimenIds = await GetSpecimenIdsForDonors(ids);
+
+        return await GetSvsDataForSpecimens(specimenIds, transcripts);
+    }
+
+    public async Task<string> GetSsmsDataForImages(IEnumerable<int> ids, bool transcripts = false)
+    {
+        var specimenIds = await GetSpecimenIdsForImages(ids);
+
+        return await GetSsmsDataForSpecimens(specimenIds, transcripts);
+    }
+
+    public async Task<string> GetCnvsDataForImages(IEnumerable<int> ids, bool transcripts = false)
+    {
+        var specimenIds = await GetSpecimenIdsForImages(ids);
+
+        return await GetCnvsDataForSpecimens(specimenIds, transcripts);
+    }
+
+    public async Task<string> GetSvsDataForImages(IEnumerable<int> ids, bool transcripts = false)
+    {
+        var specimenIds = await GetSpecimenIdsForImages(ids);
+
+        return await GetSvsDataForSpecimens(specimenIds, transcripts);
+    }
+
+    public async Task<string> GetSsmsDataForSpecimens(IEnumerable<int> ids, bool transcripts = false)
     {
         var query = _dbContext.Set<SSM.VariantOccurrence>().AsNoTracking();
 
@@ -70,7 +114,7 @@ public class VariantsTsvService
         return TsvWriter.Write(entities, map);
     }
 
-    public async Task<string> GetCnvsData(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetCnvsDataForSpecimens(IEnumerable<int> ids, bool transcripts = false)
     {
         var query = _dbContext.Set<CNV.VariantOccurrence>().AsNoTracking();
 
@@ -95,7 +139,7 @@ public class VariantsTsvService
         return TsvWriter.Write(entities, map);
     }
 
-    public async Task<string> GetSvsData(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetSvsDataForSpecimens(IEnumerable<int> ids, bool transcripts = false)
     {
         var query = _dbContext.Set<SV.VariantOccurrence>().AsNoTracking();
 
@@ -120,50 +164,50 @@ public class VariantsTsvService
         return TsvWriter.Write(entities, map);
     }
 
-    public async Task<string> GetSsmsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
+
+    public async Task<string> GetFullSsmsDataForDonors(IEnumerable<int> ids)
     {
         var specimenIds = await GetSpecimenIdsForDonors(ids);
 
-        return await GetSsmsData(specimenIds, transcripts);
+        return await GetFullSsmsDataForSpecimens(specimenIds);
     }
 
-    public async Task<string> GetCnvsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetFullCnvsDataForDonors(IEnumerable<int> ids)
     {
         var specimenIds = await GetSpecimenIdsForDonors(ids);
 
-        return await GetCnvsData(specimenIds, transcripts);
+        return await GetFullCnvsDataForSpecimens(specimenIds);
     }
 
-    public async Task<string> GetSvsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetFullSvsDataForDonors(IEnumerable<int> ids)
     {
         var specimenIds = await GetSpecimenIdsForDonors(ids);
 
-        return await GetSvsData(specimenIds, transcripts);
+        return await GetFullSvsDataForSpecimens(specimenIds);
     }
 
-    public async Task<string> GetSsmsDataForImages(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetFullSsmsDataForImages(IEnumerable<int> ids)
     {
         var specimenIds = await GetSpecimenIdsForImages(ids);
 
-        return await GetSsmsData(specimenIds, transcripts);
+        return await GetFullSsmsDataForSpecimens(specimenIds);
     }
 
-    public async Task<string> GetCnvsDataForImages(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetFullCnvsDataForImages(IEnumerable<int> ids)
     {
         var specimenIds = await GetSpecimenIdsForImages(ids);
 
-        return await GetCnvsData(specimenIds, transcripts);
+        return await GetFullCnvsDataForSpecimens(specimenIds);
     }
 
-    public async Task<string> GetSvsDataForImages(IEnumerable<int> ids, bool transcripts = false)
+    public async Task<string> GetFullSvsDataForImages(IEnumerable<int> ids)
     {
         var specimenIds = await GetSpecimenIdsForImages(ids);
 
-        return await GetSvsData(specimenIds, transcripts);
+        return await GetFullSvsDataForSpecimens(specimenIds);
     }
 
-
-    public async Task<string> GetFullSsmsData(IEnumerable<int> ids)
+    public async Task<string> GetFullSsmsDataForSpecimens(IEnumerable<int> ids)
     {
         var query = _dbContext.Set<SSM.VariantOccurrence>().AsNoTracking();
 
@@ -190,7 +234,7 @@ public class VariantsTsvService
         return TsvWriter.Write(entries, map);
     }
 
-    public async Task<string> GetFullCnvsData(IEnumerable<int> ids)
+    public async Task<string> GetFullCnvsDataForSpecimens(IEnumerable<int> ids)
     {
         var query = _dbContext.Set<CNV.VariantOccurrence>().AsNoTracking();
 
@@ -217,7 +261,7 @@ public class VariantsTsvService
         return TsvWriter.Write(entries, map);
     }
 
-    public async Task<string> GetFullSvsData(IEnumerable<int> ids)
+    public async Task<string> GetFullSvsDataForSpecimens(IEnumerable<int> ids)
     {
         var query = _dbContext.Set<SV.VariantOccurrence>().AsNoTracking();
 
@@ -237,48 +281,6 @@ public class VariantsTsvService
         MapAffectedFeatures(map);
 
         return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullSsmsDataForDonors(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetFullSsmsData(specimenIds);
-    }
-
-    public async Task<string> GetFullCnvsDataForDonors(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetFullCnvsData(specimenIds);
-    }
-
-    public async Task<string> GetFullSvsDataForDonors(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetFullSvsData(specimenIds);
-    }
-
-    public async Task<string> GetFullSsmsDataForImages(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetFullSsmsData(specimenIds);
-    }
-
-    public async Task<string> GetFullCnvsDataForImages(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetFullCnvsData(specimenIds);
-    }
-
-    public async Task<string> GetFullSvsDataForImages(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetFullSvsData(specimenIds);
     }
 
 

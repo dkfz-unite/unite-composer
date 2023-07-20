@@ -19,6 +19,7 @@ public class GeneResource : Basic.Genome.GeneResource
     public GeneExpressionStatsResource Reads { get; set; }
     public GeneExpressionStatsResource Tpm { get; set; }
     public GeneExpressionStatsResource Fpkm { get; set; }
+    public GeneDataResource Data { get; set; }
 
 
     public GeneResource(GeneIndex index) : base(index)
@@ -47,6 +48,11 @@ public class GeneResource : Basic.Genome.GeneResource
         if (index.Fpkm != null)
         {
             Fpkm = new GeneExpressionStatsResource(index.Fpkm);
+        }
+
+        if (index.Data != null)
+        {
+            Data = new GeneDataResource(index.Data);
         }
     }
 }

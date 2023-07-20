@@ -126,11 +126,11 @@ public class SpecimensTsvDownloadService : TsvDownloadService
             {
                 if (dataTypes.SsmsTranscriptsFull == true)
                 {
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullSsmsData(ids));
+                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullSsmsDataForSpecimens(ids));
                 }
                 else
                 {
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetSsmsData(ids, dataTypes.SsmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetSsmsDataForSpecimens(ids, dataTypes.SsmsTranscriptsSlim ?? false));
                 }
             }
 
@@ -138,11 +138,11 @@ public class SpecimensTsvDownloadService : TsvDownloadService
             {
                 if (dataTypes.CnvsTranscriptsFull == true)
                 {
-                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetFullCnvsData(ids));
+                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetFullCnvsDataForSpecimens(ids));
                 }
                 else
                 {
-                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetCnvsData(ids, dataTypes.CnvsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetCnvsDataForSpecimens(ids, dataTypes.CnvsTranscriptsSlim ?? false));
                 }
             }
 
@@ -150,11 +150,11 @@ public class SpecimensTsvDownloadService : TsvDownloadService
             {
                 if (dataTypes.SvsTranscriptsFull == true)
                 {
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetFullSvsData(ids));
+                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetFullSvsDataForSpecimens(ids));
                 }
                 else
                 {
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetSvsData(ids, dataTypes.SvsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetSvsDataForSpecimens(ids, dataTypes.SvsTranscriptsSlim ?? false));
                 }
             }
 
