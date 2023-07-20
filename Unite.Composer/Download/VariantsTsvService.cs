@@ -45,8 +45,6 @@ public class VariantsTsvService
     }
 
 
-    
-
     public async Task<string> GetSsmsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
     {
         var specimenIds = await GetSpecimenIdsForDonors(ids);
