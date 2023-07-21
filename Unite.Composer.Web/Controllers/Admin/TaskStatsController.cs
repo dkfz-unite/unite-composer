@@ -16,7 +16,7 @@ public class TasksController : Controller
     }
 
     [HttpGet("stats")]
-    public IActionResult GetGeneralTasksStats(string type)
+    public IActionResult GetGeneralTasksStats()
     {
         return Json(_taskStatsService.GetTaskNumbersStats());
     }

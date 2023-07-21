@@ -14,8 +14,6 @@
       "launchUrl": "api",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "UNITE_ROOT_USER": "admin@unite.net",
-        "UNITE_ROOT_PASSWORD": "Long-pa55w0rd",
         "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
         "UNITE_ENSEMBL_HOST": "http://localhost:5202",
         "UNITE_SQL_HOST": "localhost",
@@ -34,8 +32,6 @@
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "UNITE_ROOT_USER": "admin@unite.net",
-        "UNITE_ROOT_PASSWORD": "Long-pa55w0rd",
         "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
         "UNITE_ENSEMBL_HOST": "http://localhost:5202",
         "UNITE_SQL_HOST": "localhost",
