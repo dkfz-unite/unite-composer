@@ -4,6 +4,7 @@ using Unite.Composer.Data.Donors;
 using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Genome.Ranges.Models;
+using Unite.Composer.Download.Tsv;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
@@ -12,7 +13,6 @@ using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Composer.Web.Resources.Domain.Specimens;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Composer.Web.Services.Download.Tsv;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Genome.Variants.Enums;
 

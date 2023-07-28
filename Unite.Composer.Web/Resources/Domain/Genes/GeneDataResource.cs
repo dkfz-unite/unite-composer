@@ -29,6 +29,8 @@ public class GeneDataResource
     public bool? GeneExpSc { get; set; }
 
 
+    public GeneDataResource() { }
+
     public GeneDataResource(DataIndex index)
     {
         Donors = index.Donors;

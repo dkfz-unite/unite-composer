@@ -10,9 +10,9 @@ public class SampleDataService
     private readonly DomainDbContext _dbContext;
 
 
-    public SampleDataService(DomainDbContext dbContext)
+    public SampleDataService(IDbContextFactory<DomainDbContext> dbContextFactory)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContextFactory.CreateDbContext();
     }
 
 
@@ -116,6 +116,7 @@ public class SampleDataService
     private async Task<Unite.Data.Entities.Specimens.Specimen[]> LoadSpecimens(int specimenId)
     {
         var specimens = await _dbContext.Set<Unite.Data.Entities.Specimens.Specimen>()
+            .AsNoTracking()
             .Include(specimen => specimen.Tissue)
             .Where(specimen => specimen.Tissue != null)
             .Where(specimen => specimen.ParentId == null)
@@ -128,14 +129,15 @@ public class SampleDataService
     private async Task<Unite.Data.Entities.Genome.Analysis.AnalysedSample[]> LoadAnalysedSamples(int specimenId)
     {
         var samples = await _dbContext.Set<Unite.Data.Entities.Genome.Analysis.AnalysedSample>()
+            .AsNoTracking()
             .Include(analysedSample => analysedSample.Sample)
             .Include(analysedSample => analysedSample.Analysis)
             .Where(analysedSample => analysedSample.Sample.SpecimenId == specimenId)
             .Where(analysedSample => 
-                analysedSample.MutationOccurrences.Count() > 0 ||
-                analysedSample.CopyNumberVariantOccurrences.Count() > 0 ||
-                analysedSample.StructuralVariantOccurrences.Count() > 0 ||
-                analysedSample.GeneExpressions.Count() > 0)
+                analysedSample.MutationOccurrences.Any() ||
+                analysedSample.CopyNumberVariantOccurrences.Any() ||
+                analysedSample.StructuralVariantOccurrences.Any() ||
+                analysedSample.GeneExpressions.Any())
             .ToArrayAsync();
 
         return samples;

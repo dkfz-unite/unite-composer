@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Download.Tsv;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
-using Unite.Composer.Web.Services.Download.Tsv;
 using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Controllers.Domain.Donors;

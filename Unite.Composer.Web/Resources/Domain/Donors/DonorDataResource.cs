@@ -26,6 +26,8 @@ public class DonorDataResource
     public bool? GeneExpSc { get; set; }
 
 
+    public DonorDataResource() { }
+
     public DonorDataResource(DataIndex index)
     {
         Clinical = index.Clinical;

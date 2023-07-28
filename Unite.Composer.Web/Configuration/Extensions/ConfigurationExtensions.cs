@@ -8,12 +8,12 @@ using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Images;
 using Unite.Composer.Data.Projects;
 using Unite.Composer.Data.Specimens;
-using Unite.Composer.Download;
+using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Tsv.Mapping;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
-using Unite.Composer.Web.Services.Download.Tsv;
 using Unite.Data.Services;
 using Unite.Data.Services.Configuration.Options;
 using Unite.Indices.Services.Configuration.Options;
@@ -53,6 +53,8 @@ public static class ConfigurationExtensions
         services.AddTransient<DonorsTsvDownloadService>();
         services.AddTransient<ImagesTsvDownloadService>();
         services.AddTransient<SpecimensTsvDownloadService>();
+        services.AddTransient<GenesTsvDownloadService>();
+        services.AddTransient<VariantsTsvDownloadService>();
 
         services.AddTransient<ProjectService>();
         services.AddTransient<DrugScreeningService>();

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Download.Tsv;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Context;
 using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Specimens;
-using Unite.Composer.Web.Services.Download.Tsv;
 using Unite.Data.Entities.Specimens.Enums;
 using Unite.Indices.Entities.Specimens;
 
@@ -18,15 +18,15 @@ namespace Unite.Composer.Web.Controllers.Domain.Specimens;
 public class SpecimensController : Controller
 {
     private readonly ISpecimensSearchService _searchService;
-    private readonly SpecimensTsvDownloadService _specimensTsvDownloadService;
+    private readonly SpecimensTsvDownloadService _tsvDownloadService;
 
 
     public SpecimensController(
         ISpecimensSearchService searchService, 
-        SpecimensTsvDownloadService specimensTsvDownloadService)
+        SpecimensTsvDownloadService tsvDownloadService)
     {
         _searchService = searchService;
-        _specimensTsvDownloadService = specimensTsvDownloadService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
@@ -55,7 +55,7 @@ public class SpecimensController : Controller
     {
         var context = new SpecimenSearchContext(type);
         var stats = _searchService.Stats(model.Criteria, context);
-        var bytes = await _specimensTsvDownloadService.Download(stats.Keys.ToArray(), type, model.Data);
+        var bytes = await _tsvDownloadService.Download(stats.Keys.ToArray(), type, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }

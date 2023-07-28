@@ -5,6 +5,7 @@ using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Entities.Variants;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
@@ -39,6 +40,37 @@ public class VariantsSearchService : AggregatingSearchService, IVariantsSearchSe
         var result = _variantsIndexService.GetAsync(query).Result;
 
         return result;
+    }
+
+
+    public IDictionary<long, DataIndex> Stats(SearchCriteria searchCriteria = null, VariantSearchContext searchContext = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        var context = searchContext ?? new VariantSearchContext();
+
+        var availableData = new Dictionary<long, DataIndex>();
+
+        criteria = criteria with { From = 0, Size = 0 };
+        var lookupResult = Search(criteria, context);
+
+        for (var from = 0; from < lookupResult.Total; from += 499)
+        {
+            criteria = criteria with { From = from, Size = 499 };
+            var searchResult = Search(criteria, context);
+
+            foreach (var index in searchResult.Rows)
+            {
+                // Bad code, add real Id to index
+                var id = index.Id.StartsWith("SSM") ? long.Parse(index.Id.Substring(3))
+                       : index.Id.StartsWith("CNV") ? long.Parse(index.Id.Substring(3))
+                       : index.Id.StartsWith("SV") ? long.Parse(index.Id.Substring(2))
+                       : throw new InvalidOperationException($"Unknown variant type: {index.Id}");
+
+                availableData.Add(id, index.Data);
+            }
+        }
+
+        return availableData;
     }
 
     public SearchResult<VariantIndex> Search(SearchCriteria searchCriteria = null, VariantSearchContext searchContext = null)

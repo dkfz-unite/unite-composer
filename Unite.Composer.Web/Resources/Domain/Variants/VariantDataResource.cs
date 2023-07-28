@@ -1,3 +1,4 @@
+using Unite.Data.Entities.Genome.Variants.Enums;
 using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
@@ -29,7 +30,9 @@ public class VariantDataResource
     public bool? GeneExpSc { get; set; }
 
 
-    public VariantDataResource(DataIndex index)
+    public VariantDataResource() { }
+
+    public VariantDataResource(DataIndex index, VariantType type)
     {
         Donors = index.Donors;
         Clinical = index.Clinical;
@@ -49,9 +52,9 @@ public class VariantDataResource
         XenograftsMolecular = index.XenograftsMolecular;
         XenograftsDrugs = index.XenograftsDrugs;
         XenograftsInterventions = index.XenograftsInterventions;
-        Ssms = index.Ssms;
-        Cnvs = index.Cnvs;
-        Svs = index.Svs;
+        Ssms = type == VariantType.SSM && index.Ssms == true;
+        Cnvs = type == VariantType.CNV && index.Cnvs == true;
+        Svs = type == VariantType.SV && index.Svs == true;
         GeneExp = index.GeneExp;
         GeneExpSc = index.GeneExpSc;
     }

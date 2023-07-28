@@ -4,6 +4,7 @@ using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Search.Services.Filters.Base;
 using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Entities.Genes;
 using Unite.Indices.Services.Configuration.Options;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
@@ -36,6 +37,29 @@ public class GenesSearchService : AggregatingSearchService, IGenesSearchService
         var result = _genesIndexService.GetAsync(query).Result;
 
         return result;
+    }
+
+    public IDictionary<int, DataIndex> Stats(SearchCriteria searchCriteria = null)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+
+        var availableData = new Dictionary<int, DataIndex>();
+
+        criteria = criteria with { From = 0, Size = 0 };
+        var lookupResult = Search(criteria);
+
+        for (var from = 0; from < lookupResult.Total; from += 499)
+        {
+            criteria = criteria with { From = from, Size = 499 };
+            var searchResult = Search(criteria);
+
+            foreach (var index in searchResult.Rows)
+            {
+                availableData.Add(index.Id, index.Data);
+            }
+        }
+
+        return availableData;
     }
 
     public SearchResult<GeneIndex> Search(SearchCriteria searchCriteria = null)

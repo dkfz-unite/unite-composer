@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Download.Tsv;
 using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Models;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Variants;
@@ -23,17 +25,22 @@ public class GeneController : Controller
 {
     private readonly IGenesSearchService _genesSearchService;
     private readonly GeneDataService _geneDataService;
+    private readonly GenesTsvDownloadService _genesTsvDownloadService;
 
 
-    public GeneController(IGenesSearchService genesSearchService, GeneDataService geneDataService)
+    public GeneController(
+        IGenesSearchService genesSearchService, 
+        GeneDataService geneDataService, 
+        GenesTsvDownloadService genesTsvDownloadService)
     {
         _genesSearchService = genesSearchService;
         _geneDataService = geneDataService;
+        _genesTsvDownloadService = genesTsvDownloadService;
     }
 
 
     [HttpGet("{id}")]
-    public GeneResource Get(long id)
+    public GeneResource Gene(long id)
     {
         var key = id.ToString();
 
@@ -43,7 +50,7 @@ public class GeneController : Controller
     }
 
     [HttpPost("{id}/donors")]
-    public SearchResult<DonorResource> SearchDonors(int id, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<DonorResource> Donors(int id, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _genesSearchService.SearchDonors(id, searchCriteria);
 
@@ -51,7 +58,7 @@ public class GeneController : Controller
     }
 
     [HttpPost("{id}/variants/{type}")]
-    public SearchResult<VariantResource> SearchVariants(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    public SearchResult<VariantResource> Variants(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
     {
         var searchResult = _genesSearchService.SearchVariants(id, type, searchCriteria);
 
@@ -59,11 +66,19 @@ public class GeneController : Controller
     }
 
     [HttpGet("{id}/translations")]
-    public Transcript[] GetTranslations(int id)
+    public Transcript[] Translations(int id)
     {
         var translations = _geneDataService.GetTranslations(id);
 
         return translations;
+    }
+
+    [HttpPost("{id}/data")]
+    public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
+    {
+        var bytes = await _genesTsvDownloadService.Download(id, model.Data);
+
+        return File(bytes, "application/zip", "data.zip");
     }
 
 

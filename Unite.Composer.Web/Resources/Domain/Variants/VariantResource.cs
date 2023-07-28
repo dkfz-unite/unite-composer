@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Variants;
+﻿using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
@@ -27,7 +28,8 @@ public class VariantResource : Basic.Genome.Variants.VariantResource
 
         if (index.Data != null)
         {
-            Data = new VariantDataResource(index.Data);
+            var type = index.Ssm != null ? VariantType.SSM : index.Cnv != null ? VariantType.CNV : VariantType.SV;
+            Data = new VariantDataResource(index.Data, type);
         }
     }
 }

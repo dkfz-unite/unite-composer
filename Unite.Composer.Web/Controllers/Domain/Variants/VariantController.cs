@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Models;
+using Unite.Composer.Download.Tsv;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
+using Unite.Data.Entities.Genome.Variants.Enums;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
@@ -20,14 +23,17 @@ public class VariantController : Controller
 {
     private readonly IVariantsSearchService _variantsSearchService;
     private readonly MutationDataService _mutationDataService;
+    private readonly VariantsTsvDownloadService _variantsTsvDownloadService;
 
 
     public VariantController(
         IVariantsSearchService variantsSearchService,
-        MutationDataService mutationDataService)
+        MutationDataService mutationDataService,
+        VariantsTsvDownloadService variantsTsvDownloadService)
     {
         _variantsSearchService = variantsSearchService;
         _mutationDataService = mutationDataService;
+        _variantsTsvDownloadService = variantsTsvDownloadService;
     }
 
 
@@ -52,9 +58,6 @@ public class VariantController : Controller
     [HttpGet("{id}/translations")]
     public Transcript[] GetTranslations(string id)
     {
-        Console.WriteLine(id);
-        Console.WriteLine(id.StartsWith("SSM"));
-        Console.WriteLine(id.Substring(3));
         if (id.StartsWith("SSM"))
         {
             var mutationId = long.Parse(id.Substring(3));
@@ -66,6 +69,21 @@ public class VariantController : Controller
         {
             return null;
         }
+    }
+
+    [HttpPost("{id}/data")]
+    public async Task<IActionResult> Data(string id, [FromBody]SingleDownloadModel model)
+    {
+        var key = id.ToString();
+        var index = _variantsSearchService.Get(key);
+        var type = index.Ssm != null ? VariantType.SSM
+                 : index.Cnv != null ? VariantType.CNV
+                 : index.Sv != null ? VariantType.SV
+                 : throw new InvalidOperationException("Unknown variant type");
+
+        var bytes = await _variantsTsvDownloadService.Download(long.Parse(id.Substring(index.Type.Length)), type, model.Data);
+
+        return File(bytes, "application/zip", "data.zip");
     }
 
 

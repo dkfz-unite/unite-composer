@@ -2,31 +2,8 @@ using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Resources.Domain.Donors;
 
-public class DonorsDataResource
+public class DonorsDataResource : DonorDataResource
 {
-    public bool Clinical { get; set; }
-    public bool Treatments { get; set; }
-    public bool Mris { get; set; }
-    public bool Cts { get; set; }
-    public bool Tissues { get; set; }
-    public bool TissuesMolecular { get; set; }
-    public bool Cells { get; set; }
-    public bool CellsMolecular { get; set; }
-    public bool CellsDrugs { get; set; }
-    public bool Organoids { get; set; }
-    public bool OrganoidsMolecular { get; set; }
-    public bool OrganoidsDrugs { get; set; }
-    public bool OrganoidsInterventions { get; set; }
-    public bool Xenografts { get; set; }
-    public bool XenograftsMolecular { get; set; }
-    public bool XenograftsDrugs { get; set; }
-    public bool XenograftsInterventions { get; set; }
-    public bool Ssms { get; set; }
-    public bool Cnvs { get; set; }
-    public bool Svs { get; set; }
-    public bool GeneExp { get; set; }
-    public bool GeneExpSc { get; set; }
-
     public int Total { get; set; }
 
 

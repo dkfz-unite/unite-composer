@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Unite.Composer\Unite.Composer.csproj" />
+    <ProjectReference Include="..\Unite.Composer.Download\Unite.Composer.Download.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
