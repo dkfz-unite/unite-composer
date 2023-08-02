@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Web.Configuration.Constants;
 
 namespace Unite.Composer.Web.Controllers.Admin;
 
 [Route("api/admin/[controller]")]
 [ApiController]
+[Authorize(Roles = Roles.Admin)]
 public class TasksController : Controller
 {
     private readonly TaskStatsService _taskStatsService;

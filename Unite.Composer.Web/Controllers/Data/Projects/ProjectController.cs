@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Projects;
 using Unite.Composer.Data.Projects.Models;
-using Unite.Composer.Web.Configuration.Extensions;
+using Unite.Composer.Web.Configuration.Constants;
 using Unite.Composer.Web.Controllers.Data.Projects.Models;
 
 namespace Unite.Composer.Web.Controllers.Data.Projects;
@@ -30,7 +30,7 @@ public class ProjectController : Controller
     }
 
     [HttpPut("{id}")]
-    // [Authorize(Policy = Policies.Data.Manager)]
+    [Authorize(Policy = Policies.Data.Writer)]
     public ProjectModel Put(int id, [FromBody] UpdateProjectModel model)
     {
         var projectModel = new ProjectModel
