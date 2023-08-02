@@ -12,7 +12,7 @@ builder.Logging.AddConsole();
 
 builder.Services.AddServices();
 
-builder.Services.AddCors();
+// builder.Services.AddCors();
 
 builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOptions())
                 .AddJwtBearer(options => options.AddJwtBearerOptions());
@@ -28,12 +28,12 @@ var app = builder.Build();
 
 app.UseRouting();
 
-app.UseCors(builder => builder
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true)
-    .AllowCredentials()
-);
+// app.UseCors(builder => builder
+//     .AllowAnyMethod()
+//     .AllowAnyHeader()
+//     .SetIsOriginAllowed(origin => true)
+//     .AllowCredentials()
+// );
 
 app.UseAuthentication();
 
