@@ -15,7 +15,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
-        "UNITE_ENSEMBL_HOST": "http://localhost:5202",
+        "UNITE_ENSEMBL_HOST": "http://localhost:5200",
         "UNITE_SQL_HOST": "localhost",
         "UNITE_SQL_PORT": "5432",
         "UNITE_SQL_USER": "root",
@@ -33,7 +33,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "UNITE_API_KEY": "Defautl32BitApiKeyHasToBeChanged",
-        "UNITE_ENSEMBL_HOST": "http://localhost:5202",
+        "UNITE_ENSEMBL_HOST": "http://localhost:5200",
         "UNITE_SQL_HOST": "localhost",
         "UNITE_SQL_PORT": "5432",
         "UNITE_SQL_USER": "root",
