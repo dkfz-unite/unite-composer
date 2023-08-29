@@ -2,7 +2,7 @@ namespace Unite.Composer.Web.Configuration.Constants;
 
 public static class Roles
 {
-    public const string Admin = "Admin";
+    public const string Admin = "Root";
 }
 
 public static class Permissions
