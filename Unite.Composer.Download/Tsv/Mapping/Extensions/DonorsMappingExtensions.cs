@@ -25,7 +25,7 @@ internal static class DonorsMappingExtensions
     {
         return map
             .MapDonor(entity => entity.Donor)
-            .Map(entity => entity.GenderId, "gender")
+            .Map(entity => entity.GenderId, "sex")
             .Map(entity => entity.Age, "age")
             .Map(entity => entity.Diagnosis, "diagnosis")
             .Map(entity => entity.DiagnosisDate, "diagnosis_date")
