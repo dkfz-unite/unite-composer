@@ -5,6 +5,7 @@ Composer service - mediator between web application and other parts of the appli
 - Search service - provides api to query data using different search criteria.
 - Protein annotation service - provides annotation of protein coding transcripts to retrieve information about pfam protein domains of coded sequences.
 - Data downoad service - provides api to download data in different formats.
+- [Data analysis service](./Docs/analysis.md) - provides api to perform different analyses on the data.
 
 Composer web api is written in ASP.NET (.NET 6)
 
@@ -32,6 +33,8 @@ UNITE_SQL_PORT|SQL server port|5432|5432
 UNITE_SQL_USER|SQL server user||
 UNITE_SQL_PASSWORD|SQL server password||
 UNITE_ENSEMBL_HOST|Ensembl web api|http://localhost:5202|http://ensembl.unite.net
+UNITE_ANALYSIS_DATA_PATH|Path to analyses data|~/mnt/analysis|~/mnt/analysis
+UNITE_ANALYSIS_DESEQ2_URL|DeSeq2 analysis service|http://localhost:5300|http://deseq2.analysis.unite.net
 
 ## Installation
 
