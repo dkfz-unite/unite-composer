@@ -16,28 +16,40 @@ public class OrganoidFilters<TIndex> : SpecimenFilters<TIndex> where TIndex : cl
             return;
         }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            OrganoidFilterNames.ReferenceId,
-            path.Join(specimen => specimen.Organoid.ReferenceId),
-            criteria.ReferenceId)
-        );
+        if (IsNotEmpty(criteria.ReferenceId))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                OrganoidFilterNames.ReferenceId,
+                path.Join(specimen => specimen.Organoid.ReferenceId),
+                criteria.ReferenceId)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            OrganoidFilterNames.Medium,
-            path.Join(specimen => specimen.Organoid.Medium),
-            criteria.Medium)
-        );
+        if (IsNotEmpty(criteria.Medium))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                OrganoidFilterNames.Medium,
+                path.Join(specimen => specimen.Organoid.Medium),
+                criteria.Medium)
+            );
+        }
 
-        Add(new BooleanFilter<TIndex>(
-            OrganoidFilterNames.Tumorigenicity,
-            path.Join(specimen => specimen.Organoid.Tumorigenicity),
-            criteria.Tumorigenicity)
-        );
+        if (IsNotEmpty(criteria.Tumorigenicity))
+        {
+            Add(new BooleanFilter<TIndex>(
+                OrganoidFilterNames.Tumorigenicity,
+                path.Join(specimen => specimen.Organoid.Tumorigenicity),
+                criteria.Tumorigenicity)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            OrganoidFilterNames.Intervention,
-            path.Join(specimen => specimen.Organoid.Interventions.First().Type),
-            criteria.Intervention)
-        );
+        if (IsNotEmpty(criteria.Intervention))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                OrganoidFilterNames.Intervention,
+                path.Join(specimen => specimen.Organoid.Interventions.First().Type),
+                criteria.Intervention)
+            );
+        }
     }
 }

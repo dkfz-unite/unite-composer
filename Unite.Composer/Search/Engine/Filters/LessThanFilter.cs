@@ -20,7 +20,6 @@ public class LessThanFilter<TIndex, TProp> : IFilter<TIndex> where TIndex : clas
         Value = value;
     }
 
-
     public void Apply(ISearchRequest<TIndex> request)
     {
         request.AddLessThanQuery(Value, Properties);

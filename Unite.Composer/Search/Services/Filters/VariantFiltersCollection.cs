@@ -24,7 +24,7 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
         _filters.AddRange(organoidFilters.All());
         _filters.AddRange(xenograftFilters.All());
 
-        if (criteria.Image != null)
+        if (IsNotEmpty(criteria.Image?.Id))
         {
             _filters.Add(new EqualityFilter<VariantIndex, int>(
               ImageFilterNames.Id,
@@ -33,7 +33,7 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
             );
         }
 
-        if (criteria.Specimen != null)
+        if (IsNotEmpty(criteria.Specimen?.Id))
         {
             _filters.Add(new EqualityFilter<VariantIndex, int>(
                 SpecimenFilterNames.Id,
@@ -42,7 +42,7 @@ public class VariantFiltersCollection : FiltersCollection<VariantIndex>
             );
         }
 
-        if (criteria.Sample != null)
+        if (IsNotEmpty(criteria.Sample?.Id))
         {
             _filters.Add(new EqualityFilter<VariantIndex, int>(
                 "Sample.Id",

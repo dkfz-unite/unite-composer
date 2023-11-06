@@ -17,10 +17,13 @@ public class SpecimenFilters<TIndex> : FiltersCollection<TIndex> where TIndex : 
             return;
         }
 
-        Add(new EqualityFilter<TIndex, int>(
-            SpecimenFilterNames.Id,
-            path.Join(specimen => specimen.Id),
-            criteria.Id)
-        );
+        if (IsNotEmpty(criteria.Id))
+        {
+            Add(new EqualityFilter<TIndex, int>(
+                SpecimenFilterNames.Id,
+                path.Join(specimen => specimen.Id),
+                criteria.Id)
+            );
+        }
     }
 }

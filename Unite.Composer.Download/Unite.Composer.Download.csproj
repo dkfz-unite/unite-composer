@@ -5,7 +5,7 @@
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Unite.Data" Version="5.3.0" />
+    <PackageReference Include="Unite.Data" Version="5.5.0" />
     <PackageReference Include="Unite.Essentials.Tsv" Version="4.0.0" />
   </ItemGroup>
 </Project>

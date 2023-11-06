@@ -10,182 +10,6 @@ namespace Unite.Composer.Search.Services.Filters.Base;
 
 public class MolecularDataFilters<TIndex> : FiltersCollection<TIndex> where TIndex : class
 {
-    // public MolecularDataFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, TissueIndex>> path)
-    // {
-    //     if (criteria == null)
-    //     {
-    //         return;
-    //     }
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MgmtStatus,
-    //         path.Join(specimen => specimen.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
-    //         criteria.MgmtStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhStatus,
-    //         path.Join(specimen => specimen.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
-    //         criteria.IdhStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhMutation,
-    //         path.Join(specimen => specimen.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
-    //         criteria.IdhMutation)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.GeneExpressionSubtype,
-    //         path.Join(specimen => specimen.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
-    //         criteria.GeneExpressionSubtype)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MethylationSubtype,
-    //         path.Join(specimen => specimen.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
-    //         criteria.MethylationSubtype)
-    //     );
-
-    //     Add(new BooleanFilter<TIndex>(
-    //         SpecimenFilterNames.GcimpMethylation,
-    //         path.Join(specimen => specimen.MolecularData.GcimpMethylation),
-    //         criteria.GcimpMethylation)
-    //     );
-    // }
-
-    // public MolecularDataFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, CellLineIndex>> path)
-    // {
-    //     if (criteria == null)
-    //     {
-    //         return;
-    //     }
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MgmtStatus,
-    //         path.Join(specimen => specimen.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
-    //         criteria.MgmtStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhStatus,
-    //         path.Join(specimen => specimen.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
-    //         criteria.IdhStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhMutation,
-    //         path.Join(specimen => specimen.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
-    //         criteria.IdhMutation)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.GeneExpressionSubtype,
-    //         path.Join(specimen => specimen.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
-    //         criteria.GeneExpressionSubtype)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MethylationSubtype,
-    //         path.Join(specimen => specimen.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
-    //         criteria.MethylationSubtype)
-    //     );
-
-    //     Add(new BooleanFilter<TIndex>(
-    //         SpecimenFilterNames.GcimpMethylation,
-    //         path.Join(specimen => specimen.MolecularData.GcimpMethylation),
-    //         criteria.GcimpMethylation)
-    //     );
-    // }
-
-    // public MolecularDataFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, OrganoidIndex>> path)
-    // {
-    //     if (criteria == null)
-    //     {
-    //         return;
-    //     }
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MgmtStatus,
-    //         path.Join(specimen => specimen.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
-    //         criteria.MgmtStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhStatus,
-    //         path.Join(specimen => specimen.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
-    //         criteria.IdhStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhMutation,
-    //         path.Join(specimen => specimen.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
-    //         criteria.IdhMutation)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.GeneExpressionSubtype,
-    //         path.Join(specimen => specimen.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
-    //         criteria.GeneExpressionSubtype)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MethylationSubtype,
-    //         path.Join(specimen => specimen.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
-    //         criteria.MethylationSubtype)
-    //     );
-
-    //     Add(new BooleanFilter<TIndex>(
-    //         SpecimenFilterNames.GcimpMethylation,
-    //         path.Join(specimen => specimen.MolecularData.GcimpMethylation),
-    //         criteria.GcimpMethylation)
-    //     );
-    // }
-
-    // public MolecularDataFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, XenograftIndex>> path)
-    // {
-    //     if (criteria == null)
-    //     {
-    //         return;
-    //     }
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MgmtStatus,
-    //         path.Join(specimen => specimen.MolecularData.MgmtStatus.Suffix(_keywordSuffix)),
-    //         criteria.MgmtStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhStatus,
-    //         path.Join(specimen => specimen.MolecularData.IdhStatus.Suffix(_keywordSuffix)),
-    //         criteria.IdhStatus)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.IdhMutation,
-    //         path.Join(specimen => specimen.MolecularData.IdhMutation.Suffix(_keywordSuffix)),
-    //         criteria.IdhMutation)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.GeneExpressionSubtype,
-    //         path.Join(specimen => specimen.MolecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
-    //         criteria.GeneExpressionSubtype)
-    //     );
-
-    //     Add(new EqualityFilter<TIndex, object>(
-    //         SpecimenFilterNames.MethylationSubtype,
-    //         path.Join(specimen => specimen.MolecularData.MethylationSubtype.Suffix(_keywordSuffix)),
-    //         criteria.MethylationSubtype)
-    //     );
-
-    //     Add(new BooleanFilter<TIndex>(
-    //         SpecimenFilterNames.GcimpMethylation,
-    //         path.Join(specimen => specimen.MolecularData.GcimpMethylation),
-    //         criteria.GcimpMethylation)
-    //     );
-    // }
-
     public MolecularDataFilters(SpecimenCriteriaBase criteria, Expression<Func<TIndex, MolecularDataIndex>> path)
     {
         if (criteria == null)
@@ -193,40 +17,58 @@ public class MolecularDataFilters<TIndex> : FiltersCollection<TIndex> where TInd
             return;
         }
 
-        Add(new EqualityFilter<TIndex, object>(
-            SpecimenFilterNames.MgmtStatus,
-            path.Join(molecularData => molecularData.MgmtStatus.Suffix(_keywordSuffix)),
-            criteria.MgmtStatus)
-        );
+        if (IsNotEmpty(criteria.MgmtStatus))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                SpecimenFilterNames.MgmtStatus,
+                path.Join(molecularData => molecularData.MgmtStatus.Suffix(_keywordSuffix)),
+                criteria.MgmtStatus)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            SpecimenFilterNames.IdhStatus,
-            path.Join(molecularData => molecularData.IdhStatus.Suffix(_keywordSuffix)),
-            criteria.IdhStatus)
-        );
+        if (IsNotEmpty(criteria.IdhStatus))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                SpecimenFilterNames.IdhStatus,
+                path.Join(molecularData => molecularData.IdhStatus.Suffix(_keywordSuffix)),
+                criteria.IdhStatus)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            SpecimenFilterNames.IdhMutation,
-            path.Join(molecularData => molecularData.IdhMutation.Suffix(_keywordSuffix)),
-            criteria.IdhMutation)
-        );
+        if (IsNotEmpty(criteria.IdhMutation))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                SpecimenFilterNames.IdhMutation,
+                path.Join(molecularData => molecularData.IdhMutation.Suffix(_keywordSuffix)),
+                criteria.IdhMutation)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            SpecimenFilterNames.GeneExpressionSubtype,
-            path.Join(molecularData => molecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
-            criteria.GeneExpressionSubtype)
-        );
+        if (IsNotEmpty(criteria.GeneExpressionSubtype))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                SpecimenFilterNames.GeneExpressionSubtype,
+                path.Join(molecularData => molecularData.GeneExpressionSubtype.Suffix(_keywordSuffix)),
+                criteria.GeneExpressionSubtype)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            SpecimenFilterNames.MethylationSubtype,
-            path.Join(molecularData => molecularData.MethylationSubtype.Suffix(_keywordSuffix)),
-            criteria.MethylationSubtype)
-        );
+        if (IsNotEmpty(criteria.MethylationSubtype))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                SpecimenFilterNames.MethylationSubtype,
+                path.Join(molecularData => molecularData.MethylationSubtype.Suffix(_keywordSuffix)),
+                criteria.MethylationSubtype)
+            );
+        }
 
-        Add(new BooleanFilter<TIndex>(
-            SpecimenFilterNames.GcimpMethylation,
-            path.Join(molecularData => molecularData.GcimpMethylation),
-            criteria.GcimpMethylation)
-        );
+        if (IsNotEmpty(criteria.GcimpMethylation))
+        {
+            Add(new BooleanFilter<TIndex>(
+                SpecimenFilterNames.GcimpMethylation,
+                path.Join(molecularData => molecularData.GcimpMethylation),
+                criteria.GcimpMethylation)
+            );
+        }
     }
 }

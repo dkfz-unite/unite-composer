@@ -17,45 +17,56 @@ public class DonorIndexFiltersCollection : FiltersCollection<DonorIndex>
         var organoidFilters = new OrganoidFilters<DonorIndex>(criteria.Organoid, donor => donor.Specimens.First());
         var xenograftFilters = new XenograftFilters<DonorIndex>(criteria.Xenograft, donor => donor.Specimens.First());
 
-        _filters.AddRange(donorFilters.All());
-        _filters.AddRange(mriImageFilters.All());
-        _filters.AddRange(tissueFilters.All());
-        _filters.AddRange(cellLineFilters.All());
-        _filters.AddRange(organoidFilters.All());
-        _filters.AddRange(xenograftFilters.All());
+        Add(donorFilters.All());
+        Add(mriImageFilters.All());
+        Add(tissueFilters.All());
+        Add(cellLineFilters.All());
+        Add(organoidFilters.All());
+        Add(xenograftFilters.All());
 
-        if (criteria.Specimen != null)
+        if (IsNotEmpty(criteria.Specimen?.Id))
         {
-            _filters.Add(new EqualityFilter<DonorIndex, int>(
+            Add(new EqualityFilter<DonorIndex, int>(
                 SpecimenFilterNames.Id,
                 donor => donor.Specimens.First().Id,
                 criteria.Specimen.Id)
             );
         }
 
-        _filters.Add(new BooleanFilter<DonorIndex>(
-            DonorFilterNames.HasSsms,
-            donor => donor.Data.Ssms,
-            criteria.Donor.HasSsms)
-        );
+        if (IsNotEmpty(criteria.Donor?.HasSsms))
+        {
+            Add(new BooleanFilter<DonorIndex>(
+                DonorFilterNames.HasSsms,
+                donor => donor.Data.Ssms,
+                criteria.Donor.HasSsms)
+            );
+        }
 
-        _filters.Add(new BooleanFilter<DonorIndex>(
-            DonorFilterNames.HasCnvs,
-            donor => donor.Data.Cnvs,
-            criteria.Donor.HasCnvs)
-        );
+        if (IsNotEmpty(criteria.Donor?.HasCnvs))
+        {
+            Add(new BooleanFilter<DonorIndex>(
+                DonorFilterNames.HasCnvs,
+                donor => donor.Data.Cnvs,
+                criteria.Donor.HasCnvs)
+            );
+        }
 
-        _filters.Add(new BooleanFilter<DonorIndex>(
-            DonorFilterNames.HasSvs,
-            donor => donor.Data.Svs,
-            criteria.Donor.HasSvs)
-        );
+        if (IsNotEmpty(criteria.Donor?.HasSvs))
+        {
+            Add(new BooleanFilter<DonorIndex>(
+                DonorFilterNames.HasSvs,
+                donor => donor.Data.Svs,
+                criteria.Donor.HasSvs)
+            );
+        }
 
-        _filters.Add(new BooleanFilter<DonorIndex>(
-            DonorFilterNames.HasGeneExp,
-            donor => donor.Data.GeneExp,
-            criteria.Donor.HasGeneExp)
-        );
-        
+        if (IsNotEmpty(criteria.Donor?.HasGeneExp))
+        {
+            Add(new BooleanFilter<DonorIndex>(
+                DonorFilterNames.HasGeneExp,
+                donor => donor.Data.GeneExp,
+                criteria.Donor.HasGeneExp)
+            );
+        }
     }
 }

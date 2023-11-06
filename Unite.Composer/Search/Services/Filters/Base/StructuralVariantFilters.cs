@@ -17,49 +17,70 @@ public class StructuralVariantFilters<TIndex> : VariantFilters<TIndex> where TIn
             return;
         }
 
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Chromosome,
-            path.Join(variant => variant.Sv.Chromosome.Suffix(_keywordSuffix)),
-            criteria.Chromosome)
-        );
+        if (IsNotEmpty(criteria.Chromosome))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                VariantFilterNames.Chromosome,
+                path.Join(variant => variant.Sv.Chromosome.Suffix(_keywordSuffix)),
+                criteria.Chromosome)
+            );
+        }
 
-        Add(new MultiPropertyRangeFilter<TIndex, int>(
-            VariantFilterNames.Position,
-            path.Join(variant => variant.Sv.Start),
-            path.Join(variant => variant.Sv.End),
-            criteria.Position?.From,
-            criteria.Position?.To)
-        );
+        if (IsNotEmpty(criteria.Position))
+        {
+            Add(new MultiPropertyRangeFilter<TIndex, int>(
+                VariantFilterNames.Position,
+                path.Join(variant => variant.Sv.Start),
+                path.Join(variant => variant.Sv.End),
+                criteria.Position?.From,
+                criteria.Position?.To)
+            );
+        }
 
-        Add(new RangeFilter<TIndex, int?>(
-            VariantFilterNames.Length,
-            path.Join(variant => variant.Sv.Length),
-            criteria.Length?.From,
-            criteria.Length?.To)
-        );
+        if (IsNotEmpty(criteria.Length))
+        {
+            Add(new RangeFilter<TIndex, int?>(
+                VariantFilterNames.Length,
+                path.Join(variant => variant.Sv.Length),
+                criteria.Length?.From,
+                criteria.Length?.To)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            StructuralVariantFilterNames.Type,
-            path.Join(variant => variant.Sv.Type.Suffix(_keywordSuffix)),
-            criteria.Type)
-        );
+        if (IsNotEmpty(criteria.Type))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                StructuralVariantFilterNames.Type,
+                path.Join(variant => variant.Sv.Type.Suffix(_keywordSuffix)),
+                criteria.Type)
+            );
+        }
 
-        Add(new BooleanFilter<TIndex>(
-            StructuralVariantFilterNames.Inverted,
-            path.Join(variant => variant.Sv.Inverted),
-            criteria.Inverted)
-        );
+        if (IsNotEmpty(criteria.Inverted))
+        {
+            Add(new BooleanFilter<TIndex>(
+                StructuralVariantFilterNames.Inverted,
+                path.Join(variant => variant.Sv.Inverted),
+                criteria.Inverted)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Impact,
-            path.Join(variant => variant.Sv.AffectedFeatures.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
-            criteria.Impact)
-        );
+        if (IsNotEmpty(criteria.Impact))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                VariantFilterNames.Impact,
+                path.Join(variant => variant.Sv.AffectedFeatures.First().Consequences.First().Impact.Suffix(_keywordSuffix)),
+                criteria.Impact)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Consequence,
-            path.Join(variant => variant.Sv.AffectedFeatures.First().Consequences.First().Type.Suffix(_keywordSuffix)),
-            criteria.Consequence)
-        );
+        if (IsNotEmpty(criteria.Consequence))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                VariantFilterNames.Consequence,
+                path.Join(variant => variant.Sv.AffectedFeatures.First().Consequences.First().Type.Suffix(_keywordSuffix)),
+                criteria.Consequence)
+            );
+        }
     }
 }

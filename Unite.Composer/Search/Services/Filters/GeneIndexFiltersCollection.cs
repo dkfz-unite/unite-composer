@@ -32,7 +32,7 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
         _filters.AddRange(copyNumberVariantFilters.All());
         _filters.AddRange(structuralVariantFilters.All());
 
-        if (criteria.Image != null)
+        if (IsNotEmpty(criteria.Image?.Id))
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
               ImageFilterNames.Id,
@@ -41,7 +41,7 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
               ));
         }
 
-        if (criteria.Specimen != null)
+        if (IsNotEmpty(criteria.Specimen?.Id))
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
                 SpecimenFilterNames.Id,
@@ -50,7 +50,7 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
             ));
         }
 
-        if (criteria.Sample != null)
+        if (IsNotEmpty(criteria.Sample?.Id))
         {
             _filters.Add(new EqualityFilter<GeneIndex, int>(
                 SampleFilterNames.Id,
@@ -59,25 +59,22 @@ public class GeneIndexFiltersCollection : FiltersCollection<GeneIndex>
             ));
         }
 
-        if (criteria.Gene != null)
+        if (IsNotEmpty(criteria.Gene?.HasVariants))
         {
-            if (criteria.Gene.HasVariants == true)
-            {
-                _filters.Add(new GreaterThanFilter<GeneIndex, double?>(
-                    GeneFilterNames.HasVariants, 1,
-                    gene => gene.NumberOfSsms,
-                    gene => gene.NumberOfCnvs,
-                    gene => gene.NumberOfSvs
-                ));
-            }
+            _filters.Add(new GreaterThanFilter<GeneIndex, double?>(
+                GeneFilterNames.HasVariants, 1,
+                gene => gene.NumberOfSsms,
+                gene => gene.NumberOfCnvs,
+                gene => gene.NumberOfSvs
+            ));
+        }
 
-            if (criteria.Gene.HasExpressions == true)
-            {
-                _filters.Add(new NotNullFilter<GeneIndex, object>(
-                    GeneFilterNames.HasExpressions,
-                    gene => gene.Samples.First().Expression
-                ));
-            }
+        if (IsNotEmpty(criteria.Gene?.HasExpressions))
+        {
+            _filters.Add(new NotNullFilter<GeneIndex, object>(
+                GeneFilterNames.HasExpressions,
+                gene => gene.Samples.First().Expression
+            ));
         }
     }
 }

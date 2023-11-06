@@ -17,97 +17,142 @@ public class DonorFilters<TIndex> : FiltersCollection<TIndex> where TIndex : cla
             return;
         }
 
-        Add(new EqualityFilter<TIndex, int>(
-            DonorFilterNames.Id,
-            path.Join(donor => donor.Id),
-            criteria.Id)
-        );
+        if (IsNotEmpty(criteria.Id))
+        {
+            Add(new EqualityFilter<TIndex, int>(
+                DonorFilterNames.Id,
+                path.Join(donor => donor.Id),
+                criteria.Id
+            ));
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            DonorFilterNames.ReferenceId,
-            path.Join(donor => donor.ReferenceId),
-            criteria.ReferenceId)
-        );
+        if (IsNotEmpty(criteria.ReferenceId))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                DonorFilterNames.ReferenceId,
+                path.Join(donor => donor.ReferenceId),
+                criteria.ReferenceId)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            DonorFilterNames.Diagnosis,
-            path.Join(donor => donor.ClinicalData.Diagnosis),
-            criteria.Diagnosis)
-        );
+        if (IsNotEmpty(criteria.Diagnosis))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                DonorFilterNames.Diagnosis,
+                path.Join(donor => donor.ClinicalData.Diagnosis),
+                criteria.Diagnosis)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            DonorFilterNames.PrimarySite,
-            path.Join(donor => donor.ClinicalData.PrimarySite),
-            criteria.PrimarySite)
-        );
+        if (IsNotEmpty(criteria.PrimarySite))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                DonorFilterNames.PrimarySite,
+                path.Join(donor => donor.ClinicalData.PrimarySite),
+                criteria.PrimarySite)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            DonorFilterNames.Localization,
-            path.Join(donor => donor.ClinicalData.Localization),
-            criteria.Localization)
-        );
+        if (IsNotEmpty(criteria.Localization))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                DonorFilterNames.Localization,
+                path.Join(donor => donor.ClinicalData.Localization),
+                criteria.Localization)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            DonorFilterNames.Gender,
-            path.Join(donor => donor.ClinicalData.Gender.Suffix(_keywordSuffix)),
-            criteria.Gender)
-        );
+        if (IsNotEmpty(criteria.Gender))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                DonorFilterNames.Gender,
+                path.Join(donor => donor.ClinicalData.Gender.Suffix(_keywordSuffix)),
+                criteria.Gender)
+            );
+        }
 
-        Add(new RangeFilter<TIndex, int?>(
-            DonorFilterNames.Age,
-            path.Join(donor => donor.ClinicalData.Age),
-            criteria.Age?.From,
-            criteria.Age?.To)
-        );
+        if (IsNotEmpty(criteria.Age))
+        {
+            Add(new RangeFilter<TIndex, int?>(
+                DonorFilterNames.Age,
+                path.Join(donor => donor.ClinicalData.Age),
+                criteria.Age?.From,
+                criteria.Age?.To)
+            );
+        }
 
-        Add(new BooleanFilter<TIndex>(
-            DonorFilterNames.VitalStatus,
-            path.Join(donor => donor.ClinicalData.VitalStatus),
-            criteria.VitalStatus)
-        );
+        if (IsNotEmpty(criteria.VitalStatus))
+        {
+            Add(new BooleanFilter<TIndex>(
+                DonorFilterNames.VitalStatus,
+                path.Join(donor => donor.ClinicalData.VitalStatus),
+                criteria.VitalStatus)
+            );
+        }
 
-        Add(new RangeFilter<TIndex, int?>(
-            DonorFilterNames.VitalStatusChangeDay,
-            path.Join(donor => donor.ClinicalData.VitalStatusChangeDay),
-            criteria.VitalStatusChangeDay?.From,
-            criteria.VitalStatusChangeDay?.To)
-        );
+        if (IsNotEmpty(criteria.VitalStatusChangeDay))
+        {
+            Add(new RangeFilter<TIndex, int?>(
+                DonorFilterNames.VitalStatusChangeDay,
+                path.Join(donor => donor.ClinicalData.VitalStatusChangeDay),
+                criteria.VitalStatusChangeDay?.From,
+                criteria.VitalStatusChangeDay?.To)
+            );
+        }
 
-        Add(new BooleanFilter<TIndex>(
-            DonorFilterNames.ProgressionStatus,
-            path.Join(donor => donor.ClinicalData.ProgressionStatus),
-            criteria.ProgressionStatus)
-        );
+        if (IsNotEmpty(criteria.ProgressionStatus))
+        {
+            Add(new BooleanFilter<TIndex>(
+                DonorFilterNames.ProgressionStatus,
+                path.Join(donor => donor.ClinicalData.ProgressionStatus),
+                criteria.ProgressionStatus)
+            );
+        }
 
-        Add(new RangeFilter<TIndex, int?>(
-            DonorFilterNames.ProgressionStatusChangeDay,
-            path.Join(donor => donor.ClinicalData.ProgressionStatusChangeDay),
-            criteria.ProgressionStatusChangeDay?.From,
-            criteria.ProgressionStatusChangeDay?.To)
-        );
+        if (IsNotEmpty(criteria.ProgressionStatusChangeDay))
+        {
+            Add(new RangeFilter<TIndex, int?>(
+                DonorFilterNames.ProgressionStatusChangeDay,
+                path.Join(donor => donor.ClinicalData.ProgressionStatusChangeDay),
+                criteria.ProgressionStatusChangeDay?.From,
+                criteria.ProgressionStatusChangeDay?.To)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, object>(
-           DonorFilterNames.Therapy,
-           path.Join(donor => donor.Treatments.First().Therapy.Suffix(_keywordSuffix)),
-           criteria.Therapy)
-       );
+        if (IsNotEmpty(criteria.Therapy))
+        {
+            Add(new SimilarityFilter<TIndex, object>(
+               DonorFilterNames.Therapy,
+               path.Join(donor => donor.Treatments.First().Therapy.Suffix(_keywordSuffix)),
+               criteria.Therapy)
+           );
+        }
 
-        Add(new BooleanFilter<TIndex>(
-            DonorFilterNames.MtaProtected,
-            path.Join(donor => donor.MtaProtected),
-            criteria.MtaProtected)
-        );
+        if (IsNotEmpty(criteria.MtaProtected))
+        {
+            Add(new BooleanFilter<TIndex>(
+                DonorFilterNames.MtaProtected,
+                path.Join(donor => donor.MtaProtected),
+                criteria.MtaProtected)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, object>(
-           DonorFilterNames.Project,
-           path.Join(donor => donor.Projects.First().Name.Suffix(_keywordSuffix)),
-           criteria.Project)
-       );
+        if (IsNotEmpty(criteria.Project))
+        {
+            Add(new SimilarityFilter<TIndex, object>(
+               DonorFilterNames.Project,
+               path.Join(donor => donor.Projects.First().Name.Suffix(_keywordSuffix)),
+               criteria.Project)
+           );
+        }
 
-       Add(new SimilarityFilter<TIndex, object>(
-           DonorFilterNames.Study,
-           path.Join(donor => donor.Studies.First().Name.Suffix(_keywordSuffix)),
-           criteria.Study)
-       );
+        if (IsNotEmpty(criteria.Study))
+        {
+            Add(new SimilarityFilter<TIndex, object>(
+               DonorFilterNames.Study,
+               path.Join(donor => donor.Studies.First().Name.Suffix(_keywordSuffix)),
+               criteria.Study)
+           );
+        }
     }
 }

@@ -17,10 +17,13 @@ public class VariantFilters<TIndex> : FiltersCollection<TIndex> where TIndex : c
             return;
         }
 
-        Add(new EqualityFilter<TIndex, object>(
-            VariantFilterNames.Id,
-            path.Join(variant => variant.Id.Suffix(_keywordSuffix)),
-            criteria.Id)
-        );
+        if (IsNotEmpty(criteria.Id))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                VariantFilterNames.Id,
+                path.Join(variant => variant.Id.Suffix(_keywordSuffix)),
+                criteria.Id)
+            );
+        }
     }
 }

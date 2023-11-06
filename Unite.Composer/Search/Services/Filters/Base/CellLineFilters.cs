@@ -17,34 +17,49 @@ public class CellLineFilters<TIndex> : SpecimenFilters<TIndex> where TIndex : cl
             return;
         }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            CellLineFilterNames.ReferenceId,
-            path.Join(specimen => specimen.Cell.ReferenceId),
-            criteria.ReferenceId)
-        );
+        if (IsNotEmpty(criteria.ReferenceId))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                CellLineFilterNames.ReferenceId,
+                path.Join(specimen => specimen.Cell.ReferenceId),
+                criteria.ReferenceId)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.Species,
-            path.Join(specimen => specimen.Cell.Species.Suffix(_keywordSuffix)),
-            criteria.Species)
-        );
+        if (IsNotEmpty(criteria.Species))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                CellLineFilterNames.Species,
+                path.Join(specimen => specimen.Cell.Species.Suffix(_keywordSuffix)),
+                criteria.Species)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.Type,
-            path.Join(specimen => specimen.Cell.Type.Suffix(_keywordSuffix)),
-            criteria.Type)
-        );
+        if (IsNotEmpty(criteria.Type))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                CellLineFilterNames.Type,
+                path.Join(specimen => specimen.Cell.Type.Suffix(_keywordSuffix)),
+                criteria.Type)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            CellLineFilterNames.CultureType,
-            path.Join(specimen => specimen.Cell.CultureType.Suffix(_keywordSuffix)),
-            criteria.CultureType)
-        );
+        if (IsNotEmpty(criteria.CultureType))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                CellLineFilterNames.CultureType,
+                path.Join(specimen => specimen.Cell.CultureType.Suffix(_keywordSuffix)),
+                criteria.CultureType)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            CellLineFilterNames.Name,
-            path.Join(specimen => specimen.Cell.Name),
-            criteria.Name)
-        );
+        if (IsNotEmpty(criteria.Name))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                CellLineFilterNames.Name,
+                path.Join(specimen => specimen.Cell.Name),
+                criteria.Name)
+            );
+        }
     }
 }

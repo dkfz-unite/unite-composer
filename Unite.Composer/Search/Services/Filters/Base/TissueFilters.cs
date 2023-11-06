@@ -17,28 +17,40 @@ public class TissueFilters<TIndex> : SpecimenFilters<TIndex> where TIndex : clas
             return;
         }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            TissueFilterNames.ReferenceId,
-            path.Join(specimen => specimen.Tissue.ReferenceId),
-            criteria.ReferenceId)
-        );
+        if (IsNotEmpty(criteria.ReferenceId))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                TissueFilterNames.ReferenceId,
+                path.Join(specimen => specimen.Tissue.ReferenceId),
+                criteria.ReferenceId)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            TissueFilterNames.Type,
-            path.Join(specimen => specimen.Tissue.Type.Suffix(_keywordSuffix)),
-            criteria.Type)
-        );
+        if (IsNotEmpty(criteria.Type))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                TissueFilterNames.Type,
+                path.Join(specimen => specimen.Tissue.Type.Suffix(_keywordSuffix)),
+                criteria.Type)
+            );
+        }
 
-        Add(new EqualityFilter<TIndex, object>(
-            TissueFilterNames.TumorType,
-            path.Join(specimen => specimen.Tissue.TumorType.Suffix(_keywordSuffix)),
-            criteria.TumorType)
-        );
+        if (IsNotEmpty(criteria.TumorType))
+        {
+            Add(new EqualityFilter<TIndex, object>(
+                TissueFilterNames.TumorType,
+                path.Join(specimen => specimen.Tissue.TumorType.Suffix(_keywordSuffix)),
+                criteria.TumorType)
+            );
+        }
 
-        Add(new SimilarityFilter<TIndex, string>(
-            TissueFilterNames.Source,
-            path.Join(specimen => specimen.Tissue.Source),
-            criteria.Source)
-        );
+        if (IsNotEmpty(criteria.Source))
+        {
+            Add(new SimilarityFilter<TIndex, string>(
+                TissueFilterNames.Source,
+                path.Join(specimen => specimen.Tissue.Source),
+                criteria.Source)
+            );
+        }
     }
 }

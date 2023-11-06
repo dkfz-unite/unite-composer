@@ -11,28 +11,45 @@ public class ImageDataFilters<TIndex> : FiltersCollection<TIndex> where TIndex :
 {
     public ImageDataFilters(ImageCriteriaBase criteria, Expression<Func<TIndex, DataIndex>> path)
     {
-        _filters.Add(new BooleanFilter<TIndex>(
-            ImageFilterNames.HasSsms,
-            path.Join(data => data.Ssms),
-            criteria.HasSsms)
-        );
+        if (criteria == null)
+        {
+            return;
+        }
 
-        _filters.Add(new BooleanFilter<TIndex>(
-            ImageFilterNames.HasCnvs,
-            path.Join(data => data.Cnvs),
-            criteria.HasCnvs)
-        );
+        if (IsNotEmpty(criteria.HasSsms))
+        {
+            Add(new BooleanFilter<TIndex>(
+                ImageFilterNames.HasSsms,
+                path.Join(data => data.Ssms),
+                criteria.HasSsms)
+            );
+        }
 
-        _filters.Add(new BooleanFilter<TIndex>(
-            ImageFilterNames.HasSvs,
-            path.Join(data => data.Svs),
-            criteria.HasSvs)
-        );
+        if (IsNotEmpty(criteria.HasCnvs))
+        {
+            Add(new BooleanFilter<TIndex>(
+                ImageFilterNames.HasCnvs,
+                path.Join(data => data.Cnvs),
+                criteria.HasCnvs)
+            );
+        }
 
-        _filters.Add(new BooleanFilter<TIndex>(
-            ImageFilterNames.HasGeneExp,
-            path.Join(data => data.GeneExp),
-            criteria.HasGeneExp)
-        );
+        if (IsNotEmpty(criteria.HasSvs))
+        {
+            Add(new BooleanFilter<TIndex>(
+                ImageFilterNames.HasSvs,
+                path.Join(data => data.Svs),
+                criteria.HasSvs)
+            );
+        }
+
+        if (IsNotEmpty(criteria.HasGeneExp))
+        {
+            Add(new BooleanFilter<TIndex>(
+                ImageFilterNames.HasGeneExp,
+                path.Join(data => data.GeneExp),
+                criteria.HasGeneExp)
+            );
+        }
     }
 }

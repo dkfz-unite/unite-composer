@@ -2,6 +2,7 @@
 using Unite.Composer.Search.Engine.Filters;
 using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Search.Services.Criteria;
+using Unite.Composer.Search.Services.Criteria.Visualizations;
 using Unite.Composer.Search.Services.Filters;
 using Unite.Composer.Visualization.Oncogrid.Data;
 using Unite.Indices.Services.Configuration.Options;
@@ -30,6 +31,7 @@ public class OncoGridDataService
     public OncoGridData LoadData(SearchCriteria searchCriteria = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.OncoGrid = searchCriteria?.OncoGrid ?? new OncoGridCriteria();
 
         var impacts = criteria.Ssm.Impact;
         var consequences = criteria.Ssm.Consequence;

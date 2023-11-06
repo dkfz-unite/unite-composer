@@ -1,6 +1,7 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Analysis.Configuration.Options;
+using Unite.Composer.Analysis.Expression;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data.Donors;
 using Unite.Composer.Data.Genome;
@@ -14,6 +15,9 @@ using Unite.Composer.Search.Services;
 using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
+using Unite.Composer.Web.Handlers;
+using Unite.Composer.Web.HostedServices;
+using Unite.Composer.Web.Services;
 using Unite.Data.Services;
 using Unite.Data.Services.Configuration.Options;
 using Unite.Indices.Services.Configuration.Options;
@@ -62,6 +66,14 @@ public static class ConfigurationExtensions
         services.AddTransient<OncoGridDataService>();
         services.AddTransient<OncoGridDataService1>();
         services.AddTransient<ProteinPlotDataService>();
+
+        services.AddHostedService<AnalysisPreparingHostedService>();
+        services.AddTransient<AnalysisPreparingHandler>();
+        services.AddTransient<AnalysisTaskService>();
+        services.AddTransient<ExpressionAnalysisService>();
+
+        services.AddHostedService<AnalysisProcessingHostedService>();
+        services.AddTransient<AnalysisProcessingHandler>();
     }
 
     private static void AddOptions(this IServiceCollection services)
@@ -70,6 +82,8 @@ public static class ConfigurationExtensions
         services.AddTransient<IElasticOptions, ElasticOptions>();
         services.AddTransient<ISqlOptions, SqlOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
+        services.AddTransient<IAnalysisOptions, AnalysisOptions>(); 
+        services.AddTransient<AnalysisOptions>();
     }
 
     private static void AddValidation(this IServiceCollection services)
