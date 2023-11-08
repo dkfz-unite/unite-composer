@@ -33,7 +33,7 @@ jobs:
         with:
           context: .
           build-args: |
-            USER=${{ github.actor }}
+            USER=vulasau-dkfz
             TOKEN=${{ secrets.GITHUB_TOKEN }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
