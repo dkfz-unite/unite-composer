@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           build-args: |
-            USER={{ env.USER }}
+            USER=${{ env.USER }}
             TOKEN=${{ env.TOKEN }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
