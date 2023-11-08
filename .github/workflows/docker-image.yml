@@ -5,8 +5,8 @@ on:
     branches: ['main']
 
 env:
-  USER: ${{ github.actor }}
-  TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  USER: vulasau
+  TOKEN: ${{ secrets.PACKAGES }}
   REGISTRY: ghcr.io
   IMAGE: ${{ github.repository }}
 
