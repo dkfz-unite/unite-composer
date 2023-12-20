@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using Unite.Composer.Download.Extensions;
 using Unite.Data.Entities.Specimens;
+using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
 using OrganoidIntervention = Unite.Data.Entities.Specimens.Organoids.Intervention;
@@ -10,7 +10,7 @@ namespace Unite.Composer.Download.Tsv.Mapping.Extensions;
 
 internal static class SpecimenMappingExtensions
 {
-    internal static ClassMap<Specimen> MapTissues(this ClassMap<Specimen> map)
+    public static ClassMap<Specimen> MapTissues(this ClassMap<Specimen> map)
     {
         return map
             .MapSpecimen()
@@ -20,7 +20,7 @@ internal static class SpecimenMappingExtensions
             .MapMolecularData();
     }
 
-    internal static ClassMap<Specimen> MapCellLines(this ClassMap<Specimen> map)
+    public static ClassMap<Specimen> MapCellLines(this ClassMap<Specimen> map)
     {
         return map
             .MapSpecimen()
@@ -37,7 +37,7 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.CellLine.Info.ExPasyLink, "expasy_link");
     }
 
-    internal static ClassMap<Specimen> MapOrganoids(this ClassMap<Specimen> map)
+    public static ClassMap<Specimen> MapOrganoids(this ClassMap<Specimen> map)
     {
         return map
             .MapSpecimen()
@@ -47,7 +47,7 @@ internal static class SpecimenMappingExtensions
             .MapMolecularData();
     }
 
-    internal static ClassMap<Specimen> MapXenografts(this ClassMap<Specimen> map)
+    public static ClassMap<Specimen> MapXenografts(this ClassMap<Specimen> map)
     {
         return map
             .MapSpecimen()
@@ -63,7 +63,7 @@ internal static class SpecimenMappingExtensions
             .MapMolecularData();
     }
 
-    internal static ClassMap<OrganoidIntervention> MapInterventions(this ClassMap<OrganoidIntervention> map)
+    public static ClassMap<OrganoidIntervention> MapInterventions(this ClassMap<OrganoidIntervention> map)
     {
         return map
             .MapSpecimen(entity => entity.Organoid.Specimen)
@@ -76,7 +76,7 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.Results, "results");
     }
 
-    internal static ClassMap<XenograftIntervention> MapInterventions(this ClassMap<XenograftIntervention> map)
+    public static ClassMap<XenograftIntervention> MapInterventions(this ClassMap<XenograftIntervention> map)
     {
         return map
             .MapSpecimen(entity => entity.Xenograft.Specimen)
@@ -89,7 +89,7 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.Results, "results");
     }
 
-    internal static ClassMap<DrugScreening> MapDrugScreenings(this ClassMap<DrugScreening> map)
+    public static ClassMap<DrugScreening> MapDrugScreenings(this ClassMap<DrugScreening> map)
     {
         return map
             .MapSpecimen(entity => entity.Specimen)
@@ -110,9 +110,9 @@ internal static class SpecimenMappingExtensions
         return map
             .Map(entity => entity.Donor.ReferenceId, "donor_id")
             .Map(entity => entity.ReferenceId, "specimen_id")
-            .Map(entity => entity.Type, "specimen_type")
+            .Map(entity => entity.TypeId, "specimen_type")
             .Map(entity => entity.Parent.ReferenceId, "parent_id")
-            .Map(entity => entity.Parent.Type, "parent_type")
+            .Map(entity => entity.Parent.TypeId, "parent_type")
             .Map(entity => entity.CreationDate, "creation_date")
             .Map(entity => entity.CreationDay, "creation_day");
     }
@@ -122,7 +122,7 @@ internal static class SpecimenMappingExtensions
         return map
             .Map(path.Join(entity => entity.Donor.ReferenceId), "donor_id")
             .Map(path.Join(entity => entity.ReferenceId), "specimen_id")
-            .Map(path.Join(entity => entity.Type), "specimen_type");
+            .Map(path.Join(entity => entity.TypeId), "specimen_type");
     }
 
     private static ClassMap<Specimen> MapMolecularData(this ClassMap<Specimen> map)

@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Basic.Genome.Variants;
+﻿using Unite.Essentials.Extensions;
+using Unite.Indices.Entities.Basic.Genome.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
@@ -11,9 +12,9 @@ public class VariantResource
     public int End { get; set; }
     public int? Length { get; set; }
 
-    public MutationResource Ssm { get; set; }
-    public CopyNumberVariantResource Cnv { get; set; }
-    public StructuralVariantResource Sv { get; set; }
+    public SsmResource Ssm { get; set; }
+    public CnvResource Cnv { get; set; }
+    public SvResource Sv { get; set; }
     public AffectedFeatureResource[] AffectedFeatures { get; set; }
 
     /// <summary>
@@ -36,7 +37,7 @@ public class VariantResource
 
         if (index.Ssm != null)
         {
-            Ssm = new MutationResource(index.Ssm);
+            Ssm = new SsmResource(index.Ssm);
             Chromosome = index.Ssm.Chromosome;
             Start = index.Ssm.Start;
             End = index.Ssm.End;
@@ -44,7 +45,7 @@ public class VariantResource
         }
         else if (index.Cnv != null)
         {
-            Cnv = new CopyNumberVariantResource(index.Cnv);
+            Cnv = new CnvResource(index.Cnv);
             Chromosome = index.Cnv.Chromosome;
             Start = index.Cnv.Start;
             End = index.Cnv.End;
@@ -52,29 +53,33 @@ public class VariantResource
         }
         else if (index.Sv != null)
         {
-            Sv = new StructuralVariantResource(index.Sv);
+            Sv = new SvResource(index.Sv);
             Chromosome = index.Sv.Chromosome;
             Start = index.Sv.Start;
             End = index.Sv.End;
             Length = index.Sv.Length;
         }
 
-        if (index.GetAffectedFeatures()?.Any() == true)
+        
+        var affectedFeatures = index.GetAffectedFeatures();
+
+        if (includeAffectedFeatures && affectedFeatures.IsNotEmpty())
         {
-            if (includeAffectedFeatures)
-            {
-                AffectedFeatures = index.GetAffectedFeatures().Select(featureIndex => new AffectedFeatureResource(featureIndex)).ToArray();
-            }
-            else
-            {
-                TranscriptConsequences = GetTranscriptConsequences(index.GetAffectedFeatures()).ToArray();
-            }
+            AffectedFeatures = affectedFeatures
+                .Select(featureIndex => new AffectedFeatureResource(featureIndex))
+                .ToArray();
+        }
+        else if (!includeAffectedFeatures && affectedFeatures.IsNotEmpty())
+        {
+            TranscriptConsequences =
+                GetTranscriptConsequences(affectedFeatures)
+                .ToArray();
         }
     }
 
     
 
-    private IEnumerable<dynamic> GetTranscriptConsequences(AffectedFeatureIndex[] affectedFeatures)
+    private static IEnumerable<dynamic> GetTranscriptConsequences(AffectedFeatureIndex[] affectedFeatures)
     {
         return affectedFeatures
             .Where(affectedFeature => affectedFeature.Gene != null)

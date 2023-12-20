@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Data.Specimens;
-using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Genome.Ranges.Models;
+using Unite.Composer.Data.Specimens;
 using Unite.Composer.Download.Tsv;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Resources.Domain.Specimens;
 using Unite.Composer.Web.Models;
-using Unite.Data.Entities.Genome.Variants.Enums;
-using Unite.Data.Entities.Specimens.Enums;
+using Unite.Indices.Entities.Basic.Specimens.Constants;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Specimens.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
 
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -20,106 +20,100 @@ using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 using DrugResource = Unite.Composer.Web.Resources.Domain.Basic.Specimens.DrugScreeningResource;
 using VariantResource = Unite.Composer.Web.Resources.Domain.Variants.VariantResource;
 
+
 namespace Unite.Composer.Web.Controllers.Domain.Specimens;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class SpecimenController : Controller
+public class SpecimenController : DomainController
 {
-    private readonly ISpecimensSearchService _specimensSearchService;
-    private readonly SpecimenDataService _specimenDataService;
-    private readonly SampleDataService _sampleDataService;
+    private readonly ISearchService<SpecimenIndex> _specimensSearchService;
+    private readonly ISearchService<GeneIndex> _genesSearchService;
+    private readonly ISearchService<VariantIndex> _variantsSearchService;
     private readonly DrugScreeningService _drugScreeningService;
     private readonly GenomicProfileService _genomicProfileService;
-    private readonly SpecimensTsvDownloadService _specimensTsvDownloadService;
+    private readonly SpecimensTsvDownloadService _tsvDownloadService;
 
 
     public SpecimenController(
-        ISpecimensSearchService specimensSearchService,
-        SpecimenDataService specimenDataService,
-        SampleDataService sampleDataService,
+        ISearchService<SpecimenIndex> specimensSearchService,
+        ISearchService<GeneIndex> genesSearchService,
+        ISearchService<VariantIndex> variantsSearchService,
         DrugScreeningService drugScreeningService,
         GenomicProfileService genomicProfileService,
-        SpecimensTsvDownloadService specimensTsvDownloadService)
+        SpecimensTsvDownloadService tsvDownloadService)
     {
         _specimensSearchService = specimensSearchService;
-        _specimenDataService = specimenDataService;
-        _sampleDataService = sampleDataService;
+        _genesSearchService = genesSearchService;
+        _variantsSearchService = variantsSearchService;
         _drugScreeningService = drugScreeningService;
         _genomicProfileService = genomicProfileService;
-        _specimensTsvDownloadService = specimensTsvDownloadService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
     [HttpGet("{id}")]
-    public IActionResult Specimen(int id)
+    public async Task<IActionResult> Specimen(int id)
     {
         var key = id.ToString();
 
-        var index = _specimensSearchService.Get(key);
+        var result = await _specimensSearchService.Get(key);
 
-        return Json(From(index));
+        return Ok(From(result));
     }
 
-
     [HttpPost("{id}/drugs")]
-    public IActionResult Drugs(int id)
+    public async Task<IActionResult> Drugs(int id)
     {
-        var result = _drugScreeningService
-            .GetAll(id)
+        var result = await _drugScreeningService.GetAll(id);
+
+        var resource = result
             .Select(model => new DrugResource(model))
             .ToArray();
 
-        return Json(result);
+        return await OkAsync(resource);
     }
 
-
-    [HttpGet("{id}/samples")]
-    public async Task<IActionResult> Samples(int id)
+    [HttpPost("{id}/genes")]
+    public async Task<IActionResult> Genes(int id, [FromBody]SearchCriteria searchCriteria)
     {
-        var samples = await _sampleDataService.GetSpecimenSamples(id);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Id = [id] };
 
-        return Json(samples);
+        var result = await _genesSearchService.Search(criteria);
+
+        return Ok(From(id, result));
     }
-    
-    [HttpPost("{id}/genes/{sampleId}")]
-    public IActionResult Genes(int id, int sampleId, [FromBody] SearchCriteria searchCriteria)
+
+    [HttpPost("{id}/variants/{type}")]
+    public async Task<IActionResult> Variants(int id, string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchResult = _specimensSearchService.SearchGenes(sampleId, searchCriteria);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Id = [id] };
+        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
 
-        return Json(From(sampleId, searchResult));
+        var result = await _variantsSearchService.Search(criteria);
+
+        return Ok(From(id, result));
     }
 
-    [HttpPost("{id}/variants/{sampleId}/{type}")]
-    public IActionResult Variants(int id, int sampleId, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/profile")]
+    public async Task<IActionResult> Profile(int id, [FromBody]GenomicRangesFilterCriteria filterCriteria)
     {
-        var searchResult = _specimensSearchService.SearchVariants(sampleId, type, searchCriteria);
+        var profile = await _genomicProfileService.GetProfile(id, filterCriteria);
 
-        return Json(From(sampleId, searchResult));
+        return Ok(profile);
     }
-
-    [HttpPost("{id}/profile/{sampleId}")]
-    public async Task<IActionResult> Profile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
-    {
-        var profile = await _genomicProfileService.GetProfile(sampleId, filterCriteria);
-
-        return Json(profile);
-    }
-
 
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody]SingleDownloadModel model)
     {
         var key = id.ToString();
-        var index = _specimensSearchService.Get(key);
-        var type = index.Tissue != null ? SpecimenType.Tissue
-                 : index.Cell != null ? SpecimenType.CellLine
-                 : index.Organoid != null ? SpecimenType.Organoid
-                 : index.Xenograft != null ? SpecimenType.Xenograft
-                 : throw new InvalidOperationException("Unknown specimen type");
+        var index = await _specimensSearchService.Get(key);
 
-        var bytes = await _specimensTsvDownloadService.Download(id, type, model.Data);
+        var originalType = Convert(index.Type);
+        var bytes = await _tsvDownloadService.Download(id, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
@@ -135,21 +129,33 @@ public class SpecimenController : Controller
         return new SpecimenResource(index);
     }
 
-    private static SearchResult<SpecimenGeneResource> From(int sampleId, SearchResult<GeneIndex> searchResult)
+    private static SearchResult<SpecimenGeneResource> From(int specimenId, SearchResult<GeneIndex> searchResult)
     {
         return new SearchResult<SpecimenGeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new SpecimenGeneResource(index, sampleId)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SpecimenGeneResource(index, specimenId)).ToArray()
         };
     }
 
-    private static SearchResult<VariantResource> From(int sampleId, SearchResult<VariantIndex> searchResult)
+    private static SearchResult<VariantResource> From(int specimenId, SearchResult<VariantIndex> searchResult)
     {
         return new SearchResult<VariantResource>()
         {
             Total = searchResult.Total,
             Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
+        };
+    }
+
+    private static Unite.Data.Entities.Specimens.Enums.SpecimenType Convert(string type)
+    {
+        return type switch
+        {
+            SpecimenType.Tissue => Unite.Data.Entities.Specimens.Enums.SpecimenType.Tissue,
+            SpecimenType.CellLine => Unite.Data.Entities.Specimens.Enums.SpecimenType.CellLine,
+            SpecimenType.Organoid => Unite.Data.Entities.Specimens.Enums.SpecimenType.Organoid,
+            SpecimenType.Xenograft => Unite.Data.Entities.Specimens.Enums.SpecimenType.Xenograft,
+            _ => throw new InvalidOperationException("Unknown specimen type")
         };
     }
 }

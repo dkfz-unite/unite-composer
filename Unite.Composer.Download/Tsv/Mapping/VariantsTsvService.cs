@@ -1,12 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Unite.Composer.Download.Extensions.Queryable;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Composer.Download.Tsv.Mapping.Models;
+using Unite.Data.Context;
+using Unite.Data.Entities.Genome.Variants.Enums;
 using Unite.Data.Entities.Genome.Variants;
-using Unite.Data.Entities.Images;
-using Unite.Data.Entities.Specimens;
-using Unite.Data.Entities.Specimens.Tissues.Enums;
-using Unite.Data.Services;
 using Unite.Essentials.Tsv;
 
 using SSM = Unite.Data.Entities.Genome.Variants.SSM;
@@ -15,472 +12,335 @@ using SV = Unite.Data.Entities.Genome.Variants.SV;
 
 namespace Unite.Composer.Download.Tsv.Mapping;
 
-public class VariantsTsvService
+public class VariantsTsvService : TsvServiceBase
 {
-    //TODO: Use DbContextFactory per request to allow parallel queries
-    private readonly DomainDbContext _dbContext;
-
-    public VariantsTsvService(IDbContextFactory<DomainDbContext> dbContextFactory)
+    public VariantsTsvService(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
-        _dbContext = dbContextFactory.CreateDbContext();
     }
 
-
-    public async Task<string> GetSsmsData(IEnumerable<long> ids, bool transcripts = false)
+    public async Task<string> GetData(IEnumerable<long> ids, VariantType typeId, bool transcripts = false)
     {
-        var query = CreateSsmsQuery(transcripts).FilterByVariantIds(ids);
-
-        var map = new ClassMap<SSM.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetCnvsData(IEnumerable<long> ids, bool transcripts = false)
-    {
-        var query = CreateCnvsQuery(transcripts).FilterByVariantIds(ids);
-
-        var map = new ClassMap<CNV.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetSvsData(IEnumerable<long> ids, bool transcripts = false)
-    {
-        var query = CreateSvsQuery(transcripts).FilterByVariantIds(ids);
-
-        var map = new ClassMap<SV.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-    
-    public async Task<string> GetSsmsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetSsmsDataForSpecimens(specimenIds, transcripts);
-    }
-
-    public async Task<string> GetCnvsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetCnvsDataForSpecimens(specimenIds, transcripts);
-    }
-
-    public async Task<string> GetSvsDataForDonors(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetSvsDataForSpecimens(specimenIds, transcripts);
-    }
-
-    public async Task<string> GetSsmsDataForImages(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetSsmsDataForSpecimens(specimenIds, transcripts);
-    }
-
-    public async Task<string> GetCnvsDataForImages(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetCnvsDataForSpecimens(specimenIds, transcripts);
-    }
-
-    public async Task<string> GetSvsDataForImages(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetSvsDataForSpecimens(specimenIds, transcripts);
-    }
-
-    public async Task<string> GetSsmsDataForSpecimens(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var query = CreateSsmsQuery(transcripts).FilterBySpecimenIds(ids);
-
-        var map = new ClassMap<SSM.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetCnvsDataForSpecimens(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var query = CreateCnvsQuery(transcripts).FilterByAffectedGeneIds(ids);
-
-        var map = new ClassMap<CNV.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetSvsDataForSpecimens(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var query = CreateSvsQuery(transcripts).FilterBySpecimenIds(ids);
-
-        var map = new ClassMap<SV.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetSsmsDataForGenes(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var query = CreateSsmsQuery(transcripts).FilterByAffectedGeneIds(ids);
-
-        var map = new ClassMap<SSM.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetCnvsDataForGenes(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var query = CreateCnvsQuery(transcripts).FilterByAffectedGeneIds(ids);
-
-        var map = new ClassMap<CNV.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-    public async Task<string> GetSvsDataForGenes(IEnumerable<int> ids, bool transcripts = false)
-    {
-        var query = CreateSvsQuery(transcripts).FilterByAffectedGeneIds(ids);
-
-        var map = new ClassMap<SV.VariantOccurrence>().MapVariantOccurrences(transcripts);
-
-        var entities = await query.ToArrayAsync();
-
-        return Write(entities, map);
-    }
-
-
-    public async Task<string> GetFullSsmsData(IEnumerable<long> ids)
-    {
-        var query = CreateSsmsQuery(true).FilterByVariantIds(ids);
-
-        var map = new ClassMap<SsmOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
+        if (typeId == VariantType.SSM)
+            return await GetData<SSM.VariantEntry, SSM.Variant>(ids, transcripts);
+        else if (typeId == VariantType.CNV)
+            return await GetData<CNV.VariantEntry, CNV.Variant>(ids, transcripts);
+        else if (typeId == VariantType.SV)
+            return await GetData<SV.VariantEntry, SV.Variant>(ids, transcripts);
         
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new SsmOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
+        return null;
     }
 
-    public async Task<string> GetFullCnvsData(IEnumerable<long> ids)
+    public async Task<string> GetDataForDonors(IEnumerable<int> ids, VariantType typeId, bool transcripts = false)
     {
-        var query = CreateCnvsQuery(true).FilterByVariantIds(ids);
+        var variantIds = await GetIdsForDonors(ids, typeId);
 
-        var map = new ClassMap<CnvOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
+        return await GetData(variantIds, typeId, transcripts);
+    }
 
-        var entities = await query.ToArrayAsync();
+    public async Task<string> GetDataForImages(IEnumerable<int> ids, VariantType typeId, bool transcripts = false)
+    {
+        var variantIds = await GetIdsForImages(ids, typeId);
+
+        return await GetData(variantIds, typeId, transcripts);
+    }
+
+    public async Task<string> GetDataForSpecimens(IEnumerable<int> ids, VariantType typeId, bool transcripts = false)
+    {
+        var variantIds = await GetIdsForSpecimens(ids, typeId);
+
+        return await GetData(variantIds, typeId, transcripts);
+    }
+
+    public async Task<string> GetDataForGenes(IEnumerable<int> ids, VariantType typeId, bool transcripts = false)
+    {
+        var variantIds = await GetIdsForGenes(ids, typeId);
+
+        return await GetData(variantIds, typeId, transcripts);
+    }
+
+
+    public async Task<string> GetFullData(IEnumerable<long> ids, VariantType typeId)
+    {
+        if (typeId == VariantType.SSM)
+            return await GetFullData<SSM.VariantEntry, SSM.Variant>(ids);
+        else if (typeId == VariantType.CNV)
+            return await GetFullData<CNV.VariantEntry, CNV.Variant>(ids);
+        else if (typeId == VariantType.SV)
+            return await GetFullData<SV.VariantEntry, SV.Variant>(ids);
+
+        return null;
+    }
+
+    public async Task<string> GetFullDataForDonors(IEnumerable<int> ids, VariantType typeId)
+    {
+        var variantIds = await GetIdsForDonors(ids, typeId);
+
+        return await GetFullData(variantIds, typeId);
+    }
+
+    public async Task<string> GetFullDataForImages(IEnumerable<int> ids, VariantType typeId)
+    {
+        var variantIds = await GetIdsForImages(ids, typeId);
+
+        return await GetFullData(variantIds, typeId);
+    }
+
+    public async Task<string> GetFullDataForSpecimens(IEnumerable<int> ids, VariantType typeId)
+    {
+        var variantIds = await GetIdsForSpecimens(ids, typeId);
+
+        return await GetFullData(variantIds, typeId);
+    }
+
+    public async Task<string> GetFullDataForGenes(IEnumerable<int> ids, VariantType typeId)
+    {
+        var variantIds = await GetIdsForGenes(ids, typeId);
+
+        return await GetFullData(variantIds, typeId);
+    }
+
+
+    private async Task<string> GetData<TVE, TV>(IEnumerable<long> ids, bool transcripts)
+        where TVE : VariantEntry<TV>
+        where TV : Variant
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var entities = await CreateQuery<TVE, TV>(dbContext, transcripts)
+            .Where(entity => ids.Contains(entity.EntityId))
+            .ToArrayAsync();
+
+        var map = new ClassMap<TVE>().MapVariantEntries<TVE, TV>(transcripts);
+
+        return Write(entities, map);
+    }
+
+    private async Task<string> GetFullData<TVE, TV>(IEnumerable<long> ids)
+        where TVE : VariantEntry<TV>
+        where TV : Variant
+    {
+        var type = typeof(TV);
+
+        if (type == typeof(SSM.Variant))
+            return await GetFullSsmsData(ids);
+        else if (type == typeof(CNV.Variant))
+            return await GetFullCnvsData(ids);
+        else if (type == typeof(SV.Variant))
+            return await GetFullSvsData(ids);
+        else
+            return null;
+    }
+
+    private async Task<string> GetFullSsmsData(IEnumerable<long> ids)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var entities = await CreateQuery<SSM.VariantEntry, SSM.Variant>(dbContext, true)
+            .Where(entity => ids.Contains(entity.EntityId))
+            .ToArrayAsync();
+
+        var entries = entities
+            .SelectMany(entity => entity.Entity.AffectedTranscripts, (vo, vat) => new SsmEntryWithAffectedTranscript(vo, vat))
+            .ToArray();
+
+        var map = new ClassMap<SsmEntryWithAffectedTranscript>().MapVariantEntries();
         
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new CnvOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullSvsData(IEnumerable<long> ids)
-    {
-        var query = CreateSvsQuery(true).FilterByVariantIds(ids);
-
-        var map = new ClassMap<SvOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
-
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new SvOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullSsmsDataForDonors(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetFullSsmsDataForSpecimens(specimenIds);
-    }
-
-    public async Task<string> GetFullCnvsDataForDonors(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetFullCnvsDataForSpecimens(specimenIds);
-    }
-
-    public async Task<string> GetFullSvsDataForDonors(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForDonors(ids);
-
-        return await GetFullSvsDataForSpecimens(specimenIds);
-    }
-
-    public async Task<string> GetFullSsmsDataForImages(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetFullSsmsDataForSpecimens(specimenIds);
-    }
-
-    public async Task<string> GetFullCnvsDataForImages(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetFullCnvsDataForSpecimens(specimenIds);
-    }
-
-    public async Task<string> GetFullSvsDataForImages(IEnumerable<int> ids)
-    {
-        var specimenIds = await GetSpecimenIdsForImages(ids);
-
-        return await GetFullSvsDataForSpecimens(specimenIds);
-    }
-
-    public async Task<string> GetFullSsmsDataForSpecimens(IEnumerable<int> ids)
-    {
-        var query = CreateSsmsQuery(true).FilterBySpecimenIds(ids);
-
-        var map = new ClassMap<SsmOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
-
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new SsmOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullCnvsDataForSpecimens(IEnumerable<int> ids)
-    {
-        var query = CreateCnvsQuery(true).FilterBySpecimenIds(ids);
-
-        var map = new ClassMap<CnvOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
-
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new CnvOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullSvsDataForSpecimens(IEnumerable<int> ids)
-    {
-        var query = CreateSvsQuery(true).FilterBySpecimenIds(ids);
-
-        var map = new ClassMap<SvOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
-
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new SvOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullSsmsDataForGenes(IEnumerable<int> ids)
-    {
-        var query = CreateSsmsQuery(true).FilterByAffectedGeneIds(ids);
-
-        var map = new ClassMap<SsmOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
-
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new SsmOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
-        return TsvWriter.Write(entries, map);
-    }
-
-    public async Task<string> GetFullCnvsDataForGenes(IEnumerable<int> ids)
-    {
-        var query = CreateCnvsQuery(true).FilterByAffectedGeneIds(ids);
-
-        var map = new ClassMap<CnvOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
-
-        var entities = await query.ToArrayAsync();
-
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new CnvOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
-
         return Write(entries, map);
     }
 
-    public async Task<string> GetFullSvsDataForGenes(IEnumerable<int> ids)
+    private async Task<string> GetFullCnvsData(IEnumerable<long> ids)
     {
-        var query = CreateSvsQuery(true).FilterByAffectedGeneIds(ids);
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var map = new ClassMap<SvOccurrenceWithAffectedTranscript>().MapVariantOccurrences();
+        var entities = await CreateQuery<CNV.VariantEntry, CNV.Variant>(dbContext, true)
+            .Where(entity => ids.Contains(entity.EntityId))
+            .ToArrayAsync();
 
-        var entities = await query.ToArrayAsync();
+        var entries = entities
+            .SelectMany(entity => entity.Entity.AffectedTranscripts, (vo, vat) => new CnvEntryWithAffectedTranscript(vo, vat))
+            .ToArray();
 
-        var entries = entities?.SelectMany(vo => vo.Variant.AffectedTranscripts, (vo, vat) => new SvOccurrenceWithAffectedTranscript(vo, vat)).ToArray();
+        var map = new ClassMap<CnvEntryWithAffectedTranscript>().MapVariantEntries();
+        
+        return Write(entries, map);
+    }
 
-        return TsvWriter.Write(entries, map);
+    private async Task<string> GetFullSvsData(IEnumerable<long> ids)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var entities = await CreateQuery<SV.VariantEntry, SV.Variant>(dbContext, true)
+            .Where(entity => ids.Contains(entity.EntityId))
+            .ToArrayAsync();
+
+        var entries = entities
+            .SelectMany(entity => entity.Entity.AffectedTranscripts, (vo, vat) => new SvEntryWithAffectedTranscript(vo, vat))
+            .ToArray();
+
+        var map = new ClassMap<SvEntryWithAffectedTranscript>().MapVariantEntries();
+        
+        return Write(entries, map);
     }
 
 
-    private async Task<int[]> GetSpecimenIdsForDonors(IEnumerable<int> ids)
+    private async Task<long[]> GetIdsForDonors(IEnumerable<int> ids, VariantType typeId)
     {
-        return await _dbContext.Set<Specimen>().AsNoTracking()
-            .Where(entity => ids.Contains(entity.DonorId))
-            .Select(entity => entity.Id)
-            .Distinct()
-            .ToArrayAsync();
+        if (typeId == VariantType.SSM)
+            return await _donorsRepository.GetRelatedVariants<SSM.Variant>(ids);
+        else if (typeId == VariantType.CNV)
+            return await _donorsRepository.GetRelatedVariants<CNV.Variant>(ids);
+        else if (typeId == VariantType.SV)
+            return await _donorsRepository.GetRelatedVariants<SV.Variant>(ids);
+        
+        return null;
     }
 
-    private async Task<int[]> GetSpecimenIdsForImages(IEnumerable<int> ids)
-    { 
-        var donorIds = await _dbContext.Set<Image>().AsNoTracking()
-            .Where(entity => ids.Contains(entity.Id))
-            .Select(entity => entity.DonorId)
-            .Distinct()
-            .ToArrayAsync();
+    private async Task<long[]> GetIdsForImages(IEnumerable<int> ids, VariantType typeId)
+    {
+        if (typeId == VariantType.SSM)
+            return await _imagesRepository.GetRelatedVariants<SSM.Variant>(ids);
+        else if (typeId == VariantType.CNV)
+            return await _imagesRepository.GetRelatedVariants<CNV.Variant>(ids);
+        else if (typeId == VariantType.SV)
+            return await _imagesRepository.GetRelatedVariants<SV.Variant>(ids);
+        
+        return null;
+    }
 
-        return await _dbContext.Set<Specimen>().AsNoTracking()
-            .Include(entity => entity.Tissue)
-            .Where(entity => entity.Tissue != null && entity.Tissue.TypeId != TissueType.Control)
-            .Where(entity => ids.Contains(entity.DonorId))
-            .Select(entity => entity.Id)
-            .Distinct()
-            .ToArrayAsync();
+    private async Task<long[]> GetIdsForSpecimens(IEnumerable<int> ids, VariantType typeId)
+    {
+        if (typeId == VariantType.SSM)
+            return await _specimensRepository.GetRelatedVariants<SSM.Variant>(ids);
+        else if (typeId == VariantType.CNV)
+            return await _specimensRepository.GetRelatedVariants<CNV.Variant>(ids);
+        else if (typeId == VariantType.SV)
+            return await _specimensRepository.GetRelatedVariants<SV.Variant>(ids);
+        
+        return null;
+    }
+
+    private async Task<long[]> GetIdsForGenes(IEnumerable<int> ids, VariantType typeId)
+    {
+        if (typeId == VariantType.SSM)
+            return await _genesRepository.GetRelatedVariants<SSM.Variant>(ids);
+        else if (typeId == VariantType.CNV)
+            return await _genesRepository.GetRelatedVariants<CNV.Variant>(ids);
+        else if (typeId == VariantType.SV)
+            return await _genesRepository.GetRelatedVariants<SV.Variant>(ids);
+        
+        return null;
     }
 
 
-    private IQueryable<SSM.VariantOccurrence> CreateSsmsQuery(bool transcripts = false)
+    private static IQueryable<TVE> CreateQuery<TVE, TV>(DomainDbContext dbContext, bool transcripts)
+        where TVE : VariantEntry<TV>
+        where TV : Variant
     {
-        var query = _dbContext.Set<SSM.VariantOccurrence>().AsNoTracking();
+        var query = dbContext.Set<TVE>().AsNoTracking();
 
-        query = IncludeAffectedFeatures(query, transcripts);
-        query = IncludeVariant<SSM.VariantOccurrence, SSM.Variant>(query);
-        query = IncludeSamples<SSM.VariantOccurrence, SSM.Variant>(query);
-        query = OrderVariant<SSM.VariantOccurrence, SSM.Variant>(query);
+        query = IncludeAffectedFeatures<TVE, TV>(query, transcripts);
+        query = IncludeVariant<TVE, TV>(query);
+        query = IncludeSamples<TVE, TV>(query);
+        query = OrderVariant<TVE, TV>(query);
 
         return query;
     }
 
-    private IQueryable<CNV.VariantOccurrence> CreateCnvsQuery(bool transcripts = false)
-    {
-        var query = _dbContext.Set<CNV.VariantOccurrence>().AsNoTracking();
-
-        query = IncludeAffectedFeatures(query, transcripts);
-        query = IncludeVariant<CNV.VariantOccurrence, CNV.Variant>(query);
-        query = IncludeSamples<CNV.VariantOccurrence, CNV.Variant>(query);
-        query = OrderVariant<CNV.VariantOccurrence, CNV.Variant>(query);
-
-        return query;
-    }
-
-    private IQueryable<SV.VariantOccurrence> CreateSvsQuery(bool transcripts = false)
-    {
-        var query = _dbContext.Set<SV.VariantOccurrence>().AsNoTracking();
-
-        query = IncludeAffectedFeatures(query, transcripts);
-        query = IncludeVariant<SV.VariantOccurrence, SV.Variant>(query);
-        query = IncludeSamples<SV.VariantOccurrence, SV.Variant>(query);
-        query = OrderVariant<SV.VariantOccurrence, SV.Variant>(query);
-
-        return query;
-    }
-
-
-    private static IQueryable<TVO> IncludeVariant<TVO, TV>(IQueryable<TVO> query)
-        where TVO : VariantOccurrence<TV>
+    private static IQueryable<TVE> IncludeVariant<TVE, TV>(IQueryable<TVE> query)
+        where TVE : VariantEntry<TV>
         where TV : Variant
     {
         return query
-            .Include(entity => entity.Variant);
+            .Include(entity => entity.Entity);
     }
 
-    private static IQueryable<TVO> IncludeSamples<TVO, TV>(IQueryable<TVO> query)
-        where TVO : VariantOccurrence<TV>
+    private static IQueryable<TVE> IncludeSamples<TVE, TV>(IQueryable<TVE> query)
+        where TVE : VariantEntry<TV>
         where TV : Variant
     {
         return query
             .Include(entity => entity.AnalysedSample.Analysis)
-            .Include(entity => entity.AnalysedSample.Sample.Specimen.Donor)
-            .Include(entity => entity.AnalysedSample.Sample.Specimen.Tissue)
-            .Include(entity => entity.AnalysedSample.Sample.Specimen.CellLine)
-            .Include(entity => entity.AnalysedSample.Sample.Specimen.Organoid)
-            .Include(entity => entity.AnalysedSample.Sample.Specimen.Xenograft)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Specimen.Donor)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Specimen.Tissue)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Specimen.CellLine)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Specimen.Organoid)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Specimen.Xenograft);
+            .Include(entity => entity.AnalysedSample.TargetSample.Donor)
+            .Include(entity => entity.AnalysedSample.TargetSample.Tissue)
+            .Include(entity => entity.AnalysedSample.TargetSample.CellLine)
+            .Include(entity => entity.AnalysedSample.TargetSample.Organoid)
+            .Include(entity => entity.AnalysedSample.TargetSample.Xenograft)
+            .Include(entity => entity.AnalysedSample.MatchedSample.Donor)
+            .Include(entity => entity.AnalysedSample.MatchedSample.Tissue)
+            .Include(entity => entity.AnalysedSample.MatchedSample.CellLine)
+            .Include(entity => entity.AnalysedSample.MatchedSample.Organoid)
+            .Include(entity => entity.AnalysedSample.MatchedSample.Xenograft);
     }
 
-    private static IQueryable<SSM.VariantOccurrence> IncludeAffectedFeatures(IQueryable<SSM.VariantOccurrence> query, bool transcripts = false)
+    private static IQueryable<TVE> IncludeAffectedFeatures<TVE, TV>(IQueryable<TVE> query, bool transcripts)
+        where TVE : VariantEntry<TV>
+        where TV : Variant
     {
-        IQueryable<SSM.VariantOccurrence> includeQuery = query;
+        if (query is IQueryable<SSM.VariantEntry> ssmQuery)
+            return IncludeAffectedFeatures(ssmQuery, transcripts) as IQueryable<TVE>;
+        else if (query is IQueryable<CNV.VariantEntry> cnvQuery)
+            return IncludeAffectedFeatures(cnvQuery, transcripts) as IQueryable<TVE>;
+        else if (query is IQueryable<SV.VariantEntry> svQuery)
+            return IncludeAffectedFeatures(svQuery, transcripts) as IQueryable<TVE>;
+        else
+            return query;
+    }
+
+    private static IQueryable<SSM.VariantEntry> IncludeAffectedFeatures(IQueryable<SSM.VariantEntry> query, bool transcripts)
+    {
+        IQueryable<SSM.VariantEntry> includeQuery = query;
 
         if (transcripts)
         {
             includeQuery = includeQuery
-                .Include(entity => entity.Variant.AffectedTranscripts)
+                .Include(entity => entity.Entity.AffectedTranscripts)
                     .ThenInclude(entity => entity.Feature.Gene)
-                .Include(entity => entity.Variant.AffectedTranscripts)
+                .Include(entity => entity.Entity.AffectedTranscripts)
                     .ThenInclude(entity => entity.Feature.Protein);
         }
         
         return includeQuery;
     }
 
-    private static IQueryable<CNV.VariantOccurrence> IncludeAffectedFeatures(IQueryable<CNV.VariantOccurrence> query, bool transcripts = false)
+    private static IQueryable<CNV.VariantEntry> IncludeAffectedFeatures(IQueryable<CNV.VariantEntry> query, bool transcripts)
     {
-        IQueryable<CNV.VariantOccurrence> includeQuery = query;
+        IQueryable<CNV.VariantEntry> includeQuery = query;
 
         if (transcripts)
         {
             includeQuery = includeQuery
-                .Include(entity => entity.Variant.AffectedTranscripts)
+                .Include(entity => entity.Entity.AffectedTranscripts)
                     .ThenInclude(entity => entity.Feature.Gene)
-                .Include(entity => entity.Variant.AffectedTranscripts)
+                .Include(entity => entity.Entity.AffectedTranscripts)
                     .ThenInclude(entity => entity.Feature.Protein);
         }
         
         return includeQuery;
     }
 
-    private static IQueryable<SV.VariantOccurrence> IncludeAffectedFeatures(IQueryable<SV.VariantOccurrence> query, bool transcripts = false)
+    private static IQueryable<SV.VariantEntry> IncludeAffectedFeatures(IQueryable<SV.VariantEntry> query, bool transcripts)
     {
-        IQueryable<SV.VariantOccurrence> includeQuery = query;
+        IQueryable<SV.VariantEntry> includeQuery = query;
 
         if (transcripts)
         {
             includeQuery = includeQuery
-                .Include(entity => entity.Variant.AffectedTranscripts)
+                .Include(entity => entity.Entity.AffectedTranscripts)
                     .ThenInclude(entity => entity.Feature.Gene)
-                .Include(entity => entity.Variant.AffectedTranscripts)
+                .Include(entity => entity.Entity.AffectedTranscripts)
                     .ThenInclude(entity => entity.Feature.Protein);
         }
         
         return includeQuery;
     }
 
-
-    private static IQueryable<TVO> OrderVariant<TVO, TV>(IQueryable<TVO> query)
-        where TVO : VariantOccurrence<TV>
+    private static IQueryable<TVE> OrderVariant<TVE, TV>(IQueryable<TVE> query)
+        where TVE : VariantEntry<TV>
         where TV : Variant
     {
         return query
-            .OrderBy(entity => entity.AnalysedSample.Sample.Specimen.DonorId)
-            .ThenBy(entity => entity.Variant.ChromosomeId)
-            .ThenBy(entity => entity.Variant.Start);
-    }
-
-
-    private static string Write<T>(IEnumerable<T> entities, ClassMap<T> map)
-        where T : class
-    {
-        return entities?.Any() == true ? TsvWriter.Write(entities, map) : null;
+            .OrderBy(entity => entity.AnalysedSample.TargetSample.DonorId)
+            .ThenBy(entity => entity.Entity.ChromosomeId)
+            .ThenBy(entity => entity.Entity.Start);
     }
 }

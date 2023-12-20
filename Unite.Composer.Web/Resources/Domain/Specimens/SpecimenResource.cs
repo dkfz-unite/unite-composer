@@ -1,4 +1,6 @@
 ﻿using Unite.Composer.Data.Specimens.Models;
+using Unite.Composer.Web.Resources.Domain.Basic;
+using Unite.Essentials.Extensions;
 using Unite.Indices.Entities.Specimens;
 
 namespace Unite.Composer.Web.Resources.Domain.Specimens;
@@ -6,15 +8,18 @@ namespace Unite.Composer.Web.Resources.Domain.Specimens;
 public class SpecimenResource : Basic.Specimens.SpecimenResource
 {
     public int DonorId { get; set; }
-    public DateOnly? CollectionDate { get; set; }
-
-    public SpecimenResource Parent { get; set; }
+    public int? ParentId { get; set; }
+    public string ParentReferenceId { get; set; }
+    public string ParentType { get; set; }
 
     public int NumberOfGenes { get; set; }
     public int NumberOfSsms { get; set; }
     public int NumberOfCnvs { get; set; }
     public int NumberOfSvs { get; set; }
+
+    public SpecimenResource Parent { get; set; }
     public SpecimenDataResource Data { get; set; }
+    public SampleResource Sample { get; set; }
 
 
     /// <summary>
@@ -39,25 +44,20 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
 
     private void Map(SpecimenIndex index)
     {
-        if (index.Donor != null)
-        {
-            DonorId = index.Donor.Id;
-        }
-
-        if (index.Parent != null)
-        {
-            ParentId = index.Parent.Id;
-            Parent = new SpecimenResource(index.Parent);
-        }
-
+        DonorId = index.DonorId;
+        ParentId = index.ParentId;
+        ParentReferenceId = index.ParentReferenceId;
+        ParentType = index.ParentType;
+        
         NumberOfGenes = index.NumberOfGenes;
         NumberOfSsms = index.NumberOfSsms;
         NumberOfCnvs = index.NumberOfCnvs;
         NumberOfSvs = index.NumberOfSvs;
-
+        
         if (index.Data != null)
-        {
-            Data = new SpecimenDataResource(index.Data);
-        }
+            Data = new SpecimenDataResource(index.Data, index.Type);
+
+        if (index.Analyses.IsNotEmpty())
+            Sample = new SampleResource(index, index.Analyses);
     }
 }

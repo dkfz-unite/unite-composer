@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Visualization.Lolliplot;
-using Unite.Composer.Visualization.Lolliplot.Data;
 
 namespace Unite.Composer.Web.Controllers.Visualization;
 
@@ -18,8 +17,10 @@ public class LolliplotController : Controller
     }
 
     [HttpGet("transcript/{id}")]
-    public async Task<ProteinPlotData> Get(long id)
+    public async Task<IActionResult> Get(long id)
     {
-        return await _dataService.LoadData(id);
+        var result = await _dataService.LoadData(id);
+
+        return Ok(result);
     }
 }

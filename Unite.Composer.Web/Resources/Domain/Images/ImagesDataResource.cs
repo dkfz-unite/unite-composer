@@ -1,4 +1,4 @@
-using Unite.Indices.Entities.Images;
+using Unite.Indices.Entities;
 
 namespace Unite.Composer.Web.Resources.Domain.Images;
 
@@ -17,7 +17,7 @@ public class ImagesDataResource
     public int Total { get; set; }
 
 
-    public ImagesDataResource(IDictionary<int, DataIndex> indices)
+    public ImagesDataResource(IReadOnlyDictionary<object, DataIndex> indices)
     {
         Clinical = indices.Values.Any(d => d.Clinical == true);
         Treatments = indices.Values.Any(d => d.Treatments == true);
@@ -29,6 +29,6 @@ public class ImagesDataResource
         GeneExp = indices.Values.Any(d => d.GeneExp == true);
         GeneExpSc = indices.Values.Any(d => d.GeneExpSc == true);
 
-        Total = indices.Count();
+        Total = indices.Count;
     }
 }

@@ -1,5 +1,5 @@
 using Unite.Data.Entities.Genome.Variants.SSM;
-using Unite.Data.Utilities.Mutations;
+using Unite.Data.Helpers.Genome.Variants.SSM;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;

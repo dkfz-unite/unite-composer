@@ -1,4 +1,4 @@
-using Unite.Indices.Entities.Genes;
+using Unite.Indices.Entities;
 
 namespace Unite.Composer.Web.Resources.Domain.Genes;
 

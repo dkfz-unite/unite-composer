@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Projects.Models;
+using Unite.Data.Context;
 using Unite.Data.Entities.Donors;
 using Unite.Data.Entities.Genome.Transcriptomics;
 using Unite.Data.Entities.Images;
+using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens;
-using Unite.Data.Services;
+using Unite.Data.Entities.Specimens.Enums;
 
 using CNV = Unite.Data.Entities.Genome.Variants.CNV;
 using SSM = Unite.Data.Entities.Genome.Variants.SSM;
@@ -25,11 +27,13 @@ public class ProjectService
     public ProjectModel Get(int id)
     {
         var project = _dbContext.Set<Project>()
+            .AsNoTracking()
             .FirstOrDefault(project => project.Id == id);
 
         if (project != null)
         {
             var projectDonorIds = _dbContext.Set<ProjectDonor>()
+                .AsNoTracking()
                 .Where(projectDonor => projectDonor.ProjectId == project.Id)
                 .Select(projectDonor => projectDonor.DonorId)
                 .Distinct()
@@ -74,12 +78,14 @@ public class ProjectService
     public IEnumerable<ProjectModel> GetAll()
     {
         var projects = _dbContext.Set<Project>()
+            .AsNoTracking()
             .OrderBy(project => project.Name)
             .ToArray();
 
         foreach (var project in projects)
         {
             var projectDonorIds = _dbContext.Set<ProjectDonor>()
+                .AsNoTracking()
                 .Where(projectDonor => projectDonor.ProjectId == project.Id)
                 .Select(projectDonor => projectDonor.DonorId)
                 .Distinct()
@@ -98,6 +104,7 @@ public class ProjectService
         }
 
         var emptyProjectDonorIds = _dbContext.Set<Donor>()
+            .AsNoTracking()
             .Where(donor => donor.DonorProjects.Count == 0)
             .Select(donor => donor.Id)
             .Distinct()
@@ -121,8 +128,8 @@ public class ProjectService
     private ProjectDataModel CalculateProjectData(int[] donorIds)
     {
         var withMriImages = _dbContext.Set<Image>()
-            .Include(image => image.MriImage)
-            .Where(image => image.MriImage != null)
+            .AsNoTracking()
+            .Where(image => image.TypeId == ImageType.MRI)
             .Where(image => donorIds.Contains(image.DonorId))
             .Select(image => image.DonorId)
             .Distinct()
@@ -131,58 +138,62 @@ public class ProjectService
         var withCtImages = 0;
 
         var withTissues = _dbContext.Set<Specimen>()
-            .Include(specimen => specimen.Tissue)
-            .Where(specimen => specimen.Tissue != null)
+            .AsNoTracking()
+            .Where(specimen => specimen.TypeId == SpecimenType.Tissue)
             .Where(specimen => donorIds.Contains(specimen.DonorId))
             .Select(specimen => specimen.DonorId)
             .Distinct()
             .Count();
 
         var withCellLines = _dbContext.Set<Specimen>()
-            .Include(specimen => specimen.CellLine)
-            .Where(specimen => specimen.CellLine != null)
+            .AsNoTracking()
+            .Where(specimen => specimen.TypeId == SpecimenType.CellLine)
             .Where(specimen => donorIds.Contains(specimen.DonorId))
             .Select(specimen => specimen.DonorId)
             .Distinct()
             .Count();
 
         var withOrganoids = _dbContext.Set<Specimen>()
-            .Include(specimen => specimen.Organoid)
-            .Where(specimen => specimen.Organoid != null)
+            .AsNoTracking()
+            .Where(specimen => specimen.TypeId == SpecimenType.Organoid)
             .Where(specimen => donorIds.Contains(specimen.DonorId))
             .Select(specimen => specimen.DonorId)
             .Distinct()
             .Count();
 
         var withXenografts = _dbContext.Set<Specimen>()
-            .Include(specimen => specimen.Xenograft)
-            .Where(specimen => specimen.Xenograft != null)
+            .AsNoTracking()
+            .Where(specimen => specimen.TypeId == SpecimenType.Xenograft)
             .Where(specimen => donorIds.Contains(specimen.DonorId))
             .Select(specimen => specimen.DonorId)
             .Distinct()
             .Count();
 
-        var withSimpleSomaticMutations = _dbContext.Set<SSM.VariantOccurrence>()
-            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.Sample.Specimen.DonorId))
-            .Select(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId)
+        var withSimpleSomaticMutations = _dbContext.Set<SSM.VariantEntry>()
+            .AsNoTracking()
+            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.TargetSample.DonorId))
+            .Select(occurrence => occurrence.AnalysedSample.TargetSample.DonorId)
             .Distinct()
             .Count();
 
-        var withCopyNumberVariants = _dbContext.Set<CNV.VariantOccurrence>()
-            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.Sample.Specimen.DonorId))
-            .Select(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId)
+        var withCopyNumberVariants = _dbContext.Set<CNV.VariantEntry>()
+            .AsNoTracking()
+            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.TargetSample.DonorId))
+            .Select(occurrence => occurrence.AnalysedSample.TargetSample.DonorId)
             .Distinct()
             .Count();
 
-        var withStructuralVariants = _dbContext.Set<SV.VariantOccurrence>()
-            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.Sample.Specimen.DonorId))
-            .Select(occurrence => occurrence.AnalysedSample.Sample.Specimen.DonorId)
+        var withStructuralVariants = _dbContext.Set<SV.VariantEntry>()
+            .AsNoTracking()
+            .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.TargetSample.DonorId))
+            .Select(occurrence => occurrence.AnalysedSample.TargetSample.DonorId)
             .Distinct()
             .Count();
 
-        var withGeneExpressions = _dbContext.Set<GeneExpression>()
-            .Where(geneExpression => donorIds.Contains(geneExpression.AnalysedSample.Sample.Specimen.DonorId))
-            .Select(geneExpression => geneExpression.AnalysedSample.Sample.Specimen.DonorId)
+        var withGeneExpressions = _dbContext.Set<BulkExpression>()
+            .AsNoTracking()
+            .Where(geneExpression => donorIds.Contains(geneExpression.AnalysedSample.TargetSample.DonorId))
+            .Select(geneExpression => geneExpression.AnalysedSample.TargetSample.DonorId)
             .Distinct()
             .Count();
 

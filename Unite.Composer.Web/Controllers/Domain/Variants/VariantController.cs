@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Genome;
-using Unite.Composer.Data.Genome.Models;
 using Unite.Composer.Download.Tsv;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
@@ -19,69 +19,71 @@ namespace Unite.Composer.Web.Controllers.Domain.Mutations;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class VariantController : Controller
+public class VariantController : DomainController
 {
-    private readonly IVariantsSearchService _variantsSearchService;
-    private readonly MutationDataService _mutationDataService;
-    private readonly VariantsTsvDownloadService _variantsTsvDownloadService;
+    private readonly ISearchService<DonorIndex> _donorsSearchService;
+    private readonly ISearchService<VariantIndex> _variantsSearchService;
+    private readonly SsmDataService _ssmDataService;
+    private readonly VariantsTsvDownloadService _tsvDownloadService;
 
 
     public VariantController(
-        IVariantsSearchService variantsSearchService,
-        MutationDataService mutationDataService,
-        VariantsTsvDownloadService variantsTsvDownloadService)
+        ISearchService<DonorIndex> donorsSearchService,
+        ISearchService<VariantIndex> variantsSearchService,
+        SsmDataService ssmDataService,
+        VariantsTsvDownloadService tsvDownloadService)
     {
+        _donorsSearchService = donorsSearchService;
         _variantsSearchService = variantsSearchService;
-        _mutationDataService = mutationDataService;
-        _variantsTsvDownloadService = variantsTsvDownloadService;
+        _ssmDataService = ssmDataService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
     [HttpGet("{id}")]
-    public VariantResource Get(string id)
+    public async Task<IActionResult> Get(string id)
     {
         var key = id;
 
-        var index = _variantsSearchService.Get(key);
+        var result = await _variantsSearchService.Get(key);
 
-        return From(index);
+        return Ok(From(result));
     }
 
     [HttpPost("{id}/donors")]
-    public SearchResult<DonorResource> SearchDonors(string id, [FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> SearchDonors(string id, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchResult = _variantsSearchService.SearchDonors(id, searchCriteria);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Id = [id] };
 
-        return From(searchResult);
+        var result = await _donorsSearchService.Search(criteria);
+
+        return Ok(From(result));
     }
 
     [HttpGet("{id}/translations")]
-    public Transcript[] GetTranslations(string id)
+    public async Task<IActionResult> GetTranslations(string id)
     {
-        if (id.StartsWith("SSM"))
+        if (id.StartsWith(VariantType.SSM))
         {
-            var mutationId = long.Parse(id.Substring(3));
-            var translations = _mutationDataService.GetTranslations(mutationId);
+            var variantId = long.Parse(id.Substring(VariantType.SSM.Length));
+            var translations = await _ssmDataService.GetTranslations(variantId);
 
-            return translations;
+            return Ok(translations);
         }
-        else
-        {
-            return null;
-        }
+        
+        return null;
     }
 
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(string id, [FromBody]SingleDownloadModel model)
     {
         var key = id.ToString();
-        var index = _variantsSearchService.Get(key);
-        var type = index.Ssm != null ? VariantType.SSM
-                 : index.Cnv != null ? VariantType.CNV
-                 : index.Sv != null ? VariantType.SV
-                 : throw new InvalidOperationException("Unknown variant type");
+        var index = await _variantsSearchService.Get(key);
 
-        var bytes = await _variantsTsvDownloadService.Download(long.Parse(id.Substring(index.Type.Length)), type, model.Data);
+        var originalIds = long.Parse(id.Substring(index.Type.Length));
+        var originalType = Convert(index.Type);
+        var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
@@ -103,6 +105,17 @@ public class VariantController : Controller
         {
             Total = searchResult.Total,
             Rows = searchResult.Rows.Select(index => new DonorResource(index)).ToArray()
+        };
+    }
+
+    private static Unite.Data.Entities.Genome.Variants.Enums.VariantType Convert(string type)
+    {
+        return type switch
+        {
+            VariantType.SSM => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SSM,
+            VariantType.CNV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.CNV,
+            VariantType.SV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SV,
+            _ => throw new InvalidOperationException("Unknown variant type")
         };
     }
 }

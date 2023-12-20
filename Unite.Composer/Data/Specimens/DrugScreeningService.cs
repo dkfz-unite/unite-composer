@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Specimens.Models;
+using Unite.Data.Context;
 using Unite.Data.Entities.Specimens;
-using Unite.Data.Services;
 
 namespace Unite.Composer.Data.Specimens;
 
@@ -16,16 +16,17 @@ public class DrugScreeningService
     }
 
 
-    public IEnumerable<DrugScreeningModel> GetAll(int specimenId)
+    public async Task<IEnumerable<DrugScreeningModel>> GetAll(int specimenId)
     {
-        var screenings = _dbContext.Set<DrugScreening>()
+        var screenings = await _dbContext.Set<DrugScreening>()
+            .AsNoTracking()
             .Include(screening => screening.Drug)
             .Where(screening => screening.SpecimenId == specimenId)
-            .ToArray();
+            .ToArrayAsync();
 
-        foreach (var screening in screenings)
+        return screenings.Select(screening =>
         {
-            yield return new DrugScreeningModel
+            return new DrugScreeningModel
             {
                 Drug = screening.Drug.Name,
                 Dss = screening.Dss,
@@ -38,9 +39,9 @@ public class DrugScreeningService
                 AbsIC75 = screening.AbsIC75,
                 Concentration = screening.Concentration,
                 Inhibition = screening.Inhibition,
-                Dose = screening.Dose,
-                Response = screening.Response
+                Dose = screening.InhibitionLine,
+                Response = screening.ConcentrationLine
             };
-        }
+        });
     }
 }

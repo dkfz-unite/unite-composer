@@ -34,8 +34,6 @@ public class TranscriptResource
         ExonicLength = index.ExonicLength;
 
         if (index.Protein != null)
-        {
             Protein = new ProteinResource(index.Protein);
-        }
     }
 }

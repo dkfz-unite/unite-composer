@@ -16,9 +16,9 @@ public class GeneResource : Basic.Genome.GeneResource
     public int NumberOfCnvs { get; }
     public int NumberOfSvs { get; }
 
-    public GeneExpressionStatsResource Reads { get; set; }
-    public GeneExpressionStatsResource Tpm { get; set; }
-    public GeneExpressionStatsResource Fpkm { get; set; }
+    public BulkExpressionStatsResource Reads { get; set; }
+    public BulkExpressionStatsResource Tpm { get; set; }
+    public BulkExpressionStatsResource Fpkm { get; set; }
     public GeneDataResource Data { get; set; }
 
 
@@ -36,23 +36,15 @@ public class GeneResource : Basic.Genome.GeneResource
         NumberOfSvs = index.NumberOfSvs;
 
         if (index.Reads != null)
-        {
-            Reads = new GeneExpressionStatsResource(index.Reads);
-        }
+            Reads = new BulkExpressionStatsResource(index.Reads);
 
         if (index.Tpm != null)
-        {
-            Tpm = new GeneExpressionStatsResource(index.Tpm);
-        }
+            Tpm = new BulkExpressionStatsResource(index.Tpm);
 
         if (index.Fpkm != null)
-        {
-            Fpkm = new GeneExpressionStatsResource(index.Fpkm);
-        }
+            Fpkm = new BulkExpressionStatsResource(index.Fpkm);
 
         if (index.Data != null)
-        {
             Data = new GeneDataResource(index.Data);
-        }
     }
 }

@@ -1,5 +1,5 @@
-using Unite.Data.Entities.Genome.Variants.Enums;
-using Unite.Indices.Entities.Variants;
+using Unite.Indices.Entities;
+using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
@@ -32,7 +32,7 @@ public class VariantDataResource
 
     public VariantDataResource() { }
 
-    public VariantDataResource(DataIndex index, VariantType type)
+    public VariantDataResource(DataIndex index, string type)
     {
         Donors = index.Donors;
         Clinical = index.Clinical;

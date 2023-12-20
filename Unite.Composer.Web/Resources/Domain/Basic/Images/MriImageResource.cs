@@ -4,7 +4,9 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Images;
 
 public class MriImageResource
 {
+    public int Id { get; set; }
     public string ReferenceId { get; set; }
+    public int? CreationDay { get; set; }
 
     public double? WholeTumor { get; set; }
     public double? ContrastEnhancing { get; set; }
@@ -29,7 +31,9 @@ public class MriImageResource
 
     public MriImageResource(MriImageIndex index)
     {
+        Id = index.Id;
         ReferenceId = index.ReferenceId;
+        CreationDay = index.CreationDay;
 
         WholeTumor = index.WholeTumor;
         ContrastEnhancing = index.ContrastEnhancing;

@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Basic.Donors;
+﻿using Unite.Essentials.Extensions;
+using Unite.Indices.Entities.Basic.Donors;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Donors;
 
@@ -19,27 +20,25 @@ public class DonorResource
         Id = index.Id;
         ReferenceId = index.ReferenceId;
         MtaProtected = index.MtaProtected;
-
+        
         if (index.ClinicalData != null)
-        {
             ClinicalData = new ClinicalDataResource(index.ClinicalData);
-        }
 
-        if (index.Treatments?.Any() == true)
+        if (index.Treatments.IsNotEmpty())
         {
             Treatments = index.Treatments
                 .Select(treatment => new TreatmentResource(treatment))
                 .ToArray();
         }
 
-        if (index.Projects?.Any() == true)
+        if (index.Projects.IsNotEmpty())
         {
             Projects = index.Projects
                 .Select(project => new ProjectResource(project))
                 .ToArray();
         }
 
-        if (index.Studies?.Any() == true)
+        if (index.Studies.IsNotEmpty())
         {
             Studies = index.Studies
                 .Select(study => new StudyResource(study))

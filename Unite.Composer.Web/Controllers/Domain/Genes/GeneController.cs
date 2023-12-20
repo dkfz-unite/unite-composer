@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Data.Genome;
-using Unite.Composer.Data.Genome.Models;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services.Filters.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Genes.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -21,62 +21,75 @@ namespace Unite.Composer.Web.Controllers.Domain.Genes;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class GeneController : Controller
+public class GeneController : DomainController
 {
-    private readonly IGenesSearchService _genesSearchService;
-    private readonly GeneDataService _geneDataService;
-    private readonly GenesTsvDownloadService _genesTsvDownloadService;
+    private readonly ISearchService<DonorIndex> _donorsSearchService;
+    private readonly ISearchService<GeneIndex> _genesSearchService;
+    private readonly ISearchService<VariantIndex> _variantsSearchService;
+    private readonly GeneDataService _dataService;
+    private readonly GenesTsvDownloadService _tsvDownloadService;
 
 
     public GeneController(
-        IGenesSearchService genesSearchService, 
-        GeneDataService geneDataService, 
-        GenesTsvDownloadService genesTsvDownloadService)
+        ISearchService<DonorIndex> donorsSearchService,
+        ISearchService<GeneIndex> genesSearchService,
+        ISearchService<VariantIndex> variantsSearchService,
+        GeneDataService dataService, 
+        GenesTsvDownloadService tsvDownloadService)
     {
+        _donorsSearchService = donorsSearchService;
         _genesSearchService = genesSearchService;
-        _geneDataService = geneDataService;
-        _genesTsvDownloadService = genesTsvDownloadService;
+        _variantsSearchService = variantsSearchService;
+        _dataService = dataService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
     [HttpGet("{id}")]
-    public GeneResource Gene(long id)
+    public async Task<IActionResult> Gene(long id)
     {
         var key = id.ToString();
 
-        var index = _genesSearchService.Get(key);
+        var result = await _genesSearchService.Get(key);
 
-        return From(index);
+        return Ok(From(result));
     }
 
     [HttpPost("{id}/donors")]
-    public SearchResult<DonorResource> Donors(int id, [FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Donors(int id, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _genesSearchService.SearchDonors(id, searchCriteria);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = [id] };
 
-        return From(id, searchResult);
+        var result = await _donorsSearchService.Search(criteria);
+
+        return Ok(From(result));
     }
 
-    [HttpPost("{id}/variants/{type}")]
-    public SearchResult<VariantResource> Variants(int id, VariantType type, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/{type?}")]
+    public async Task<IActionResult> Variants(int id, string type, [FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _genesSearchService.SearchVariants(id, type, searchCriteria);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = [id] };
+        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
 
-        return From(searchResult);
+        var result = await _variantsSearchService.Search(criteria);
+
+        return Ok(From(result));
     }
 
     [HttpGet("{id}/translations")]
-    public Transcript[] Translations(int id)
+    public async Task<IActionResult> Translations(int id)
     {
-        var translations = _geneDataService.GetTranslations(id);
+        var translations = await _dataService.GetTranslations(id);
 
-        return translations;
+        return Ok(translations);
     }
 
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
     {
-        var bytes = await _genesTsvDownloadService.Download(id, model.Data);
+        var bytes = await _tsvDownloadService.Download(id, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
@@ -92,7 +105,7 @@ public class GeneController : Controller
         return new GeneResource(index);
     }
 
-    private static SearchResult<DonorResource> From(int geneId, SearchResult<DonorIndex> searchResult)
+    private static SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)
     {
         return new SearchResult<DonorResource>()
         {

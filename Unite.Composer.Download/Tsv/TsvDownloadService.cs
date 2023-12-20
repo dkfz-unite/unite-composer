@@ -2,7 +2,7 @@ using System.IO.Compression;
 
 namespace Unite.Composer.Download.Tsv;
 
-public class TsvDownloadService
+public abstract class TsvDownloadService
 {
     protected static Task CreateArchiveEntry(ZipArchive arhive, string name, string content)
     {

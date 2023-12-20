@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Visualization.Oncogrid;
-using Unite.Composer.Visualization.Oncogrid.Data;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 namespace Unite.Composer.Web.Controllers.Visualization;
 
@@ -18,14 +17,22 @@ public class OncoGridController : Controller
     }
 
     [HttpGet]
-    public OncoGridData Get()
+    public async Task<IActionResult> Get()
     {
-        return _dataService.LoadData();
+        var result = _dataService.LoadData();
+
+        var resource = Ok(result);
+
+        return await Task.FromResult(resource);
     }
 
     [HttpPost]
-    public OncoGridData Post([FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Post(int donors, int genes, [FromBody]SearchCriteria searchCriteria)
     {
-        return _dataService.LoadData(searchCriteria);
+        var result = _dataService.LoadData(donors, genes, searchCriteria);
+
+        var resource = Ok(result);
+
+        return await Task.FromResult(resource);
     }
 }

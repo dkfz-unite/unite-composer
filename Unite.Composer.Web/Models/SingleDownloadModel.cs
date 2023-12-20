@@ -4,5 +4,5 @@ namespace Unite.Composer.Web.Models;
 
 public record SingleDownloadModel
 {
-    public DataTypes Data { get; init; }
+    public DataTypesCriteria Data { get; init; }
 }

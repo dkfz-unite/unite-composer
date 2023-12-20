@@ -1,4 +1,4 @@
-using Unite.Indices.Entities.Donors;
+using Unite.Indices.Entities;
 
 namespace Unite.Composer.Web.Resources.Domain.Donors;
 
@@ -7,7 +7,7 @@ public class DonorsDataResource : DonorDataResource
     public int Total { get; set; }
 
 
-    public DonorsDataResource(IDictionary<int, DataIndex> indices)
+    public DonorsDataResource(IReadOnlyDictionary<object, DataIndex> indices)
     {
         Clinical = indices.Values.Any(d => d.Clinical == true);
         Treatments = indices.Values.Any(d => d.Treatments == true);
@@ -32,6 +32,6 @@ public class DonorsDataResource : DonorDataResource
         GeneExp = indices.Values.Any(d => d.GeneExp == true);
         GeneExpSc = indices.Values.Any(d => d.GeneExpSc == true);
 
-        Total = indices.Count();
+        Total = indices.Count;
     }
 }

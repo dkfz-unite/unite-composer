@@ -1,121 +1,85 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Data.Donors;
-using Unite.Composer.Data.Genome;
-using Unite.Composer.Data.Genome.Ranges;
-using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Composer.Download.Tsv;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Composer.Web.Resources.Domain.Specimens;
-using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Images.Enums;
-using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services.Filters.Base.Donors.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Images.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Specimens.Criteria;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
-using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
 
 namespace Unite.Composer.Web.Controllers.Domain.Donors;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class DonorController : Controller
+public class DonorController : DomainController
 {
-    private readonly IDonorsSearchService _donorsSearchService;
-    private readonly DonorDataService _donorDataService;
-    private readonly SampleDataService _sampleDataService;
-    private readonly GenomicProfileService _genomicProfileService;
-    private readonly DonorsTsvDownloadService _donorsTsvDownloadService;
+    private readonly ISearchService<DonorIndex> _donorsSearchService;
+    private readonly ISearchService<ImageIndex> _imagesSearchService;
+    private readonly ISearchService<SpecimenIndex> _specimensSearchService;
+    private readonly DonorsTsvDownloadService _tsvDownloadService;
 
 
     public DonorController(
-        IDonorsSearchService donorsSearchService,
-        DonorDataService donorDataService,
-        SampleDataService sampleDataService,
-        GenomicProfileService genomicProfileService,
-        DonorsTsvDownloadService donorsTsvDownloadService)
+        ISearchService<DonorIndex> searchService,
+        ISearchService<ImageIndex> imagesSearchService,
+        ISearchService<SpecimenIndex> specimensSearchService,
+        DonorsTsvDownloadService tsvDownloadService)
     {
-        _donorsSearchService = donorsSearchService;
-        _donorDataService = donorDataService;
-        _sampleDataService = sampleDataService;
-        _genomicProfileService = genomicProfileService;
-        _donorsTsvDownloadService = donorsTsvDownloadService;
+        _donorsSearchService = searchService;
+        _imagesSearchService = imagesSearchService;
+        _specimensSearchService = specimensSearchService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
     [HttpGet("{id}")]
-    public IActionResult Donor(int id)
+    public async Task<IActionResult> Donor(int id)
     {
         var key = id.ToString();
 
-        var index = _donorsSearchService.Get(key);
-        
-        return Json(From(index));
+        var result = await _donorsSearchService.Get(key);
+
+        return Ok(From(result));
     }
 
-
-    [HttpPost("{id}/images/{type}")]
-    public IActionResult Images(int id, ImageType type, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/images/{type?}")]
+    public async Task<IActionResult> Images(int id, string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchResult = _donorsSearchService.SearchImages(id, type, searchCriteria);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = [id] };
+        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
 
-        return Json(From(searchResult));
+        var result = await _imagesSearchService.Search(criteria);
+
+        return Ok(From(result));
     }
 
-    [HttpPost("{id}/specimens")]
-    public IActionResult Specimens(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/specimens/{type?}")]
+    public async Task<IActionResult> Specimens(int id, string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchResult = _donorsSearchService.SearchSpecimens(id, searchCriteria);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = [id] };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Type = DetectSpecimenType(type) };
 
-        return Json(From(searchResult));
+        var result = await _specimensSearchService.Search(criteria);
+
+        return Ok(From(result));
     }
-
-
-    [HttpGet("{id}/samples")]
-    public async Task<IActionResult> Samples(int id)
-    {
-        var samples = await _sampleDataService.GetDonorSamples(id);
-
-        return Json(samples);
-    }
-
-    [HttpPost("{id}/genes/{sampleId}")]
-    public IActionResult Genes(int id, int sampleId, [FromBody] SearchCriteria searchCriteria)
-    {
-        var searchResult = _donorsSearchService.SearchGenes(sampleId, searchCriteria);
-
-        return Json(From(sampleId, searchResult));
-    }
-
-    [HttpPost("{id}/variants/{sampleId}/{type}")]
-    public IActionResult Variants(int id, int sampleId, VariantType type, [FromBody] SearchCriteria searchCriteria)
-    {
-        var searchResult = _donorsSearchService.SearchVariants(sampleId, type, searchCriteria);
-
-        return Json(From(sampleId, searchResult));
-    }
-
-    [HttpPost("{id}/profile/{sampleId}")]
-    public async Task<IActionResult> Profile(int id, int sampleId, [FromBody] GenomicRangesFilterCriteria filterCriteria)
-    {
-        var profile = await _genomicProfileService.GetProfile(sampleId, filterCriteria);
-
-        return Json(profile);
-    }
-
 
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
     {
-        var bytes = await _donorsTsvDownloadService.Download(id, model.Data);
+        var bytes = await _tsvDownloadService.Download(id, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
@@ -146,24 +110,6 @@ public class DonorController : Controller
         {
             Total = searchResult.Total,
             Rows = searchResult.Rows.Select(index => new SpecimenResource(index)).ToArray()
-        };
-    }
-
-    private static SearchResult<DonorGeneResource> From(int sampleId, SearchResult<GeneIndex> searchResult)
-    {
-        return new SearchResult<DonorGeneResource>()
-        {
-            Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new DonorGeneResource(index, sampleId)).ToArray()
-        };
-    }
-
-    private static SearchResult<VariantResource> From(int sampleId, SearchResult<VariantIndex> searchResult)
-    {
-        return new SearchResult<VariantResource>()
-        {
-            Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
         };
     }
 }

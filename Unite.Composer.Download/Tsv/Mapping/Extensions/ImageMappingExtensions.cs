@@ -1,14 +1,14 @@
 using System.Linq.Expressions;
-using Unite.Composer.Download.Extensions;
 using Unite.Data.Entities.Donors;
 using Unite.Data.Entities.Images;
+using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Extensions;
 
 internal static class ImageMappingExtensions
 {
-    internal static ClassMap<Image> MapMriImages(this ClassMap<Image> map)
+    public static ClassMap<Image> MapMriImages(this ClassMap<Image> map)
     {
         return map
             .MapDonor(entity => entity.Donor)
@@ -41,6 +41,6 @@ internal static class ImageMappingExtensions
     {
         return map
             .Map(entity => entity.ReferenceId, "image_id")
-            .Map(entity => entity.Type, "image_type");
+            .Map(entity => entity.TypeId, "image_type");
     }
 }

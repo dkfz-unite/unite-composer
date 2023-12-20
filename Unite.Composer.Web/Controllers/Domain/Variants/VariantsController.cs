@@ -1,27 +1,29 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Download.Tsv;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
 using Unite.Indices.Entities.Variants;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 namespace Unite.Composer.Web.Controllers.Domain.Mutations;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class VariantsController : Controller
+public class VariantsController : DomainController
 {
-    private readonly IVariantsSearchService _searchService;
+    private readonly ISearchService<VariantIndex> _searchService;
     private readonly VariantsTsvDownloadService _tsvDownloadService;
 
 
-    public VariantsController(IVariantsSearchService searchService, VariantsTsvDownloadService tsvDownloadService)
+    public VariantsController(
+        ISearchService<VariantIndex> searchService, 
+        VariantsTsvDownloadService tsvDownloadService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
@@ -29,31 +31,38 @@ public class VariantsController : Controller
 
 
     [HttpPost("{type}")]
-    public SearchResult<VariantResource> Search(VariantType type, [FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchContext = new VariantSearchContext(type);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
 
-        var searchResult = _searchService.Search(searchCriteria, searchContext);
+        var result = await _searchService.Search(criteria);
 
-        return From(searchResult);
+        return Ok(From(result));
     }
 
     [HttpPost("{type}/stats")]
-    public VariantsDataResource Stats(VariantType type, [FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Stats(string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchContext = new VariantSearchContext(type);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
 
-        var availableData = _searchService.Stats(searchCriteria, searchContext);
+        var data = await _searchService.Stats(criteria);
 
-        return new VariantsDataResource(availableData, type);
+        return Ok(new VariantsDataResource(data, type));
     }
 
     [HttpPost("{type}/data")]
-    public async Task<ActionResult> Data(VariantType type, BulkDownloadModel model)
+    public async Task<ActionResult> Data(string type, BulkDownloadModel model)
     {
-        var context = new VariantSearchContext(type);
-        var stats = _searchService.Stats(model.Criteria, context);
-        var bytes = await _tsvDownloadService.Download(stats.Keys.ToArray(), type, model.Data);
+        var criteria = model.Criteria ?? new SearchCriteria();
+        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
+
+        var stats = await _searchService.Stats(criteria);
+
+        var originalIds = Convert(type, stats.Keys.Cast<string>());
+        var originalType = Convert(type);
+        var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
@@ -65,6 +74,22 @@ public class VariantsController : Controller
         {
             Total = searchResult.Total,
             Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
+        };
+    }
+
+    private static long[] Convert(string type, IEnumerable<string> ids)
+    {
+        return ids.Select(id => long.Parse(id[type.Length..])).ToArray();
+    }
+
+    private static Unite.Data.Entities.Genome.Variants.Enums.VariantType Convert(string type)
+    {
+        return type switch
+        {
+            VariantType.SSM => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SSM,
+            VariantType.CNV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.CNV,
+            VariantType.SV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SV,
+            _ => throw new InvalidOperationException("Unknown variant type")
         };
     }
 }

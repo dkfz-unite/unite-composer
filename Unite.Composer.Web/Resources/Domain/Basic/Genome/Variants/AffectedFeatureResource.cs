@@ -1,4 +1,5 @@
-﻿using Unite.Indices.Entities.Basic.Genome.Variants;
+﻿using Unite.Essentials.Extensions;
+using Unite.Indices.Entities.Basic.Genome.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
@@ -16,16 +17,12 @@ public class AffectedFeatureResource
     public AffectedFeatureResource(AffectedFeatureIndex index)
     {
         if (index.Gene != null)
-        {
             Gene = new GeneResource(index.Gene);
-        }
 
         if (index.Transcript != null)
-        {
             Transcript = new AffectedTranscriptResource(index.Transcript);
-        }
 
-        if (index.Consequences?.Any() == true)
+        if (index.Consequences.IsNotEmpty())
         {
             Consequences = index.Consequences
                 .Select(consequenceIndex => new ConsequenceResource(consequenceIndex))

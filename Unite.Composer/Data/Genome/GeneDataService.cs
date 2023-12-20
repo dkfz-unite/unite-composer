@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Genome.Models;
-using Unite.Data.Services;
+using Unite.Data.Context;
 
 namespace Unite.Composer.Data.Genome;
 
@@ -19,21 +19,19 @@ public class GeneDataService
     /// </summary>
     /// <param name="id">Gene identifier.</param>
     /// <returns>Array of transcripts.</returns>    
-    public Transcript[] GetTranslations(int id)
+    public async Task<Transcript[]> GetTranslations(int id)
     {
-        var entities = _dbContext.Set<Unite.Data.Entities.Genome.Variants.SSM.AffectedTranscript>()
-            .Include(affectedTranscript => affectedTranscript.Feature)
-                .ThenInclude(transcript => transcript.Protein)
-            .Where(affectedTranscript => affectedTranscript.Feature.Protein != null)
+        var entities = await _dbContext.Set<Unite.Data.Entities.Genome.Variants.SSM.AffectedTranscript>()
+            .AsNoTracking()
+            .Include(affectedTranscript => affectedTranscript.Feature.Protein)
+            .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)
             .Where(affectedTranscript => affectedTranscript.Feature.GeneId == id)
             .Select(affectedTranscript => affectedTranscript.Feature)
-            .ToArray();
+            .ToArrayAsync();
 
-        var models = entities
+        return entities
             .DistinctBy(entity => entity.Id)
             .Select(entity => new Transcript(entity))
             .ToArray();
-
-        return models;
     }
 }

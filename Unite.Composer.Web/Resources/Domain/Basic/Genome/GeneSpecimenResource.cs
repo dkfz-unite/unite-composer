@@ -6,13 +6,11 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Genome;
 
 public class GeneSpecimenResource : SpecimenResource
 {
-    public GeneExpressionResource Expression { get; }
+    public BulkExpressionResource Expression { get; }
 
-    public GeneSpecimenResource(SpecimenIndex specimenIndex, GeneExpressionIndex expressionIndex) : base(specimenIndex)
+    public GeneSpecimenResource(SpecimenIndex specimenIndex, BulkExpressionIndex expressionIndex) : base(specimenIndex)
     {
         if (expressionIndex != null)
-        {
-            Expression = new GeneExpressionResource(expressionIndex);
-        }
+            Expression = new BulkExpressionResource(expressionIndex);
     }
 }

@@ -1,15 +1,15 @@
 using System.Linq.Expressions;
-using Unite.Composer.Download.Extensions;
 using Unite.Composer.Download.Tsv.Mapping.Converters;
 using Unite.Data.Entities.Donors;
 using Unite.Data.Entities.Donors.Clinical;
+using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Extensions;
 
 internal static class DonorsMappingExtensions
 {
-    internal static ClassMap<Donor> MapDonors(this ClassMap<Donor> map)
+    public static ClassMap<Donor> MapDonors(this ClassMap<Donor> map)
     {
         var projectDonorConverter = new ProjectDonorConverter();
         var studyDonorConverter = new StudyDonorConverter();
@@ -21,7 +21,7 @@ internal static class DonorsMappingExtensions
             .Map(entity => entity.DonorStudies, "studies", studyDonorConverter);
     }
 
-    internal static ClassMap<ClinicalData> MapClinicalData(this ClassMap<ClinicalData> map)
+    public static ClassMap<ClinicalData> MapClinicalData(this ClassMap<ClinicalData> map)
     {
         return map
             .MapDonor(entity => entity.Donor)
@@ -41,7 +41,7 @@ internal static class DonorsMappingExtensions
             .Map(entity => entity.SteroidsBaseline, "steroids_baseline");
     }
 
-    internal static ClassMap<Treatment> MapTreatments(this ClassMap<Treatment> map)
+    public static ClassMap<Treatment> MapTreatments(this ClassMap<Treatment> map)
     {
         return map
             .MapDonor(entity => entity.Donor)

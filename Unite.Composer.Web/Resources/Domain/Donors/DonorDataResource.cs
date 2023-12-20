@@ -1,4 +1,6 @@
-using Unite.Indices.Entities.Donors;
+using Unite.Indices.Entities;
+
+namespace Unite.Composer.Web.Resources.Domain.Donors;
 
 public class DonorDataResource
 {

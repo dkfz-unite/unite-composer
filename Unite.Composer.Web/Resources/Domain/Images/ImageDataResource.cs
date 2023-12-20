@@ -1,4 +1,4 @@
-using Unite.Indices.Entities.Images;
+using Unite.Indices.Entities;
 
 public class ImageDataResource
 {

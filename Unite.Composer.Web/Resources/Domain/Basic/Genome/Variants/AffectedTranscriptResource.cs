@@ -4,8 +4,6 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
 public class AffectedTranscriptResource
 {
-    public TranscriptResource Feature { get; set; }
-
     public string AminoAcidChange { get; set; }
     public string CodonChange { get; set; }
 
@@ -13,15 +11,19 @@ public class AffectedTranscriptResource
     public int? OverlapBpNumber { get; set; }
     public double? OverlapPercentage { get; set; }
 
+    public TranscriptResource Feature { get; set; }
+
+
     public AffectedTranscriptResource(AffectedTranscriptIndex index)
     {
-        Feature = new TranscriptResource(index.Feature);
-
         AminoAcidChange = index.AminoAcidChange;
         CodonChange = index.CodonChange;
 
         Distance = index.Distance;
         OverlapBpNumber = index.OverlapBpNumber;
         OverlapPercentage = index.OverlapPercentage;
+
+        if (index.Feature != null)
+            Feature = new TranscriptResource(index.Feature);
     }
 }

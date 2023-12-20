@@ -1,11 +1,14 @@
-﻿using Unite.Composer.Search.Engine;
-using Unite.Composer.Search.Engine.Filters;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services.Criteria;
-using Unite.Composer.Search.Services.Criteria.Visualizations;
-using Unite.Composer.Search.Services.Filters;
-using Unite.Composer.Visualization.Oncogrid.Data;
-using Unite.Indices.Services.Configuration.Options;
+﻿using Unite.Composer.Visualization.Oncogrid.Data;
+using Unite.Indices.Context.Configuration.Options;
+using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Search.Engine;
+using Unite.Indices.Search.Engine.Filters;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services.Filters;
+using Unite.Indices.Search.Services.Filters.Base.Donors.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Genes.Criteria;
+using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
@@ -28,21 +31,20 @@ public class OncoGridDataService
     }
 
 
-    public OncoGridData LoadData(SearchCriteria searchCriteria = null)
+    public OncoGridData LoadData(int numberOfDonors = 100, int numberOfGenes = 50, SearchCriteria searchCriteria = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.OncoGrid = searchCriteria?.OncoGrid ?? new OncoGridCriteria();
 
         var impacts = criteria.Ssm.Impact;
         var consequences = criteria.Ssm.Consequence;
 
-        var donorsSearchResult = FindDonors(criteria);
+        var donorsSearchResult = FindDonors(numberOfDonors, criteria);
 
         var donorIds = donorsSearchResult.Rows
             .Select(donor => donor.Id)
             .ToArray();
 
-        var genesSearchResult = FindGenes(criteria, donorIds);
+        var genesSearchResult = FindGenes(numberOfGenes, criteria, donorIds);
 
         var geneIds = genesSearchResult.Rows
             .Select(gene => gene.Id)
@@ -64,62 +66,65 @@ public class OncoGridDataService
     /// <summary>
     /// Retrieves donors with highest number of mutations filtered by given search criteria.
     /// </summary>
-    /// <param name="searchCriteria">Search criteria</param>
+    /// <param name="number">Number of donors to retrieve.</param> 
+    /// <param name="searchCriteria">Search criteria.</param>
     /// <returns>Search result with donors and number of total available rows.</returns>
     private SearchResult<DonorIndex> FindDonors(
+        int number,
         SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria;
 
-        var criteriaFilters = new DonorIndexFiltersCollection(criteria).All();
+        var filters = new DonorFiltersCollection(criteria).All();
 
         var query = new SearchQuery<DonorIndex>()
-            .AddPagination(0, criteria.OncoGrid.NumberOfDonors)
+            .AddPagination(0, number)
             .AddFullTextSearch(criteria.Term)
-            .AddFilters(criteriaFilters)
+            .AddFilters(filters)
             .AddOrdering(donor => donor.NumberOfGenes)
             .AddExclusion(donor => donor.Specimens)
             .AddExclusion(donor => donor.Treatments)
             .AddExclusion(donor => donor.Projects)
             .AddExclusion(donor => donor.Studies);
 
-        return _donorsIndexService.SearchAsync(query).Result;
+        return _donorsIndexService.Search(query).Result;
     }
 
     /// <summary>
     /// Retrieves genes of given donors with highest number of mutations filtered by given search criteria.
     /// </summary>
-    /// <param name="searchCriteria">Search criteria</param>
-    /// <param name="donorIds">Id's of donors</param>
+    /// <param name="number">Number of genes to retrieve.</param> 
+    /// <param name="searchCriteria">Search criteria.</param>
+    /// <param name="donorIds">Id's of donors.</param>
     /// <returns>Search result with genes and number of total available rows.</returns>
     private SearchResult<GeneIndex> FindGenes(
+        int number,
         SearchCriteria searchCriteria,
         IEnumerable<int> donorIds)
     {
         var criteria = new SearchCriteria();
-        criteria.Donor = new DonorCriteria();
-        criteria.Donor.Id = donorIds.ToArray();
+        criteria.Donor = new DonorCriteria() { Id = donorIds.ToArray() };
         criteria.Gene = searchCriteria.Gene;
+        criteria.Variant = new VariantCriteria() { Type = [VariantType.SSM] };
         criteria.Ssm = searchCriteria.Ssm;
-        criteria.OncoGrid = searchCriteria.OncoGrid;
 
-        var criteriaFilters = new GeneIndexFiltersCollection(criteria).All();
+        var criteriaFilters = new GeneFiltersCollection(criteria).All();
 
         var query = new SearchQuery<GeneIndex>()
-            .AddPagination(0, criteria.OncoGrid.NumberOfGenes)
+            .AddPagination(0, number)
             .AddFilters(criteriaFilters)
             .AddOrdering(gene => gene.NumberOfSsms)
-            .AddExclusion(gene => gene.Samples);
+            .AddExclusion(gene => gene.Specimens);
 
-        return _genesIndexService.SearchAsync(query).Result;
+        return _genesIndexService.Search(query).Result;
     }
 
     /// <summary>
     /// Retrieves mutations of given donors in given genes filtered by given search criteria.
     /// </summary>
-    /// <param name="searchCriteria">Search criteria</param>
-    /// <param name="donorIds">Id's of donors</param>
-    /// <param name="geneIds">Id's of genes</param>
+    /// <param name="searchCriteria">Search criteria.</param>
+    /// <param name="donorIds">Id's of donors.</param>
+    /// <param name="geneIds">Id's of genes.</param>
     /// <returns>Search result with mutations and number of total available rows.</returns>
     private SearchResult<VariantIndex> FindMutations(
         SearchCriteria searchCriteria,
@@ -127,38 +132,34 @@ public class OncoGridDataService
         IEnumerable<int> geneIds)
     {
         var criteria = new SearchCriteria();
-        criteria.Donor = new DonorCriteria();
-        criteria.Donor.Id = donorIds.ToArray();
-        criteria.Gene = new GeneCriteria();
-        criteria.Gene.Id = geneIds.ToArray();
+        criteria.Donor = new DonorCriteria() { Id = donorIds.ToArray() };
+        criteria.Gene = new GeneCriteria() { Id = geneIds.ToArray() };
+        criteria.Variant = new VariantCriteria() { Type = [VariantType.SSM] };
         criteria.Ssm = searchCriteria.Ssm;
-        criteria.OncoGrid = searchCriteria.OncoGrid;
 
-        var criteriaFilters = new MutationIndexFiltersCollection(criteria).All();
+        var criteriaFilters = new VariantFiltersCollection(criteria).All();
 
         var query = new SearchQuery<VariantIndex>()
-            // TODO: remove magical number and include all possible mutations. This should be done properly with elasticsearch aggregations
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.IsMutation", variant => variant.Ssm))
-            .AddFilter(new NotNullFilter<VariantIndex, object>("Variant.HasAffectedFeatures", variant => variant.Ssm.AffectedFeatures))
-            .AddExclusion(mutation => mutation.Samples.First().Donor.ClinicalData)
-            .AddExclusion(mutation => mutation.Samples.First().Donor.Treatments)
-            .AddExclusion(mutation => mutation.Samples.First().Donor.Projects)
-            .AddExclusion(mutation => mutation.Samples.First().Donor.Studies);
+            .AddFilter(new NotNullFilter<VariantIndex, object>("SSM.HasAffectedFeatures", variant => variant.Ssm.AffectedFeatures))
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.ClinicalData)
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.Treatments)
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.Projects)
+            .AddExclusion(mutation => mutation.Specimens.First().Donor.Studies);
 
-        return _variantsIndexService.SearchAsync(query).Result;
+        return _variantsIndexService.Search(query).Result;
     }
 
 
     /// <summary>
     /// Builds <see cref="OncoGridData"/> object from donor and mutation indices for given number of most affected genes.
     /// </summary>
-    /// <param name="donors">Donor indices</param>
-    /// <param name="mutations">Mutation indices</param>
-    /// <param name="numberOfGenes">Number of most affected genes</param>
+    /// <param name="donors">Donor indices.</param>
+    /// <param name="mutations">Mutation indices.</param>
+    /// <param name="numberOfGenes">Number of most affected genes.</param>
     /// <returns><see cref="OncoGridData"/> object.</returns>
-    private OncoGridData GetOncoGridData(
+    private static OncoGridData GetOncoGridData(
         IEnumerable<DonorIndex> donors,
         IEnumerable<GeneIndex> genes,
         IEnumerable<VariantIndex> mutations,
@@ -179,9 +180,9 @@ public class OncoGridDataService
     /// <summary>
     /// Builds <see cref="OncoGridDonor"/> objects from donor indices.
     /// </summary>
-    /// <param name="donors">Donor indices</param>
+    /// <param name="donors">Donor indices.</param>
     /// <returns>Collection of <see cref="OncoGridDonor"/> objects.</returns>
-    private IEnumerable<OncoGridDonor> GetDonorsData(
+    private static IEnumerable<OncoGridDonor> GetDonorsData(
         IEnumerable<DonorIndex> donors)
     {
         return donors
@@ -191,9 +192,9 @@ public class OncoGridDataService
     /// <summary>
     /// Builds <see cref="OncoGridGene"/> objects from gene indices.
     /// </summary>
-    /// <param name="genes">Gene indices</param>
+    /// <param name="genes">Gene indices.</param>
     /// <returns>Collection of <see cref="OncoGridGene"/> objects.</returns>
-    private IEnumerable<OncoGridGene> GetGenesData(
+    private static IEnumerable<OncoGridGene> GetGenesData(
         IEnumerable<GeneIndex> genes)
     {
         return genes
@@ -204,11 +205,11 @@ public class OncoGridDataService
     /// Builds <see cref="OncoGridMutation"/> objects from mutation indices
     /// for all combinations of given <see cref="OncoGridDonor"/> and <see cref="OncoGridGene"/> entries.
     /// </summary>
-    /// <param name="donors">Donors to fill OncoGrid columns</param>
-    /// <param name="genes">Genes to fill OncoGrid rows</param>
-    /// <param name="mutations">Mutation indices</param>
+    /// <param name="donors">Donors to fill OncoGrid columns.</param>
+    /// <param name="genes">Genes to fill OncoGrid rows.</param>
+    /// <param name="mutations">Mutation indices.</param>
     /// <returns>Collection of <see cref="OncoGridMutation"/> objects.</returns>
-    private IEnumerable<OncoGridMutation> GetObservationsData(
+    private static IEnumerable<OncoGridMutation> GetObservationsData(
         IEnumerable<OncoGridDonor> donors,
         IEnumerable<OncoGridGene> genes,
         IEnumerable<VariantIndex> mutations,
@@ -224,7 +225,7 @@ public class OncoGridDataService
                 var geneId = int.Parse(gene.Id);
 
                 var observedMutations = mutations.Where(mutation =>
-                    mutation.Samples.Any(mutationSample => mutationSample.Donor.Id == donorId) &&
+                    mutation.Specimens.Any(mutationSample => mutationSample.Donor.Id == donorId) &&
                     mutation.Ssm.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
@@ -271,7 +272,7 @@ public class OncoGridDataService
         return consequences == null || !consequences.Any() || consequences.Contains(consequence);
     }
 
-    private string GetVariantCode(VariantIndex variant)
+    private static string GetVariantCode(VariantIndex variant)
     {
         return $"{variant.Ssm.Chromosome}:g.{variant.Ssm.Start}{variant.Ssm.Ref ?? "-"}>{variant.Ssm.Alt ?? "-"}";
     }

@@ -1,64 +1,71 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Download.Tsv;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Context;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
-using Unite.Data.Entities.Images.Enums;
 using Unite.Indices.Entities.Images;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Base.Images.Criteria;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 namespace Unite.Composer.Web.Controllers.Domain.Images;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class ImagesController : Controller
+public class ImagesController : DomainController
 {
-    private readonly IImagesSearchService _searchService;
-    private readonly ImagesTsvDownloadService _imagesTsvDownloadService;
+    private readonly ISearchService<ImageIndex> _searchService;
+    private readonly ImagesTsvDownloadService _tsvDownloadService;
 
 
     public ImagesController(
-        IImagesSearchService searchService,
-        ImagesTsvDownloadService imagesTsvDownloadService)
+        ISearchService<ImageIndex> searchService,
+        ImagesTsvDownloadService tsvDownloadService)
     {
         _searchService = searchService;
-        _imagesTsvDownloadService = imagesTsvDownloadService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
     [HttpPost("{type}")]
-    public SearchResult<ImageResource> Search(ImageType type, [FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchContext = new ImageSearchContext(type);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
 
-        var searchResult = _searchService.Search(searchCriteria, searchContext);
+        var result = await _searchService.Search(criteria);
 
-        return From(searchResult);
+        return Ok(From(result));
     }
 
     [HttpPost("{type}/stats")]
-    public ImagesDataResource Stats(ImageType type, [FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Stats(string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var searchContext = new ImageSearchContext(type);
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
 
-        var availableData = _searchService.Stats(searchCriteria, searchContext);
+        var stats = await _searchService.Stats(criteria);
 
-        return new ImagesDataResource(availableData);
+        return Ok(new ImagesDataResource(stats));
     }
 
     [HttpPost("{type}/data")]
-    public async Task<IActionResult> Data(ImageType type, [FromBody] BulkDownloadModel model)
+    public async Task<IActionResult> Data(string type, [FromBody] BulkDownloadModel model)
     {
-        var context = new ImageSearchContext(type);
-        var stats = _searchService.Stats(model.Criteria, context);
-        var bytes = await _imagesTsvDownloadService.Download(stats.Keys.ToArray(), type, model.Data);
+        var criteria = model.Criteria ?? new SearchCriteria();
+        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
+
+        var stats = await _searchService.Stats(criteria);
+
+        var originalIds = stats.Keys.Cast<int>().ToArray();
+        var originalType = ConvertImageType(type);
+        var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
+
 
     private static SearchResult<ImageResource> From(SearchResult<ImageIndex> searchResult)
     {

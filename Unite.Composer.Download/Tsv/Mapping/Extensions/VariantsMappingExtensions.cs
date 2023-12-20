@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
 using Unite.Composer.Download.Tsv.Mapping.Converters;
-using Unite.Composer.Download.Extensions;
 using Unite.Composer.Download.Tsv.Mapping.Models;
 using Unite.Data.Entities.Genome.Analysis;
+using Unite.Data.Entities.Genome.Variants;
+using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
 using SSM = Unite.Data.Entities.Genome.Variants.SSM;
@@ -13,60 +14,72 @@ namespace Unite.Composer.Download.Tsv.Mapping.Extensions;
 
 internal static class VariantsMappingExtensions
 {
-    internal static ClassMap<SSM.VariantOccurrence> MapVariantOccurrences(this ClassMap<SSM.VariantOccurrence> map, bool transcripts = false)
+    public static ClassMap<TVE> MapVariantEntries<TVE, TV>(this ClassMap<TVE> map, bool transcripts = false)
+        where TVE : VariantEntry<TV>
+        where TV : Variant
+    {
+        if (map is ClassMap<SSM.VariantEntry> ssmMap)
+            ssmMap.MapVariantEntries(transcripts);
+        else if (map is ClassMap<CNV.VariantEntry> cnvMap)
+            cnvMap.MapVariantEntries(transcripts);
+        else if (map is ClassMap<SV.VariantEntry> svMap)
+            svMap.MapVariantEntries(transcripts);
+
+        return map;
+    }
+
+    public static ClassMap<SSM.VariantEntry> MapVariantEntries(this ClassMap<SSM.VariantEntry> map, bool transcripts = false)
     {
         return map.MapAnalysedSample(entity => entity.AnalysedSample)
-                  .MapVariant(entity => entity.Variant)
+                  .MapVariant(entity => entity.Entity)
                   .MapAffectedFeatures(transcripts);
     }
 
-    internal static ClassMap<CNV.VariantOccurrence> MapVariantOccurrences(this ClassMap<CNV.VariantOccurrence> map, bool transcripts = false)
+    public static ClassMap<CNV.VariantEntry> MapVariantEntries(this ClassMap<CNV.VariantEntry> map, bool transcripts = false)
     {
         return map.MapAnalysedSample(entity => entity.AnalysedSample)
-                  .MapVariant(entity => entity.Variant)
+                  .MapVariant(entity => entity.Entity)
                   .MapAffectedFeatures(transcripts);
     }
 
-    internal static ClassMap<SV.VariantOccurrence> MapVariantOccurrences(this ClassMap<SV.VariantOccurrence> map, bool transcripts = false)
+    public static ClassMap<SV.VariantEntry> MapVariantEntries(this ClassMap<SV.VariantEntry> map, bool transcripts = false)
     {
         return map.MapAnalysedSample(entity => entity.AnalysedSample)
-                  .MapVariant(entity => entity.Variant)
+                  .MapVariant(entity => entity.Entity)
                   .MapAffectedFeatures(transcripts);
     }
 
 
-    internal static ClassMap<SsmOccurrenceWithAffectedTranscript> MapVariantOccurrences(this ClassMap<SsmOccurrenceWithAffectedTranscript> map)
+    public static ClassMap<SsmEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<SsmEntryWithAffectedTranscript> map)
     {
-        return map.MapAnalysedSample(entry => entry.Occurrence.AnalysedSample)
-                  .MapVariant(entry => entry.Occurrence.Variant)
+        return map.MapAnalysedSample(entry => entry.Entry.AnalysedSample)
+                  .MapVariant(entry => entry.Entry.Entity)
                   .MapAffectedTranscript(entry => entry.AffectedFeature);
     }
 
-    internal static ClassMap<CnvOccurrenceWithAffectedTranscript> MapVariantOccurrences(this ClassMap<CnvOccurrenceWithAffectedTranscript> map)
+    public static ClassMap<CnvEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<CnvEntryWithAffectedTranscript> map)
     {
-        return map.MapAnalysedSample(entry => entry.Occurrence.AnalysedSample)
-                  .MapVariant(entry => entry.Occurrence.Variant)
-                  .MapAffectedTranscript(entr => entr.AffectedFeature);
+        return map.MapAnalysedSample(entry => entry.Entry.AnalysedSample)
+                  .MapVariant(entry => entry.Entry.Entity)
+                  .MapAffectedTranscript(entry => entry.AffectedFeature);
     }
 
-    internal static ClassMap<SvOccurrenceWithAffectedTranscript> MapVariantOccurrences(this ClassMap<SvOccurrenceWithAffectedTranscript> map)
+    public static ClassMap<SvEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<SvEntryWithAffectedTranscript> map)
     {
-        return map.MapAnalysedSample(entry => entry.Occurrence.AnalysedSample)
-                  .MapVariant(entry => entry.Occurrence.Variant)
-                  .MapAffectedTranscript(entr => entr.AffectedFeature);
+        return map.MapAnalysedSample(entry => entry.Entry.AnalysedSample)
+                  .MapVariant(entry => entry.Entry.Entity)
+                  .MapAffectedTranscript(entry => entry.AffectedFeature);
     }
 
 
     private static ClassMap<T> MapAnalysedSample<T>(this ClassMap<T> map, Expression<Func<T, AnalysedSample>> path) where T : class
     {
         return map
-            .Map(path.Join(entity => entity.Sample.Specimen.Donor.ReferenceId), "donor_id")
-            .Map(path.Join(entity => entity.Sample.Specimen.ReferenceId), "specimen_id")
-            .Map(path.Join(entity => entity.Sample.Specimen.Type), "specimen_type")
-            .Map(path.Join(entity => entity.Sample.ReferenceId), "sample_id")
-            .Map(path.Join(entity => entity.MatchedSample.Specimen.ReferenceId), "matched_specimen_id")
-            .Map(path.Join(entity => entity.MatchedSample.Specimen.Type), "matched_specimen_type")
-            .Map(path.Join(entity => entity.MatchedSample.ReferenceId), "matched_sample_id")
+            .Map(path.Join(entity => entity.TargetSample.Donor.ReferenceId), "donor_id")
+            .Map(path.Join(entity => entity.TargetSample.ReferenceId), "specimen_id")
+            .Map(path.Join(entity => entity.TargetSample.TypeId), "specimen_type")
+            .Map(path.Join(entity => entity.MatchedSample.ReferenceId), "matched_specimen_id")
+            .Map(path.Join(entity => entity.MatchedSample.TypeId), "matched_specimen_type")
             .Map(path.Join(entity => entity.Analysis.TypeId), "analysis_type");
     }
 
@@ -124,34 +137,34 @@ internal static class VariantsMappingExtensions
     }
 
 
-    private static ClassMap<SSM.VariantOccurrence> MapAffectedFeatures(this ClassMap<SSM.VariantOccurrence> map, bool transcripts = false)
+    private static ClassMap<SSM.VariantEntry> MapAffectedFeatures(this ClassMap<SSM.VariantEntry> map, bool transcripts = false)
     {
         if (transcripts)
         {
             var affectedTranscriptsConverter = new SsmAffectedTranscriptsConverter();
-            map.Map(entity => entity.Variant.AffectedTranscripts, "affected_genes", affectedTranscriptsConverter);
+            map.Map(entity => entity.Entity.AffectedTranscripts, "affected_genes", affectedTranscriptsConverter);
         }
 
         return map;
     }
 
-    private static ClassMap<CNV.VariantOccurrence> MapAffectedFeatures(this ClassMap<CNV.VariantOccurrence> map, bool transcripts = false)
+    private static ClassMap<CNV.VariantEntry> MapAffectedFeatures(this ClassMap<CNV.VariantEntry> map, bool transcripts = false)
     {
         if (transcripts)
         {
             var affectedTranscriptsConverter = new CnvAffectedTranscriptsConverter();
-            map.Map(entity => entity.Variant.AffectedTranscripts, "affected_genes", affectedTranscriptsConverter);
+            map.Map(entity => entity.Entity.AffectedTranscripts, "affected_genes", affectedTranscriptsConverter);
         }
 
         return map;
     }
 
-    private static ClassMap<SV.VariantOccurrence> MapAffectedFeatures(this ClassMap<SV.VariantOccurrence> map, bool transcripts = false)
+    private static ClassMap<SV.VariantEntry> MapAffectedFeatures(this ClassMap<SV.VariantEntry> map, bool transcripts = false)
     {
         if (transcripts)
         {
             var affectedTranscriptsConverter = new SvAffectedTranscriptsConverter();
-            map.Map(entity => entity.Variant.AffectedTranscripts, "affected_genes", affectedTranscriptsConverter);
+            map.Map(entity => entity.Entity.AffectedTranscripts, "affected_genes", affectedTranscriptsConverter);
         }
 
         return map;

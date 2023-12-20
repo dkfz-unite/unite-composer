@@ -8,7 +8,6 @@ public class SpecimenResource
     public int Id { get; set; }
     public string ReferenceId { get; set; }
     public string Type { get; set; }
-    public int? ParentId { get; set; }
     public int? CreationDay { get; set; }
 
     public TissueResource Tissue { get; set; }
@@ -26,25 +25,15 @@ public class SpecimenResource
         Id = index.Id;
         ReferenceId = index.ReferenceId;
         Type = index.Type;
-        CreationDay = index.CreationDay;
 
         if (index.Tissue != null)
-        {
             Tissue = new TissueResource(index.Tissue);
-        }
         else if (index.Cell != null)
-        {
             Cell = new CellLineResource(index.Cell);
-        }
         else if (index.Organoid != null)
-        {
             Organoid = new OrganoidResource(index.Organoid);
-        }
         else if (index.Xenograft != null)
-        {
             Xenograft = new XenograftResource(index.Xenograft);
-        }
-
     }
 
     /// <summary>
@@ -57,23 +46,14 @@ public class SpecimenResource
         Id = index.Id;
         ReferenceId = index.ReferenceId;
         Type = index.Type;
-        CreationDay = index.CreationDay;
 
         if (index.Tissue != null)
-        {
             Tissue = new TissueResource(index.Tissue);
-        }
         else if (index.Cell != null)
-        {
             Cell = new CellLineResource(index.Cell, drugScreenings);
-        }
         else if (index.Organoid != null)
-        {
             Organoid = new OrganoidResource(index.Organoid, drugScreenings);
-        }
         else if (index.Xenograft != null)
-        {
             Xenograft = new XenograftResource(index.Xenograft, drugScreenings);
-        }
     }
 }

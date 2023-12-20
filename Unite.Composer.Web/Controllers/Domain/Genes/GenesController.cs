@@ -1,53 +1,56 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Download.Tsv;
-using Unite.Composer.Search.Engine.Queries;
-using Unite.Composer.Search.Services;
-using Unite.Composer.Search.Services.Criteria;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Indices.Entities.Genes;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 namespace Unite.Composer.Web.Controllers.Domain.Genes;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class GenesController : Controller
+public class GenesController : DomainController
 {
-    private readonly IGenesSearchService _searchService;
-    private readonly GenesTsvDownloadService _genesTsvDownloadService;
+    private readonly ISearchService<GeneIndex> _searchService;
+    private readonly GenesTsvDownloadService _tsvDownloadService;
 
 
-    public GenesController(IGenesSearchService searchService, GenesTsvDownloadService genesTsvDownloadService)
+    public GenesController(
+        ISearchService<GeneIndex> searchService, 
+        GenesTsvDownloadService tsvDownloadService)
     {
         _searchService = searchService;
-        _genesTsvDownloadService = genesTsvDownloadService;
+        _tsvDownloadService = tsvDownloadService;
     }
 
 
     [HttpPost("")]
-    public SearchResult<GeneResource> Genes([FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Genes([FromBody] SearchCriteria searchCriteria)
     {
-        var searchResult = _searchService.Search(searchCriteria);
+        var result = await _searchService.Search(searchCriteria);
 
-        return From(searchResult);
+        return Ok(From(result));
     }
 
     [HttpPost("stats")]
-    public GenesDataResource Stats([FromBody] SearchCriteria searchCriteria)
+    public async Task<IActionResult> Stats([FromBody] SearchCriteria searchCriteria)
     {
-        var stats = _searchService.Stats(searchCriteria);
+        var stats = await _searchService.Stats(searchCriteria);
 
-        return new GenesDataResource(stats);
+        return Ok(new GenesDataResource(stats));
     }
 
     [HttpPost("data")]
     public async Task<IActionResult> Data([FromBody] BulkDownloadModel model)
     {
-        var stats = _searchService.Stats(model.Criteria);
+        var stats = await _searchService.Stats(model.Criteria);
 
-        var bytes = await _genesTsvDownloadService.Download(stats.Keys.ToArray(), model.Data);
+        var originalIds = stats.Keys.Cast<int>().ToArray();
+        var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }

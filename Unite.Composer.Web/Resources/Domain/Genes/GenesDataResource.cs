@@ -1,4 +1,4 @@
-using Unite.Indices.Entities.Genes;
+using Unite.Indices.Entities;
 
 namespace Unite.Composer.Web.Resources.Domain.Genes;
 
@@ -7,7 +7,7 @@ public class GenesDataResource : GeneDataResource
     public int Total { get; set; }
 
 
-    public GenesDataResource(IDictionary<int, DataIndex> indices)
+    public GenesDataResource(IReadOnlyDictionary<object, DataIndex> indices)
     {
         Clinical = indices.Values.Any(d => d.Clinical == true);
         Treatments = indices.Values.Any(d => d.Treatments == true);

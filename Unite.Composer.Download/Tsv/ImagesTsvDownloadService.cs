@@ -2,7 +2,9 @@ using System.IO.Compression;
 using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
+using Unite.Data.Entities.Genome.Variants.Enums;
 using Unite.Data.Entities.Images.Enums;
+using Unite.Data.Entities.Specimens.Enums;
 
 namespace Unite.Composer.Download.Tsv;
 
@@ -30,89 +32,60 @@ public class ImagesTsvDownloadService : TsvDownloadService
     }
 
 
-    public async Task<byte[]> Download(int id, ImageType type, DataTypes dataTypes)
+    public async Task<byte[]> Download(int id, ImageType type, DataTypesCriteria criteria)
     {
         var ids = new[] { id };
 
-        return await Download(ids, type, dataTypes);
+        return await Download(ids, type, criteria);
     }
 
-    public async Task<byte[]> Download(IEnumerable<int> ids, ImageType type, DataTypes dataTypes)
+    public async Task<byte[]> Download(IEnumerable<int> ids, ImageType type, DataTypesCriteria criteria)
     {
         var archiveBytes = Array.Empty<byte>();
         using (var archiveStream = new MemoryStream())
         using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
         {
-            if (dataTypes.Donors == true)
-            {
-                await CreateArchiveEntry(archive, TsvFileNames.Donors, _donorsTsvService.GetDonorsDataForImages(ids));
-            }
+            if (criteria.Donors == true)
+                await CreateArchiveEntry(archive, TsvFileNames.Donors, _donorsTsvService.GetDataForImages(ids));
             
-            if (dataTypes.Clinical == true)
-            {
+            if (criteria.Clinical == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Clinical, _donorsTsvService.GetClinicalDataForImages(ids));
-            }
 
-            if (dataTypes.Treatments == true)
-            {
+            if (criteria.Treatments == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForImages(ids));
-            }
 
             if (type == ImageType.MRI)
-            {
-                await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetMriImagesData(ids));
-            }
+                await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetData(ids, ImageType.MRI));
 
-            if (type == ImageType.CT)
-            {
-                // await CreateArchiveEntry(archive, "TsvFileNames.Cts", _imagesTsvService.GetCtImagesData(ids));
-            }
+            if (criteria.Specimens == true)
+                await CreateArchiveEntry(archive, TsvFileNames.Tissues, _specimensTsvService.GetDataForImages(ids, SpecimenType.Tissue));
 
-            if (dataTypes.Specimens == true)
+            if (criteria.Ssms == true)
             {
-                await CreateArchiveEntry(archive, TsvFileNames.Tissues, _specimensTsvService.GetTissuesDataForImages(ids));
-            }
-
-            if (dataTypes.Ssms == true)
-            {
-                if (dataTypes.SsmsTranscriptsFull == true)
-                {
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullSsmsDataForImages(ids));
-                }
+                if (criteria.SsmsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullDataForImages(ids, VariantType.SSM));
                 else
-                {
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetSsmsDataForImages(ids, dataTypes.SsmsTranscriptsSlim ?? false));
-                }
+                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetDataForImages(ids, VariantType.SSM, criteria.SsmsTranscriptsSlim ?? false));
             }
 
-            if (dataTypes.Cnvs == true)
+            if (criteria.Cnvs == true)
             {
-                if (dataTypes.CnvsTranscriptsFull == true)
-                {
-                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetFullCnvsDataForImages(ids));
-                }
+                if (criteria.CnvsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetFullDataForImages(ids, VariantType.CNV));
                 else
-                {
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetCnvsDataForImages(ids, dataTypes.CnvsTranscriptsSlim ?? false));
-                }
+                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetDataForImages(ids, VariantType.CNV, criteria.CnvsTranscriptsSlim ?? false));
             }
 
-            if (dataTypes.Svs == true)
+            if (criteria.Svs == true)
             {
-                if (dataTypes.SvsTranscriptsFull == true)
-                {
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetFullSvsDataForImages(ids));
-                }
+                if (criteria.SvsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetFullDataForImages(ids, VariantType.SV));
                 else
-                {
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetSvsDataForImages(ids, dataTypes.SvsTranscriptsSlim ?? false));
-                }
+                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetDataForImages(ids, VariantType.SV, criteria.SvsTranscriptsSlim ?? false));
             }
 
-            if (dataTypes.GeneExp == true)
-            {
-                await CreateArchiveEntry(archive, TsvFileNames.GeneExp, _transcriptomicsTsvService.GetTranscriptomicsDataForImages(ids));
-            }
+            if (criteria.GeneExp == true)
+                await CreateArchiveEntry(archive, TsvFileNames.GeneExp, _transcriptomicsTsvService.GetDataForImages(ids));
                 
             archive.Dispose();
             archiveStream.Close();

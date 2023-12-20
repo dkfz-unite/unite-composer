@@ -1,5 +1,5 @@
-using Unite.Data.Entities.Genome.Variants.Enums;
-using Unite.Indices.Entities.Variants;
+using Unite.Indices.Entities;
+using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
@@ -8,7 +8,7 @@ public class VariantsDataResource : VariantDataResource
     public int Total { get; set; }
 
 
-    public VariantsDataResource(IDictionary<long, DataIndex> indices, VariantType type)
+    public VariantsDataResource(IReadOnlyDictionary<object, DataIndex> indices, string type)
     {
         Clinical = indices.Values.Any(d => d.Clinical == true);
         Treatments = indices.Values.Any(d => d.Treatments == true);
@@ -33,6 +33,6 @@ public class VariantsDataResource : VariantDataResource
         GeneExp = indices.Values.Any(d => d.GeneExp == true);
         GeneExpSc = indices.Values.Any(d => d.GeneExpSc == true);
 
-        Total = indices.Count();
+        Total = indices.Count;
     }
 }

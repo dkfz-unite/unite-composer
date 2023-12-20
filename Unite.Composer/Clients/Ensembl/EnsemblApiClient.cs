@@ -1,6 +1,6 @@
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Clients.Ensembl.Resources;
-using Unite.Data.Extensions;
+using Unite.Essentials.Extensions;
 
 namespace Unite.Composer.Clients.Ensembl;
 

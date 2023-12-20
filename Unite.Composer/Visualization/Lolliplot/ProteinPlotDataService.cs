@@ -1,12 +1,15 @@
+using Nest;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
-using Unite.Composer.Search.Engine;
-using Unite.Composer.Search.Engine.Filters;
-using Unite.Composer.Search.Engine.Queries;
 using Unite.Composer.Visualization.Lolliplot.Annotation;
 using Unite.Composer.Visualization.Lolliplot.Data;
-using Unite.Data.Services;
+using Unite.Data.Context;
+using Unite.Indices.Context.Configuration.Options;
+using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
 using Unite.Indices.Entities.Variants;
-using Unite.Indices.Services.Configuration.Options;
+using Unite.Indices.Search.Engine;
+using Unite.Indices.Search.Engine.Filters;
+using Unite.Indices.Search.Engine.Queries;
+using Unite.Indices.Search.Services.Filters.Base.Variants.Constants;
 
 namespace Unite.Composer.Visualization.Lolliplot;
 
@@ -71,9 +74,9 @@ public class ProteinPlotDataService
             .AddPagination(0, 10000)
             .AddFilter(CreateVariantTypeFilter())
             .AddFilter(CreateTranscriptFilter(transcriptId))
-            .AddExclusion(variant => variant.Samples);
+            .AddExclusion(variant => variant.Specimens);
 
-        var searchResult = await _variantsIndexService.SearchAsync(query);
+        var searchResult = await _variantsIndexService.Search(query);
 
         var proteinMutations = new List<ProteinMutation>();
 
@@ -108,10 +111,11 @@ public class ProteinPlotDataService
 
     private static IFilter<VariantIndex> CreateVariantTypeFilter()
     {
-        return new NotNullFilter<VariantIndex, Indices.Entities.Basic.Genome.Variants.MutationIndex>
+        return new EqualityFilter<VariantIndex, object>
         (
-            "Variant.Mutation",
-            variant => variant.Ssm
+            VariantFilterNames.Type,
+            variant => variant.Type.Suffix("keyword"),
+            VariantType.SSM
         );
     }
 
@@ -119,7 +123,7 @@ public class ProteinPlotDataService
     {
         return new EqualityFilter<VariantIndex, long>
         (
-            "Transcript.Id",
+            "SSM.Transcript.Id",
             variant => variant.Ssm.AffectedFeatures.First().Transcript.Feature.Id,
             transcriptId
         );
