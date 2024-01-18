@@ -106,7 +106,7 @@ public class DonorsTsvService : TsvServiceBase
         using var dbContext = _dbContextFactory.CreateDbContext();
 
         var entities = await CreateTreatmentsQuery(dbContext)
-            .Where(entity => ids.Contains(entity.Id))
+            .Where(entity => ids.Contains(entity.DonorId))
             .ToArrayAsync();
 
         var map = new ClassMap<Treatment>().MapTreatments();

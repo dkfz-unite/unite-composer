@@ -151,8 +151,8 @@ public class SpecimenController : DomainController
     {
         return type switch
         {
-            SpecimenType.Tissue => Unite.Data.Entities.Specimens.Enums.SpecimenType.Tissue,
-            SpecimenType.CellLine => Unite.Data.Entities.Specimens.Enums.SpecimenType.CellLine,
+            SpecimenType.Material => Unite.Data.Entities.Specimens.Enums.SpecimenType.Material,
+            SpecimenType.Line => Unite.Data.Entities.Specimens.Enums.SpecimenType.Line,
             SpecimenType.Organoid => Unite.Data.Entities.Specimens.Enums.SpecimenType.Organoid,
             SpecimenType.Xenograft => Unite.Data.Entities.Specimens.Enums.SpecimenType.Xenograft,
             _ => throw new InvalidOperationException("Unknown specimen type")

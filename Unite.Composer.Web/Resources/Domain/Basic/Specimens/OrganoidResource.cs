@@ -14,8 +14,8 @@ public class OrganoidResource
     public bool? Tumorigenicity { get; set; }
 
     public MolecularDataResource MolecularData { get; set; }
+    public InterventionResource[] Interventions { get; set; }
     public DrugScreeningResource[] DrugScreenings { get; set; }
-    public OrganoidInterventionResource[] Interventions { get; set; }
 
 
     public OrganoidResource(OrganoidIndex index)
@@ -30,17 +30,17 @@ public class OrganoidResource
         if (index.MolecularData != null)
             MolecularData = new MolecularDataResource(index.MolecularData);
 
+        if (index.Interventions.IsNotEmpty())
+        {
+            Interventions = index.Interventions
+                .Select(interventionIndex => new InterventionResource(interventionIndex))
+                .ToArray();
+        }
+
         if (index.DrugScreenings.IsNotEmpty())
         {
             DrugScreenings = index.DrugScreenings
                 .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
-                .ToArray();
-        }
-
-        if (index.Interventions.IsNotEmpty())
-        {
-            Interventions = index.Interventions
-                .Select(interventionIndex => new OrganoidInterventionResource(interventionIndex))
                 .ToArray();
         }
     }

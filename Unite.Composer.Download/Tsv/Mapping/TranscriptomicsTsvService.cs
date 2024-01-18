@@ -71,8 +71,8 @@ public class TranscriptomicsTsvService : TsvServiceBase
             .AsNoTracking()
             .Include(entity => entity.Entity)
             .Include(entity => entity.AnalysedSample.TargetSample.Donor)
-            .Include(entity => entity.AnalysedSample.TargetSample.Tissue)
-            .Include(entity => entity.AnalysedSample.TargetSample.CellLine)
+            .Include(entity => entity.AnalysedSample.TargetSample.Material)
+            .Include(entity => entity.AnalysedSample.TargetSample.Line)
             .Include(entity => entity.AnalysedSample.TargetSample.Organoid)
             .Include(entity => entity.AnalysedSample.TargetSample.Xenograft);
     }

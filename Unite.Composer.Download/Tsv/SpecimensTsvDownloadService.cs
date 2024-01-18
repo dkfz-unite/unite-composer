@@ -59,11 +59,11 @@ public class SpecimensTsvDownloadService : TsvDownloadService
 
             if (criteria.Specimens == true)
             {
-                if (type == SpecimenType.Tissue)
-                    await CreateArchiveEntry(archive, TsvFileNames.Tissues, _specimensTsvService.GetData(ids, SpecimenType.Tissue));
+                if (type == SpecimenType.Material)
+                    await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetData(ids, SpecimenType.Material));
 
-                if (type == SpecimenType.CellLine)
-                    await CreateArchiveEntry(archive, TsvFileNames.Cells, _specimensTsvService.GetData(ids, SpecimenType.CellLine));
+                if (type == SpecimenType.Line)
+                    await CreateArchiveEntry(archive, TsvFileNames.Lines, _specimensTsvService.GetData(ids, SpecimenType.Line));
 
                 if (type == SpecimenType.Organoid)
                     await CreateArchiveEntry(archive, TsvFileNames.Organoids, _specimensTsvService.GetData(ids, SpecimenType.Organoid));
@@ -83,8 +83,8 @@ public class SpecimensTsvDownloadService : TsvDownloadService
 
             if (criteria.Drugs == true)
             {
-                if (type == SpecimenType.CellLine)
-                    await CreateArchiveEntry(archive, TsvFileNames.CellsDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.CellLine));
+                if (type == SpecimenType.Line)
+                    await CreateArchiveEntry(archive, TsvFileNames.LinesDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Line));
 
                 if (type == SpecimenType.Organoid)
                     await CreateArchiveEntry(archive, TsvFileNames.OrganoidsDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Organoid));

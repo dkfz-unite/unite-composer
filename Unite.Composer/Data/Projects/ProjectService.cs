@@ -137,17 +137,17 @@ public class ProjectService
 
         var withCtImages = 0;
 
-        var withTissues = _dbContext.Set<Specimen>()
+        var withMaterials = _dbContext.Set<Specimen>()
             .AsNoTracking()
-            .Where(specimen => specimen.TypeId == SpecimenType.Tissue)
+            .Where(specimen => specimen.TypeId == SpecimenType.Material)
             .Where(specimen => donorIds.Contains(specimen.DonorId))
             .Select(specimen => specimen.DonorId)
             .Distinct()
             .Count();
 
-        var withCellLines = _dbContext.Set<Specimen>()
+        var withLines = _dbContext.Set<Specimen>()
             .AsNoTracking()
-            .Where(specimen => specimen.TypeId == SpecimenType.CellLine)
+            .Where(specimen => specimen.TypeId == SpecimenType.Line)
             .Where(specimen => donorIds.Contains(specimen.DonorId))
             .Select(specimen => specimen.DonorId)
             .Distinct()
@@ -169,21 +169,21 @@ public class ProjectService
             .Distinct()
             .Count();
 
-        var withSimpleSomaticMutations = _dbContext.Set<SSM.VariantEntry>()
+        var withSsms = _dbContext.Set<SSM.VariantEntry>()
             .AsNoTracking()
             .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.TargetSample.DonorId))
             .Select(occurrence => occurrence.AnalysedSample.TargetSample.DonorId)
             .Distinct()
             .Count();
 
-        var withCopyNumberVariants = _dbContext.Set<CNV.VariantEntry>()
+        var withCnvs = _dbContext.Set<CNV.VariantEntry>()
             .AsNoTracking()
             .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.TargetSample.DonorId))
             .Select(occurrence => occurrence.AnalysedSample.TargetSample.DonorId)
             .Distinct()
             .Count();
 
-        var withStructuralVariants = _dbContext.Set<SV.VariantEntry>()
+        var withSvs = _dbContext.Set<SV.VariantEntry>()
             .AsNoTracking()
             .Where(occurrence => donorIds.Contains(occurrence.AnalysedSample.TargetSample.DonorId))
             .Select(occurrence => occurrence.AnalysedSample.TargetSample.DonorId)
@@ -203,13 +203,13 @@ public class ProjectService
             Total = donorIds.Length,
             MRI = withMriImages,
             CT = withCtImages,
-            Tissues = withTissues,
-            Cells = withCellLines,
+            Materials = withMaterials,
+            Lines = withLines,
             Organoids = withOrganoids,
             Xenografts = withXenografts,
-            SSM = withSimpleSomaticMutations,
-            CNV = withCopyNumberVariants,
-            SV = withStructuralVariants,
+            SSM = withSsms,
+            CNV = withCnvs,
+            SV = withSvs,
             TRA = withGeneExpressions
         };
     }

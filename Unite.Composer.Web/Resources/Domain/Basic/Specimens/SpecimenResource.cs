@@ -10,8 +10,8 @@ public class SpecimenResource
     public string Type { get; set; }
     public int? CreationDay { get; set; }
 
-    public TissueResource Tissue { get; set; }
-    public CellLineResource Cell { get; set; }
+    public MaterialResource Material { get; set; }
+    public LineResource Line { get; set; }
     public OrganoidResource Organoid { get; set; }
     public XenograftResource Xenograft { get; set; }
 
@@ -26,10 +26,10 @@ public class SpecimenResource
         ReferenceId = index.ReferenceId;
         Type = index.Type;
 
-        if (index.Tissue != null)
-            Tissue = new TissueResource(index.Tissue);
-        else if (index.Cell != null)
-            Cell = new CellLineResource(index.Cell);
+        if (index.Material != null)
+            Material = new MaterialResource(index.Material);
+        else if (index.Line != null)
+            Line = new LineResource(index.Line);
         else if (index.Organoid != null)
             Organoid = new OrganoidResource(index.Organoid);
         else if (index.Xenograft != null)
@@ -47,10 +47,10 @@ public class SpecimenResource
         ReferenceId = index.ReferenceId;
         Type = index.Type;
 
-        if (index.Tissue != null)
-            Tissue = new TissueResource(index.Tissue);
-        else if (index.Cell != null)
-            Cell = new CellLineResource(index.Cell, drugScreenings);
+        if (index.Material != null)
+            Material = new MaterialResource(index.Material);
+        else if (index.Line != null)
+            Line = new LineResource(index.Line, drugScreenings);
         else if (index.Organoid != null)
             Organoid = new OrganoidResource(index.Organoid, drugScreenings);
         else if (index.Xenograft != null)

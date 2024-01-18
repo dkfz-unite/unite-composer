@@ -8,8 +8,8 @@ public class GeneResource : Basic.Genome.GeneResource
     public int NumberOfDonors { get; }
     public int NumberOfMris { get; set; }
     public int NumberOfCts { get; set; }
-    public int NumberOfTissues { get; set; }
-    public int NumberOfCells { get; set; }
+    public int NumberOfMaterials { get; set; }
+    public int NumberOfLines { get; set; }
     public int NumberOfOrganoids { get; set; }
     public int NumberOfXenografts { get; set; }
     public int NumberOfSsms { get; }
@@ -27,8 +27,8 @@ public class GeneResource : Basic.Genome.GeneResource
         NumberOfDonors = index.NumberOfDonors;
         NumberOfMris = index.NumberOfMris;
         NumberOfCts = index.NumberOfCts;
-        NumberOfTissues = index.NumberOfTissues;
-        NumberOfCells = index.NumberOfCells;
+        NumberOfMaterials = index.NumberOfMaterials;
+        NumberOfLines = index.NumberOfLines;
         NumberOfOrganoids = index.NumberOfOrganoids;
         NumberOfXenografts = index.NumberOfXenografts;
         NumberOfSsms = index.NumberOfSsms;

@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
-public class OrganoidInterventionResource
+public class InterventionResource
 {
     public string Type { get; set; }
     public string Details { get; set; }
@@ -11,7 +11,7 @@ public class OrganoidInterventionResource
     public string Results { get; set; }
 
 
-    public OrganoidInterventionResource(OrganoidInterventionIndex index)
+    public InterventionResource(InterventionIndex index)
     {
         Type = index.Type;
         Details = index.Details;

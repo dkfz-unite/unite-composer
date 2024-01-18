@@ -10,11 +10,11 @@ public class VariantDataResource
     public bool? Treatments { get; set; }
     public bool? Mris { get; set; }
     public bool? Cts { get; set; }
-    public bool? Tissues { get; set; }
-    public bool? TissuesMolecular { get; set; }
-    public bool? Cells { get; set; }
-    public bool? CellsMolecular { get; set; }
-    public bool? CellsDrugs { get; set; }
+    public bool? Materials { get; set; }
+    public bool? MaterialsMolecular { get; set; }
+    public bool? Lines { get; set; }
+    public bool? LinesMolecular { get; set; }
+    public bool? LinesDrugs { get; set; }
     public bool? Organoids { get; set; }
     public bool? OrganoidsMolecular { get; set; }
     public bool? OrganoidsDrugs { get; set; }
@@ -39,11 +39,11 @@ public class VariantDataResource
         Treatments = index.Treatments;
         Mris = index.Mris;
         Cts = index.Cts;
-        Tissues = index.Tissues;
-        TissuesMolecular = index.TissuesMolecular;
-        Cells = index.Cells;
-        CellsMolecular = index.CellsMolecular;
-        CellsDrugs = index.CellsDrugs;
+        Materials = index.Materials;
+        MaterialsMolecular = index.MaterialsMolecular;
+        Lines = index.Lines;
+        LinesMolecular = index.LinesMolecular;
+        LinesDrugs = index.LinesDrugs;
         Organoids = index.Organoids;
         OrganoidsMolecular = index.OrganoidsMolecular;
         OrganoidsDrugs = index.OrganoidsDrugs;

@@ -14,11 +14,11 @@ public class VariantsDataResource : VariantDataResource
         Treatments = indices.Values.Any(d => d.Treatments == true);
         Mris = indices.Values.Any(d => d.Mris == true);
         Cts = indices.Values.Any(d => d.Cts == true);
-        Tissues = indices.Values.Any(d => d.Tissues == true);
-        TissuesMolecular = indices.Values.Any(d => d.TissuesMolecular == true);
-        Cells = indices.Values.Any(d => d.Cells == true);
-        CellsMolecular = indices.Values.Any(d => d.CellsMolecular == true);
-        CellsDrugs = indices.Values.Any(d => d.CellsDrugs == true);
+        Materials = indices.Values.Any(d => d.Materials == true);
+        MaterialsMolecular = indices.Values.Any(d => d.MaterialsMolecular == true);
+        Lines = indices.Values.Any(d => d.Lines == true);
+        LinesMolecular = indices.Values.Any(d => d.LinesMolecular == true);
+        LinesDrugs = indices.Values.Any(d => d.LinesDrugs == true);
         Organoids = indices.Values.Any(d => d.Organoids == true);
         OrganoidsMolecular = indices.Values.Any(d => d.OrganoidsMolecular == true);
         OrganoidsDrugs = indices.Values.Any(d => d.OrganoidsDrugs == true);

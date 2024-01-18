@@ -261,13 +261,13 @@ public class VariantsTsvService : TsvServiceBase
         return query
             .Include(entity => entity.AnalysedSample.Analysis)
             .Include(entity => entity.AnalysedSample.TargetSample.Donor)
-            .Include(entity => entity.AnalysedSample.TargetSample.Tissue)
-            .Include(entity => entity.AnalysedSample.TargetSample.CellLine)
+            .Include(entity => entity.AnalysedSample.TargetSample.Material)
+            .Include(entity => entity.AnalysedSample.TargetSample.Line)
             .Include(entity => entity.AnalysedSample.TargetSample.Organoid)
             .Include(entity => entity.AnalysedSample.TargetSample.Xenograft)
             .Include(entity => entity.AnalysedSample.MatchedSample.Donor)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Tissue)
-            .Include(entity => entity.AnalysedSample.MatchedSample.CellLine)
+            .Include(entity => entity.AnalysedSample.MatchedSample.Material)
+            .Include(entity => entity.AnalysedSample.MatchedSample.Line)
             .Include(entity => entity.AnalysedSample.MatchedSample.Organoid)
             .Include(entity => entity.AnalysedSample.MatchedSample.Xenograft);
     }

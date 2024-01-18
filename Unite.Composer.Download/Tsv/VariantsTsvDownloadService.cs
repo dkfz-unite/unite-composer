@@ -78,8 +78,8 @@ public class VariantsTsvDownloadService : TsvDownloadService
 
             if (dataTypes.Specimens == true)
             {
-                await CreateArchiveEntry(archive, TsvFileNames.Tissues, _specimensTsvService.GetDataForVariants<TV>(ids, SpecimenType.Tissue));
-                await CreateArchiveEntry(archive, TsvFileNames.Cells, _specimensTsvService.GetDataForVariants<TV>(ids, SpecimenType.CellLine));
+                await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetDataForVariants<TV>(ids, SpecimenType.Material));
+                await CreateArchiveEntry(archive, TsvFileNames.Lines, _specimensTsvService.GetDataForVariants<TV>(ids, SpecimenType.Line));
                 await CreateArchiveEntry(archive, TsvFileNames.Organoids, _specimensTsvService.GetDataForVariants<TV>(ids, SpecimenType.Organoid));
                 await CreateArchiveEntry(archive, TsvFileNames.Xenografts, _specimensTsvService.GetDataForVariants<TV>(ids, SpecimenType.Xenograft));
             }
@@ -92,7 +92,7 @@ public class VariantsTsvDownloadService : TsvDownloadService
 
             if (dataTypes.Drugs == true)
             {
-                await CreateArchiveEntry(archive, TsvFileNames.CellsDrugs, _specimensTsvService.GetDrugsScreeningsDataForVariants<TV>(ids, SpecimenType.CellLine));
+                await CreateArchiveEntry(archive, TsvFileNames.LinesDrugs, _specimensTsvService.GetDrugsScreeningsDataForVariants<TV>(ids, SpecimenType.Line));
                 await CreateArchiveEntry(archive, TsvFileNames.OrganoidsDrugs, _specimensTsvService.GetDrugsScreeningsDataForVariants<TV>(ids, SpecimenType.Organoid));
                 await CreateArchiveEntry(archive, TsvFileNames.XenograftsDrugs, _specimensTsvService.GetDrugsScreeningsDataForVariants<TV>(ids, SpecimenType.Xenograft));
             }

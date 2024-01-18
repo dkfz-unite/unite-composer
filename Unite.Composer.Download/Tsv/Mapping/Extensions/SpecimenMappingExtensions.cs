@@ -3,38 +3,35 @@ using Unite.Data.Entities.Specimens;
 using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
-using OrganoidIntervention = Unite.Data.Entities.Specimens.Organoids.Intervention;
-using XenograftIntervention = Unite.Data.Entities.Specimens.Xenografts.Intervention;
-
 namespace Unite.Composer.Download.Tsv.Mapping.Extensions;
 
 internal static class SpecimenMappingExtensions
 {
-    public static ClassMap<Specimen> MapTissues(this ClassMap<Specimen> map)
+    public static ClassMap<Specimen> MapMaterials(this ClassMap<Specimen> map)
     {
         return map
             .MapSpecimen()
-            .Map(entity => entity.Tissue.TypeId, "type")
-            .Map(entity => entity.Tissue.TumorTypeId, "tumor_type")
-            .Map(entity => entity.Tissue.Source.Value, "source")
+            .Map(entity => entity.Material.TypeId, "type")
+            .Map(entity => entity.Material.TumorTypeId, "tumor_type")
+            .Map(entity => entity.Material.Source.Value, "source")
             .MapMolecularData();
     }
 
-    public static ClassMap<Specimen> MapCellLines(this ClassMap<Specimen> map)
+    public static ClassMap<Specimen> MapLines(this ClassMap<Specimen> map)
     {
         return map
             .MapSpecimen()
-            .Map(entity => entity.CellLine.SpeciesId, "species")
-            .Map(entity => entity.CellLine.TypeId, "type")
-            .Map(entity => entity.CellLine.CultureTypeId, "culture_type")
+            .Map(entity => entity.Line.CellsSpeciesId, "cells_species")
+            .Map(entity => entity.Line.CellsTypeId, "cells_type")
+            .Map(entity => entity.Line.CellsCultureTypeId, "cells_culture_type")
             .MapMolecularData()
-            .Map(entity => entity.CellLine.Info.Name, "public_name")
-            .Map(entity => entity.CellLine.Info.DepositorName, "depositor_name")
-            .Map(entity => entity.CellLine.Info.DepositorEstablishment, "depositor_establishment")
-            .Map(entity => entity.CellLine.Info.EstablishmentDate, "establishment_date")
-            .Map(entity => entity.CellLine.Info.PubMedLink, "pubmed_link")
-            .Map(entity => entity.CellLine.Info.AtccLink, "atcc_link")
-            .Map(entity => entity.CellLine.Info.ExPasyLink, "expasy_link");
+            .Map(entity => entity.Line.Info.Name, "public_name")
+            .Map(entity => entity.Line.Info.DepositorName, "depositor_name")
+            .Map(entity => entity.Line.Info.DepositorEstablishment, "depositor_establishment")
+            .Map(entity => entity.Line.Info.EstablishmentDate, "establishment_date")
+            .Map(entity => entity.Line.Info.PubMedLink, "pubmed_link")
+            .Map(entity => entity.Line.Info.AtccLink, "atcc_link")
+            .Map(entity => entity.Line.Info.ExPasyLink, "expasy_link");
     }
 
     public static ClassMap<Specimen> MapOrganoids(this ClassMap<Specimen> map)
@@ -54,7 +51,7 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.Xenograft.MouseStrain, "mouse_strain")
             .Map(entity => entity.Xenograft.GroupSize, "group_size")
             .Map(entity => entity.Xenograft.ImplantTypeId, "implant_type")
-            .Map(entity => entity.Xenograft.TissueLocationId, "tissue_location")
+            .Map(entity => entity.Xenograft.ImplantLocationId, "implant_location")
             .Map(entity => entity.Xenograft.ImplantedCellsNumber, "implanted_cells_number")
             .Map(entity => entity.Xenograft.Tumorigenicity, "tumorigenicity")
             .Map(entity => entity.Xenograft.TumorGrowthFormId, "tumor_growth_form")
@@ -63,23 +60,10 @@ internal static class SpecimenMappingExtensions
             .MapMolecularData();
     }
 
-    public static ClassMap<OrganoidIntervention> MapInterventions(this ClassMap<OrganoidIntervention> map)
+    public static ClassMap<Intervention> MapInterventions(this ClassMap<Intervention> map)
     {
         return map
-            .MapSpecimen(entity => entity.Organoid.Specimen)
-            .Map(entity => entity.Type.Name, "type")
-            .Map(entity => entity.Type.Description, "description")
-            .Map(entity => entity.StartDate, "start_date")
-            .Map(entity => entity.StartDay, "start_day")
-            .Map(entity => entity.EndDate, "end_date")
-            .Map(entity => entity.DurationDays, "duration_days")
-            .Map(entity => entity.Results, "results");
-    }
-
-    public static ClassMap<XenograftIntervention> MapInterventions(this ClassMap<XenograftIntervention> map)
-    {
-        return map
-            .MapSpecimen(entity => entity.Xenograft.Specimen)
+            .MapSpecimen(entity => entity.Specimen)
             .Map(entity => entity.Type.Name, "type")
             .Map(entity => entity.Type.Description, "description")
             .Map(entity => entity.StartDate, "start_date")
@@ -97,11 +81,12 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.Drug.Description, "drug_description")
             .Map(entity => entity.Dss, "dss")
             .Map(entity => entity.DssSelective, "dss_selective")
+            .Map(entity => entity.Gof, "gof")
+            .Map(entity => entity.AbsIC25, "abs_ic_25")
+            .Map(entity => entity.AbsIC50, "abs_ic_50")
+            .Map(entity => entity.AbsIC75, "abs_ic_75")
             .Map(entity => entity.MinConcentration, "min_concentration")
-            .Map(entity => entity.MaxConcentration, "max_concentration")
-            .Map(entity => entity.AbsIC25, "abs_ic25")
-            .Map(entity => entity.AbsIC50, "abs_ic50")
-            .Map(entity => entity.AbsIC75, "abs_ic75");
+            .Map(entity => entity.MaxConcentration, "max_concentration");
     }
 
 

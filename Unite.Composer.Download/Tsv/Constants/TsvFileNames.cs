@@ -7,9 +7,9 @@ public static class TsvFileNames
     public const string Treatments = "treatments.tsv";
     public const string Mris = "mris.tsv";
     public const string Cts = "cts.tsv";
-    public const string Tissues = "tissues.tsv";
-    public const string Cells = "cells.tsv";
-    public const string CellsDrugs = "cells_drugs.tsv";
+    public const string Materials = "materials.tsv";
+    public const string Lines = "lines.tsv";
+    public const string LinesDrugs = "lines_drugs.tsv";
     public const string Organoids = "organoids.tsv";
     public const string OrganoidsDrugs = "organoids_drugs.tsv";
     public const string OrganoidsInterventions = "organoids_interventions.tsv";

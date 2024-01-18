@@ -60,8 +60,8 @@ public class DonorsTsvDownloadService : TsvDownloadService
 
             if (criteria.Specimens == true)
             {
-                await CreateArchiveEntry(archive, TsvFileNames.Tissues, _specimensTsvService.GetDataForDonors(ids, SpecimenType.Tissue));
-                await CreateArchiveEntry(archive, TsvFileNames.Cells, _specimensTsvService.GetDataForDonors(ids, SpecimenType.CellLine));
+                await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetDataForDonors(ids, SpecimenType.Material));
+                await CreateArchiveEntry(archive, TsvFileNames.Lines, _specimensTsvService.GetDataForDonors(ids, SpecimenType.Line));
                 await CreateArchiveEntry(archive, TsvFileNames.Organoids, _specimensTsvService.GetDataForDonors(ids, SpecimenType.Organoid));
                 await CreateArchiveEntry(archive, TsvFileNames.Xenografts, _specimensTsvService.GetDataForDonors(ids, SpecimenType.Xenograft));
             }
@@ -74,7 +74,7 @@ public class DonorsTsvDownloadService : TsvDownloadService
 
             if (criteria.Drugs == true)
             {
-                await CreateArchiveEntry(archive, TsvFileNames.CellsDrugs, _specimensTsvService.GetDrugsScreeningsDataForDonors(ids, SpecimenType.CellLine));
+                await CreateArchiveEntry(archive, TsvFileNames.LinesDrugs, _specimensTsvService.GetDrugsScreeningsDataForDonors(ids, SpecimenType.Line));
                 await CreateArchiveEntry(archive, TsvFileNames.OrganoidsDrugs, _specimensTsvService.GetDrugsScreeningsDataForDonors(ids, SpecimenType.Organoid));
                 await CreateArchiveEntry(archive, TsvFileNames.XenograftsDrugs, _specimensTsvService.GetDrugsScreeningsDataForDonors(ids, SpecimenType.Xenograft));
             }

@@ -7,8 +7,8 @@ public class ProjectDataModel
     public int? MRI { get; set; }
     public int? CT { get; set; }
 
-    public int? Tissues { get; set; }
-    public int? Cells { get; set; }
+    public int? Materials { get; set; }
+    public int? Lines { get; set; }
     public int? Organoids { get; set; }
     public int? Xenografts { get; set; }
 

@@ -25,29 +25,18 @@ public class SpecimenDataResource
         GeneExp = index.GeneExp;
         GeneExpSc = index.GeneExpSc;
         Molecular = GetMolecilar(index, type);
-        Drugs = GetDrugs(index, type);
         Interventions = GetInterventions(index, type);
+        Drugs = GetDrugs(index, type);
     }
 
     private static bool? GetMolecilar(DataIndex index, string type)
     {
         return type switch
         {
-            SpecimenType.Tissue => index.TissuesMolecular,
-            SpecimenType.CellLine => index.CellsMolecular,
+            SpecimenType.Material => index.MaterialsMolecular,
+            SpecimenType.Line => index.LinesMolecular,
             SpecimenType.Xenograft => index.XenograftsMolecular,
             SpecimenType.Organoid => index.OrganoidsMolecular,
-            _ => null
-        };
-    }
-
-    private static bool? GetDrugs(DataIndex index, string type)
-    {
-        return type switch
-        {
-            SpecimenType.CellLine => index.CellsDrugs,
-            SpecimenType.Xenograft => index.XenograftsDrugs,
-            SpecimenType.Organoid => index.OrganoidsDrugs,
             _ => null
         };
     }
@@ -58,6 +47,17 @@ public class SpecimenDataResource
         {
             SpecimenType.Xenograft => index.XenograftsInterventions,
             SpecimenType.Organoid => index.OrganoidsInterventions,
+            _ => null
+        };
+    }
+
+    private static bool? GetDrugs(DataIndex index, string type)
+    {
+        return type switch
+        {
+            SpecimenType.Line => index.LinesDrugs,
+            SpecimenType.Xenograft => index.XenograftsDrugs,
+            SpecimenType.Organoid => index.OrganoidsDrugs,
             _ => null
         };
     }

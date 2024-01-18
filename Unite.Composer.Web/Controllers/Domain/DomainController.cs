@@ -34,10 +34,10 @@ public abstract class DomainController : Controller
     {
         if (string.IsNullOrWhiteSpace(type))
             return null;
-        else if (type.Equals(SpecimenType.Tissue, _comparison))
-            return [SpecimenType.Tissue];
-        else if (type.Equals(SpecimenType.CellLine, _comparison))
-            return [SpecimenType.CellLine];
+        else if (type.Equals(SpecimenType.Material, _comparison))
+            return [SpecimenType.Material];
+        else if (type.Equals(SpecimenType.Line, _comparison))
+            return [SpecimenType.Line];
         else if (type.Equals(SpecimenType.Organoid, _comparison))
             return [SpecimenType.Organoid];
         else if (type.Equals(SpecimenType.Xenograft, _comparison))
@@ -72,10 +72,10 @@ public abstract class DomainController : Controller
 
     protected static Unite.Data.Entities.Specimens.Enums.SpecimenType ConvertSpecimenType(string type)
     {
-        if (string.Equals(type, SpecimenType.Tissue, _comparison))
-            return Unite.Data.Entities.Specimens.Enums.SpecimenType.Tissue;
-        else if (string.Equals(type, SpecimenType.CellLine, _comparison))
-            return Unite.Data.Entities.Specimens.Enums.SpecimenType.CellLine;
+        if (string.Equals(type, SpecimenType.Material, _comparison))
+            return Unite.Data.Entities.Specimens.Enums.SpecimenType.Material;
+        else if (string.Equals(type, SpecimenType.Line, _comparison))
+            return Unite.Data.Entities.Specimens.Enums.SpecimenType.Line;
         else if (string.Equals(type, SpecimenType.Organoid, _comparison))
             return Unite.Data.Entities.Specimens.Enums.SpecimenType.Organoid;
         else if (string.Equals(type, SpecimenType.Xenograft, _comparison))

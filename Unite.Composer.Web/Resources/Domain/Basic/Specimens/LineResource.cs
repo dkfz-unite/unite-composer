@@ -4,19 +4,19 @@ using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
-public class CellLineResource
+public class LineResource
 {
     public int Id { get; set; }
     public string ReferenceId { get; set; }
     public int? CreationDay { get; set; }
-    public string Species { get; set; }
-    public string Type { get; set; }
-    public string CultureType { get; set; }
+    public string CellsSpecies { get; set; }
+    public string CellsType { get; set; }
+    public string CellsCultureType { get; set; }
 
     public string Name { get; set; }
     public string DepositorName { get; set; }
     public string DepositorEstablishment { get; set; }
-    public DateTime? EstablishmentDate { get; set; }
+    public DateOnly? EstablishmentDate { get; set; }
 
     public string PubMedLink { get; set; }
     public string AtccLink { get; set; }
@@ -26,14 +26,14 @@ public class CellLineResource
     public DrugScreeningResource[] DrugScreenings { get; set; }
 
 
-    public CellLineResource(CellLineIndex index)
+    public LineResource(LineIndex index)
     {
         Id = index.Id;
         ReferenceId = index.ReferenceId;
         CreationDay = index.CreationDay;
-        Species = index.Species;
-        Type = index.Type;
-        CultureType = index.CultureType;
+        CellsSpecies = index.CellsSpecies;
+        CellsType = index.CellsType;
+        CellsCultureType = index.CellsCultureType;
 
         Name = index.Name;
         DepositorName = index.DepositorName;
@@ -55,7 +55,7 @@ public class CellLineResource
         }
     }
 
-    public CellLineResource(CellLineIndex index, DrugScreeningModel[] drugScreenings) : this(index)
+    public LineResource(LineIndex index, DrugScreeningModel[] drugScreenings) : this(index)
     {
         if (drugScreenings.IsNotEmpty())
         {

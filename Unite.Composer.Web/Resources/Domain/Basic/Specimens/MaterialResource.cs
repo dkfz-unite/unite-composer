@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
-public class TissueResource
+public class MaterialResource
 {
     public int Id { get; set; }
     public string ReferenceId { get; set; }
@@ -14,7 +14,7 @@ public class TissueResource
     public MolecularDataResource MolecularData { get; set; }
 
 
-    public TissueResource(TissueIndex index)
+    public MaterialResource(MaterialIndex index)
     {
         Id = index.Id;
         ReferenceId = index.ReferenceId;

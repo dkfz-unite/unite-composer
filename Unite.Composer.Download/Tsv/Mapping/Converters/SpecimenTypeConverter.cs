@@ -14,8 +14,8 @@ public class SpecimenTypeConverter : IConverter<Specimen>
     {
         var specimen = (Specimen)value;
 
-        return specimen.Tissue != null ? "Tissue"
-             : specimen.CellLine != null ? "Cell Line"
+        return specimen.Material != null ? "Material"
+             : specimen.Line != null ? "Line"
              : specimen.Organoid != null ? "Organoid"
              : specimen.Xenograft != null ? "Xenograft"
              : string.Empty;

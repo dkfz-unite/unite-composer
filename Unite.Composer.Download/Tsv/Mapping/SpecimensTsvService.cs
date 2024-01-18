@@ -6,9 +6,6 @@ using Unite.Data.Entities.Specimens;
 using Unite.Data.Entities.Specimens.Enums;
 using Unite.Essentials.Tsv;
 
-using OrganoidIntervention = Unite.Data.Entities.Specimens.Organoids.Intervention;
-using XenograftIntervention = Unite.Data.Entities.Specimens.Xenografts.Intervention;
-
 namespace Unite.Composer.Download.Tsv.Mapping;
 
 public class SpecimensTsvService : TsvServiceBase
@@ -19,10 +16,10 @@ public class SpecimensTsvService : TsvServiceBase
 
     public async Task<string> GetData(IEnumerable<int> ids, SpecimenType typeId)
     {
-        if (typeId == SpecimenType.Tissue)
-            return await GetTissuesData(ids);
-        else if (typeId == SpecimenType.CellLine)
-            return await GetCellLinesData(ids);
+        if (typeId == SpecimenType.Material)
+            return await GetMaterialsData(ids);
+        else if (typeId == SpecimenType.Line)
+            return await GetLinesData(ids);
         else if (typeId == SpecimenType.Organoid)
             return await GetOrganoidsData(ids);
         else if (typeId == SpecimenType.Xenograft)
@@ -63,12 +60,21 @@ public class SpecimensTsvService : TsvServiceBase
 
     public async Task<string> GetInterventionsData(IEnumerable<int> ids, SpecimenType typeId)
     {
-        if (typeId == SpecimenType.Organoid)
-            return await GetOrganoidInterventionsData(ids);
-        else if (typeId == SpecimenType.Xenograft)
-            return await GetXenograftInterventionsData(ids);
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return null;
+        var entities = await CreateInterventionsQuery(dbContext)
+            .Where(entity => entity.Specimen.TypeId == typeId)
+            .Where(entity => ids.Contains(entity.SpecimenId))
+            .ToArrayAsync();
+
+        if (!entities.Any())
+        {
+            return null;
+        }
+
+        var map = new ClassMap<Intervention>().MapInterventions();
+
+        return TsvWriter.Write(entities, map);
     }
 
     public async Task<string> GetInterventionsDataForDonors(IEnumerable<int> ids, SpecimenType typeId)
@@ -96,14 +102,21 @@ public class SpecimensTsvService : TsvServiceBase
 
     public async Task<string> GetDrugsScreeningsData(IEnumerable<int> ids, SpecimenType typeId)
     {
-        if (typeId == SpecimenType.CellLine)
-            return await GetCellLineDrugScreeningsData(ids);
-        else if (typeId == SpecimenType.Organoid)
-            return await GetOrganoidDrugScreeningsData(ids);
-        else if (typeId == SpecimenType.Xenograft)
-            return await GetXenograftDrugScreeningsData(ids);
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return null;
+        var entities = await CreateDrugScreeningsQuery(dbContext)
+            .Where(entity => entity.Specimen.TypeId == typeId)
+            .Where(entity => ids.Contains(entity.SpecimenId))
+            .ToArrayAsync();
+
+        if (!entities.Any())
+        {
+            return null;
+        }
+
+        var map = new ClassMap<DrugScreening>().MapDrugScreenings();
+
+        return TsvWriter.Write(entities, map);
     }
 
     public async Task<string> GetDrugsScreeningsDataForDonors(IEnumerable<int> ids, SpecimenType typeId)
@@ -129,13 +142,13 @@ public class SpecimensTsvService : TsvServiceBase
     }
 
 
-    private async Task<string> GetTissuesData(IEnumerable<int> ids)
+    private async Task<string> GetMaterialsData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         
         var entities = await CreateQuery(dbContext)
-            .Include(entity => entity.Tissue.Source)
-            .Where(entity => entity.Tissue != null)
+            .Include(entity => entity.Material.Source)
+            .Where(entity => entity.TypeId != SpecimenType.Material)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 
@@ -144,18 +157,18 @@ public class SpecimensTsvService : TsvServiceBase
             return null;
         }
 
-        var map = new ClassMap<Specimen>().MapTissues();
+        var map = new ClassMap<Specimen>().MapMaterials();
         
         return TsvWriter.Write(entities, map);
     }
 
-    private async Task<string> GetCellLinesData(IEnumerable<int> ids)
+    private async Task<string> GetLinesData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
         var entities = await CreateQuery(dbContext)
-            .Include(entity => entity.CellLine.Info)
-            .Where(entity => entity.CellLine != null)
+            .Include(entity => entity.Line.Info)
+            .Where(entity => entity.TypeId == SpecimenType.Line)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 
@@ -164,7 +177,7 @@ public class SpecimensTsvService : TsvServiceBase
             return null;
         }
 
-        var map = new ClassMap<Specimen>().MapCellLines();
+        var map = new ClassMap<Specimen>().MapLines();
 
         return TsvWriter.Write(entities, map);
     }
@@ -175,7 +188,7 @@ public class SpecimensTsvService : TsvServiceBase
 
         var entities = await CreateQuery(dbContext)
             .Include(entity => entity.Organoid)
-            .Where(entity => entity.Organoid != null)
+            .Where(entity => entity.TypeId == SpecimenType.Organoid)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 
@@ -195,7 +208,7 @@ public class SpecimensTsvService : TsvServiceBase
 
         var entities = await CreateQuery(dbContext)
             .Include(entity => entity.Xenograft)
-            .Where(entity => entity.Xenograft != null)
+            .Where(entity => entity.TypeId == SpecimenType.Xenograft)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 
@@ -214,121 +227,19 @@ public class SpecimensTsvService : TsvServiceBase
         return dbContext.Set<Specimen>().AsNoTracking()
             .Include(entity => entity.Donor)
             .Include(entity => entity.MolecularData)
-            .Include(entity => entity.Parent.Tissue)
-            .Include(entity => entity.Parent.CellLine)
+            .Include(entity => entity.Parent.Material)
+            .Include(entity => entity.Parent.Line)
             .Include(entity => entity.Parent.Organoid)
             .Include(entity => entity.Parent.Xenograft);
     }
 
-
-    private async Task<string> GetOrganoidInterventionsData(IEnumerable<int> ids)
+    private static IQueryable<Intervention> CreateInterventionsQuery(DomainDbContext dbContext)
     {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-        var entities = await CreateOrganoidInterventionsQuery(dbContext)
-            .Where(entity => ids.Contains(entity.Organoid.SpecimenId))
-            .ToArrayAsync();
-
-        if (!entities.Any())
-        {
-            return null;
-        }
-
-        var map = new ClassMap<OrganoidIntervention>().MapInterventions();
-
-        return TsvWriter.Write(entities, map);
-    }
-
-    private async Task<string> GetXenograftInterventionsData(IEnumerable<int> ids)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-        var entities = await CreateXenograftInterventionsQuery(dbContext)
-            .Where(entity => ids.Contains(entity.Xenograft.SpecimenId))
-            .ToArrayAsync();
-
-        if (!entities.Any())
-        {
-            return null;
-        }
-
-        var map = new ClassMap<XenograftIntervention>().MapInterventions();
-
-        return TsvWriter.Write(entities, map);
-    }
-
-    private static IQueryable<OrganoidIntervention> CreateOrganoidInterventionsQuery(DomainDbContext dbContext)
-    {
-        return dbContext.Set<OrganoidIntervention>().AsNoTracking()
+        return dbContext.Set<Intervention>().AsNoTracking()
             .Include(entity => entity.Type)
-            .Include(entity => entity.Organoid.Specimen.Donor)
-            .Include(entity => entity.Organoid.Specimen.Organoid);
-    }
-
-    private static IQueryable<XenograftIntervention> CreateXenograftInterventionsQuery(DomainDbContext dbContext)
-    {
-        return dbContext.Set<XenograftIntervention>().AsNoTracking()
-            .Include(entity => entity.Type)
-            .Include(entity => entity.Xenograft.Specimen.Donor)
-            .Include(entity => entity.Xenograft.Specimen.Xenograft);
-    }
-
-
-    private async Task<string> GetCellLineDrugScreeningsData(IEnumerable<int> ids)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-        var entities = await CreateDrugScreeningsQuery(dbContext)
-            .Where(entity => entity.Specimen.CellLine != null)
-            .Where(entity => ids.Contains(entity.SpecimenId))
-            .ToArrayAsync();
-
-        if (!entities.Any())
-        {
-            return null;
-        }
-
-        var map = new ClassMap<DrugScreening>().MapDrugScreenings();
-
-        return TsvWriter.Write(entities, map);
-    }
-
-    private async Task<string> GetOrganoidDrugScreeningsData(IEnumerable<int> ids)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-        var entities = await CreateDrugScreeningsQuery(dbContext)
-            .Where(entity => entity.Specimen.Organoid != null)
-            .Where(entity => ids.Contains(entity.SpecimenId))
-            .ToArrayAsync();
-
-        if (!entities.Any())
-        {
-            return null;
-        }
-
-        var map = new ClassMap<DrugScreening>().MapDrugScreenings();
-
-        return TsvWriter.Write(entities, map);
-    }
-
-    private async Task<string> GetXenograftDrugScreeningsData(IEnumerable<int> ids)
-    {
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-        var entities = await CreateDrugScreeningsQuery(dbContext)
-            .Where(entity => entity.Specimen.Xenograft != null)
-            .Where(entity => ids.Contains(entity.SpecimenId))
-            .ToArrayAsync();
-
-        if (!entities.Any())
-        {
-            return null;
-        }
-
-        var map = new ClassMap<DrugScreening>().MapDrugScreenings();
-
-        return TsvWriter.Write(entities, map);
+            .Include(entity => entity.Specimen.Donor)
+            .Include(entity => entity.Specimen.Organoid)
+            .Include(entity => entity.Specimen.Xenograft);
     }
 
     private static IQueryable<DrugScreening> CreateDrugScreeningsQuery(DomainDbContext dbContext)
@@ -336,8 +247,7 @@ public class SpecimensTsvService : TsvServiceBase
         return dbContext.Set<DrugScreening>().AsNoTracking()
             .Include(entity => entity.Drug)
             .Include(entity => entity.Specimen.Donor)
-            .Include(entity => entity.Specimen.Tissue)
-            .Include(entity => entity.Specimen.CellLine)
+            .Include(entity => entity.Specimen.Line)
             .Include(entity => entity.Specimen.Organoid)
             .Include(entity => entity.Specimen.Xenograft);
     }

@@ -12,15 +12,15 @@ public class XenograftResource
     public string MouseStrain { get; set; }
     public int? GroupSize { get; set; }
     public string ImplantType { get; set; }
-    public string TissueLocation { get; set; }
+    public string ImplantLocation { get; set; }
     public int? ImplantedCellsNumber { get; set; }
     public bool? Tumorigenicity { get; set; }
     public string TumorGrowthForm { get; set; }
     public string SurvivalDays { get; set; }
 
     public MolecularDataResource MolecularData { get; set; }
+    public InterventionResource[] Interventions { get; set; }
     public DrugScreeningResource[] DrugScreenings { get; set; }
-    public XenograftInterventionResource[] Interventions { get; set; }
 
 
     public XenograftResource(XenograftIndex index)
@@ -31,7 +31,7 @@ public class XenograftResource
         MouseStrain = index.MouseStrain;
         GroupSize = index.GroupSize;
         ImplantType = index.ImplantType;
-        TissueLocation = index.TissueLocation;
+        ImplantLocation = index.ImplantType;
         ImplantedCellsNumber = index.ImplantedCellsNumber;
         Tumorigenicity = index.Tumorigenicity;
         TumorGrowthForm = index.TumorGrowthForm;
@@ -40,17 +40,17 @@ public class XenograftResource
         if (index.MolecularData != null)
             MolecularData = new MolecularDataResource(index.MolecularData);
 
+        if (index.Interventions.IsNotEmpty())
+        {
+            Interventions = index.Interventions
+                .Select(interventionIndex => new InterventionResource(interventionIndex))
+                .ToArray();
+        }
+
         if (index.DrugScreenings.IsNotEmpty())
         {
             DrugScreenings = index.DrugScreenings
                 .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
-                .ToArray();
-        }
-
-        if (index.Interventions.IsNotEmpty())
-        {
-            Interventions = index.Interventions
-                .Select(interventionIndex => new XenograftInterventionResource(interventionIndex))
                 .ToArray();
         }
     }

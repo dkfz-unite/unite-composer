@@ -58,7 +58,7 @@ public class ImagesTsvDownloadService : TsvDownloadService
                 await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetData(ids, ImageType.MRI));
 
             if (criteria.Specimens == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Tissues, _specimensTsvService.GetDataForImages(ids, SpecimenType.Tissue));
+                await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetDataForImages(ids, SpecimenType.Material));
 
             if (criteria.Ssms == true)
             {

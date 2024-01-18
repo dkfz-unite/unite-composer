@@ -10,8 +10,8 @@ public class SpecimensDataResource
     public bool Mris { get; set; }
     public bool Cts { get; set; }
     public bool Molecular { get; set; }
-    public bool Drugs { get; set; }
     public bool Interventions { get; set; }
+    public bool Drugs { get; set; }
     public bool Ssms { get; set; }
     public bool Cnvs { get; set; }
     public bool Svs { get; set; }
@@ -43,8 +43,8 @@ public class SpecimensDataResource
     {
         return type switch
         {
-            SpecimenType.Tissue => index.TissuesMolecular,
-            SpecimenType.CellLine => index.CellsMolecular,
+            SpecimenType.Material => index.MaterialsMolecular,
+            SpecimenType.Line => index.LinesMolecular,
             SpecimenType.Xenograft => index.XenograftsMolecular,
             SpecimenType.Organoid => index.OrganoidsMolecular,
             _ => null
@@ -55,7 +55,7 @@ public class SpecimensDataResource
     {
         return type switch
         {
-            SpecimenType.CellLine => index.CellsDrugs,
+            SpecimenType.Line => index.LinesDrugs,
             SpecimenType.Xenograft => index.XenograftsDrugs,
             SpecimenType.Organoid => index.OrganoidsDrugs,
             _ => null
