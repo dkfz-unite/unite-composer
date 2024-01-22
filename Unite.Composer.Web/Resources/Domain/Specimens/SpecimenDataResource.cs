@@ -1,9 +1,13 @@
 using Unite.Indices.Entities;
 using Unite.Indices.Entities.Basic.Specimens.Constants;
 
+namespace Unite.Composer.Web.Resources.Domain.Specimens;
+
 public class SpecimenDataResource
 {
     public bool? Molecular { get; set; }
+    public bool? Interventions { get; set; }
+    public bool? Drugs { get; set; }
     public bool? Mris { get; set; }
     public bool? Cts { get; set; }
     public bool? Ssms { get; set; }
@@ -11,8 +15,6 @@ public class SpecimenDataResource
     public bool? Svs { get; set; }
     public bool? GeneExp { get; set; }
     public bool? GeneExpSc { get; set; }
-    public bool? Drugs { get; set; }
-    public bool? Interventions { get; set; }
 
 
     public SpecimenDataResource(DataIndex index, string type)

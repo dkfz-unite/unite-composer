@@ -32,15 +32,15 @@ public class DrugScreeningService
                 Dss = screening.Dss,
                 DssSelective = screening.DssSelective,
                 Gof = screening.Gof,
-                MinConcentration = screening.MinConcentration,
-                MaxConcentration = screening.MaxConcentration,
                 AbsIC25 = screening.AbsIC25,
                 AbsIC50 = screening.AbsIC50,
                 AbsIC75 = screening.AbsIC75,
+                MinConcentration = screening.MinConcentration,
+                MaxConcentration = screening.MaxConcentration,
                 Concentration = screening.Concentration,
                 Inhibition = screening.Inhibition,
-                Dose = screening.InhibitionLine,
-                Response = screening.ConcentrationLine
+                ConcentrationLine = screening.InhibitionLine,
+                InhibitionLine = screening.ConcentrationLine
             };
         });
     }

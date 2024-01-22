@@ -51,6 +51,16 @@ public class SpecimensDataResource
         };
     }
 
+    private static bool? GetInterventions(DataIndex index, string type)
+    {
+        return type switch
+        {
+            SpecimenType.Xenograft => index.XenograftsInterventions,
+            SpecimenType.Organoid => index.OrganoidsInterventions,
+            _ => null
+        };
+    }
+
     private static bool? GetDrugs(DataIndex index, string type)
     {
         return type switch
@@ -58,16 +68,6 @@ public class SpecimensDataResource
             SpecimenType.Line => index.LinesDrugs,
             SpecimenType.Xenograft => index.XenograftsDrugs,
             SpecimenType.Organoid => index.OrganoidsDrugs,
-            _ => null
-        };
-    }
-
-    private static bool? GetInterventions(DataIndex index, string type)
-    {
-        return type switch
-        {
-            SpecimenType.Xenograft => index.XenograftsInterventions,
-            SpecimenType.Organoid => index.OrganoidsInterventions,
             _ => null
         };
     }

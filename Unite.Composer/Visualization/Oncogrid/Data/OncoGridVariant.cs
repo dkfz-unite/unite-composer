@@ -1,6 +1,6 @@
 ﻿namespace Unite.Composer.Visualization.Oncogrid.Data;
 
-public class OncoGridMutation
+public class OncoGridVariant
 {
     /// <summary>
     /// Mutation id

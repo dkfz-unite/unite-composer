@@ -11,9 +11,6 @@ public class MaterialResource
     public string TumorType { get; set; }
     public string Source { get; set; }
 
-    public MolecularDataResource MolecularData { get; set; }
-
-
     public MaterialResource(MaterialIndex index)
     {
         Id = index.Id;
@@ -22,8 +19,5 @@ public class MaterialResource
         Type = index.Type;
         TumorType = index.TumorType;
         Source = index.Source;
-
-        if (index.MolecularData != null)
-            MolecularData = new MolecularDataResource(index.MolecularData);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Unite.Composer.Data.Specimens.Models;
+using Unite.Essentials.Extensions;
 using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
@@ -14,6 +15,10 @@ public class SpecimenResource
     public LineResource Line { get; set; }
     public OrganoidResource Organoid { get; set; }
     public XenograftResource Xenograft { get; set; }
+
+    public MolecularDataResource MolecularData { get; set; }
+    public InterventionResource[] Interventions { get; set; }
+    public DrugScreeningResource[] DrugScreenings { get; set; }
 
 
     /// <summary>
@@ -34,6 +39,15 @@ public class SpecimenResource
             Organoid = new OrganoidResource(index.Organoid);
         else if (index.Xenograft != null)
             Xenograft = new XenograftResource(index.Xenograft);
+
+        if (index.GetMolecularData() != null)
+            MolecularData = new MolecularDataResource(index.GetMolecularData());
+
+        if (index.GetInterventions().IsNotEmpty())
+            Interventions = index.GetInterventions().Select(interventionIndex => new InterventionResource(interventionIndex)).ToArray();
+
+        if (index.GetDrugScreenings().IsNotEmpty())
+            DrugScreenings = index.GetDrugScreenings().Select(drugScreeningIndex => new DrugScreeningResource(drugScreeningIndex)).ToArray();
     }
 
     /// <summary>
@@ -41,19 +55,9 @@ public class SpecimenResource
     /// </summary>
     /// <param name="index">Specimen index</param>
     /// <param name="drugScreenings">Drugs sreening data models</param>
-    public SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings)
+    public SpecimenResource(SpecimenIndex index, DrugScreeningModel[] drugScreenings) : this(index)
     {
-        Id = index.Id;
-        ReferenceId = index.ReferenceId;
-        Type = index.Type;
-
-        if (index.Material != null)
-            Material = new MaterialResource(index.Material);
-        else if (index.Line != null)
-            Line = new LineResource(index.Line, drugScreenings);
-        else if (index.Organoid != null)
-            Organoid = new OrganoidResource(index.Organoid, drugScreenings);
-        else if (index.Xenograft != null)
-            Xenograft = new XenograftResource(index.Xenograft, drugScreenings);
+        if (drugScreenings.IsNotEmpty())
+            DrugScreenings = drugScreenings.Select(drugScreening => new DrugScreeningResource(drugScreening)).ToArray();
     }
 }

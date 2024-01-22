@@ -1,6 +1,4 @@
-﻿using Unite.Composer.Data.Specimens.Models;
-using Unite.Essentials.Extensions;
-using Unite.Indices.Entities.Basic.Specimens;
+﻿using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
@@ -22,9 +20,6 @@ public class LineResource
     public string AtccLink { get; set; }
     public string ExPasyLink { get; set; }
 
-    public MolecularDataResource MolecularData { get; set; }
-    public DrugScreeningResource[] DrugScreenings { get; set; }
-
 
     public LineResource(LineIndex index)
     {
@@ -43,25 +38,5 @@ public class LineResource
         PubMedLink = index.PubMedLink;
         AtccLink = index.AtccLink;
         ExPasyLink = index.ExPasyLink;
-
-        if (index.MolecularData != null)
-            MolecularData = new MolecularDataResource(index.MolecularData);
-
-        if (index.DrugScreenings.IsNotEmpty())
-        {
-            DrugScreenings = index.DrugScreenings
-                .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
-                .ToArray();
-        }
-    }
-
-    public LineResource(LineIndex index, DrugScreeningModel[] drugScreenings) : this(index)
-    {
-        if (drugScreenings.IsNotEmpty())
-        {
-            DrugScreenings = drugScreenings
-                .Select(screeningModel => new DrugScreeningResource(screeningModel))
-                .ToArray();
-        }
     }
 }

@@ -15,6 +15,7 @@ public class VariantResource
     public SsmResource Ssm { get; set; }
     public CnvResource Cnv { get; set; }
     public SvResource Sv { get; set; }
+    
     public AffectedFeatureResource[] AffectedFeatures { get; set; }
 
     /// <summary>

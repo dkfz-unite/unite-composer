@@ -1,6 +1,4 @@
-﻿using Unite.Composer.Data.Specimens.Models;
-using Unite.Essentials.Extensions;
-using Unite.Indices.Entities.Basic.Specimens;
+﻿using Unite.Indices.Entities.Basic.Specimens;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
@@ -13,11 +11,7 @@ public class OrganoidResource
     public int? ImplantedCellsNumber { get; set; }
     public bool? Tumorigenicity { get; set; }
 
-    public MolecularDataResource MolecularData { get; set; }
-    public InterventionResource[] Interventions { get; set; }
-    public DrugScreeningResource[] DrugScreenings { get; set; }
-
-
+    
     public OrganoidResource(OrganoidIndex index)
     {
         Id = index.Id;
@@ -26,32 +20,5 @@ public class OrganoidResource
         Medium = index.Medium;
         ImplantedCellsNumber = index.ImplantedCellsNumber;
         Tumorigenicity = index.Tumorigenicity;
-
-        if (index.MolecularData != null)
-            MolecularData = new MolecularDataResource(index.MolecularData);
-
-        if (index.Interventions.IsNotEmpty())
-        {
-            Interventions = index.Interventions
-                .Select(interventionIndex => new InterventionResource(interventionIndex))
-                .ToArray();
-        }
-
-        if (index.DrugScreenings.IsNotEmpty())
-        {
-            DrugScreenings = index.DrugScreenings
-                .Select(screeningIndex => new DrugScreeningResource(screeningIndex))
-                .ToArray();
-        }
-    }
-
-    public OrganoidResource(OrganoidIndex index, DrugScreeningModel[] drugScreenings) : this(index)
-    {
-        if (drugScreenings.IsNotEmpty())
-        {
-            DrugScreenings = drugScreenings
-                .Select(screeningModel => new DrugScreeningResource(screeningModel))
-                .ToArray();
-        }
     }
 }

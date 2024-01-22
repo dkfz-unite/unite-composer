@@ -202,14 +202,14 @@ public class OncoGridDataService
     }
 
     /// <summary>
-    /// Builds <see cref="OncoGridMutation"/> objects from mutation indices
+    /// Builds <see cref="OncoGridVariant"/> objects from mutation indices
     /// for all combinations of given <see cref="OncoGridDonor"/> and <see cref="OncoGridGene"/> entries.
     /// </summary>
     /// <param name="donors">Donors to fill OncoGrid columns.</param>
     /// <param name="genes">Genes to fill OncoGrid rows.</param>
     /// <param name="mutations">Mutation indices.</param>
-    /// <returns>Collection of <see cref="OncoGridMutation"/> objects.</returns>
-    private static IEnumerable<OncoGridMutation> GetObservationsData(
+    /// <returns>Collection of <see cref="OncoGridVariant"/> objects.</returns>
+    private static IEnumerable<OncoGridVariant> GetObservationsData(
         IEnumerable<OncoGridDonor> donors,
         IEnumerable<OncoGridGene> genes,
         IEnumerable<VariantIndex> mutations,
@@ -246,7 +246,7 @@ public class OncoGridDataService
 
                     if (consequence != null)
                     {
-                        yield return new OncoGridMutation
+                        yield return new OncoGridVariant
                         {
                             Id = mutation.Id,
                             Code = GetVariantCode(mutation),

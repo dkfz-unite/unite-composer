@@ -14,10 +14,10 @@ public class OncoGridData
 
     /// <summary>
     /// Oncogrid observations data
-    /// Each reference of <see cref="OncoGridMutation.DonorId"/> requires the existence of an entry within
+    /// Each reference of <see cref="OncoGridVariant.DonorId"/> requires the existence of an entry within
     /// <see cref="Donors"/> with an equal <see cref="OncoGridDonor.Id"/>.
-    /// Each reference of <see cref="OncoGridMutation.GeneId"/> requires the existence of an entry within
+    /// Each reference of <see cref="OncoGridVariant.GeneId"/> requires the existence of an entry within
     /// <see cref="Genes"/> with with an equal <see cref="OncoGridGene.Id"/>.
     /// </summary>
-    public IEnumerable<OncoGridMutation> Observations { get; set; }
+    public IEnumerable<OncoGridVariant> Observations { get; set; }
 }
