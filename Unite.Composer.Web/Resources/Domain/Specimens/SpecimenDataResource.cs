@@ -5,6 +5,9 @@ namespace Unite.Composer.Web.Resources.Domain.Specimens;
 
 public class SpecimenDataResource
 {
+    public bool? Donors { get; set; }
+    public bool? Clinical { get; set; }
+    public bool? Treatments { get; set; }
     public bool? Molecular { get; set; }
     public bool? Interventions { get; set; }
     public bool? Drugs { get; set; }
@@ -19,6 +22,9 @@ public class SpecimenDataResource
 
     public SpecimenDataResource(DataIndex index, string type)
     {
+        Donors = index.Donors;
+        Clinical = index.Clinical;
+        Treatments = index.Treatments;
         Mris = index.Mris;
         Cts = index.Cts;
         Ssms = index.Ssms;
