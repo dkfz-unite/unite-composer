@@ -2,12 +2,8 @@
 
 ## General
 Composer service - mediator between web application and other parts of the application.
-- Search service - provides api to query data using different search criteria.
-- Protein annotation service - provides annotation of protein coding transcripts to retrieve information about pfam protein domains of coded sequences.
-- Data downoad service - provides api to download data in different formats.
-- [Data analysis service](./Docs/analysis.md) - provides api to perform different analyses on the data.
-
-Composer web api is written in ASP.NET (.NET 6)
+- [Data domain service](./Docs/api-domain.md) - provides api search domain data.
+- [Data analysis service](https://github.com/dkfz-unite/unite-analysis) - provides api to perform different analyses on the data.
 
 ## Access
 Environment|Address|Port
@@ -20,21 +16,21 @@ Docker|http://composer.unite.net|80
 - [Elasticsearch](https://github.com/dkfz-unite/unite-environment/tree/main/programs/elasticsearch) - Elasticsearch server with indices of domain data.
 
 ## Configuration
-To configure the application, change environment variables either in docker or in [launchSettings.json](Unite.Composer.Web/Properties/launchSettings.json) file:
-Variable|Description|Default(Local)|Default(Docker)
---------|-----------|--------------|---------------
-ASPNETCORE_ENVIRONMENT|ASP.NET environment|Debug|Release
-UNITE_API_KEY|Unite api key||
-UNITE_ELASTIC_HOST|ES service host|http://localhost:9200|http://es.unite.net:9200
-UNITE_ELASTIC_USER|ES service user||
-UNITE_ELASTIC_PASSWORD|ES service password||
-UNITE_SQL_HOST|SQL server host|localhost|sql.unite.net
-UNITE_SQL_PORT|SQL server port|5432|5432
-UNITE_SQL_USER|SQL server user||
-UNITE_SQL_PASSWORD|SQL server password||
-UNITE_ENSEMBL_HOST|Ensembl web api|http://localhost:5202|http://ensembl.unite.net
-UNITE_ANALYSIS_DATA_PATH|Path to analyses data|~/mnt/analysis|~/mnt/analysis
-UNITE_ANALYSIS_DESEQ2_URL|DeSeq2 analysis service|http://localhost:5300|http://deseq2.analysis.unite.net
+To configure the application, change environment variables in either docker or in [launchSettings.json](Unite.Composer.Web/Properties/launchSettings.json) file (if running locally):
+
+- `ASPNETCORE_ENVIRONMENT` - ASP.NET environment (`Release`).
+- `UNITE_API_KEY` - API key for decription of JWT token and user authorization.
+- `UNITE_ELASTIC_HOST` - Elasticsearch service host (`es.unite.net:9200`).
+- `UNITE_ELASTIC_USER` - Elasticsearch service user.
+- `UNITE_ELASTIC_PASSWORD` - Elasticsearch service password.
+- `UNITE_SQL_HOST` - SQL server host (`sql.unite.net`).
+- `UNITE_SQL_PORT` - SQL server port (`5432`).
+- `UNITE_SQL_USER` - SQL server user.
+- `UNITE_SQL_PASSWORD` - SQL server password.
+- `UNITE_ENSEMBL_HOST` - Ensembl web api (`http://data.ensembl.unite.net`).
+
+> [!NOTE]
+> For local development purposes we recommend to use **default** values.
 
 ## Installation
 
@@ -44,6 +40,8 @@ The easiest way to install the application is to use docker-compose:
 - Composer api configuration and installation scripts: https://github.com/dkfz-unite/unite-environment/tree/main/applications/unite-composer
 
 ### Docker
+The image of the service is available in our [registry](https://github.com/dkfz-unite/unite-composer/pkgs/container/unite-composer).
+
 [Dockerfile](Dockerfile) is used to build an image of the application.
 To build an image run the following command:
 ```
@@ -72,7 +70,7 @@ docker run \
 -e UNITE_SQL_PORT=5432 \
 -e UNITE_SQL_USER=[sql_user] \
 -e UNITE_SQL_PASSWORD=[sql_password] \
--e UNITE_ENSEMBL_HOST=http://ensembl.unite.net \
+-e UNITE_ENSEMBL_HOST=http://data.ensembl.unite.net \
 -e ASPNETCORE_ENVIRONMENT=Release \
 -d \
 unite.composer:latest
