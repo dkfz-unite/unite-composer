@@ -68,6 +68,7 @@ public class DonorsTsvDownloadService : TsvDownloadService
 
             if (criteria.Interventions == true)
             {
+                await CreateArchiveEntry(archive, TsvFileNames.LinesInterventions, _specimensTsvService.GetInterventionsDataForDonors(ids, SpecimenType.Line));
                 await CreateArchiveEntry(archive, TsvFileNames.OrganoidsInterventions, _specimensTsvService.GetInterventionsDataForDonors(ids, SpecimenType.Organoid));
                 await CreateArchiveEntry(archive, TsvFileNames.XenograftsInterventions, _specimensTsvService.GetInterventionsDataForDonors(ids, SpecimenType.Xenograft));
             }

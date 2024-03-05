@@ -86,6 +86,7 @@ public class VariantsTsvDownloadService : TsvDownloadService
 
             if (dataTypes.Interventions == true)
             {
+                await CreateArchiveEntry(archive, TsvFileNames.LinesInterventions, _specimensTsvService.GetInterventionsDataForVariants<TV>(ids, SpecimenType.Line));
                 await CreateArchiveEntry(archive, TsvFileNames.OrganoidsInterventions, _specimensTsvService.GetInterventionsDataForVariants<TV>(ids, SpecimenType.Organoid));
                 await CreateArchiveEntry(archive, TsvFileNames.XenograftsInterventions, _specimensTsvService.GetInterventionsDataForVariants<TV>(ids, SpecimenType.Xenograft));
             }

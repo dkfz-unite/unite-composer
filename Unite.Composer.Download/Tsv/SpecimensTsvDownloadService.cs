@@ -74,6 +74,9 @@ public class SpecimensTsvDownloadService : TsvDownloadService
 
             if (criteria.Interventions == true)
             {
+                if (type == SpecimenType.Line)
+                    await CreateArchiveEntry(archive, TsvFileNames.LinesInterventions, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Line));
+
                 if (type == SpecimenType.Organoid)
                     await CreateArchiveEntry(archive, TsvFileNames.OrganoidsInterventions, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Organoid));
 

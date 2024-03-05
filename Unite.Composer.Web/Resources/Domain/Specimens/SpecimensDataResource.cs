@@ -55,6 +55,7 @@ public class SpecimensDataResource
     {
         return type switch
         {
+            SpecimenType.Line => index.LinesInterventions,
             SpecimenType.Xenograft => index.XenograftsInterventions,
             SpecimenType.Organoid => index.OrganoidsInterventions,
             _ => null
