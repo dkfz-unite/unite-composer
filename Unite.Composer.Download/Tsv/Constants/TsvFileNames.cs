@@ -10,6 +10,7 @@ public static class TsvFileNames
     public const string Materials = "materials.tsv";
     public const string Lines = "lines.tsv";
     public const string LinesDrugs = "lines_drugs.tsv";
+    public const string LinesInterventions = "lines_interventions.tsv";
     public const string Organoids = "organoids.tsv";
     public const string OrganoidsDrugs = "organoids_drugs.tsv";
     public const string OrganoidsInterventions = "organoids_interventions.tsv";

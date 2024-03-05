@@ -238,6 +238,7 @@ public class SpecimensTsvService : TsvServiceBase
         return dbContext.Set<Intervention>().AsNoTracking()
             .Include(entity => entity.Type)
             .Include(entity => entity.Specimen.Donor)
+            .Include(entity => entity.Specimen.Line)
             .Include(entity => entity.Specimen.Organoid)
             .Include(entity => entity.Specimen.Xenograft);
     }
