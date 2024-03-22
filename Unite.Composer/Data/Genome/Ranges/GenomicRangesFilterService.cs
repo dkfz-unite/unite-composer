@@ -21,7 +21,7 @@ public class GenomicRangesFilterService
 
         chromosomeRanges.Last().End = criteria.End;
 
-        var slice = (int)Math.Round((double)(filterCriteria.Length / filterCriteria.Density) + SHIFT, 0);
+        var slice = (int)Math.Floor((double)(filterCriteria.Length / filterCriteria.Density) + SHIFT);
 
         foreach (var chromosomeRange in chromosomeRanges)
         {

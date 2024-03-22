@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Data.Context;
+using Unite.Data.Entities.Genome;
 using Unite.Data.Entities.Genome.Enums;
 using Unite.Data.Entities.Genome.Transcriptomics;
+using Unite.Essentials.Extensions;
 
 using SSM = Unite.Data.Entities.Genome.Variants.SSM;
 using CNV = Unite.Data.Entities.Genome.Variants.CNV;
@@ -23,33 +25,77 @@ public class GenomicProfileService
 
     public async Task<GenomicRangesData> GetProfile(int specimenId, GenomicRangesFilterCriteria filterCriteria)
     {
-        var ranges = _rangesService.GetRanges(filterCriteria).Select(range => new GenomicRangeData(range)).ToArray();
-
+        
+        var ranges = _rangesService.GetRanges(filterCriteria).ToArray();
+        
         var startChr = ranges.Min(range => range.Chr);
         var start = ranges.Where(range => range.Chr == startChr).Min(range => range.Start);
         var endChr = ranges.Max(range => range.Chr);
         var end = ranges.Where(range => range.Chr == endChr).Max(range => range.End);
+        var index = 0;
 
-        var ssmsTask = LoadSsms(specimenId, startChr, start, endChr, end);
-        var cnvsTask = LoadCnvs(specimenId, startChr, start, endChr, end);
-        var expressionsTask = LoadBulkExpressions(specimenId, startChr, start, endChr, end);
+        ranges.ForEach(range => range.Index = index++);
 
-        await Task.WhenAll(ssmsTask, cnvsTask, expressionsTask);
+        var profile = new GenomicRangesData(ranges)
+        {
+            HasSsms = HasSsms(specimenId),
+            HasCnvs = HasCnvs(specimenId),
+            HasSvs = HasSvs(specimenId),
+            HasExps = HasExpressions(specimenId)
+        };
 
-        var ssms = ssmsTask.Result;
-        var cnvs = cnvsTask.Result;
-        var expressions = expressionsTask.Result;
+        await Task.WhenAll(
+            LoadGenes(startChr, start, endChr, end, ranges[0].Length).ContinueWith(task => profile.Genes = GetGenesData(task.Result, ref ranges)),
+            LoadSsms(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Ssms = GetSsmsData(task.Result, ref ranges)),
+            LoadCnvs(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Cnvs = GetCnvsData(task.Result, ref ranges)),
+            LoadSvs(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Svs = GetSvsData(task.Result, ref ranges)),
+            LoadExpressions(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Exps = GetExpressionsData(task.Result, ref ranges))
+        );
 
-        FillWithSsmData(ssms, ref ranges);
-        FillWithCnvData(cnvs, ref ranges);
-        FillWithExpressionData(expressions, ref ranges);
-
-        return new GenomicRangesData(ranges.ToArray());
+        return profile;
     }
 
 
-    private static void FillWithSsmData(in SSM.Variant[] variants, ref GenomicRangeData[] ranges)
+    private static Models.Profile.GenesData[] GetGenesData(in Gene[] genes, ref GenomicRange[] ranges)
     {
+        var data = new Dictionary<int, Models.Profile.GenesData>();
+        
+        foreach (var range in ranges)
+        {
+            var rangeGenes = genes.Where(gene =>
+                gene.ChromosomeId == (Chromosome)range.Chr &&
+                ((gene.End >= range.Start && gene.End <= range.End) ||
+                (gene.Start >= range.Start && gene.Start <= range.End) ||
+                (gene.Start >= range.Start && gene.End <= range.End) ||
+                (gene.Start <= range.Start && gene.End >= range.End))
+            );
+
+            var gene = rangeGenes.FirstOrDefault();
+
+            if (gene != null)
+            {
+                var exists = data.TryGetValue(gene.Id, out var geneData);
+                
+                if (!exists)
+                {
+                    geneData = new Models.Profile.GenesData([range.Index, range.Index], gene);
+
+                    data.Add(gene.Id, geneData);
+                }
+                else
+                {
+                    geneData.Range[1] = range.Index;
+                }
+            }
+        }
+    
+        return data.Values.ToArrayOrNull();
+    }
+
+    private static Models.Profile.SsmsData[] GetSsmsData(in SSM.Variant[] variants, ref GenomicRange[] ranges)
+    {
+        var data = new List<Models.Profile.SsmsData>();
+        
         foreach (var range in ranges)
         {
             var rangeVariants = variants.Where(variant =>
@@ -60,33 +106,19 @@ public class GenomicProfileService
                 (variant.Start <= range.Start && variant.End >= range.End))
             ).ToArray();
 
-            if (rangeVariants.Any())
-            {
-                range.Ssm = new Models.Profile.MutationsData();
-
-                foreach (var variant in rangeVariants)
-                {
-                    var impact = variant.AffectedTranscripts?
-                        .SelectMany(affectedTranscript => affectedTranscript.Consequences)
-                        .Select(consequence => GetImpactGrade(consequence.Impact))
-                        .OrderBy(grade => grade)
-                        .FirstOrDefault();
-
-                    if (impact == 1)
-                        range.Ssm.High++;
-                    else if (impact == 2)
-                        range.Ssm.Moderate++;
-                    else if (impact == 3)
-                        range.Ssm.Low++;
-                    else
-                        range.Ssm.Unknown++;
-                }
-            }
+            if (rangeVariants.Length > 1)
+                data.Add(new Models.Profile.SsmsData([range.Index, range.Index], rangeVariants));
+            else if (rangeVariants.Length == 1)
+                data.Add(new Models.Profile.SsmsData([range.Index, range.Index], rangeVariants[0]));
         }
+
+        return data.ToArrayOrNull();
     }
 
-    private static void FillWithCnvData(in CNV.Variant[] variants, ref GenomicRangeData[] ranges)
+    public static Models.Profile.CnvsData[] GetCnvsData(in CNV.Variant[] variants, ref GenomicRange[] ranges)
     {
+        var data = new Dictionary<long, Models.Profile.CnvsData>();
+
         foreach (var range in ranges)
         {
             var rangeVariants = variants.Where(variant =>
@@ -97,23 +129,75 @@ public class GenomicProfileService
                 (variant.Start <= range.Start && variant.End >= range.End))
             );
 
-            var variant = rangeVariants.FirstOrDefault();
+            var variant = rangeVariants.FirstOrDefault(variant => variant.TypeId == CNV.Enums.CnvType.Loss) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == CNV.Enums.CnvType.Gain) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == CNV.Enums.CnvType.Neutral) ??
+                          rangeVariants.FirstOrDefault();
 
             if (variant != null)
             {
-                range.Cnv = new Models.Profile.CopyNumberVariantsData
+                var exists = data.TryGetValue(variant.Id, out var cnvData);
+
+                if (!exists)
                 {
-                    Cna = variant.TypeId,
-                    Loh = variant.Loh,
-                    Del = variant.HomoDel,
-                    Tcn = variant.TcnMean != null ? Math.Round(variant.TcnMean.Value, 2) : null
-                };
+                    cnvData = new Models.Profile.CnvsData([range.Index, range.Index], variant);
+
+                    data.Add(variant.Id, cnvData);
+                }
+                else
+                {
+                    cnvData.Range[1] = range.Index;
+                }
             }
         }
+
+        return data.Values.ToArrayOrNull();
     }
 
-    private static void FillWithExpressionData(in BulkExpression[] expressions, ref GenomicRangeData[] ranges)
+    private static Models.Profile.SvsData[] GetSvsData(in SV.Variant[] variants, ref GenomicRange[] ranges)
     {
+        var data = new Dictionary<long, Models.Profile.SvsData>();
+
+        foreach (var range in ranges)
+        {
+            var rangeVariants = variants.Where(variant =>
+                variant.ChromosomeId == (Chromosome)range.Chr &&
+                ((variant.OtherStart >= range.Start && variant.OtherStart <= range.End) ||
+                (variant.End >= range.Start && variant.End <= range.End) ||
+                (variant.OtherStart >= range.Start && variant.OtherStart <= range.End) ||
+                (variant.End <= range.Start && variant.OtherStart >= range.End))
+            );
+
+            var variant = rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.DEL) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.DUP) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.TDUP) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.INS) ??
+                          rangeVariants.FirstOrDefault();
+
+            if (variant != null)
+            {
+                var exists = data.TryGetValue(variant.Id, out var svData);
+
+                if (!exists)
+                {
+                    svData = new Models.Profile.SvsData([range.Index, range.Index], variant);
+
+                    data.Add(variant.Id, svData);
+                }
+                else
+                {
+                    svData.Range[1] = range.Index;
+                }
+            }
+        }
+
+        return data.Values.ToArrayOrNull();
+    }
+
+    private static Models.Profile.ExpressionData[] GetExpressionsData(in BulkExpression[] expressions, ref GenomicRange[] ranges)
+    {
+        var data = new List<Models.Profile.ExpressionData>();
+
         foreach (var range in ranges)
         {
             var rangeExpressions = expressions.Where(expression =>
@@ -124,18 +208,50 @@ public class GenomicProfileService
                 (expression.Entity.Start <= range.Start && expression.Entity.End >= range.End))
             ).ToArray();
 
-            if (rangeExpressions.Any())
-            {
-                range.Exp = new Models.Profile.ExpressionsData
-                {
-                    Reads = rangeExpressions.Average(expression => expression.Reads),
-                    TPM = Math.Round(rangeExpressions.Average(expression => expression.TPM), 2),
-                    FPKM = Math.Round(rangeExpressions.Average(expression => expression.FPKM), 2)
-                };
-            }
+            if (rangeExpressions.Length > 1)
+                data.Add(new Models.Profile.ExpressionData([range.Index, range.Index], rangeExpressions));
+            else if (rangeExpressions.Length == 1)
+                data.Add(new Models.Profile.ExpressionData([range.Index, range.Index], rangeExpressions[0]));
         }
+
+        return data.ToArrayOrNull();
     }
 
+    // private static void FillWithExpressionData(in BulkExpression[] expressions, ref GenomicRangeData[] ranges)
+    // {
+    //     foreach (var range in ranges)
+    //     {
+    //         var rangeExpressions = expressions.Where(expression =>
+    //             expression.Entity.ChromosomeId == (Chromosome)range.Chr &&
+    //             ((expression.Entity.End >= range.Start && expression.Entity.End <= range.End) ||
+    //             (expression.Entity.Start >= range.Start && expression.Entity.Start <= range.End) ||
+    //             (expression.Entity.Start >= range.Start && expression.Entity.End <= range.End) ||
+    //             (expression.Entity.Start <= range.Start && expression.Entity.End >= range.End))
+    //         ).ToArray();
+
+    //         if (rangeExpressions.Any())
+    //         {
+    //             range.Exp = new Models.Profile.ExpressionData
+    //             {
+    //                 Reads = rangeExpressions.Average(expression => expression.Reads),
+    //                 TPM = Math.Round(rangeExpressions.Average(expression => expression.TPM), 2),
+    //                 FPKM = Math.Round(rangeExpressions.Average(expression => expression.FPKM), 2)
+    //             };
+    //         }
+    //     }
+    // }
+
+
+    private async Task<Gene[]> LoadGenes(int startChr, int start, int endChr, int end, int length)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<Gene>()
+            .AsNoTracking()
+            .Where(gene => (int)gene.ChromosomeId >= startChr && (int)gene.ChromosomeId <= endChr)
+            .Where(gene => gene.End - gene.Start + 1 >= length)
+            .ToArrayAsync();
+    }
 
     private async Task<SSM.Variant[]> LoadSsms(int specimenId, int startChr, int start, int endChr, int end)
     {
@@ -162,7 +278,21 @@ public class GenomicProfileService
             .ToArrayAsync();
     }
 
-    private async Task<BulkExpression[]> LoadBulkExpressions(int specimenId, int startChr, int start, int endChr, int end)
+    private async Task<SV.Variant[]> LoadSvs(int specimenId, int startChr, int start, int endChr, int end)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<SV.VariantEntry>()
+            .AsNoTracking()
+            .Include(entry => entry.Entity.AffectedTranscripts)
+            .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
+            .Where(entry => entry.Entity.TypeId != SV.Enums.SvType.ITX && entry.Entity.TypeId != SV.Enums.SvType.CTX)
+            .Where(entry => (int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr)
+            .Select(entry => entry.Entity)
+            .ToArrayAsync();
+    }
+
+    private async Task<BulkExpression[]> LoadExpressions(int specimenId, int startChr, int start, int endChr, int end)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
@@ -174,15 +304,39 @@ public class GenomicProfileService
             .ToArrayAsync();
     }
 
-    private static int GetImpactGrade(string impactType)
+    private bool HasSsms(int specimenId)
     {
-        return impactType switch
-        {
-            "High" => 1,
-            "Moderate" => 2,
-            "Low" => 3,
-            "Unknown" => 4,
-            _ => 5
-        };
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return dbContext.Set<SSM.VariantEntry>()
+            .AsNoTracking()
+            .Any(entry => entry.AnalysedSample.TargetSampleId == specimenId);
+    }
+
+    private bool HasCnvs(int specimenId)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return dbContext.Set<CNV.VariantEntry>()
+            .AsNoTracking()
+            .Any(entry => entry.AnalysedSample.TargetSampleId == specimenId);
+    }
+
+    private bool HasSvs(int specimenId)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return dbContext.Set<SV.VariantEntry>()
+            .AsNoTracking()
+            .Any(entry => entry.AnalysedSample.TargetSampleId == specimenId);
+    }
+
+    private bool HasExpressions(int specimenId)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return dbContext.Set<BulkExpression>()
+            .AsNoTracking()
+            .Any(expression => expression.AnalysedSample.TargetSampleId == specimenId);
     }
 }
