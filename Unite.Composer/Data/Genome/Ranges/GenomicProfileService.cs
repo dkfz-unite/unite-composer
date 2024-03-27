@@ -102,7 +102,6 @@ public class GenomicProfileService
                 variant.ChromosomeId == (Chromosome)range.Chr &&
                 ((variant.End >= range.Start && variant.End <= range.End) ||
                 (variant.Start >= range.Start && variant.Start <= range.End) ||
-                (variant.Start >= range.Start && variant.End <= range.End) ||
                 (variant.Start <= range.Start && variant.End >= range.End))
             ).ToArray();
 
@@ -125,7 +124,6 @@ public class GenomicProfileService
                 variant.ChromosomeId == (Chromosome)range.Chr &&
                 ((variant.End >= range.Start && variant.End <= range.End) ||
                 (variant.Start >= range.Start && variant.Start <= range.End) ||
-                (variant.Start >= range.Start && variant.End <= range.End) ||
                 (variant.Start <= range.Start && variant.End >= range.End))
             );
 
@@ -162,13 +160,14 @@ public class GenomicProfileService
         {
             var rangeVariants = variants.Where(variant =>
                 variant.ChromosomeId == (Chromosome)range.Chr &&
-                ((variant.OtherStart >= range.Start && variant.OtherStart <= range.End) ||
-                (variant.End >= range.Start && variant.End <= range.End) ||
+                ((variant.End >= range.Start && variant.End <= range.End) ||
                 (variant.OtherStart >= range.Start && variant.OtherStart <= range.End) ||
                 (variant.End <= range.Start && variant.OtherStart >= range.End))
             );
 
-            var variant = rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.DEL) ??
+            var variant = rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.ITX) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.CTX) ??
+                          rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.DEL) ??
                           rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.DUP) ??
                           rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.TDUP) ??
                           rangeVariants.FirstOrDefault(variant => variant.TypeId == SV.Enums.SvType.INS) ??
@@ -186,7 +185,8 @@ public class GenomicProfileService
                 }
                 else
                 {
-                    svData.Range[1] = range.Index;
+                    if (variant.TypeId != SV.Enums.SvType.ITX && variant.TypeId != SV.Enums.SvType.CTX)
+                        svData.Range[1] = range.Index;
                 }
             }
         }
@@ -217,31 +217,6 @@ public class GenomicProfileService
         return data.ToArrayOrNull();
     }
 
-    // private static void FillWithExpressionData(in BulkExpression[] expressions, ref GenomicRangeData[] ranges)
-    // {
-    //     foreach (var range in ranges)
-    //     {
-    //         var rangeExpressions = expressions.Where(expression =>
-    //             expression.Entity.ChromosomeId == (Chromosome)range.Chr &&
-    //             ((expression.Entity.End >= range.Start && expression.Entity.End <= range.End) ||
-    //             (expression.Entity.Start >= range.Start && expression.Entity.Start <= range.End) ||
-    //             (expression.Entity.Start >= range.Start && expression.Entity.End <= range.End) ||
-    //             (expression.Entity.Start <= range.Start && expression.Entity.End >= range.End))
-    //         ).ToArray();
-
-    //         if (rangeExpressions.Any())
-    //         {
-    //             range.Exp = new Models.Profile.ExpressionData
-    //             {
-    //                 Reads = rangeExpressions.Average(expression => expression.Reads),
-    //                 TPM = Math.Round(rangeExpressions.Average(expression => expression.TPM), 2),
-    //                 FPKM = Math.Round(rangeExpressions.Average(expression => expression.FPKM), 2)
-    //             };
-    //         }
-    //     }
-    // }
-
-
     private async Task<Gene[]> LoadGenes(int startChr, int start, int endChr, int end, int length)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
@@ -259,7 +234,9 @@ public class GenomicProfileService
 
         return await dbContext.Set<SSM.VariantEntry>().AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
+                .ThenInclude(transcript => transcript.Feature)
             .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
+            .Where(entry => entry.Entity.AffectedTranscripts.Any())
             .Where(entry => (int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr)
             .Select(entry => entry.Entity)
             .ToArrayAsync();
@@ -272,6 +249,7 @@ public class GenomicProfileService
         return await dbContext.Set<CNV.VariantEntry>()
             .AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
+                .ThenInclude(transcript => transcript.Feature)
             .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
             .Where(entry => (int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr)
             .Select(entry => entry.Entity)
@@ -285,9 +263,11 @@ public class GenomicProfileService
         return await dbContext.Set<SV.VariantEntry>()
             .AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
+                .ThenInclude(transcript => transcript.Feature)
             .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
-            .Where(entry => entry.Entity.TypeId != SV.Enums.SvType.ITX && entry.Entity.TypeId != SV.Enums.SvType.CTX)
-            .Where(entry => (int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr)
+            // .Where(entry => entry.Entity.TypeId != SV.Enums.SvType.ITX && entry.Entity.TypeId != SV.Enums.SvType.CTX)
+            .Where(entry => ((int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr) ||
+                           ((int)entry.Entity.OtherChromosomeId >= startChr && (int)entry.Entity.OtherChromosomeId <= endChr))
             .Select(entry => entry.Entity)
             .ToArrayAsync();
     }

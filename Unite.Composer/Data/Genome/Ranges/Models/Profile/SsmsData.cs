@@ -63,9 +63,11 @@ public class Ssm
     public string Change { get; set; }
     public string Impact { get; set; }
     public string Consequence { get; set; }
+    public string Gene { get; set; }
 
     public Ssm(Variant variant)
     {
+        var transcript = variant.GetMostAffectedTranscript();
         var consequence = variant.GetMostSeverConsequence();
         var chromosome = variant.ChromosomeId.ToDefinitionString();
         var position = variant.Start == variant.End ? $"{variant.Start}" : $"{variant.Start}-{variant.End}";
@@ -76,6 +78,7 @@ public class Ssm
         Type = $"{variant.TypeId}";
         Impact = consequence?.Impact;
         Consequence = consequence?.Type;
+        Gene = transcript?.Feature.Symbol;
     }
 }
 
@@ -84,6 +87,15 @@ public static class SsmExtensions
     private const string HighImpact = "High";
     private const string ModerateImpact = "Moderate";
     private const string LowImpact = "Low";
+
+    public static AffectedTranscript GetMostAffectedTranscript(this Variant variant)
+    {
+        return variant?.AffectedTranscripts
+            .OrderBy(affectedTranscipt => affectedTranscipt.Consequences
+                .Select(consequence => GetImpactGrade(consequence.Impact))
+                .Min())
+            .FirstOrDefault();
+    }
 
     public static Unite.Data.Entities.Genome.Variants.Consequence GetMostSeverConsequence(this Variant variant)
     {

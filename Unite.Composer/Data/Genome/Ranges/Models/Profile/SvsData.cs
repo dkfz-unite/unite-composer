@@ -22,13 +22,23 @@ public class Sv
     public string Id { get; set; }
     public string Position { get; set; }
     public string Type { get; set; }
-    public int Length { get; set; }
+    public int? Length { get; set; }
+    public int? Genes { get; set; }
 
     public Sv(Unite.Data.Entities.Genome.Variants.SV.Variant variant)
     {
         Id = $"SV{variant.Id}";
-        Position = $"{variant.ChromosomeId.ToDefinitionString()}:{variant.End}-{variant.OtherStart}";
+        Position = GetPosition(variant);
         Type = variant.TypeId.ToDefinitionString();
-        Length = variant.Length.Value;
+        Length = variant.Length;
+        Genes = variant.AffectedTranscripts?.DistinctBy(transcript => transcript.Feature.GeneId).Count();
+    }
+
+    private static string GetPosition(Unite.Data.Entities.Genome.Variants.SV.Variant variant)
+    {
+        if (variant.ChromosomeId == variant.OtherChromosomeId)
+            return $"{variant.ChromosomeId.ToDefinitionString()}:{variant.End}-{variant.OtherStart}";
+        else
+            return $"{variant.ChromosomeId.ToDefinitionString()}:{variant.End} - {variant.OtherChromosomeId.ToDefinitionString()}:{variant.OtherStart}";
     }
 }

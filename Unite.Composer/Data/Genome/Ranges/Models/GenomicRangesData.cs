@@ -11,12 +11,10 @@ public class GenomicRangesData
 	public IEnumerable<SvsData> Svs { get; set; }
 	public IEnumerable<ExpressionData> Exps { get; set; }
 	
-	// public IEnumerable<GenomicRangeData> Ranges { get; set; }
-
-	public bool HasSsms { get; set; } //=> Ranges?.Any(range => range.Ssm != null) == true;
-	public bool HasCnvs { get; set; } //=> Ranges?.Any(range => range.Cnv != null) == true;
-	public bool HasSvs { get; set; } //=> Ranges?.Any(range => range.Sv != null) == true;
-	public bool HasExps { get; set; } //=> Ranges?.Any(range => range.Exp != null) == true;
+	public bool HasSsms { get; set; }
+	public bool HasCnvs { get; set; }
+	public bool HasSvs { get; set; }
+	public bool HasExps { get; set; }
 	
 	public GenomicRangesData(IEnumerable<GenomicRange> ranges)
 	{

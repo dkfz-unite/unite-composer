@@ -26,6 +26,7 @@ public class Cnv
     public double? Tcn { get; set; }
     public bool? Loh { get; set; }
     public bool? Del { get; set; }
+    public int? Genes { get; set; }
 
     public Cnv(Unite.Data.Entities.Genome.Variants.CNV.Variant variant)
     {
@@ -36,5 +37,6 @@ public class Cnv
         Tcn = variant.TcnMean;
         Loh = variant.Loh;
         Del = variant.HomoDel;
+        Genes = variant.AffectedTranscripts?.DistinctBy(transcript => transcript.Feature.GeneId).Count();
     }
 }
