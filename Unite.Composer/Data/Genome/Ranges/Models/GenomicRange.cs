@@ -1,13 +1,20 @@
-﻿namespace Unite.Composer.Data.Genome.Ranges.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Unite.Composer.Data.Genome.Ranges.Models;
 
 public class GenomicRange
 {
+    [JsonPropertyName("i")]
+    public int Index { get; set; }
+    [JsonPropertyName("c")]
     public int Chr { get; set; }
+    [JsonPropertyName("s")]
     public int Start { get; set; }
+    [JsonPropertyName("e")]
     public int End { get; set; }
 
-    public int Length => GetLength(Start, End);
-    public string Code => GetCode(Chr, Start, End);
+    [JsonIgnore]
+    public int Length => End - Start + 1;
 
 
     public GenomicRange(int chr, int start, int end)
@@ -15,18 +22,5 @@ public class GenomicRange
         Chr = chr;
         Start = start;
         End = end;
-    }
-
-
-    private static int GetLength(int start, int end)
-    {
-        return end - start + 1;
-    }
-
-    private static string GetCode(int chr, int start, int end)
-    {
-        var chromosome = chr == 23 ? "X" : chr == 24 ? "Y" : $"{chr}";
-
-        return $"{chromosome}:{start}-{end}";
     }
 }
