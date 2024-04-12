@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
@@ -18,14 +19,17 @@ public class ImagesController : DomainController
 {
     private readonly ISearchService<ImageIndex> _searchService;
     private readonly ImagesTsvDownloadService _tsvDownloadService;
+    private readonly TaskStatsService _taskStatsService;
 
 
     public ImagesController(
         ISearchService<ImageIndex> searchService,
-        ImagesTsvDownloadService tsvDownloadService)
+        ImagesTsvDownloadService tsvDownloadService,
+        TaskStatsService taskStatsService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
+        _taskStatsService = taskStatsService;
     }
 
 
@@ -64,6 +68,14 @@ public class ImagesController : DomainController
         var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
+    }
+
+    [HttpGet("{type}/status")]
+    public async Task<IActionResult> Status(string type)
+    {
+        var status = await _taskStatsService.GetStatus(Unite.Data.Entities.Tasks.Enums.IndexingTaskType.Image);
+
+        return Ok(status);
     }
 
 
