@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Unite.Data.Context;
 using Unite.Data.Entities.Tasks.Enums;
 
@@ -7,57 +8,92 @@ public record TaskNumbersStats (int Submission, int Annotation, int Indexing);
 
 public class TaskStatsService
 {
-    private readonly DomainDbContext _dbContext;
+    private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
 
 
-    public TaskStatsService(DomainDbContext dbContext)
+    public TaskStatsService(IDbContextFactory<DomainDbContext> dbContextFactory)
     {
-        _dbContext = dbContext;
+        _dbContextFactory = dbContextFactory;
     }
 
 
-    public TaskNumbersStats GetTaskNumbersStats()
+    public async Task<TaskNumbersStats> GetTaskNumbersStats()
     {
-        var submissionTasksNumber = _dbContext.Set<Unite.Data.Entities.Tasks.Task>().Count(task => task.SubmissionTypeId != null);
-        var annotationTasksNumber = _dbContext.Set<Unite.Data.Entities.Tasks.Task>().Count(task => task.AnnotationTypeId != null);
-        var indexingTasksNumber = _dbContext.Set<Unite.Data.Entities.Tasks.Task>().Count(task => task.IndexingTypeId != null);
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var submissionTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.SubmissionTypeId != null);
+        var annotationTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.AnnotationTypeId != null);
+        var indexingTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.IndexingTypeId != null);
 
         return new TaskNumbersStats(submissionTasksNumber, annotationTasksNumber, indexingTasksNumber);
     }
 
-    public IDictionary<SubmissionTaskType, int> GetSubmissionTasksStats()
+    public async Task<IDictionary<SubmissionTaskType, int>> GetSubmissionTasksStats()
     {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
         var tasks = Enum.GetValues<SubmissionTaskType>().ToDictionary(value => value, value => 0);
 
         foreach (var taskType in tasks.Keys)
         {
-            tasks[taskType] = _dbContext.Set<Unite.Data.Entities.Tasks.Task>().Count(task => task.SubmissionTypeId == taskType);
+            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.SubmissionTypeId == taskType);
         }
 
         return tasks;
     }
 
-    public IDictionary<AnnotationTaskType, int> GetAnnotationTasksStats()
+    public async Task<IDictionary<AnnotationTaskType, int>> GetAnnotationTasksStats()
     {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
         var tasks = Enum.GetValues<AnnotationTaskType>().ToDictionary(value => value, value => 0);
 
         foreach (var taskType in tasks.Keys)
         {
-            tasks[taskType] = _dbContext.Set<Unite.Data.Entities.Tasks.Task>().Count(task => task.AnnotationTypeId == taskType);
+            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.AnnotationTypeId == taskType);
         }
 
         return tasks;
     }
 
-    public IDictionary<IndexingTaskType, int> GetIndexingTasksStats()
+    public async Task<IDictionary<IndexingTaskType, int>> GetIndexingTasksStats()
     {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
         var tasks = Enum.GetValues<IndexingTaskType>().ToDictionary(value => value, value => 0);
 
         foreach (var taskType in tasks.Keys)
         {
-            tasks[taskType] = _dbContext.Set<Unite.Data.Entities.Tasks.Task>().Count(task => task.IndexingTypeId == taskType);
+            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.IndexingTypeId == taskType);
         }
 
         return tasks;
+    }
+
+    public async Task<bool> GetStatus(SubmissionTaskType type)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().AnyAsync(task => task.SubmissionTypeId == type);
+
+        return !hasTasks;
+    }
+
+    public async Task<bool> GetStatus(AnnotationTaskType type)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().AnyAsync(task => task.AnnotationTypeId == type);
+
+        return !hasTasks;
+    }
+
+    public async Task<bool> GetStatus(IndexingTaskType type)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().AnyAsync(task => task.IndexingTypeId == type);
+
+        return !hasTasks;
     }
 }

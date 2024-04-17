@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Specimens;
@@ -19,14 +20,17 @@ public class SpecimensController : DomainController
 {
     private readonly ISearchService<SpecimenIndex> _searchService;
     private readonly SpecimensTsvDownloadService _tsvDownloadService;
+    private readonly TaskStatsService _taskStatsService;
 
 
     public SpecimensController(
         ISearchService<SpecimenIndex> searchService, 
-        SpecimensTsvDownloadService tsvDownloadService)
+        SpecimensTsvDownloadService tsvDownloadService,
+        TaskStatsService taskStatsService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
+        _taskStatsService = taskStatsService;
     }
 
 
@@ -65,6 +69,14 @@ public class SpecimensController : DomainController
         var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
+    }
+
+    [HttpGet("{type}/status")]
+    public async Task<IActionResult> Status(string type)
+    {
+        var status = await _taskStatsService.GetStatus(Unite.Data.Entities.Tasks.Enums.IndexingTaskType.Specimen);
+
+        return Ok(status);
     }
 
 

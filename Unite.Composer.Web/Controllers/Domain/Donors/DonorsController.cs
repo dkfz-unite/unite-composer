@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
@@ -17,14 +18,17 @@ public class DonorsController : DomainController
 {
     private readonly ISearchService<DonorIndex> _searchService;
     private readonly DonorsTsvDownloadService _tsvDownloadService;
+    private readonly TaskStatsService _taskStatsService;
 
 
     public DonorsController(
         ISearchService<DonorIndex> searchService, 
-        DonorsTsvDownloadService tsvDownloadService)
+        DonorsTsvDownloadService tsvDownloadService,
+        TaskStatsService taskStatsService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
+        _taskStatsService = taskStatsService;
     }
 
 
@@ -57,6 +61,14 @@ public class DonorsController : DomainController
         var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
+    }
+
+    [HttpGet("status")]
+    public async Task<IActionResult> Status()
+    {
+        var status = await _taskStatsService.GetStatus(Unite.Data.Entities.Tasks.Enums.IndexingTaskType.Donor);
+
+        return Ok(status);
     }
 
 

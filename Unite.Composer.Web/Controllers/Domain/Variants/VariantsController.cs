@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Variants;
@@ -19,14 +20,17 @@ public class VariantsController : DomainController
 {
     private readonly ISearchService<VariantIndex> _searchService;
     private readonly VariantsTsvDownloadService _tsvDownloadService;
+    private readonly TaskStatsService _taskStatsService;
 
 
     public VariantsController(
         ISearchService<VariantIndex> searchService, 
-        VariantsTsvDownloadService tsvDownloadService)
+        VariantsTsvDownloadService tsvDownloadService,
+        TaskStatsService taskStatsService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
+        _taskStatsService = taskStatsService;
     }
 
 
@@ -67,6 +71,16 @@ public class VariantsController : DomainController
         return File(bytes, "application/zip", "data.zip");
     }
 
+    [HttpGet("{type}/status")]
+    public async Task<IActionResult> Status(string type)
+    {
+        var taskType = ConvertTaskType(type);
+
+        var status = await _taskStatsService.GetStatus(taskType);
+
+        return Ok(status);
+    }
+
 
     private static SearchResult<VariantResource> From(SearchResult<VariantIndex> searchResult)
     {
@@ -89,6 +103,17 @@ public class VariantsController : DomainController
             VariantType.SSM => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SSM,
             VariantType.CNV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.CNV,
             VariantType.SV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SV,
+            _ => throw new InvalidOperationException("Unknown variant type")
+        };
+    }
+
+    private static Unite.Data.Entities.Tasks.Enums.IndexingTaskType ConvertTaskType(string type)
+    {
+        return type switch
+        {
+            VariantType.SSM => Unite.Data.Entities.Tasks.Enums.IndexingTaskType.SSM,
+            VariantType.CNV => Unite.Data.Entities.Tasks.Enums.IndexingTaskType.CNV,
+            VariantType.SV => Unite.Data.Entities.Tasks.Enums.IndexingTaskType.SV,
             _ => throw new InvalidOperationException("Unknown variant type")
         };
     }

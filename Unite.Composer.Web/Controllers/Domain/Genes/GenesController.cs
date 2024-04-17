@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Genes;
@@ -17,14 +18,17 @@ public class GenesController : DomainController
 {
     private readonly ISearchService<GeneIndex> _searchService;
     private readonly GenesTsvDownloadService _tsvDownloadService;
+    private readonly TaskStatsService _taskStatsService;
 
 
     public GenesController(
         ISearchService<GeneIndex> searchService, 
-        GenesTsvDownloadService tsvDownloadService)
+        GenesTsvDownloadService tsvDownloadService,
+        TaskStatsService taskStatsService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
+        _taskStatsService = taskStatsService;
     }
 
 
@@ -53,6 +57,14 @@ public class GenesController : DomainController
         var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
+    }
+
+    [HttpGet("status")]
+    public async Task<IActionResult> Status()
+    {
+        var status = await _taskStatsService.GetStatus(Unite.Data.Entities.Tasks.Enums.IndexingTaskType.Gene);
+
+        return Ok(status);
     }
 
 
