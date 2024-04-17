@@ -13,45 +13,83 @@ public class SsmsData : RangeData
     public Ssm Variant { get; set; }
 
     /// <summary>
-    /// Array of variant impact stats in format [High, Moderate, Low, Unknown].
+    /// Variants by impact in format [High, Moderate, Low, Unknown].
     /// </summary>
     [JsonPropertyName("i")]
-    public int[] Impacts { get; set; }
+    public SsmImpact[] Impacts { get; set; }
 
 
     public SsmsData(int[] range, Variant variant) : base(range)
     {
         Variant = new Ssm(variant);
 
-        Impacts = [0, 0, 0, 0];
+        Impacts = [new SsmImpact(), new SsmImpact(), new SsmImpact(), new SsmImpact()];
 
-        var consequence = variant.GetMostSeverConsequence();
-
-        SetImpacts(consequence);
+        SetValues(variant);
     }
 
     public SsmsData(int[] range, IEnumerable<Variant> variants) : base(range)
     {
-        Impacts = [0, 0, 0, 0];
+        Impacts = [new SsmImpact(), new SsmImpact(), new SsmImpact(), new SsmImpact()];
 
         foreach (var variant in variants)
         {
-            var consequence = variant.GetMostSeverConsequence();
-
-            SetImpacts(consequence);
+            SetValues(variant);
         }
     }
 
-    private void SetImpacts(Unite.Data.Entities.Genome.Variants.Consequence consequence)
+    private void SetValues(Variant variant)
     {
+        var consequence = variant.GetMostSeverConsequence();
+
         if (consequence?.Impact == "High")
-            Impacts[0]++;
+        {
+            Impacts[0].Total++;
+            SetChangeFrom(Impacts[0], variant.Ref);
+            SetChangeTo(Impacts[0], variant.Alt);
+        }
         else if (consequence?.Impact == "Moderate")
-            Impacts[1]++;
+        {
+            Impacts[1].Total++;
+            SetChangeFrom(Impacts[1], variant.Ref);
+            SetChangeTo(Impacts[1], variant.Alt);
+        }
         else if (consequence?.Impact == "Low")
-            Impacts[2]++;
-        else
-            Impacts[3]++;
+        {
+            Impacts[2].Total++;
+            SetChangeFrom(Impacts[2], variant.Ref);
+            SetChangeTo(Impacts[2], variant.Alt);
+        }
+        else if (consequence?.Impact == "Unknown")
+        {
+            Impacts[3].Total++;
+            SetChangeFrom(Impacts[3], variant.Ref);
+            SetChangeTo(Impacts[3], variant.Alt);
+        }
+    }
+
+    private static void SetChangeFrom(SsmImpact impact, string nucleotide)
+    {
+        if (nucleotide == "A")
+            impact.From[0]++;
+        else if (nucleotide == "C")
+            impact.From[1]++;
+        else if (nucleotide == "G")
+            impact.From[2]++;
+        else if (nucleotide == "T")
+            impact.From[3]++;
+    }
+
+    private static void SetChangeTo(SsmImpact impact, string nucleotide)
+    {
+        if (nucleotide == "A")
+            impact.To[0]++;
+        else if (nucleotide == "C")
+            impact.To[1]++;
+        else if (nucleotide == "G")
+            impact.To[2]++;
+        else if (nucleotide == "T")
+            impact.To[3]++;
     }
 }
 
@@ -80,6 +118,27 @@ public class Ssm
         Consequence = consequence?.Type;
         Gene = transcript?.Feature.Symbol;
     }
+}
+
+public class SsmImpact
+{
+    /// <summary>
+    /// Number of variants by impact in format [High, Moderate, Low, Unknown].
+    /// </summary>
+    [JsonPropertyName("n")]
+    public int Total { get; set; } = 0;
+
+    /// <summary>
+    /// Number of variants by reference nucleotide in format [A, C, G, T].
+    /// </summary>
+    [JsonPropertyName("f")]
+    public int[] From { get; set; } = [0, 0, 0, 0];
+
+    /// <summary>
+    /// Number of variants by alternative nucleotide in format [A, C, G, T].
+    /// </summary>
+    [JsonPropertyName("t")]
+    public int[] To { get; set; } = [0, 0, 0, 0];
 }
 
 public static class SsmExtensions
@@ -117,4 +176,3 @@ public static class SsmExtensions
         };
     }
 }
-
