@@ -117,7 +117,7 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.Tcn), "tcn")
             .Map(path.Join(entity => entity.TypeId), "type")
             .Map(path.Join(entity => entity.Loh), "loh")
-            .Map(path.Join(entity => entity.HomoDel), "homo_del");
+            .Map(path.Join(entity => entity.Del), "del");
     }
 
     private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, SV.Variant>> path) where T : class

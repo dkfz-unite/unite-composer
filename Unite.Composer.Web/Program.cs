@@ -12,6 +12,8 @@ builder.Logging.AddConsole();
 
 builder.Services.AddServices();
 
+builder.Services.AddResponseCompression(options => options.AddCompressionOptions());
+
 builder.Services.AddAuthentication(options => options.AddJwtAuthenticationOptions())
                 .AddJwtBearer(options => options.AddJwtBearerOptions());
 
