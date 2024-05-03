@@ -36,7 +36,7 @@ public class Cnv
         Length = variant.Length.Value;
         Tcn = variant.TcnMean;
         Loh = variant.Loh;
-        Del = variant.HomoDel;
+        Del = variant.Del;
         Genes = variant.AffectedTranscripts?.DistinctBy(transcript => transcript.Feature.GeneId).Count();
     }
 }

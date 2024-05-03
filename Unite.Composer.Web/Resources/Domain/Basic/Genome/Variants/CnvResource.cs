@@ -13,7 +13,7 @@ public class CnvResource
 
     public string Type { get; set; }
     public bool? Loh { get; set; }
-    public bool? HomoDel { get; set; }
+    public bool? Del { get; set; }
     public double? C1Mean { get; set; }
     public double? C2Mean { get; set; }
     public double? TcnMean { get; set; }
@@ -35,7 +35,7 @@ public class CnvResource
 
         Type = index.Type;
         Loh = index.Loh;
-        HomoDel = index.HomoDel;
+        Del = index.Del;
         C1Mean = index.C1Mean;
         C2Mean = index.C2Mean;
         TcnMean = index.TcnMean;
