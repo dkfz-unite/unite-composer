@@ -99,6 +99,8 @@ public class Ssm
     public string Position { get; set; }
     public string Type { get; set; }
     public string Change { get; set; }
+    public string ChangeCodon { get; set; }
+    public string ChangeProtein { get; set; }
     public string Impact { get; set; }
     public string Consequence { get; set; }
     public string Gene { get; set; }
@@ -113,6 +115,8 @@ public class Ssm
         Id = $"SSM{variant.Id}";
         Position = $"{chromosome}:{position}";
         Change = $"{variant.Ref ?? "-"}>{variant.Alt ?? "-"}";
+        ChangeCodon = transcript?.CodonChange;
+        ChangeProtein = transcript?.AminoAcidChange;
         Type = $"{variant.TypeId}";
         Impact = consequence?.Impact;
         Consequence = consequence?.Type;
