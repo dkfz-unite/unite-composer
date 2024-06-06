@@ -87,7 +87,7 @@ public class VariantResource
             .Where(affectedFeature => affectedFeature.Transcript != null)
             .Select(affectedFeature => new
             {
-                ProteinChange = affectedFeature.Transcript.AminoAcidChange,
+                ProteinChange = affectedFeature.Transcript.ProteinChange,
                 CodonChange = affectedFeature.Transcript.CodonChange,
                 Gene = affectedFeature.Gene,
                 Transcript = affectedFeature.Transcript.Feature,

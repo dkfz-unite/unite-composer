@@ -25,7 +25,7 @@ public class SsmDataService
         var entities = await _dbContext.Set<Unite.Data.Entities.Genome.Analysis.Dna.Ssm.AffectedTranscript>()
             .AsNoTracking()
             .Include(affectedTranscript => affectedTranscript.Feature.Protein)
-            .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)
+            .Where(affectedTranscript => affectedTranscript.ProteinChange != null)
             .Where(affectedTranscript => affectedTranscript.VariantId == id)
             .Select(affectedTranscript => affectedTranscript.Feature)
             .ToArrayAsync();

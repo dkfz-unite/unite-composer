@@ -83,7 +83,7 @@ public class ProteinPlotDataService
         foreach (var variant in searchResult.Rows)
         {
             var affectedFeature = variant.Ssm.AffectedFeatures?
-                .Where(affectedFeature => affectedFeature.Transcript.AminoAcidChange != null)
+                .Where(affectedFeature => affectedFeature.Transcript.ProteinChange != null)
                 .FirstOrDefault(affectedFeature => affectedFeature.Transcript.Feature.Id == transcriptId);
 
             if (affectedFeature != null)
@@ -97,7 +97,7 @@ public class ProteinPlotDataService
                     Id = variant.Ssm.Id,
                     Effect = effect.Type,
                     Impact = effect.Impact,
-                    AminoAcidChange = affectedFeature.Transcript.AminoAcidChange,
+                    ProteinChange = affectedFeature.Transcript.ProteinChange,
                     NumberOfDonors = variant.NumberOfDonors
                 };
 

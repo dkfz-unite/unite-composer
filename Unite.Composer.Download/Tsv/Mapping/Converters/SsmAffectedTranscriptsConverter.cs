@@ -28,7 +28,7 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
                 Transcript = affectedTranscript.Feature.Symbol ?? affectedTranscript.Feature.StableId,
                 ProteinStart = affectedTranscript.ProteinStart,
                 ProteinEnd = affectedTranscript.ProteinEnd,
-                ProteinChange = affectedTranscript.AminoAcidChange,
+                ProteinChange = affectedTranscript.ProteinChange,
                 Effect = affectedTranscript.Effects.OrderBy(effect => effect.Severity).First()
             })
             .GroupBy(affectedFeature => affectedFeature.Gene);

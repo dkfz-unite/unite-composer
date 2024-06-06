@@ -116,7 +116,7 @@ public class Ssm
         Position = $"{chromosome}:{position}";
         Change = $"{variant.Ref ?? "-"}>{variant.Alt ?? "-"}";
         ChangeCodon = transcript?.CodonChange;
-        ChangeProtein = transcript?.AminoAcidChange;
+        ChangeProtein = transcript?.ProteinChange;
         Type = $"{variant.TypeId}";
         Impact = effect?.Impact;
         Effect = effect?.Type;

@@ -185,7 +185,7 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.Feature.Protein.StableId), "protein_id")
             .Map(path.Join(entity => entity.Distance), "distance")
             .Map(path.Join(entity => entity.CodonChange), "codon_change", codonChangeConverter)
-            .Map(path.Join(entity => entity.AminoAcidChange), "protein_change", proteinChangeConverter)
+            .Map(path.Join(entity => entity.ProteinChange), "protein_change", proteinChangeConverter)
             .Map(path.Join(entity => entity.Effects), "effects", effectsConverter);
     }
 
