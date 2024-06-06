@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Genome.Variants;
+﻿using Unite.Indices.Entities.Basic.Genome.Dna;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 

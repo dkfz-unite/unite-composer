@@ -2,14 +2,14 @@ using System.IO.Compression;
 using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
-using Unite.Data.Entities.Genome.Variants;
-using Unite.Data.Entities.Genome.Variants.Enums;
+using Unite.Data.Entities.Genome.Analysis.Dna;
+using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens.Enums;
 
-using SSM = Unite.Data.Entities.Genome.Variants.SSM;
-using CNV = Unite.Data.Entities.Genome.Variants.CNV;
-using SV = Unite.Data.Entities.Genome.Variants.SV;
+using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Tsv;
 
@@ -37,14 +37,14 @@ public class VariantsTsvDownloadService : TsvDownloadService
     }
 
 
-    public async Task<byte[]> Download(long id, VariantType type, DataTypesCriteria criteria)
+    public async Task<byte[]> Download(int id, VariantType type, DataTypesCriteria criteria)
     {
         var ids = new[] { id };
 
         return await Download(ids, type, criteria);
     }
 
-    public async Task<byte[]> Download(IEnumerable<long> ids, VariantType type, DataTypesCriteria criteria)
+    public async Task<byte[]> Download(IEnumerable<int> ids, VariantType type, DataTypesCriteria criteria)
     {
         if (type == VariantType.SSM)
             return await Download<SSM.Variant>(ids, type, criteria);
@@ -57,7 +57,7 @@ public class VariantsTsvDownloadService : TsvDownloadService
     }
 
 
-    private async Task<byte[]> Download<TV>(IEnumerable<long> ids, VariantType type, DataTypesCriteria dataTypes)
+    private async Task<byte[]> Download<TV>(IEnumerable<int> ids, VariantType type, DataTypesCriteria dataTypes)
         where TV : Variant
     {
         var archiveBytes = Array.Empty<byte>();

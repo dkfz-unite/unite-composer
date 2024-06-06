@@ -28,8 +28,8 @@ public class DonorResource : Basic.Donors.DonorResource
         if (index.Specimens.IsNotEmpty())
         {
             Samples = index.Specimens
-                .Where(specimen => specimen.Analyses.IsNotEmpty())
-                .Select(specimen => new SampleResource(specimen, specimen.Analyses))
+                .Where(specimen => specimen.Samples.IsNotEmpty())
+                .Select(specimen => new SampleResource(specimen, specimen.Samples))
                 .ToArrayOrNull();
         }
     }

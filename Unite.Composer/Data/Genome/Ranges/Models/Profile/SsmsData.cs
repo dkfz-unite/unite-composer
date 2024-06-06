@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Unite.Data.Entities.Genome.Variants.SSM;
+using Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
 using Unite.Essentials.Extensions;
 
 namespace Unite.Composer.Data.Genome.Ranges.Models.Profile;
@@ -40,27 +40,27 @@ public class SsmsData : RangeData
 
     private void SetValues(Variant variant)
     {
-        var consequence = variant.GetMostSeverConsequence();
+        var effect = variant.GetMostSeverEffect();
 
-        if (consequence?.Impact == "High")
+        if (effect?.Impact == "High")
         {
             Impacts[0].Total++;
             SetChangeFrom(Impacts[0], variant.Ref);
             SetChangeTo(Impacts[0], variant.Alt);
         }
-        else if (consequence?.Impact == "Moderate")
+        else if (effect?.Impact == "Moderate")
         {
             Impacts[1].Total++;
             SetChangeFrom(Impacts[1], variant.Ref);
             SetChangeTo(Impacts[1], variant.Alt);
         }
-        else if (consequence?.Impact == "Low")
+        else if (effect?.Impact == "Low")
         {
             Impacts[2].Total++;
             SetChangeFrom(Impacts[2], variant.Ref);
             SetChangeTo(Impacts[2], variant.Alt);
         }
-        else if (consequence?.Impact == "Unknown")
+        else if (effect?.Impact == "Unknown")
         {
             Impacts[3].Total++;
             SetChangeFrom(Impacts[3], variant.Ref);
@@ -102,13 +102,13 @@ public class Ssm
     public string ChangeCodon { get; set; }
     public string ChangeProtein { get; set; }
     public string Impact { get; set; }
-    public string Consequence { get; set; }
+    public string Effect { get; set; }
     public string Gene { get; set; }
 
     public Ssm(Variant variant)
     {
         var transcript = variant.GetMostAffectedTranscript();
-        var consequence = variant.GetMostSeverConsequence();
+        var effect = variant.GetMostSeverEffect();
         var chromosome = variant.ChromosomeId.ToDefinitionString();
         var position = variant.Start == variant.End ? $"{variant.Start}" : $"{variant.Start}-{variant.End}";
 
@@ -118,8 +118,8 @@ public class Ssm
         ChangeCodon = transcript?.CodonChange;
         ChangeProtein = transcript?.AminoAcidChange;
         Type = $"{variant.TypeId}";
-        Impact = consequence?.Impact;
-        Consequence = consequence?.Type;
+        Impact = effect?.Impact;
+        Effect = effect?.Type;
         Gene = transcript?.Feature.Symbol;
     }
 }
@@ -154,18 +154,18 @@ public static class SsmExtensions
     public static AffectedTranscript GetMostAffectedTranscript(this Variant variant)
     {
         return variant?.AffectedTranscripts
-            .OrderBy(affectedTranscipt => affectedTranscipt.Consequences
-                .Select(consequence => GetImpactGrade(consequence.Impact))
+            .OrderBy(affectedTranscipt => affectedTranscipt.Effects
+                .Select(effect => GetImpactGrade(effect.Impact))
                 .Min())
             .FirstOrDefault();
     }
 
-    public static Unite.Data.Entities.Genome.Variants.Consequence GetMostSeverConsequence(this Variant variant)
+    public static Unite.Data.Entities.Genome.Analysis.Dna.Effect GetMostSeverEffect(this Variant variant)
     {
         return variant?.AffectedTranscripts
-            .SelectMany(affectedTranscipt => affectedTranscipt.Consequences)
-            .OrderBy(consequence => GetImpactGrade(consequence.Impact))
-            .ThenBy(consequence => consequence.Severity)
+            .SelectMany(affectedTranscipt => affectedTranscipt.Effects)
+            .OrderBy(effect => GetImpactGrade(effect.Impact))
+            .ThenBy(effect => effect.Severity)
             .FirstOrDefault();
     }
 

@@ -5,7 +5,7 @@ using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
@@ -66,7 +66,7 @@ public class VariantController : DomainController
     {
         if (id.StartsWith(VariantType.SSM))
         {
-            var variantId = long.Parse(id.Substring(VariantType.SSM.Length));
+            var variantId = int.Parse(id.Substring(VariantType.SSM.Length));
             var translations = await _ssmDataService.GetTranslations(variantId);
 
             return Ok(translations);
@@ -81,7 +81,7 @@ public class VariantController : DomainController
         var key = id.ToString();
         var index = await _variantsSearchService.Get(key);
 
-        var originalIds = long.Parse(id.Substring(index.Type.Length));
+        var originalIds = int.Parse(id.Substring(index.Type.Length));
         var originalType = Convert(index.Type);
         var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
@@ -108,13 +108,13 @@ public class VariantController : DomainController
         };
     }
 
-    private static Unite.Data.Entities.Genome.Variants.Enums.VariantType Convert(string type)
+    private static Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType Convert(string type)
     {
         return type switch
         {
-            VariantType.SSM => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SSM,
-            VariantType.CNV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.CNV,
-            VariantType.SV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SV,
+            VariantType.SSM => Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.SSM,
+            VariantType.CNV => Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.CNV,
+            VariantType.SV => Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.SV,
             _ => throw new InvalidOperationException("Unknown variant type")
         };
     }

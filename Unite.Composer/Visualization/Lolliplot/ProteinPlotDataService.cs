@@ -4,7 +4,7 @@ using Unite.Composer.Visualization.Lolliplot.Annotation;
 using Unite.Composer.Visualization.Lolliplot.Data;
 using Unite.Data.Context;
 using Unite.Indices.Context.Configuration.Options;
-using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Entities.Variants;
 using Unite.Indices.Search.Engine;
 using Unite.Indices.Search.Engine.Filters;
@@ -36,7 +36,7 @@ public class ProteinPlotDataService
     /// </summary>
     /// <param name="transcriptId">Transcript identifier</param>
     /// <returns>Protein plot data.</returns>
-    public async Task<ProteinPlotData> LoadData(long transcriptId)
+    public async Task<ProteinPlotData> LoadData(int transcriptId)
     {
         var data = new ProteinPlotData
         {
@@ -53,7 +53,7 @@ public class ProteinPlotDataService
     /// </summary>
     /// <param name="transcriptId">Transcript identifier</param>
     /// <returns>Protein data.</returns>
-    private async Task<ProteinDomain[]> GetProteinDomains(long transcriptId)
+    private async Task<ProteinDomain[]> GetProteinDomains(int transcriptId)
     {
         var protein = _dbContext.Set<Unite.Data.Entities.Genome.Protein>()
             .FirstOrDefault(protein => protein.TranscriptId == transcriptId);
@@ -68,7 +68,7 @@ public class ProteinPlotDataService
     /// </summary>
     /// <param name="transcriptId">Transcript identifier</param>
     /// <returns>Array of protein mutations.</returns>
-    private async Task<ProteinMutation[]> GetProteinMutations(long transcriptId)
+    private async Task<ProteinMutation[]> GetProteinMutations(int transcriptId)
     {   
         var query = new SearchQuery<VariantIndex>()
             .AddPagination(0, 10000)
@@ -88,15 +88,15 @@ public class ProteinPlotDataService
 
             if (affectedFeature != null)
             {
-                var consequence = affectedFeature.Consequences
-                    .OrderBy(consequence => consequence.Severity)
+                var effect = affectedFeature.Effects
+                    .OrderBy(effect => effect.Severity)
                     .First();
 
                 var proteinMutation = new ProteinMutation
                 {
                     Id = variant.Ssm.Id,
-                    Consequence = consequence.Type,
-                    Impact = consequence.Impact,
+                    Effect = effect.Type,
+                    Impact = effect.Impact,
                     AminoAcidChange = affectedFeature.Transcript.AminoAcidChange,
                     NumberOfDonors = variant.NumberOfDonors
                 };
@@ -119,9 +119,9 @@ public class ProteinPlotDataService
         );
     }
 
-    private static IFilter<VariantIndex> CreateTranscriptFilter(long transcriptId)
+    private static IFilter<VariantIndex> CreateTranscriptFilter(int transcriptId)
     {
-        return new EqualityFilter<VariantIndex, long>
+        return new EqualityFilter<VariantIndex, int>
         (
             "SSM.Transcript.Id",
             variant => variant.Ssm.AffectedFeatures.First().Transcript.Feature.Id,

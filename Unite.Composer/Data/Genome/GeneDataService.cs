@@ -21,7 +21,7 @@ public class GeneDataService
     /// <returns>Array of transcripts.</returns>    
     public async Task<Transcript[]> GetTranslations(int id)
     {
-        var entities = await _dbContext.Set<Unite.Data.Entities.Genome.Variants.SSM.AffectedTranscript>()
+        var entities = await _dbContext.Set<Unite.Data.Entities.Genome.Analysis.Dna.Ssm.AffectedTranscript>()
             .AsNoTracking()
             .Include(affectedTranscript => affectedTranscript.Feature.Protein)
             .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)

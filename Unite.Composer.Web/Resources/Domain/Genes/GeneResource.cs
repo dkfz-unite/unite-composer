@@ -1,5 +1,4 @@
-﻿using Unite.Composer.Web.Resources.Domain.Basic.Genome;
-using Unite.Indices.Entities.Genes;
+﻿using Unite.Indices.Entities.Genes;
 
 namespace Unite.Composer.Web.Resources.Domain.Genes;
 
@@ -16,9 +15,6 @@ public class GeneResource : Basic.Genome.GeneResource
     public int NumberOfCnvs { get; }
     public int NumberOfSvs { get; }
 
-    public BulkExpressionStatsResource Reads { get; set; }
-    public BulkExpressionStatsResource Tpm { get; set; }
-    public BulkExpressionStatsResource Fpkm { get; set; }
     public GeneDataResource Data { get; set; }
 
 
@@ -34,15 +30,6 @@ public class GeneResource : Basic.Genome.GeneResource
         NumberOfSsms = index.NumberOfSsms;
         NumberOfCnvs = index.NumberOfCnvs;
         NumberOfSvs = index.NumberOfSvs;
-
-        if (index.Reads != null)
-            Reads = new BulkExpressionStatsResource(index.Reads);
-
-        if (index.Tpm != null)
-            Tpm = new BulkExpressionStatsResource(index.Tpm);
-
-        if (index.Fpkm != null)
-            Fpkm = new BulkExpressionStatsResource(index.Fpkm);
 
         if (index.Data != null)
             Data = new GeneDataResource(index.Data);

@@ -57,7 +57,7 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
         if (index.Data != null)
             Data = new SpecimenDataResource(index.Data, index.Type);
 
-        if (index.Analyses.IsNotEmpty())
-            Sample = new SampleResource(index, index.Analyses);
+        if (index.Samples.IsNotEmpty())
+            Sample = new SampleResource(index, index.Samples);
     }
 }

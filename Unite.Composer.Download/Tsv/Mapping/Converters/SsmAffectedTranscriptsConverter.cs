@@ -1,5 +1,5 @@
-using Unite.Data.Entities.Genome.Variants.SSM;
-using Unite.Data.Helpers.Genome.Variants.SSM;
+using Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using Unite.Data.Helpers.Genome.Dna.Ssm;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;
@@ -29,7 +29,7 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
                 ProteinStart = affectedTranscript.ProteinStart,
                 ProteinEnd = affectedTranscript.ProteinEnd,
                 ProteinChange = affectedTranscript.AminoAcidChange,
-                Consequence = affectedTranscript.Consequences.OrderBy(consequence => consequence.Severity).First()
+                Effect = affectedTranscript.Effects.OrderBy(effect => effect.Severity).First()
             })
             .GroupBy(affectedFeature => affectedFeature.Gene);
 
@@ -39,7 +39,7 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
 
             var proteins = affectedFeatureGroup
                 .Where(affectedFeature => affectedFeature.ProteinChange != null)
-                .Select(affectedFeature => AAChangeCodeGenerator.Generate(affectedFeature.ProteinStart, affectedFeature.ProteinEnd, affectedFeature.ProteinChange))
+                .Select(affectedFeature => ProteinChangeCodeGenerator.Generate(affectedFeature.ProteinStart, affectedFeature.ProteinEnd, affectedFeature.ProteinChange))
                 .Distinct();
 
             yield return proteins.Any() ? $"{gene}({string.Join(", ", proteins)})" : $"{gene}";

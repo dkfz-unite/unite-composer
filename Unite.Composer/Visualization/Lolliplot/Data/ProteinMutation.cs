@@ -16,9 +16,9 @@ public class ProteinMutation
     public string Code { get; set; }
 
     /// <summary>
-    /// Mutation consequence code
+    /// Mutation effect code
     /// </summary>
-    public string Consequence { get; set; }
+    public string Effect { get; set; }
 
     /// <summary>
     /// Mutation impact

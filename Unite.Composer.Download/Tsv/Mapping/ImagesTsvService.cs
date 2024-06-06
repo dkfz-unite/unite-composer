@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Data.Entities.Images;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Essentials.Tsv;
@@ -43,7 +43,7 @@ public class ImagesTsvService : TsvServiceBase
         return await GetData(imageIds, typeId);
     }
 
-    public async Task<string> GetDataForVariants<TV>(IEnumerable<long> ids, ImageType typeId)
+    public async Task<string> GetDataForVariants<TV>(IEnumerable<int> ids, ImageType typeId)
         where TV : Variant
     {
         var imageIds = await _variantsRepository.GetRelatedImages<TV>(ids, typeId);

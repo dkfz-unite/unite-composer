@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Entities.Basic.Images.Constants;
 using Unite.Indices.Entities.Basic.Specimens.Constants;
 
@@ -84,14 +84,14 @@ public abstract class DomainController : Controller
             throw new NotSupportedException($"Specimen type {type} is not supported.");
     }
 
-    protected static Unite.Data.Entities.Genome.Variants.Enums.VariantType ConvertVariantType(string type)
+    protected static Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType ConvertVariantType(string type)
     {
         if (string.Equals(type, VariantType.SSM, _comparison))
-            return Unite.Data.Entities.Genome.Variants.Enums.VariantType.SSM;
+            return Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.SSM;
         else if (string.Equals(type, VariantType.CNV, _comparison))
-            return Unite.Data.Entities.Genome.Variants.Enums.VariantType.CNV;
+            return Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.CNV;
         else if (string.Equals(type, VariantType.SV, _comparison))
-            return Unite.Data.Entities.Genome.Variants.Enums.VariantType.SV;
+            return Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.SV;
         else
             throw new NotSupportedException($"Variant type {type} is not supported.");
     }

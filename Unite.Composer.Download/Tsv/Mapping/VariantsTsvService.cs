@@ -2,13 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Composer.Download.Tsv.Mapping.Models;
 using Unite.Data.Context;
-using Unite.Data.Entities.Genome.Variants.Enums;
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
+using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Essentials.Tsv;
 
-using SSM = Unite.Data.Entities.Genome.Variants.SSM;
-using CNV = Unite.Data.Entities.Genome.Variants.CNV;
-using SV = Unite.Data.Entities.Genome.Variants.SV;
+using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Tsv.Mapping;
 
@@ -18,7 +18,7 @@ public class VariantsTsvService : TsvServiceBase
     {
     }
 
-    public async Task<string> GetData(IEnumerable<long> ids, VariantType typeId, bool transcripts = false)
+    public async Task<string> GetData(IEnumerable<int> ids, VariantType typeId, bool transcripts = false)
     {
         if (typeId == VariantType.SSM)
             return await GetData<SSM.VariantEntry, SSM.Variant>(ids, transcripts);
@@ -59,7 +59,7 @@ public class VariantsTsvService : TsvServiceBase
     }
 
 
-    public async Task<string> GetFullData(IEnumerable<long> ids, VariantType typeId)
+    public async Task<string> GetFullData(IEnumerable<int> ids, VariantType typeId)
     {
         if (typeId == VariantType.SSM)
             return await GetFullData<SSM.VariantEntry, SSM.Variant>(ids);
@@ -100,7 +100,7 @@ public class VariantsTsvService : TsvServiceBase
     }
 
 
-    private async Task<string> GetData<TVE, TV>(IEnumerable<long> ids, bool transcripts)
+    private async Task<string> GetData<TVE, TV>(IEnumerable<int> ids, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
@@ -115,7 +115,7 @@ public class VariantsTsvService : TsvServiceBase
         return Write(entities, map);
     }
 
-    private async Task<string> GetFullData<TVE, TV>(IEnumerable<long> ids)
+    private async Task<string> GetFullData<TVE, TV>(IEnumerable<int> ids)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
@@ -131,7 +131,7 @@ public class VariantsTsvService : TsvServiceBase
             return null;
     }
 
-    private async Task<string> GetFullSsmsData(IEnumerable<long> ids)
+    private async Task<string> GetFullSsmsData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
@@ -148,7 +148,7 @@ public class VariantsTsvService : TsvServiceBase
         return Write(entries, map);
     }
 
-    private async Task<string> GetFullCnvsData(IEnumerable<long> ids)
+    private async Task<string> GetFullCnvsData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
@@ -165,7 +165,7 @@ public class VariantsTsvService : TsvServiceBase
         return Write(entries, map);
     }
 
-    private async Task<string> GetFullSvsData(IEnumerable<long> ids)
+    private async Task<string> GetFullSvsData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
@@ -183,7 +183,7 @@ public class VariantsTsvService : TsvServiceBase
     }
 
 
-    private async Task<long[]> GetIdsForDonors(IEnumerable<int> ids, VariantType typeId)
+    private async Task<int[]> GetIdsForDonors(IEnumerable<int> ids, VariantType typeId)
     {
         if (typeId == VariantType.SSM)
             return await _donorsRepository.GetRelatedVariants<SSM.Variant>(ids);
@@ -195,7 +195,7 @@ public class VariantsTsvService : TsvServiceBase
         return null;
     }
 
-    private async Task<long[]> GetIdsForImages(IEnumerable<int> ids, VariantType typeId)
+    private async Task<int[]> GetIdsForImages(IEnumerable<int> ids, VariantType typeId)
     {
         if (typeId == VariantType.SSM)
             return await _imagesRepository.GetRelatedVariants<SSM.Variant>(ids);
@@ -207,7 +207,7 @@ public class VariantsTsvService : TsvServiceBase
         return null;
     }
 
-    private async Task<long[]> GetIdsForSpecimens(IEnumerable<int> ids, VariantType typeId)
+    private async Task<int[]> GetIdsForSpecimens(IEnumerable<int> ids, VariantType typeId)
     {
         if (typeId == VariantType.SSM)
             return await _specimensRepository.GetRelatedVariants<SSM.Variant>(ids);
@@ -219,7 +219,7 @@ public class VariantsTsvService : TsvServiceBase
         return null;
     }
 
-    private async Task<long[]> GetIdsForGenes(IEnumerable<int> ids, VariantType typeId)
+    private async Task<int[]> GetIdsForGenes(IEnumerable<int> ids, VariantType typeId)
     {
         if (typeId == VariantType.SSM)
             return await _genesRepository.GetRelatedVariants<SSM.Variant>(ids);
@@ -259,17 +259,18 @@ public class VariantsTsvService : TsvServiceBase
         where TV : Variant
     {
         return query
-            .Include(entity => entity.AnalysedSample.Analysis)
-            .Include(entity => entity.AnalysedSample.TargetSample.Donor)
-            .Include(entity => entity.AnalysedSample.TargetSample.Material)
-            .Include(entity => entity.AnalysedSample.TargetSample.Line)
-            .Include(entity => entity.AnalysedSample.TargetSample.Organoid)
-            .Include(entity => entity.AnalysedSample.TargetSample.Xenograft)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Donor)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Material)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Line)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Organoid)
-            .Include(entity => entity.AnalysedSample.MatchedSample.Xenograft);
+            .Include(entity => entity.Sample.Analysis)
+            .Include(entity => entity.Sample.Specimen.Donor)
+            .Include(entity => entity.Sample.Specimen.Material)
+            .Include(entity => entity.Sample.Specimen.Line)
+            .Include(entity => entity.Sample.Specimen.Organoid)
+            .Include(entity => entity.Sample.Specimen.Xenograft)
+            .Include(entity => entity.Sample.Specimen.Donor)
+            .Include(entity => entity.Sample.Specimen.Material)
+            .Include(entity => entity.Sample.MatchedSample.Specimen.Material)
+            .Include(entity => entity.Sample.MatchedSample.Specimen.Line)
+            .Include(entity => entity.Sample.MatchedSample.Specimen.Organoid)
+            .Include(entity => entity.Sample.MatchedSample.Specimen.Xenograft);
     }
 
     private static IQueryable<TVE> IncludeAffectedFeatures<TVE, TV>(IQueryable<TVE> query, bool transcripts)
@@ -339,7 +340,7 @@ public class VariantsTsvService : TsvServiceBase
         where TV : Variant
     {
         return query
-            .OrderBy(entity => entity.AnalysedSample.TargetSample.DonorId)
+            .OrderBy(entity => entity.Sample.Specimen.DonorId)
             .ThenBy(entity => entity.Entity.ChromosomeId)
             .ThenBy(entity => entity.Entity.Start);
     }

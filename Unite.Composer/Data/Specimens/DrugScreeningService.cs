@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data.Specimens.Models;
 using Unite.Data.Context;
-using Unite.Data.Entities.Specimens;
+using Unite.Data.Entities.Specimens.Analysis.Drugs;
 
 namespace Unite.Composer.Data.Specimens;
 
@@ -20,27 +20,25 @@ public class DrugScreeningService
     {
         var screenings = await _dbContext.Set<DrugScreening>()
             .AsNoTracking()
-            .Include(screening => screening.Drug)
-            .Where(screening => screening.SpecimenId == specimenId)
+            .Include(screening => screening.Entity)
+            .Where(screening => screening.Sample.SpecimenId == specimenId)
             .ToArrayAsync();
 
         return screenings.Select(screening =>
         {
             return new DrugScreeningModel
             {
-                Drug = screening.Drug.Name,
-                Dss = screening.Dss,
-                DssSelective = screening.DssSelective,
+                Drug = screening.Entity.Name,
                 Gof = screening.Gof,
-                AbsIC25 = screening.AbsIC25,
-                AbsIC50 = screening.AbsIC50,
-                AbsIC75 = screening.AbsIC75,
-                MinConcentration = screening.MinConcentration,
-                MaxConcentration = screening.MaxConcentration,
-                Concentration = screening.Concentration,
-                Inhibition = screening.Inhibition,
-                ConcentrationLine = screening.InhibitionLine,
-                InhibitionLine = screening.ConcentrationLine
+                Dss = screening.Dss,
+                DssS = screening.DssS,
+                MinDose = screening.MinDose,
+                MaxDose = screening.MaxDose,
+                Dose25 = screening.Dose25,
+                Dose50 = screening.Dose50,
+                Dose75 = screening.Dose75,
+                Doses = screening.Doses,
+                Responses = screening.Responses
             };
         });
     }
