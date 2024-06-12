@@ -1,4 +1,4 @@
-using Unite.Data.Entities.Genome.Variants.SV;
+using Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;
@@ -28,7 +28,7 @@ public class SvAffectedTranscriptsConverter : IConverter<IEnumerable<AffectedTra
                 Transcript = affectedTranscript.Feature.Symbol ?? affectedTranscript.Feature.StableId,
                 ProteinStart = affectedTranscript.ProteinStart,
                 ProteinEnd = affectedTranscript.ProteinEnd,
-                Consequence = affectedTranscript.Consequences.OrderBy(consequence => consequence.Severity).First()
+                Effect = affectedTranscript.Effects.OrderBy(effect => effect.Severity).First()
             })
             .GroupBy(affectedFeature => affectedFeature.Gene);
 

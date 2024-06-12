@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Unite.Data.Entities.Specimens;
+using Unite.Data.Entities.Specimens.Analysis.Drugs;
 using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
@@ -76,17 +77,17 @@ internal static class SpecimenMappingExtensions
     public static ClassMap<DrugScreening> MapDrugScreenings(this ClassMap<DrugScreening> map)
     {
         return map
-            .MapSpecimen(entity => entity.Specimen)
-            .Map(entity => entity.Drug.Name, "drug_name")
-            .Map(entity => entity.Drug.Description, "drug_description")
-            .Map(entity => entity.Dss, "dss")
-            .Map(entity => entity.DssSelective, "dss_selective")
+            .MapSpecimen(entity => entity.Sample.Specimen)
+            .Map(entity => entity.Entity.Name, "drug_name")
+            .Map(entity => entity.Entity.Description, "drug_description")
             .Map(entity => entity.Gof, "gof")
-            .Map(entity => entity.AbsIC25, "abs_ic_25")
-            .Map(entity => entity.AbsIC50, "abs_ic_50")
-            .Map(entity => entity.AbsIC75, "abs_ic_75")
-            .Map(entity => entity.MinConcentration, "min_concentration")
-            .Map(entity => entity.MaxConcentration, "max_concentration");
+            .Map(entity => entity.Dss, "dss")
+            .Map(entity => entity.DssS, "dsss")
+            .Map(entity => entity.MinDose, "min_dose")
+            .Map(entity => entity.MaxDose, "max_dose")
+            .Map(entity => entity.Dose25, "dose_25")
+            .Map(entity => entity.Dose50, "dose_50")
+            .Map(entity => entity.Dose75, "dose_75");
     }
 
 

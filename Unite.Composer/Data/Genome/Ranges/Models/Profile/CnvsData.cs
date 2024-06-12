@@ -11,7 +11,7 @@ public class CnvsData : RangeData
     [JsonPropertyName("e")]
     public Cnv Variant { get; set; }
 
-    public CnvsData(int[] range, Unite.Data.Entities.Genome.Variants.CNV.Variant variant) : base(range)
+    public CnvsData(int[] range, Unite.Data.Entities.Genome.Analysis.Dna.Cnv.Variant variant) : base(range)
     {
         Variant = new Cnv(variant);
     }
@@ -28,7 +28,7 @@ public class Cnv
     public bool? Del { get; set; }
     public int? Genes { get; set; }
 
-    public Cnv(Unite.Data.Entities.Genome.Variants.CNV.Variant variant)
+    public Cnv(Unite.Data.Entities.Genome.Analysis.Dna.Cnv.Variant variant)
     {
         Id = $"CNV{variant.Id}";
         Position = $"{variant.ChromosomeId.ToDefinitionString()}:{variant.Start}-{variant.End}";

@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Data.Entities.Specimens;
+using Unite.Data.Entities.Specimens.Analysis.Drugs;
 using Unite.Data.Entities.Specimens.Enums;
 using Unite.Essentials.Tsv;
 
@@ -49,7 +50,7 @@ public class SpecimensTsvService : TsvServiceBase
         return await GetData(specimenIds, typeId);
     }
 
-    public async Task<string> GetDataForVariants<TV>(IEnumerable<long> ids, SpecimenType typeId)
+    public async Task<string> GetDataForVariants<TV>(IEnumerable<int> ids, SpecimenType typeId)
         where TV : Variant
     {
         var specimenIds = await _variantsRepository.GetRelatedSpecimens<TV>(ids);
@@ -91,7 +92,7 @@ public class SpecimensTsvService : TsvServiceBase
         return await GetInterventionsData(specimenIds, typeId);
     }
 
-    public async Task<string> GetInterventionsDataForVariants<TV>(IEnumerable<long> ids, SpecimenType typeId)
+    public async Task<string> GetInterventionsDataForVariants<TV>(IEnumerable<int> ids, SpecimenType typeId)
         where TV : Variant
     {
         var specimenIds = await _variantsRepository.GetRelatedSpecimens<TV>(ids);
@@ -105,8 +106,8 @@ public class SpecimensTsvService : TsvServiceBase
         using var dbContext = _dbContextFactory.CreateDbContext();
 
         var entities = await CreateDrugScreeningsQuery(dbContext)
-            .Where(entity => entity.Specimen.TypeId == typeId)
-            .Where(entity => ids.Contains(entity.SpecimenId))
+            .Where(entity => entity.Sample.Specimen.TypeId == typeId)
+            .Where(entity => ids.Contains(entity.Sample.SpecimenId))
             .ToArrayAsync();
 
         if (!entities.Any())
@@ -133,7 +134,7 @@ public class SpecimensTsvService : TsvServiceBase
         return await GetDrugsScreeningsData(specimenIds, typeId);
     }
 
-    public async Task<string> GetDrugsScreeningsDataForVariants<TV>(IEnumerable<long> ids, SpecimenType typeId)
+    public async Task<string> GetDrugsScreeningsDataForVariants<TV>(IEnumerable<int> ids, SpecimenType typeId)
         where TV : Variant
     {
         var specimenIds = await _variantsRepository.GetRelatedSpecimens<TV>(ids);
@@ -246,10 +247,10 @@ public class SpecimensTsvService : TsvServiceBase
     private static IQueryable<DrugScreening> CreateDrugScreeningsQuery(DomainDbContext dbContext)
     {
         return dbContext.Set<DrugScreening>().AsNoTracking()
-            .Include(entity => entity.Drug)
-            .Include(entity => entity.Specimen.Donor)
-            .Include(entity => entity.Specimen.Line)
-            .Include(entity => entity.Specimen.Organoid)
-            .Include(entity => entity.Specimen.Xenograft);
+            .Include(entity => entity.Entity)
+            .Include(entity => entity.Sample.Specimen.Donor)
+            .Include(entity => entity.Sample.Specimen.Line)
+            .Include(entity => entity.Sample.Specimen.Organoid)
+            .Include(entity => entity.Sample.Specimen.Xenograft);
     }
 }

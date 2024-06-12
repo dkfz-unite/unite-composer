@@ -46,7 +46,7 @@ public class GeneController : DomainController
 
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Gene(long id)
+    public async Task<IActionResult> Gene(int id)
     {
         var key = id.ToString();
 

@@ -11,7 +11,7 @@ public class SvsData : RangeData
     [JsonPropertyName("e")]
     public Sv Variant { get; set; }
 
-    public SvsData(int[] range, Unite.Data.Entities.Genome.Variants.SV.Variant variant) : base(range)
+    public SvsData(int[] range, Unite.Data.Entities.Genome.Analysis.Dna.Sv.Variant variant) : base(range)
     {
         Variant = new Sv(variant);
     }
@@ -25,7 +25,7 @@ public class Sv
     public int? Length { get; set; }
     public int? Genes { get; set; }
 
-    public Sv(Unite.Data.Entities.Genome.Variants.SV.Variant variant)
+    public Sv(Unite.Data.Entities.Genome.Analysis.Dna.Sv.Variant variant)
     {
         Id = $"SV{variant.Id}";
         Position = GetPosition(variant);
@@ -34,7 +34,7 @@ public class Sv
         Genes = variant.AffectedTranscripts?.DistinctBy(transcript => transcript.Feature.GeneId).Count();
     }
 
-    private static string GetPosition(Unite.Data.Entities.Genome.Variants.SV.Variant variant)
+    private static string GetPosition(Unite.Data.Entities.Genome.Analysis.Dna.Sv.Variant variant)
     {
         if (variant.ChromosomeId == variant.OtherChromosomeId)
             return $"{variant.ChromosomeId.ToDefinitionString()}:{variant.End}-{variant.OtherStart}";

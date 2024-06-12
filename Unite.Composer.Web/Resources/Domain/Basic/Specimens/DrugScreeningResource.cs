@@ -1,23 +1,21 @@
 ﻿using Unite.Composer.Data.Specimens.Models;
-using Unite.Indices.Entities.Basic.Specimens;
+using Unite.Indices.Entities.Basic.Specimens.Drugs;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
 public class DrugScreeningResource
 {
     public string Drug { get; set; }
-    public double? Dss { get; set; }
-    public double? DssSelective { get; set; }
     public double? Gof { get; set; }
-    public double? AbsIC25 { get; set; }
-    public double? AbsIC50 { get; set; }
-    public double? AbsIC75 { get; set; }
-    public double? MinConcentration { get; set; }
-    public double? MaxConcentration { get; set; }
-    public double[] Concentration { get; set; }
-    public double[] Inhibition { get; set; }
-    public double[] ConcentrationLine { get; set; }
-    public double[] InhibitionLine { get; set; }
+    public double? Dss { get; set; }
+    public double? DssS { get; set; }
+    public double? MinDose { get; set; }
+    public double? MaxDose { get; set; }
+    public double? Dose25 { get; set; }
+    public double? Dose50 { get; set; }
+    public double? Dose75 { get; set; }
+    public double[] Doses { get; set; }
+    public double[] Responses { get; set; }
 
 
     /// <summary>
@@ -28,14 +26,14 @@ public class DrugScreeningResource
     public DrugScreeningResource(DrugScreeningIndex index)
     {
         Drug = index.Drug;
-        Dss = index.Dss;
-        DssSelective = index.DssSelective;
         Gof = index.Gof;
-        AbsIC25 = index.AbsIC25;
-        AbsIC50 = index.AbsIC50;
-        AbsIC75 = index.AbsIC75;
-        MinConcentration = index.MinConcentration;
-        MaxConcentration = index.MaxConcentration;
+        Dss = index.Dss;
+        DssS = index.DssS;
+        MinDose = index.MinDose;
+        MaxDose = index.MaxDose;
+        Dose25 = index.Dose25;
+        Dose50 = index.Dose50;
+        Dose75 = index.Dose75;
     }
 
     /// <summary>
@@ -46,17 +44,15 @@ public class DrugScreeningResource
     public DrugScreeningResource(DrugScreeningModel model)
     {
         Drug = model.Drug;
-        Dss = model.Dss;
-        DssSelective = model.DssSelective;
         Gof = model.Gof;
-        AbsIC25 = model.AbsIC25;
-        AbsIC50 = model.AbsIC50;
-        AbsIC75 = model.AbsIC75;
-        MinConcentration = model.MinConcentration;
-        MaxConcentration = model.MaxConcentration;
-        Concentration = model.Concentration;
-        Inhibition = model.Inhibition;
-        ConcentrationLine = model.ConcentrationLine;
-        InhibitionLine = model.InhibitionLine;
+        Dss = model.Dss;
+        DssS = model.DssS;
+        MinDose = model.MinDose;
+        MaxDose = model.MaxDose;
+        Dose25 = model.Dose25;
+        Dose50 = model.Dose50;
+        Dose75 = model.Dose75;
+        Doses = model.Doses;
+        Responses = model.Responses;
     }
 }

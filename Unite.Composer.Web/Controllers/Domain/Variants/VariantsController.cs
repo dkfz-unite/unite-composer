@@ -4,7 +4,7 @@ using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Entities.Variants;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
@@ -91,18 +91,18 @@ public class VariantsController : DomainController
         };
     }
 
-    private static long[] Convert(string type, IEnumerable<string> ids)
+    private static int[] Convert(string type, IEnumerable<string> ids)
     {
-        return ids.Select(id => long.Parse(id[type.Length..])).ToArray();
+        return ids.Select(id => int.Parse(id[type.Length..])).ToArray();
     }
 
-    private static Unite.Data.Entities.Genome.Variants.Enums.VariantType Convert(string type)
+    private static Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType Convert(string type)
     {
         return type switch
         {
-            VariantType.SSM => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SSM,
-            VariantType.CNV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.CNV,
-            VariantType.SV => Unite.Data.Entities.Genome.Variants.Enums.VariantType.SV,
+            VariantType.SSM => Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.SSM,
+            VariantType.CNV => Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.CNV,
+            VariantType.SV => Unite.Data.Entities.Genome.Analysis.Dna.Enums.VariantType.SV,
             _ => throw new InvalidOperationException("Unknown variant type")
         };
     }

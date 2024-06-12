@@ -13,12 +13,12 @@ public class OncoGridVariant
     public string Code { get; set; }
 
     /// <summary>
-    /// Mutation most sever consequence
+    /// Mutation most sever effect
     /// </summary>
-    public string Consequence { get; set; }
+    public string Effect { get; set; }
 
     /// <summary>
-    /// Mutation most sever consequence impact
+    /// Mutation most sever effect impact
     /// </summary>
     public string Impact { get; set; }
 

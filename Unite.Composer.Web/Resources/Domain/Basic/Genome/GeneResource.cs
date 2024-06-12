@@ -4,7 +4,7 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Genome;
 
 public class GeneResource
 {
-    public long Id { get; }
+    public int Id { get; }
     public string StableId { get; }
     public string Symbol { get; }
     public string Description { get; set; }

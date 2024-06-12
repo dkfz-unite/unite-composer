@@ -1,10 +1,10 @@
-﻿using Unite.Indices.Entities.Basic.Genome.Variants;
+﻿using Unite.Indices.Entities.Basic.Genome.Dna;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
 public class CnvResource
 {
-    public long Id { get; set; }
+    public string Id { get; set; }
 
     public string Chromosome { get; set; }
     public int Start { get; set; }

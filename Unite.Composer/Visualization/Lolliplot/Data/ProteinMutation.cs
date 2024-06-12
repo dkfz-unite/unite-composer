@@ -8,7 +8,7 @@ public class ProteinMutation
     /// <summary>
     /// Unite mutation id 
     /// </summary>
-    public long Id { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// Mutation code in HGVs format
@@ -16,9 +16,9 @@ public class ProteinMutation
     public string Code { get; set; }
 
     /// <summary>
-    /// Mutation consequence code
+    /// Mutation effect code
     /// </summary>
-    public string Consequence { get; set; }
+    public string Effect { get; set; }
 
     /// <summary>
     /// Mutation impact
@@ -28,7 +28,7 @@ public class ProteinMutation
     /// <summary>
     /// Amino acid change in protein affected by the mutation
     /// </summary>
-    public string AminoAcidChange { get; set; }
+    public string ProteinChange { get; set; }
 
     /// <summary>
     /// Number of donors affected by the mutation

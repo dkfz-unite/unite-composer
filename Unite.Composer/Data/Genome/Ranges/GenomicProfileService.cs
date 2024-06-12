@@ -3,12 +3,12 @@ using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Data.Context;
 using Unite.Data.Entities.Genome;
 using Unite.Data.Entities.Genome.Enums;
-using Unite.Data.Entities.Genome.Transcriptomics;
+using Unite.Data.Entities.Genome.Analysis.Rna;
 using Unite.Essentials.Extensions;
 
-using SSM = Unite.Data.Entities.Genome.Variants.SSM;
-using CNV = Unite.Data.Entities.Genome.Variants.CNV;
-using SV = Unite.Data.Entities.Genome.Variants.SV;
+using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Data.Genome.Ranges;
 
@@ -116,7 +116,7 @@ public class GenomicProfileService
 
     public static Models.Profile.CnvsData[] GetCnvsData(in CNV.Variant[] variants, ref GenomicRange[] ranges)
     {
-        var data = new Dictionary<long, Models.Profile.CnvsData>();
+        var data = new Dictionary<int, Models.Profile.CnvsData>();
 
         foreach (var range in ranges)
         {
@@ -154,7 +154,7 @@ public class GenomicProfileService
 
     private static Models.Profile.SvsData[] GetSvsData(in SV.Variant[] variants, ref GenomicRange[] ranges)
     {
-        var data = new Dictionary<long, Models.Profile.SvsData>();
+        var data = new Dictionary<int, Models.Profile.SvsData>();
 
         foreach (var range in ranges)
         {
@@ -194,7 +194,7 @@ public class GenomicProfileService
         return data.Values.ToArrayOrNull();
     }
 
-    private static Models.Profile.ExpressionData[] GetExpressionsData(in BulkExpression[] expressions, ref GenomicRange[] ranges)
+    private static Models.Profile.ExpressionData[] GetExpressionsData(in GeneExpression[] expressions, ref GenomicRange[] ranges)
     {
         var data = new List<Models.Profile.ExpressionData>();
 
@@ -235,7 +235,7 @@ public class GenomicProfileService
         return await dbContext.Set<SSM.VariantEntry>().AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
                 .ThenInclude(transcript => transcript.Feature)
-            .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
+            .Where(entry => entry.Sample.SpecimenId == specimenId)
             .Where(entry => entry.Entity.AffectedTranscripts.Any())
             .Where(entry => (int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr)
             .Select(entry => entry.Entity)
@@ -250,7 +250,7 @@ public class GenomicProfileService
             .AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
                 .ThenInclude(transcript => transcript.Feature)
-            .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
+            .Where(entry => entry.Sample.SpecimenId == specimenId)
             .Where(entry => (int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr)
             .Select(entry => entry.Entity)
             .ToArrayAsync();
@@ -264,7 +264,7 @@ public class GenomicProfileService
             .AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
                 .ThenInclude(transcript => transcript.Feature)
-            .Where(entry => entry.AnalysedSample.TargetSampleId == specimenId)
+            .Where(entry => entry.Sample.SpecimenId == specimenId)
             // .Where(entry => entry.Entity.TypeId != SV.Enums.SvType.ITX && entry.Entity.TypeId != SV.Enums.SvType.CTX)
             .Where(entry => ((int)entry.Entity.ChromosomeId >= startChr && (int)entry.Entity.ChromosomeId <= endChr) ||
                            ((int)entry.Entity.OtherChromosomeId >= startChr && (int)entry.Entity.OtherChromosomeId <= endChr))
@@ -272,14 +272,14 @@ public class GenomicProfileService
             .ToArrayAsync();
     }
 
-    private async Task<BulkExpression[]> LoadExpressions(int specimenId, int startChr, int start, int endChr, int end)
+    private async Task<GeneExpression[]> LoadExpressions(int specimenId, int startChr, int start, int endChr, int end)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return await dbContext.Set<BulkExpression>()
+        return await dbContext.Set<GeneExpression>()
             .AsNoTracking()
             .Include(expression => expression.Entity)
-            .Where(expression => expression.AnalysedSample.TargetSampleId == specimenId)
+            .Where(expression => expression.Sample.SpecimenId == specimenId)
             .Where(expression => (int)expression.Entity.ChromosomeId >= startChr && (int)expression.Entity.ChromosomeId <= endChr)
             .ToArrayAsync();
     }
@@ -290,7 +290,7 @@ public class GenomicProfileService
 
         return dbContext.Set<SSM.VariantEntry>()
             .AsNoTracking()
-            .Any(entry => entry.AnalysedSample.TargetSampleId == specimenId);
+            .Any(entry => entry.Sample.SpecimenId == specimenId);
     }
 
     private bool HasCnvs(int specimenId)
@@ -299,7 +299,7 @@ public class GenomicProfileService
 
         return dbContext.Set<CNV.VariantEntry>()
             .AsNoTracking()
-            .Any(entry => entry.AnalysedSample.TargetSampleId == specimenId);
+            .Any(entry => entry.Sample.SpecimenId == specimenId);
     }
 
     private bool HasSvs(int specimenId)
@@ -308,15 +308,15 @@ public class GenomicProfileService
 
         return dbContext.Set<SV.VariantEntry>()
             .AsNoTracking()
-            .Any(entry => entry.AnalysedSample.TargetSampleId == specimenId);
+            .Any(entry => entry.Sample.SpecimenId == specimenId);
     }
 
     private bool HasExpressions(int specimenId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return dbContext.Set<BulkExpression>()
+        return dbContext.Set<GeneExpression>()
             .AsNoTracking()
-            .Any(expression => expression.AnalysedSample.TargetSampleId == specimenId);
+            .Any(expression => expression.Sample.SpecimenId == specimenId);
     }
 }

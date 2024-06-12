@@ -1,9 +1,9 @@
 using Unite.Data.Entities.Genome;
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
 
-using SSM = Unite.Data.Entities.Genome.Variants.SSM;
-using CNV = Unite.Data.Entities.Genome.Variants.CNV;
-using SV = Unite.Data.Entities.Genome.Variants.SV;
+using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Models;
 

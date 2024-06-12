@@ -3,16 +3,14 @@
 public class DrugScreeningModel
 {
     public string Drug;
-    public double? Dss;
-    public double? DssSelective;
     public double? Gof;
-    public double? AbsIC25;
-    public double? AbsIC50;
-    public double? AbsIC75;
-    public double? MinConcentration;
-    public double? MaxConcentration;
-    public double[] Concentration;
-    public double[] Inhibition;
-    public double[] ConcentrationLine;
-    public double[] InhibitionLine;
+    public double? Dss;
+    public double? DssS;
+    public double? MinDose;
+    public double? MaxDose;
+    public double? Dose25;
+    public double? Dose50;
+    public double? Dose75;
+    public double[] Doses;
+    public double[] Responses;
 }

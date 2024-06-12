@@ -17,7 +17,7 @@ public class LolliplotController : Controller
     }
 
     [HttpGet("transcript/{id}")]
-    public async Task<IActionResult> Get(long id)
+    public async Task<IActionResult> Get(int id)
     {
         var result = await _dataService.LoadData(id);
 

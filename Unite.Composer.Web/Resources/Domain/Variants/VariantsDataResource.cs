@@ -1,5 +1,5 @@
 using Unite.Indices.Entities;
-using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 

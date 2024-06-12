@@ -1,5 +1,5 @@
 ﻿using Unite.Essentials.Extensions;
-using Unite.Indices.Entities.Basic.Genome.Variants;
+using Unite.Indices.Entities.Basic.Genome.Dna;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
@@ -11,7 +11,7 @@ public class AffectedFeatureResource
     //public AffectedRegulatorResource Regulator { get; set; }
     //public AffectedMotifResource Motif { get; set; }
 
-    public ConsequenceResource[] Consequences { get; set; }
+    public EffectResource[] Effects { get; set; }
 
 
     public AffectedFeatureResource(AffectedFeatureIndex index)
@@ -22,10 +22,10 @@ public class AffectedFeatureResource
         if (index.Transcript != null)
             Transcript = new AffectedTranscriptResource(index.Transcript);
 
-        if (index.Consequences.IsNotEmpty())
+        if (index.Effects.IsNotEmpty())
         {
-            Consequences = index.Consequences
-                .Select(consequenceIndex => new ConsequenceResource(consequenceIndex))
+            Effects = index.Effects
+                .Select(effectIndex => new EffectResource(effectIndex))
                 .ToArray();
         }
     }

@@ -1,9 +1,9 @@
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;
 
-public class ConsequencesConverter : IConverter<Consequence[]>
+public class EffectsConverter : IConverter<Effect[]>
 {
     public object Convert(string value, string row)
     {
@@ -12,9 +12,9 @@ public class ConsequencesConverter : IConverter<Consequence[]>
 
     public string Convert(object value, object row)
     {
-        var consequences = value as Consequence[];
+        var effects = value as Effect[];
         
-        var groups = consequences.OrderBy(c => c.Severity).GroupBy(c => c.Impact);
+        var groups = effects.OrderBy(c => c.Severity).GroupBy(c => c.Impact);
 
         var impacts = groups.Select(g => $"{g.Key}({string.Join(", ", g.Select(c => c.Type))})");
 

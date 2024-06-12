@@ -2,13 +2,13 @@ using System.Linq.Expressions;
 using Unite.Composer.Download.Tsv.Mapping.Converters;
 using Unite.Composer.Download.Tsv.Mapping.Models;
 using Unite.Data.Entities.Genome.Analysis;
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
-using SSM = Unite.Data.Entities.Genome.Variants.SSM;
-using CNV = Unite.Data.Entities.Genome.Variants.CNV;
-using SV = Unite.Data.Entities.Genome.Variants.SV;
+using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Extensions;
 
@@ -30,21 +30,21 @@ internal static class VariantsMappingExtensions
 
     public static ClassMap<SSM.VariantEntry> MapVariantEntries(this ClassMap<SSM.VariantEntry> map, bool transcripts = false)
     {
-        return map.MapAnalysedSample(entity => entity.AnalysedSample)
+        return map.MapSample(entity => entity.Sample)
                   .MapVariant(entity => entity.Entity)
                   .MapAffectedFeatures(transcripts);
     }
 
     public static ClassMap<CNV.VariantEntry> MapVariantEntries(this ClassMap<CNV.VariantEntry> map, bool transcripts = false)
     {
-        return map.MapAnalysedSample(entity => entity.AnalysedSample)
+        return map.MapSample(entity => entity.Sample)
                   .MapVariant(entity => entity.Entity)
                   .MapAffectedFeatures(transcripts);
     }
 
     public static ClassMap<SV.VariantEntry> MapVariantEntries(this ClassMap<SV.VariantEntry> map, bool transcripts = false)
     {
-        return map.MapAnalysedSample(entity => entity.AnalysedSample)
+        return map.MapSample(entity => entity.Sample)
                   .MapVariant(entity => entity.Entity)
                   .MapAffectedFeatures(transcripts);
     }
@@ -52,34 +52,34 @@ internal static class VariantsMappingExtensions
 
     public static ClassMap<SsmEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<SsmEntryWithAffectedTranscript> map)
     {
-        return map.MapAnalysedSample(entry => entry.Entry.AnalysedSample)
+        return map.MapSample(entry => entry.Entry.Sample)
                   .MapVariant(entry => entry.Entry.Entity)
                   .MapAffectedTranscript(entry => entry.AffectedFeature);
     }
 
     public static ClassMap<CnvEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<CnvEntryWithAffectedTranscript> map)
     {
-        return map.MapAnalysedSample(entry => entry.Entry.AnalysedSample)
+        return map.MapSample(entry => entry.Entry.Sample)
                   .MapVariant(entry => entry.Entry.Entity)
                   .MapAffectedTranscript(entry => entry.AffectedFeature);
     }
 
     public static ClassMap<SvEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<SvEntryWithAffectedTranscript> map)
     {
-        return map.MapAnalysedSample(entry => entry.Entry.AnalysedSample)
+        return map.MapSample(entry => entry.Entry.Sample)
                   .MapVariant(entry => entry.Entry.Entity)
                   .MapAffectedTranscript(entry => entry.AffectedFeature);
     }
 
 
-    private static ClassMap<T> MapAnalysedSample<T>(this ClassMap<T> map, Expression<Func<T, AnalysedSample>> path) where T : class
+    private static ClassMap<T> MapSample<T>(this ClassMap<T> map, Expression<Func<T, Sample>> path) where T : class
     {
         return map
-            .Map(path.Join(entity => entity.TargetSample.Donor.ReferenceId), "donor_id")
-            .Map(path.Join(entity => entity.TargetSample.ReferenceId), "specimen_id")
-            .Map(path.Join(entity => entity.TargetSample.TypeId), "specimen_type")
-            .Map(path.Join(entity => entity.MatchedSample.ReferenceId), "matched_specimen_id")
-            .Map(path.Join(entity => entity.MatchedSample.TypeId), "matched_specimen_type")
+            .Map(path.Join(entity => entity.Specimen.Donor.ReferenceId), "donor_id")
+            .Map(path.Join(entity => entity.Specimen.ReferenceId), "specimen_id")
+            .Map(path.Join(entity => entity.Specimen.TypeId), "specimen_type")
+            .Map(path.Join(entity => entity.MatchedSample.Specimen.ReferenceId), "matched_specimen_id")
+            .Map(path.Join(entity => entity.MatchedSample.Specimen.TypeId), "matched_specimen_type")
             .Map(path.Join(entity => entity.Analysis.TypeId), "analysis_type");
     }
 
@@ -175,7 +175,7 @@ internal static class VariantsMappingExtensions
     {
         var codonChangeConverter = new CodonChangeConverter();
         var proteinChangeConverter = new ProteinChangeConverter();
-        var consequencesConverter = new ConsequencesConverter();
+        var effectsConverter = new EffectsConverter();
 
         return map
             .Map(path.Join(entity => entity.Feature.Gene.StableId), "gene_id")
@@ -184,14 +184,14 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.Feature.Symbol), "transcript_symbol")
             .Map(path.Join(entity => entity.Feature.Protein.StableId), "protein_id")
             .Map(path.Join(entity => entity.Distance), "distance")
-            .Map(path.Join(entity => entity.CodonChange), "cdna_change", codonChangeConverter)
-            .Map(path.Join(entity => entity.AminoAcidChange), "aa_change", proteinChangeConverter)
-            .Map(path.Join(entity => entity.Consequences), "consequences", consequencesConverter);
+            .Map(path.Join(entity => entity.CodonChange), "codon_change", codonChangeConverter)
+            .Map(path.Join(entity => entity.ProteinChange), "protein_change", proteinChangeConverter)
+            .Map(path.Join(entity => entity.Effects), "effects", effectsConverter);
     }
 
     private static ClassMap<T> MapAffectedTranscript<T>(this ClassMap<T> map, Expression<Func<T, CNV.AffectedTranscript>> path) where T : class
     {
-        var consequencesConverter = new ConsequencesConverter();
+        var effectsConverter = new EffectsConverter();
 
         return map
             .Map(path.Join(entity => entity.Feature.Gene.StableId), "gene_id")
@@ -205,12 +205,12 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.CDNAStart), "cdna_breaking_point")
             .Map(path.Join(entity => entity.CDSStart), "cds_breaking_point")
             .Map(path.Join(entity => entity.ProteinStart), "protein_breaking_point")
-            .Map(path.Join(entity => entity.Consequences), "consequences", consequencesConverter);
+            .Map(path.Join(entity => entity.Effects), "effects", effectsConverter);
     }
 
     private static ClassMap<T> MapAffectedTranscript<T>(this ClassMap<T> map, Expression<Func<T, SV.AffectedTranscript>> path) where T : class
     {
-        var consequencesConverter = new ConsequencesConverter();
+        var effectsConverter = new EffectsConverter();
 
         return map
             .Map(path.Join(entity => entity.Feature.Gene.StableId), "gene_id")
@@ -224,6 +224,6 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.CDNAStart), "cdna_breaking_point")
             .Map(path.Join(entity => entity.CDSStart), "cds_breaking_point")
             .Map(path.Join(entity => entity.ProteinStart), "protein_breaking_point")
-            .Map(path.Join(entity => entity.Consequences), "consequences", consequencesConverter);
+            .Map(path.Join(entity => entity.Effects), "effects", effectsConverter);
     }
 }

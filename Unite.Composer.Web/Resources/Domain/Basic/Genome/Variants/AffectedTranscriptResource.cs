@@ -1,10 +1,10 @@
-﻿using Unite.Indices.Entities.Basic.Genome.Variants;
+﻿using Unite.Indices.Entities.Basic.Genome.Dna;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
 public class AffectedTranscriptResource
 {
-    public string AminoAcidChange { get; set; }
+    public string ProteinChange { get; set; }
     public string CodonChange { get; set; }
 
     public int? Distance { get; set; }
@@ -16,7 +16,7 @@ public class AffectedTranscriptResource
 
     public AffectedTranscriptResource(AffectedTranscriptIndex index)
     {
-        AminoAcidChange = index.AminoAcidChange;
+        ProteinChange = index.ProteinChange;
         CodonChange = index.CodonChange;
 
         Distance = index.Distance;

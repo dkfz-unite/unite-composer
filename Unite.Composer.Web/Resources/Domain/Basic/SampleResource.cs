@@ -13,16 +13,16 @@ public class SampleResource
     public string[] Analyses { get; set; }
 
 
-    public SampleResource(SpecimenIndex specimenIndex, AnalysisIndex[] analysisIndices = null)
+    public SampleResource(SpecimenIndex specimenIndex, SampleIndex[] sampleIndices = null)
     {
         Id = specimenIndex.Id;
         ReferenceId = specimenIndex.ReferenceId;
         Type = specimenIndex.Type;
 
-        if (analysisIndices.IsNotEmpty())
+        if (sampleIndices.IsNotEmpty())
         {
-            Analyses = analysisIndices
-                .Select(analysisIndex => analysisIndex.Type)
+            Analyses = sampleIndices
+                .Select(sampleIndex => sampleIndex.AnalysisType)
                 .ToArray();
         }
     }

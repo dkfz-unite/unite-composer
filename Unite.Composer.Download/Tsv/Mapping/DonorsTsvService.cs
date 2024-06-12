@@ -3,7 +3,7 @@ using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
 using Unite.Data.Entities.Donors;
 using Unite.Data.Entities.Donors.Clinical;
-using Unite.Data.Entities.Genome.Variants;
+using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Tsv.Mapping;
@@ -49,7 +49,7 @@ public class DonorsTsvService : TsvServiceBase
         return await GetData(donorIds);
     }
 
-    public async Task<string> GetDataForVariants<TV>(IEnumerable<long> ids)
+    public async Task<string> GetDataForVariants<TV>(IEnumerable<int> ids)
         where TV : Variant
     {
         var donorIds = await _variantsRepository.GetRelatedDonors<TV>(ids);
@@ -92,7 +92,7 @@ public class DonorsTsvService : TsvServiceBase
         return await GetClinicalData(donorIds);
     }
 
-    public async Task<string> GetClinicalDataForVariants<TV>(IEnumerable<long> ids)
+    public async Task<string> GetClinicalDataForVariants<TV>(IEnumerable<int> ids)
         where TV : Variant
     {
         var donorIds = await _variantsRepository.GetRelatedDonors<TV>(ids);
@@ -135,7 +135,7 @@ public class DonorsTsvService : TsvServiceBase
         return await GetTreatmentsData(donorIds);
     }
 
-    public async Task<string> GetTreatmentsDataForVariants<TV>(IEnumerable<long> ids)
+    public async Task<string> GetTreatmentsDataForVariants<TV>(IEnumerable<int> ids)
         where TV : Variant
     {
         var donorIds = await _variantsRepository.GetRelatedDonors<TV>(ids);

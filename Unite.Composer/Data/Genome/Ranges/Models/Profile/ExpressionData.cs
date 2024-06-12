@@ -16,7 +16,7 @@ public class ExpressionData : RangeData
     public double[] Reads { get; set; }
 
 
-    public ExpressionData(int[] range, Unite.Data.Entities.Genome.Transcriptomics.BulkExpression expression) : base(range)
+    public ExpressionData(int[] range, Unite.Data.Entities.Genome.Analysis.Rna.GeneExpression expression) : base(range)
     {
         Expression = new Expression(expression);
 
@@ -27,7 +27,7 @@ public class ExpressionData : RangeData
         Reads = [reads, tpm, fpkm];
     }
 
-    public ExpressionData(int[] range, IEnumerable<Unite.Data.Entities.Genome.Transcriptomics.BulkExpression> expressions) : base(range)
+    public ExpressionData(int[] range, IEnumerable<Unite.Data.Entities.Genome.Analysis.Rna.GeneExpression> expressions) : base(range)
     {
         foreach (var expression in expressions)
         {
@@ -44,7 +44,7 @@ public class Expression
 {
     public string Gene { get; set; }
 
-    public Expression(Unite.Data.Entities.Genome.Transcriptomics.BulkExpression expression)
+    public Expression(Unite.Data.Entities.Genome.Analysis.Rna.GeneExpression expression)
     {
         Gene = expression.Entity.Symbol;
     }

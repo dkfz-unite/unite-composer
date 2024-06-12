@@ -1,6 +1,6 @@
 ﻿using Unite.Composer.Visualization.Oncogrid.Data;
 using Unite.Indices.Context.Configuration.Options;
-using Unite.Indices.Entities.Basic.Genome.Variants.Constants;
+using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Search.Engine;
 using Unite.Indices.Search.Engine.Filters;
 using Unite.Indices.Search.Engine.Queries;
@@ -36,7 +36,7 @@ public class OncoGridDataService
         var criteria = searchCriteria ?? new SearchCriteria();
 
         var impacts = criteria.Ssm.Impact;
-        var consequences = criteria.Ssm.Consequence;
+        var effect = criteria.Ssm.Effect;
 
         var donorsSearchResult = FindDonors(numberOfDonors, criteria);
 
@@ -56,7 +56,7 @@ public class OncoGridDataService
             donorsSearchResult.Rows,
             genesSearchResult.Rows,
             mutationsSearchResult.Rows,
-            impacts, consequences
+            impacts, effect
         );
 
         return data;
@@ -164,7 +164,7 @@ public class OncoGridDataService
         IEnumerable<GeneIndex> genes,
         IEnumerable<VariantIndex> mutations,
         IEnumerable<string> impacts,
-        IEnumerable<string> consequences)
+        IEnumerable<string> effects)
     {
         var oncoGridData = new OncoGridData();
 
@@ -172,7 +172,7 @@ public class OncoGridDataService
         // If immediate enumeration required, call 'ToArray' method for required data set.
         oncoGridData.Donors = GetDonorsData(donors);
         oncoGridData.Genes = GetGenesData(genes);
-        oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations, impacts, consequences);
+        oncoGridData.Observations = GetObservationsData(oncoGridData.Donors, oncoGridData.Genes, mutations, impacts, effects);
 
         return oncoGridData;
     }
@@ -214,7 +214,7 @@ public class OncoGridDataService
         IEnumerable<OncoGridGene> genes,
         IEnumerable<VariantIndex> mutations,
         IEnumerable<string> impacts,
-        IEnumerable<string> consequences)
+        IEnumerable<string> effects)
     {
         foreach (var donor in donors)
         {
@@ -234,24 +234,24 @@ public class OncoGridDataService
 
                 foreach (var mutation in observedMutations)
                 {
-                    var consequence = mutation.Ssm.AffectedFeatures
+                    var effect = mutation.Ssm.AffectedFeatures
                         .Where(affectedFeature => affectedFeature.Transcript != null)
                         .Where(affectedFeature => affectedFeature.Gene != null)
                         .Where(affectedFeature => affectedFeature.Gene.Id == geneId)
-                        .SelectMany(affectedFeature => affectedFeature.Consequences)
-                        .Where(consequence => HasMatchingImpact(consequence.Impact, impacts))
-                        .Where(consequence => HasMatchingConsequence(consequence.Type, consequences))
-                        .OrderBy(consequence => consequence.Severity)
+                        .SelectMany(affectedFeature => affectedFeature.Effects)
+                        .Where(effect => HasMatchingImpact(effect.Impact, impacts))
+                        .Where(effect => HasMatchingEffects(effect.Type, effects))
+                        .OrderBy(effect => effect.Severity)
                         .FirstOrDefault();
 
-                    if (consequence != null)
+                    if (effect != null)
                     {
                         yield return new OncoGridVariant
                         {
                             Id = mutation.Id,
                             Code = GetVariantCode(mutation),
-                            Consequence = consequence.Type,
-                            Impact = consequence.Impact,
+                            Effect = effect.Type,
+                            Impact = effect.Impact,
                             DonorId = donor.Id,
                             GeneId = gene.Id
                         };
@@ -267,9 +267,9 @@ public class OncoGridDataService
         return impacts == null || !impacts.Any() || impacts.Contains(impact);
     }
 
-    private static bool HasMatchingConsequence(string consequence, IEnumerable<string> consequences)
+    private static bool HasMatchingEffects(string effect, IEnumerable<string> effects)
     {
-        return consequences == null || !consequences.Any() || consequences.Contains(consequence);
+        return effects == null || !effects.Any() || effects.Contains(effect);
     }
 
     private static string GetVariantCode(VariantIndex variant)

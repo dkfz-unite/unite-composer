@@ -1,5 +1,5 @@
 ﻿using Unite.Essentials.Extensions;
-using Unite.Indices.Entities.Basic.Genome.Variants;
+using Unite.Indices.Entities.Basic.Genome.Dna;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
@@ -19,17 +19,17 @@ public class VariantResource
     public AffectedFeatureResource[] AffectedFeatures { get; set; }
 
     /// <summary>
-    /// Projection of variant affected transcripts to their consequences.
+    /// Projection of variant affected transcripts to their effects.
     /// Has the following format:
-    /// - Term - consequence term (e.g. "missense_variant")
-    /// - Impact - consequence impact (e,g. "Moderate")
-    /// - GenesNumber - total number of genes affected by the consequence
-    /// - Genes - first 5 genes affected by the consequence
+    /// - Term - effect term (e.g. "missense_variant")
+    /// - Impact - effect impact (e,g. "Moderate")
+    /// - GenesNumber - total number of genes affected by the effect
+    /// - Genes - first 5 genes affected by the effect
     /// -- Id - gene id
     /// -- Symbol - gene symbol
     /// -- Translations - list of unique amino acid changes caused by the consiquence in corresponding gene
     /// </summary>
-    public dynamic[] TranscriptConsequences { get; }
+    public dynamic[] TranscriptEffects { get; }
 
 
     public VariantResource(VariantIndex index, bool includeAffectedFeatures = false)
@@ -72,35 +72,35 @@ public class VariantResource
         }
         else if (!includeAffectedFeatures && affectedFeatures.IsNotEmpty())
         {
-            TranscriptConsequences =
-                GetTranscriptConsequences(affectedFeatures)
+            TranscriptEffects =
+                GetTranscriptEffects(affectedFeatures)
                 .ToArray();
         }
     }
 
     
 
-    private static IEnumerable<dynamic> GetTranscriptConsequences(AffectedFeatureIndex[] affectedFeatures)
+    private static IEnumerable<dynamic> GetTranscriptEffects(AffectedFeatureIndex[] affectedFeatures)
     {
         return affectedFeatures
             .Where(affectedFeature => affectedFeature.Gene != null)
             .Where(affectedFeature => affectedFeature.Transcript != null)
             .Select(affectedFeature => new
             {
-                AminoAcidChange = affectedFeature.Transcript.AminoAcidChange,
+                ProteinChange = affectedFeature.Transcript.ProteinChange,
                 CodonChange = affectedFeature.Transcript.CodonChange,
                 Gene = affectedFeature.Gene,
                 Transcript = affectedFeature.Transcript.Feature,
-                Consequence = affectedFeature.Consequences.OrderBy(consequence => consequence.Severity).First()
+                Effect = affectedFeature.Effects.OrderBy(effect => effect.Severity).First()
             })
-            .OrderBy(affectedTranscript => affectedTranscript.Consequence.Severity)
+            .OrderBy(affectedTranscript => affectedTranscript.Effect.Severity)
             .GroupBy(
-                affectedTranscript => affectedTranscript.Consequence.Type,
-                (key, group) => new { Value = group.First().Consequence, Elements = group })
-            .Select(consequenceGroup => {
-                var term = consequenceGroup.Value.Type;
-                var impact = consequenceGroup.Value.Impact;
-                var genes = consequenceGroup.Elements
+                affectedTranscript => affectedTranscript.Effect.Type,
+                (key, group) => new { Value = group.First().Effect, Elements = group })
+            .Select(effectGroup => {
+                var term = effectGroup.Value.Type;
+                var impact = effectGroup.Value.Impact;
+                var genes = effectGroup.Elements
                     .GroupBy(
                         affectedTranscript => affectedTranscript.Gene.Symbol,
                         (key, group) => new { Value = group.First().Gene, Elements = group })
@@ -109,17 +109,17 @@ public class VariantResource
                         var id = geneGroup.Value.Id;
                         var symbol = geneGroup.Value.Symbol ?? geneGroup.Value.StableId;
                         var translations = geneGroup.Elements
-                            .Where(affectedTranscript => affectedTranscript.AminoAcidChange != null)
+                            .Where(affectedTranscript => affectedTranscript.ProteinChange != null)
                             .OrderBy(affectedTranscript => affectedTranscript.Transcript.Start)
-                            .Select(affectedTranscript => affectedTranscript.AminoAcidChange)
+                            .Select(affectedTranscript => affectedTranscript.ProteinChange)
                             .Distinct();
                         return new GeneGroup(id, symbol, translations);
                     });
                 var genesNumber = genes.Count();
-                return new ConsequenceGroup(term, impact, genesNumber, genes.Take(5));
+                return new EffectGroup(term, impact, genesNumber, genes.Take(5));
             });
     }
 
     private record GeneGroup(int Id, string Symbol, IEnumerable<string> Translations);
-    private record ConsequenceGroup(string Term, string Impact, int GenesNumber, IEnumerable<GeneGroup> Genes);
+    private record EffectGroup(string Term, string Impact, int GenesNumber, IEnumerable<GeneGroup> Genes);
 }
