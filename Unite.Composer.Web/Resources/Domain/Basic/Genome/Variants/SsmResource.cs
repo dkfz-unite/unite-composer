@@ -4,7 +4,7 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
 public class SsmResource
 {
-    public long Id { get; }
+    public string Id { get; }
 
     public string Chromosome { get; }
     public int Start { get; }

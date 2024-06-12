@@ -113,7 +113,7 @@ public class ProteinPlotDataService
     {
         return new EqualityFilter<VariantIndex, object>
         (
-            VariantFilterNames.Type,
+            VariantFilterNames.VariantType,
             variant => variant.Type.Suffix("keyword"),
             VariantType.SSM
         );

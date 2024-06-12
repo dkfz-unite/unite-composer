@@ -8,7 +8,7 @@ public class ProteinMutation
     /// <summary>
     /// Unite mutation id 
     /// </summary>
-    public long Id { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// Mutation code in HGVs format

@@ -7,6 +7,7 @@ namespace Unite.Composer.Web.Resources.Domain.Specimens;
 
 public class SpecimenGeneResource : GeneResource
 {
+    public int NumberOfDonors { get; set; }
     public int NumberOfSsms { get; set; }
     public int NumberOfCnvs { get; set; }
     public int NumberOfSvs { get; set; }
@@ -17,6 +18,7 @@ public class SpecimenGeneResource : GeneResource
         var specimen = index.Specimens?.FirstOrDefault(specimen => specimen.Id == specimenId);
         var specimens = new SpecimenIndex[] { specimen };
 
+        NumberOfDonors = 1;
         NumberOfSsms = GeneIndex.GetNumberOfVariants(specimens, VariantType.SSM.ToDefinitionString());
         NumberOfCnvs = GeneIndex.GetNumberOfVariants(specimens, VariantType.CNV.ToDefinitionString());
         NumberOfSvs = GeneIndex.GetNumberOfVariants(specimens, VariantType.SV.ToDefinitionString());
