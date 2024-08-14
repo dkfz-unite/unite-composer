@@ -28,8 +28,8 @@ public class SpecimensDataResource
         Mris = indices.Values.Any(d => d.Mris == true);
         Cts = indices.Values.Any(d => d.Cts == true);
         Molecular = indices.Values.Any(d => GetMolecilar(d, type) == true);
-        Drugs = indices.Values.Any(d => GetDrugs(d, type) == true);
         Interventions = indices.Values.Any(d => GetInterventions(d, type) == true);
+        Drugs = indices.Values.Any(d => GetDrugs(d, type) == true);
         Ssms = indices.Values.Any(d => d.Ssms == true);
         Cnvs = indices.Values.Any(d => d.Cnvs == true);
         Svs = indices.Values.Any(d => d.Svs == true);
