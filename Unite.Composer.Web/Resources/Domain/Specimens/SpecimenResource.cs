@@ -1,5 +1,4 @@
 ﻿using Unite.Composer.Data.Specimens.Models;
-using Unite.Composer.Web.Resources.Domain.Basic;
 using Unite.Essentials.Extensions;
 using Unite.Indices.Entities.Specimens;
 
@@ -19,7 +18,7 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
 
     public SpecimenResource Parent { get; set; }
     public SpecimenDataResource Data { get; set; }
-    public SampleResource Sample { get; set; }
+    public SpecimenSampleResource Sample { get; set; }
 
 
     /// <summary>
@@ -58,6 +57,6 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
             Data = new SpecimenDataResource(index.Data, index.Type);
 
         if (index.Samples.IsNotEmpty())
-            Sample = new SampleResource(index, index.Samples);
+            Sample = new SpecimenSampleResource(index, index.Samples);
     }
 }

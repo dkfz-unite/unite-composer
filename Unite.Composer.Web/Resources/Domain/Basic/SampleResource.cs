@@ -10,7 +10,7 @@ public class SampleResource
     public string ReferenceId { get; set; }
     public string Type { get; set; }
 
-    public string[] Analyses { get; set; }
+    public AnalysisResource[] Analyses { get; set; }
 
 
     public SampleResource(SpecimenIndex specimenIndex, SampleIndex[] sampleIndices = null)
@@ -19,11 +19,12 @@ public class SampleResource
         ReferenceId = specimenIndex.ReferenceId;
         Type = specimenIndex.Type;
 
-        if (sampleIndices.IsNotEmpty())
-        {
-            Analyses = sampleIndices
-                .Select(sampleIndex => sampleIndex.AnalysisType)
-                .ToArray();
-        }
+        Analyses = sampleIndices?.Select(GetAnalysisResource).ToArrayOrNull();
+    }
+
+
+    private static AnalysisResource GetAnalysisResource(SampleIndex index)
+    {
+        return AnalysisResource.CreateFrom(index);
     }
 }

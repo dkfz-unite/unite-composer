@@ -1,5 +1,4 @@
-﻿using Unite.Composer.Web.Resources.Domain.Basic;
-using Unite.Essentials.Extensions;
+﻿using Unite.Essentials.Extensions;
 using Unite.Indices.Entities.Images;
 
 namespace Unite.Composer.Web.Resources.Domain.Images;
@@ -14,7 +13,7 @@ public class ImageResource : Basic.Images.ImageResource
     public int NumberOfSvs { get; set; }
 
     public ImageDataResource Data { get; set; }
-    public SampleResource[] Samples { get; set; }
+    public ImageSampleResource[] Samples { get; set; }
 
 
     public ImageResource(ImageIndex index) : base(index)
@@ -33,7 +32,7 @@ public class ImageResource : Basic.Images.ImageResource
         {
             Samples = index.Specimens
                 .Where(specimen => specimen.Samples.IsNotEmpty())
-                .Select(specimen => new SampleResource(specimen, specimen.Samples))
+                .Select(specimen => new ImageSampleResource(specimen, specimen.Samples))
                 .ToArrayOrNull();
         }
     }
