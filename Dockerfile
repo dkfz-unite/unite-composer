@@ -15,7 +15,7 @@ RUN dotnet restore "Unite.Composer/Unite.Composer.csproj"
 RUN dotnet restore "Unite.Composer.Download/Unite.Composer.Download.csproj"
 RUN dotnet restore "Unite.Composer.Web/Unite.Composer.Web.csproj"
 
-FROM restore as build
+FROM restore AS build
 COPY . .
 WORKDIR "/src/Unite.Composer.Web"
 RUN dotnet build --no-restore "Unite.Composer.Web.csproj" -c Release

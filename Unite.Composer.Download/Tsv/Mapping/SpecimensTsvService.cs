@@ -149,7 +149,7 @@ public class SpecimensTsvService : TsvServiceBase
         
         var entities = await CreateQuery(dbContext)
             .Include(entity => entity.Material.Source)
-            .Where(entity => entity.TypeId != SpecimenType.Material)
+            .Where(entity => entity.TypeId == SpecimenType.Material)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 

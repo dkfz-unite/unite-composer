@@ -1,5 +1,4 @@
-﻿using Unite.Composer.Web.Resources.Domain.Basic;
-using Unite.Essentials.Extensions;
+﻿using Unite.Essentials.Extensions;
 using Unite.Indices.Entities.Donors;
 
 namespace Unite.Composer.Web.Resources.Domain.Donors;
@@ -12,7 +11,7 @@ public class DonorResource : Basic.Donors.DonorResource
     public int NumberOfSvs { get; set; }
 
     public DonorDataResource Data { get; set; }
-    public SampleResource[] Samples { get; set; }
+    public DonorSampleResource[] Samples { get; set; }
 
 
     public DonorResource(DonorIndex index) : base(index)
@@ -29,7 +28,7 @@ public class DonorResource : Basic.Donors.DonorResource
         {
             Samples = index.Specimens
                 .Where(specimen => specimen.Samples.IsNotEmpty())
-                .Select(specimen => new SampleResource(specimen, specimen.Samples))
+                .Select(specimen => new DonorSampleResource(specimen, specimen.Samples))
                 .ToArrayOrNull();
         }
     }
