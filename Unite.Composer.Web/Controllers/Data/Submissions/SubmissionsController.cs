@@ -15,7 +15,7 @@ public class SubmissionsController : Controller
     }
 
     [HttpGet("{id}")]
-    public Unite.Data.Entities.Tasks.Task FindTaskStatus(string id)
+    public Task<Unite.Data.Entities.Tasks.Task> FindTaskStatus(string id)
     {
        var task = _submissionService.FindTaskStatus(id);
         return task;

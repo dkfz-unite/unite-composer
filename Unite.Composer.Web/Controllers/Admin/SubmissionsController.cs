@@ -19,22 +19,22 @@ public class SubmissionsController : Controller
     }
 
     [HttpGet("")]
-    public SubmissionTaskModel[] Get()
+    public Task<SubmissionTaskModel[]> Get()
     {
-        var submissionTasks = _submissionService.GetAll().ToArray();
+        var submissionTasks = _submissionService.GetAll();
 
         return submissionTasks;
     }
     
     [HttpPost("{id}")]
-    public bool UpdateSubmissionToPrepared(string id)
+    public Task<bool> UpdateSubmissionToPrepared(string id)
     {
         var approveStatus = _submissionService.UpdateSubmissionToPrepared(id);
         return approveStatus;
     }
 
     [HttpPost("{id}/updateRejectComment/{comment}")]
-    public bool UpdateRejectComment(string id, string comment)
+    public Task<bool> UpdateRejectComment(string id, string comment)
     {
        var approveStatus = _submissionService.UpdateRejectReason(id, comment);
         return approveStatus;
