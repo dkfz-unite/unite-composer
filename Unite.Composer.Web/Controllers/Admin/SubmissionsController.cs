@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Admin.Submissions;
-using Unite.Composer.Admin.Submissions.Models;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Web.Configuration.Constants;
+using Unite.Composer.Web.Models;
 
 namespace Unite.Composer.Web.Controllers.Admin;
 
@@ -11,32 +11,34 @@ namespace Unite.Composer.Web.Controllers.Admin;
 [Authorize(Roles = Roles.Admin)]
 public class SubmissionsController : Controller
 {
-    private readonly SubmissionService _submissionService;
+    private readonly SubmissionsService _submissionsService;
 
-    public SubmissionsController(SubmissionService submissionService)
+    public SubmissionsController(SubmissionsService submissionsService)
     {
-        _submissionService = submissionService;
+        _submissionsService = submissionsService;
     }
 
     [HttpGet("")]
-    public Task<SubmissionTaskModel[]> Get()
+    public async Task<IActionResult> Get()
     {
-        var submissionTasks = _submissionService.GetAll();
+        var tasks = await _submissionsService.GetPedning();
 
-        return submissionTasks;
+        return Ok(tasks);
     }
     
-    [HttpPost("{id}")]
-    public Task<bool> UpdateSubmissionToPrepared(string id)
+    [HttpPost("{id}/approve")]
+    public async Task<IActionResult> Approve(long id)
     {
-        var approveStatus = _submissionService.UpdateSubmissionToPrepared(id);
-        return approveStatus;
+        var status = await _submissionsService.Approve(id);
+        
+        return status ? Ok() : NotFound();
     }
 
-    [HttpPost("{id}/updateRejectComment/{comment}")]
-    public Task<bool> UpdateRejectComment(string id, string comment)
+    [HttpPost("{id}/reject")]
+    public async Task<IActionResult> Reject(long id, [FromBody] RejectSubmissionModel model)
     {
-       var approveStatus = _submissionService.UpdateRejectReason(id, comment);
-        return approveStatus;
+        var status = await _submissionsService.Reject(id, model.Reason);
+
+        return status ? Ok() : NotFound();
     }
 }

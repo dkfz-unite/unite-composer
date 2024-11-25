@@ -1,5 +1,4 @@
 ﻿using Unite.Composer.Admin.Services;
-using Unite.Composer.Admin.Submissions;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
@@ -31,7 +30,7 @@ public static class ConfigurationExtensions
         services.AddValidation();
 
         services.AddTransient<TaskStatsService>();
-        services.AddTransient<SubmissionService>();
+        services.AddTransient<SubmissionsService>();
 
         services.AddTransient<DrugScreeningService>();
         services.AddTransient<GeneDataService>();
