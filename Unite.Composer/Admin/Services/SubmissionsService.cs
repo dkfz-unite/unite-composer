@@ -4,7 +4,7 @@ using Unite.Data.Entities.Tasks.Enums;
 
 namespace Unite.Composer.Admin.Services;
 
-public record SubmissionModel(long Id, SubmissionTaskType Type, DateTime Date); 
+public record SubmissionModel(long Id, SubmissionTaskType Type, DateTime Date);
 
 public class SubmissionsService
 {
@@ -31,7 +31,7 @@ public class SubmissionsService
     {
         var task = await _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
             .AsNoTracking()
-            .FirstAsync(task => task.Id == id);
+            .FirstOrDefaultAsync(task => task.Id == id);
 
         if (task != null)
         {
@@ -47,7 +47,7 @@ public class SubmissionsService
     {
         var task = await _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
             .AsNoTracking()
-            .FirstAsync(task => task.Id == id);
+            .FirstOrDefaultAsync(task => task.Id == id);
 
         if (task != null)
         {
@@ -68,7 +68,7 @@ public class SubmissionsService
     {
         var task = await _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
             .AsNoTracking()
-            .FirstAsync(task => task.Id == id);
+            .FirstOrDefaultAsync(task => task.Id == id);
 
         if (task != null)
         {
