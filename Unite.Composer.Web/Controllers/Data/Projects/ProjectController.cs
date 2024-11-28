@@ -7,7 +7,7 @@ using Unite.Composer.Web.Controllers.Data.Projects.Models;
 
 namespace Unite.Composer.Web.Controllers.Data.Projects;
 
-[Route("api/data/project")]
+[Route("api/data/[controller]")]
 [ApiController]
 [Authorize]
 public class ProjectController : Controller

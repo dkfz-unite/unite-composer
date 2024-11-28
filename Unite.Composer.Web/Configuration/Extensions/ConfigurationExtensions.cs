@@ -30,6 +30,7 @@ public static class ConfigurationExtensions
         services.AddValidation();
 
         services.AddTransient<TaskStatsService>();
+        services.AddTransient<SubmissionsService>();
 
         services.AddTransient<DrugScreeningService>();
         services.AddTransient<GeneDataService>();
