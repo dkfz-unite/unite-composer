@@ -10,48 +10,16 @@ namespace Unite.Composer.Web.Controllers.Data.DataSets;
 [Authorize]
 public class DatasetsController : Controller
 {
-    private readonly DatasetsService _datasetService;
+    private readonly DatasetsService _datasetsService;
 
-    public DatasetsController(DatasetsService datasetService)
+    public DatasetsController(DatasetsService datasetsService)
     {
-        _datasetService = datasetService;
+        _datasetsService = datasetsService;
     }
 
-    [HttpPost("addDataset")]
-    public IActionResult AddDataset([FromBody] DatasetsModel dataset)
+    [HttpPost("load")]
+    public async Task<IEnumerable<DatasetModel>> Load([FromBody] DatasetModel dataset)
     {
-        var datasetModel = new DatasetsModel
-        {
-           UserID = dataset.UserID,
-           Domain = dataset.Domain,
-           Name = dataset.Name,
-           Description = dataset.Description,
-           Date = dataset.Date,
-           Criteria = dataset.Criteria
-        };
-        
-        var response = _datasetService.AddDataset(datasetModel);
-        return Ok(response);
-    }
-
-    [HttpPost("loadDatasets")]
-    public IActionResult LoadDatasets([FromBody] DatasetsModel dataset)
-    {
-        var datasetModel = new DatasetsModel
-        {
-           UserID = dataset.UserID,
-           Domain = dataset.Domain,
-           Criteria = dataset.Criteria
-        };
-        
-        var response = _datasetService.LoadDatasets(datasetModel);
-        return Ok(response);
-    }
-
-    [HttpPost("{id}/deleteDataset")]
-    public IActionResult DeleteDataset(string id)
-    {
-         _datasetService.DeleteDataset(id);
-        return Ok();
+        return await _datasetsService.Load(dataset);
     }
 }

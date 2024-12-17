@@ -4,7 +4,7 @@ using Unite.Composer.Data.Datasets.Models;
 
 namespace Unite.Composer.Data.Datasets.Repositories;
 
-public class DatasetsRepository : CacheRepository<DatasetsModel>
+public class DatasetsRepository : CacheRepository<DatasetModel>
 {
     public override string DatabaseName => "user-data";
     public override string CollectionName => "datasets";

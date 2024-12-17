@@ -34,6 +34,7 @@ public static class ConfigurationExtensions
         services.AddTransient<TaskStatsService>();
         services.AddTransient<SubmissionsService>();
         services.AddTransient<DatasetsService>();
+        services.AddTransient<DatasetService>();
 
         services.AddTransient<DrugScreeningService>();
         services.AddTransient<GeneDataService>();

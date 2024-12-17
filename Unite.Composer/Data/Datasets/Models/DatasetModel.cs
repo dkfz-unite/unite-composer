@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Unite.Composer.Data.Datasets.Models;
 
-public class DatasetsModel
+public record DatasetModel
 {
     private string _id;
     private string _userId;

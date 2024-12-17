@@ -12,35 +12,12 @@ public class DatasetsService
 		_datasetsRepository = new Repositories.DatasetsRepository(options);
 	}
 
-    public string AddDataset(DatasetsModel data)
+	public async Task<IEnumerable<DatasetModel>> Load(DatasetModel data)
 	{
-	 	return _datasetsRepository.Add(data);
-	}
-
-	public List<DatasetsModel> LoadDatasets(DatasetsModel data)
-	{
-	 	var datasets = _datasetsRepository.Where(item =>item.Document.UserID == data.UserID && item.Document.Domain == data.Domain);
-	    
-		List<DatasetsModel> datasetsModel = new List<DatasetsModel>();
-		foreach(var item in datasets)
-		{
-			DatasetsModel dataset = new DatasetsModel {
-				UserID = item.Document.UserID,
-				Domain = item.Document.Domain,
-				Name = item.Document.Name,
-				Description = item.Document.Description,
-				Date = item.Document.Date,
-				Criteria = item.Document.Criteria,
-				Id = item.Id
-			};
-			datasetsModel.Add(dataset);
-		}
+		var datasets = (await _datasetsRepository.
+		WhereAsync(item =>item.Document.UserID == data.UserID && item.Document.Domain == data.Domain))
+		.Select(item => item.Document with {Id = item.Id});
 		
-		return datasetsModel;
-	}
-
-	public void DeleteDataset(string id)
-	{
-	 	_datasetsRepository.Delete(id);
+		return datasets;
 	}
 }
