@@ -17,7 +17,7 @@ public class DatasetsController : Controller
         _datasetsService = datasetsService;
     }
 
-    [HttpPost("load")]
+    [HttpPost()]
     public async Task<IEnumerable<DatasetModel>> Load([FromBody] DatasetModel dataset)
     {
         return await _datasetsService.Load(dataset);

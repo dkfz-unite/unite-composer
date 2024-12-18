@@ -17,13 +17,13 @@ public class DatasetController : Controller
         _datasetService = datasetService;
     }
 
-    [HttpPost("add")]
+    [HttpPost()]
     public async Task<string> Add([FromBody] DatasetModel dataset)
     {
         return await _datasetService.Add(dataset);
     }
 
-    [HttpPost("{id}/delete")]
+    [HttpDelete("{id}")]
     public async Task Delete(string id)
     {
         await _datasetService.Delete(id);
