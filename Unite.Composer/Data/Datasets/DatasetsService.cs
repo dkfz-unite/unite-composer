@@ -14,10 +14,7 @@ public class DatasetsService
 
 	public async Task<IEnumerable<DatasetModel>> Load(DatasetModel data)
 	{
-		var datasets = (await _datasetsRepository.
-		WhereAsync(item =>item.Document.UserID == data.UserID && item.Document.Domain == data.Domain))
-		.Select(item => item.Document with {Id = item.Id});
-		
-		return datasets;
+		var datasets = await _datasetsRepository.WhereAsync(item =>item.Document.UserId == data.UserId && item.Document.Domain == data.Domain);
+		return datasets.Select(item => item.Document with {Id = item.Id});
 	}
 }

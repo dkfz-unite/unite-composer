@@ -15,8 +15,8 @@ public record DatasetModel
     [JsonPropertyName("key")]
     public string Id { get => _id?.Trim(); set => _id = value; }
 
-    [JsonPropertyName("userid")]
-    public string UserID { get => _userId?.Trim(); set => _userId = value; }
+    [JsonPropertyName("userId")]
+    public string UserId { get => _userId?.Trim(); set => _userId = value; }
 
     [JsonPropertyName("domain")]
     public string Domain { get => _domain?.Trim(); set => _domain = value; }
