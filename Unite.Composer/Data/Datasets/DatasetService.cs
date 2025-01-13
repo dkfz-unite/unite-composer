@@ -21,4 +21,11 @@ public class DatasetService
 	{
 	 	await _datasetsRepository.DeleteAsync(id);
 	}
+
+	public async Task DeleteUser(string userId)
+	{
+	 	var datasets = await _datasetsRepository.WhereAsync(item =>item.Document.UserId == userId);
+		var userDatasets = datasets.Select(dataset => _datasetsRepository.DeleteAsync(dataset.Id));
+		await Task.WhenAll(userDatasets);
+	}
 }

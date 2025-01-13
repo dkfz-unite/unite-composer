@@ -28,4 +28,10 @@ public class DatasetController : Controller
     {
         await _datasetService.Delete(id);
     }
+
+    [HttpDelete("{userId}/delete")]
+    public async Task DeleteUser(string userId)
+    {
+        await _datasetService.DeleteUser(userId);
+    }
 }
