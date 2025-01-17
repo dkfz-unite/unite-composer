@@ -7,14 +7,23 @@ public class DatasetsService
 {
     private readonly Repositories.DatasetsRepository _datasetsRepository;
 
+
     public DatasetsService(IMongoOptions options)
 	{
 		_datasetsRepository = new Repositories.DatasetsRepository(options);
 	}
 
-	public async Task<IEnumerable<DatasetModel>> Load(DatasetModel data)
+
+	public async Task<DatasetModel[]> Load(SearchModel model)
 	{
-		var datasets = await _datasetsRepository.WhereAsync(item =>item.Document.UserId == data.UserId && item.Document.Domain == data.Domain);
-		return datasets.Select(item => item.Document with {Id = item.Id});
+		var datasets = await _datasetsRepository.WhereAsync(item =>item.Document.UserId == model.UserId);
+		return datasets.Select(item => item.Document with {Id = item.Id}).ToArray();
+	}
+
+	public async Task Delete(SearchModel model)
+	{
+	 	var datasets = await _datasetsRepository.WhereAsync(item =>item.Document.UserId == model.UserId);
+		var tasks = datasets.Select(dataset => _datasetsRepository.DeleteAsync(dataset.Id));
+		await Task.WhenAll(tasks);
 	}
 }

@@ -7,10 +7,12 @@ public class DatasetService
 {
     private readonly Repositories.DatasetsRepository _datasetsRepository;
 
+
     public DatasetService(IMongoOptions options)
 	{
 		_datasetsRepository = new Repositories.DatasetsRepository(options);
 	}
+
 
 	public async Task<string> Add(DatasetModel data)
 	{
@@ -20,12 +22,5 @@ public class DatasetService
 	public async Task Delete(string id)
 	{
 	 	await _datasetsRepository.DeleteAsync(id);
-	}
-
-	public async Task DeleteUser(string userId)
-	{
-	 	var datasets = await _datasetsRepository.WhereAsync(item =>item.Document.UserId == userId);
-		var userDatasets = datasets.Select(dataset => _datasetsRepository.DeleteAsync(dataset.Id));
-		await Task.WhenAll(userDatasets);
 	}
 }
