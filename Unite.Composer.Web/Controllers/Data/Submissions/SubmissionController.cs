@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Admin.Services;
+using Unite.Composer.Data.Submissions;
 
 namespace Unite.Composer.Web.Controllers.Data.Submissions;
 
@@ -17,7 +17,7 @@ public class SubmissionController : Controller
     }
 
     [HttpGet("{id}/status")]
-    public async Task<Unite.Data.Entities.Tasks.Enums.TaskStatusType?> GetStatus(long id)
+    public async Task<SubmissionStatus> GetStatus(long id)
     {
         return await _submissionsService.GetStatus(id);
     }
