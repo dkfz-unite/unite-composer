@@ -12,14 +12,22 @@ public class DatasetsController : Controller
 {
     private readonly DatasetsService _datasetsService;
 
+
     public DatasetsController(DatasetsService datasetsService)
     {
         _datasetsService = datasetsService;
     }
 
-    [HttpPost()]
-    public async Task<IEnumerable<DatasetModel>> Load([FromBody] DatasetModel dataset)
+
+    [HttpPost]
+    public async Task<DatasetModel[]> Load([FromBody] SearchModel model)
     {
-        return await _datasetsService.Load(dataset);
+        return await _datasetsService.Load(model);
+    }
+
+    [HttpDelete]
+    public async Task Delete([FromBody] SearchModel model)
+    {
+        await _datasetsService.Delete(model);
     }
 }
