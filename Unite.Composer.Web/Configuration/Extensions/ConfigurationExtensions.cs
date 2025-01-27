@@ -1,9 +1,11 @@
-﻿using Unite.Composer.Admin.Services;
+﻿using Unite.Cache.Configuration.Options;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
+using Unite.Composer.Data.Datasets;
 using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Projects;
 using Unite.Composer.Data.Specimens;
+using Unite.Composer.Data.Submissions;
 using Unite.Composer.Download.Configuration.Extensions;
 using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Visualization.Oncogrid;
@@ -29,12 +31,15 @@ public static class ConfigurationExtensions
         services.AddSearchServices();
         services.AddValidation();
 
-        services.AddTransient<TaskStatsService>();
-        services.AddTransient<SubmissionsService>();
+        services.AddTransient<Admin.Services.TaskStatsService>();
+        services.AddTransient<Admin.Services.SubmissionsService>();
 
         services.AddTransient<DrugScreeningService>();
         services.AddTransient<GeneDataService>();
         services.AddTransient<SsmDataService>();
+        services.AddTransient<SubmissionsService>();
+        services.AddTransient<DatasetsService>();
+        services.AddTransient<DatasetService>();
 
         services.AddTsvDownload();
 
@@ -49,6 +54,7 @@ public static class ConfigurationExtensions
         services.AddTransient<ApiOptions>();
         services.AddTransient<IElasticOptions, ElasticOptions>();
         services.AddTransient<ISqlOptions, SqlOptions>();
+        services.AddTransient<IMongoOptions, MongoOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
     }
 
