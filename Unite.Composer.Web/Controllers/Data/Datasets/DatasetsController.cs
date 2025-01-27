@@ -26,8 +26,9 @@ public class DatasetsController : Controller
     }
 
     [HttpDelete]
-    public async Task Delete([FromBody] SearchModel model)
+    public async Task Delete([FromQuery] string userId)
     {
+        var model = new SearchModel { UserId = userId };
         await _datasetsService.Delete(model);
     }
 }
