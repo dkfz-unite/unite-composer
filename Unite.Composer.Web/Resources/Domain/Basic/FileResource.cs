@@ -6,6 +6,7 @@ public class FileResource
 {
     public string Type { get; set; }
     public string Format { get; set; }
+    public string Archive { get; set; }
     public string Url { get; set; }
 
 
@@ -18,6 +19,7 @@ public class FileResource
         {
             Type = index.Type,
             Format = index.Format,
+            Archive = index.Archive,
             Url = index.Url
         };
     }

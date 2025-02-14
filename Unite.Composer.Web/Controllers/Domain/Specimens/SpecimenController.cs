@@ -4,21 +4,23 @@ using Unite.Composer.Data.Genome.Ranges;
 using Unite.Composer.Data.Genome.Ranges.Models;
 using Unite.Composer.Data.Specimens;
 using Unite.Composer.Download.Tsv;
+using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Specimens;
+using Unite.Composer.Web.Resources.Domain.Variants;
 using Unite.Composer.Web.Models;
 using Unite.Indices.Entities.Basic.Specimens.Constants;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Criteria;
 using Unite.Indices.Search.Services.Filters.Base.Specimens.Criteria;
-using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
 
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+using SsmIndex = Unite.Indices.Entities.Variants.SsmIndex;
+using CnvIndex = Unite.Indices.Entities.Variants.CnvIndex;
+using SvIndex = Unite.Indices.Entities.Variants.SvIndex;
 
 using DrugResource = Unite.Composer.Web.Resources.Domain.Basic.Specimens.DrugScreeningResource;
-using VariantResource = Unite.Composer.Web.Resources.Domain.Variants.VariantResource;
 
 
 namespace Unite.Composer.Web.Controllers.Domain.Specimens;
@@ -30,7 +32,9 @@ public class SpecimenController : DomainController
 {
     private readonly ISearchService<SpecimenIndex> _specimensSearchService;
     private readonly ISearchService<GeneIndex> _genesSearchService;
-    private readonly ISearchService<VariantIndex> _variantsSearchService;
+    private readonly ISearchService<SsmIndex> _ssmsSearchService;
+    private readonly ISearchService<CnvIndex> _cnvsSearchService;
+    private readonly ISearchService<SvIndex> _svsSearchService;
     private readonly DrugScreeningService _drugScreeningService;
     private readonly GenomicProfileService _genomicProfileService;
     private readonly SpecimensTsvDownloadService _tsvDownloadService;
@@ -39,14 +43,18 @@ public class SpecimenController : DomainController
     public SpecimenController(
         ISearchService<SpecimenIndex> specimensSearchService,
         ISearchService<GeneIndex> genesSearchService,
-        ISearchService<VariantIndex> variantsSearchService,
+        ISearchService<SsmIndex> ssmsSearchService,
+        ISearchService<CnvIndex> cnvsSearchService,
+        ISearchService<SvIndex> svsSearchService,
         DrugScreeningService drugScreeningService,
         GenomicProfileService genomicProfileService,
         SpecimensTsvDownloadService tsvDownloadService)
     {
         _specimensSearchService = specimensSearchService;
         _genesSearchService = genesSearchService;
-        _variantsSearchService = variantsSearchService;
+        _ssmsSearchService = ssmsSearchService;
+        _cnvsSearchService = cnvsSearchService;
+        _svsSearchService = svsSearchService;
         _drugScreeningService = drugScreeningService;
         _genomicProfileService = genomicProfileService;
         _tsvDownloadService = tsvDownloadService;
@@ -79,23 +87,44 @@ public class SpecimenController : DomainController
     public async Task<IActionResult> Genes(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Id = [id] };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
 
         var result = await _genesSearchService.Search(criteria);
 
-        return Ok(From(id, result));
+        return Ok(From(result));
     }
 
-    [HttpPost("{id}/variants/{type}")]
-    public async Task<IActionResult> Variants(int id, string type, [FromBody]SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/ssm")]
+    public async Task<IActionResult> Ssms(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Id = [id] };
-        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
 
-        var result = await _variantsSearchService.Search(criteria);
+        var result = await _ssmsSearchService.Search(criteria);
 
-        return Ok(From(id, result));
+        return Ok(From(result));
+    }
+
+    [HttpPost("{id}/variants/cnv")]
+    public async Task<IActionResult> Cnvs(int id, [FromBody]SearchCriteria searchCriteria)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
+
+        var result = await _cnvsSearchService.Search(criteria);
+
+        return Ok(From(result));
+    }
+
+    [HttpPost("{id}/variants/sv")]
+    public async Task<IActionResult> Svs(int id, [FromBody]SearchCriteria searchCriteria)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
+
+        var result = await _svsSearchService.Search(criteria);
+
+        return Ok(From(result));
     }
 
     [HttpPost("{id}/profile")]
@@ -129,21 +158,39 @@ public class SpecimenController : DomainController
         return new SpecimenResource(index);
     }
 
-    private static SearchResult<SpecimenGeneResource> From(int specimenId, SearchResult<GeneIndex> searchResult)
+    private static SearchResult<GeneResource> From(SearchResult<GeneIndex> searchResult)
     {
-        return new SearchResult<SpecimenGeneResource>()
+        return new SearchResult<GeneResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new SpecimenGeneResource(index, specimenId)).ToArray()
+            Rows = searchResult.Rows.Select(index => new GeneResource(index)).ToArray()
         };
     }
 
-    private static SearchResult<VariantResource> From(int specimenId, SearchResult<VariantIndex> searchResult)
+    private static SearchResult<SsmResource> From(SearchResult<SsmIndex> searchResult)
     {
-        return new SearchResult<VariantResource>()
+        return new SearchResult<SsmResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SsmResource(index)).ToArray()
+        };
+    }
+
+    private static SearchResult<CnvResource> From(SearchResult<CnvIndex> searchResult)
+    {
+        return new SearchResult<CnvResource>()
+        {
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new CnvResource(index)).ToArray()
+        };
+    }
+
+    private static SearchResult<SvResource> From(SearchResult<SvIndex> searchResult)
+    {
+        return new SearchResult<SvResource>()
+        {
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new SvResource(index)).ToArray()
         };
     }
 

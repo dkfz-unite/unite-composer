@@ -17,7 +17,7 @@ public class AnalysisResource
         return new AnalysisResource
         {
             Type = index.AnalysisType,
-            Day = index.AnalysisDay,
+            Day = index.AnalysisDay
         };
     }
 }

@@ -1,20 +1,21 @@
 ﻿using Unite.Essentials.Extensions;
-using Unite.Indices.Entities.Basic.Genome.Dna;
+// using Unite.Indices.Entities.Basic.Genome.Dna;
+using Unite.Indices.Entities.Basic.Genome.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
 
-public class VariantResource
+public abstract class VariantResource
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     public string Chromosome { get; set; }
     public int Start { get; set; }
     public int End { get; set; }
     public int? Length { get; set; }
 
-    public SsmResource Ssm { get; set; }
-    public CnvResource Cnv { get; set; }
-    public SvResource Sv { get; set; }
+    // public SsmResource Ssm { get; set; }
+    // public CnvResource Cnv { get; set; }
+    // public SvResource Sv { get; set; }
     
     public AffectedFeatureResource[] AffectedFeatures { get; set; }
 
@@ -32,37 +33,42 @@ public class VariantResource
     public dynamic[] TranscriptEffects { get; }
 
 
-    public VariantResource(VariantIndex index, bool includeAffectedFeatures = false)
+    public VariantResource(VariantBaseIndex index, bool includeAffectedFeatures = false)
     {
         Id = index.Id;
 
-        if (index.Ssm != null)
-        {
-            Ssm = new SsmResource(index.Ssm);
-            Chromosome = index.Ssm.Chromosome;
-            Start = index.Ssm.Start;
-            End = index.Ssm.End;
-            Length = index.Ssm.Length;
-        }
-        else if (index.Cnv != null)
-        {
-            Cnv = new CnvResource(index.Cnv);
-            Chromosome = index.Cnv.Chromosome;
-            Start = index.Cnv.Start;
-            End = index.Cnv.End;
-            Length = index.Cnv.Length;
-        }
-        else if (index.Sv != null)
-        {
-            Sv = new SvResource(index.Sv);
-            Chromosome = index.Sv.Chromosome;
-            Start = index.Sv.Start;
-            End = index.Sv.End;
-            Length = index.Sv.Length;
-        }
+        Chromosome = index.Chromosome;
+        Start = index.Start;
+        End = index.End;
+        Length = index.Length;
+
+        // if (index.Ssm != null)
+        // {
+        //     Ssm = new SsmResource(index.Ssm);
+        //     Chromosome = index.Ssm.Chromosome;
+        //     Start = index.Ssm.Start;
+        //     End = index.Ssm.End;
+        //     Length = index.Ssm.Length;
+        // }
+        // else if (index.Cnv != null)
+        // {
+        //     Cnv = new CnvResource(index.Cnv);
+        //     Chromosome = index.Cnv.Chromosome;
+        //     Start = index.Cnv.Start;
+        //     End = index.Cnv.End;
+        //     Length = index.Cnv.Length;
+        // }
+        // else if (index.Sv != null)
+        // {
+        //     Sv = new SvResource(index.Sv);
+        //     Chromosome = index.Sv.Chromosome;
+        //     Start = index.Sv.Start;
+        //     End = index.Sv.End;
+        //     Length = index.Sv.Length;
+        // }
 
         
-        var affectedFeatures = index.GetAffectedFeatures();
+        var affectedFeatures = index.AffectedFeatures;
 
         if (includeAffectedFeatures && affectedFeatures.IsNotEmpty())
         {

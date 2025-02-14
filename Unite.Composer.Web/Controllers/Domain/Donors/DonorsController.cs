@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
+using Unite.Composer.Web.Resources.Domain.Basic;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Indices.Entities.Donors;
 using Unite.Indices.Search.Engine.Queries;
@@ -49,7 +50,7 @@ public class DonorsController : DomainController
 
         var stats = await _searchService.Stats(criteria);
 
-        return Ok(new DonorsDataResource(stats));
+        return Ok(new DataResource(stats));
     }
 
     [HttpPost("data")]

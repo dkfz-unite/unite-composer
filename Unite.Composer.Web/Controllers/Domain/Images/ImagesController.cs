@@ -37,7 +37,7 @@ public class ImagesController : DomainController
     public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
+        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
 
         var result = await _searchService.Search(criteria);
 
@@ -48,18 +48,18 @@ public class ImagesController : DomainController
     public async Task<IActionResult> Stats(string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
+        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
 
         var stats = await _searchService.Stats(criteria);
 
-        return Ok(new ImagesDataResource(stats));
+        return Ok(new ImageDataResource(stats));
     }
 
     [HttpPost("{type}/data")]
     public async Task<IActionResult> Data(string type, [FromBody] BulkDownloadModel model)
     {
         var criteria = model.Criteria ?? new SearchCriteria();
-        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
+        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
 
         var stats = await _searchService.Stats(criteria);
 

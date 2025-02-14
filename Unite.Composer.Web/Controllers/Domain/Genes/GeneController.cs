@@ -10,11 +10,13 @@ using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services.Filters.Criteria;
 using Unite.Indices.Search.Services.Filters.Base.Genes.Criteria;
-using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+using SsmIndex = Unite.Indices.Entities.Variants.SsmIndex;
+using CnvIndex = Unite.Indices.Entities.Variants.CnvIndex;
+using SvIndex = Unite.Indices.Entities.Variants.SvIndex;
+
 
 namespace Unite.Composer.Web.Controllers.Domain.Genes;
 
@@ -25,7 +27,9 @@ public class GeneController : DomainController
 {
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<GeneIndex> _genesSearchService;
-    private readonly ISearchService<VariantIndex> _variantsSearchService;
+    private readonly ISearchService<SsmIndex> _ssmsSearchService;
+    private readonly ISearchService<CnvIndex> _cnvsSearchService;
+    private readonly ISearchService<SvIndex> _svsSearchService;
     private readonly GeneDataService _dataService;
     private readonly GenesTsvDownloadService _tsvDownloadService;
 
@@ -33,13 +37,17 @@ public class GeneController : DomainController
     public GeneController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<GeneIndex> genesSearchService,
-        ISearchService<VariantIndex> variantsSearchService,
+        ISearchService<SsmIndex> ssmsSearchService,
+        ISearchService<CnvIndex> cnvsSearchService,
+        ISearchService<SvIndex> svsSearchService,
         GeneDataService dataService, 
         GenesTsvDownloadService tsvDownloadService)
     {
         _donorsSearchService = donorsSearchService;
         _genesSearchService = genesSearchService;
-        _variantsSearchService = variantsSearchService;
+        _ssmsSearchService = ssmsSearchService;
+        _cnvsSearchService = cnvsSearchService;
+        _svsSearchService = svsSearchService;
         _dataService = dataService;
         _tsvDownloadService = tsvDownloadService;
     }
@@ -66,14 +74,35 @@ public class GeneController : DomainController
         return Ok(From(result));
     }
 
-    [HttpPost("{id}/variants/{type?}")]
-    public async Task<IActionResult> Variants(int id, string type, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/ssm")]
+    public async Task<IActionResult> Ssms(int id, [FromBody] SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = [id] };
-        criteria.Variant = (criteria.Variant ?? new VariantCriteria()) with { Type = DetectVariantType(type) };
 
-        var result = await _variantsSearchService.Search(criteria);
+        var result = await _ssmsSearchService.Search(criteria);
+
+        return Ok(From(result));
+    }
+
+    [HttpPost("{id}/variants/cnv")]
+    public async Task<IActionResult> Cnvs(int id, [FromBody] SearchCriteria searchCriteria)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = [id] };
+
+        var result = await _cnvsSearchService.Search(criteria);
+
+        return Ok(From(result));
+    }
+
+    [HttpPost("{id}/variants/sv")]
+    public async Task<IActionResult> Svs(int id, [FromBody] SearchCriteria searchCriteria)
+    {
+        var criteria = searchCriteria ?? new SearchCriteria();
+        criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = [id] };
+
+        var result = await _svsSearchService.Search(criteria);
 
         return Ok(From(result));
     }
@@ -114,12 +143,30 @@ public class GeneController : DomainController
         };
     }
 
-    private static SearchResult<VariantResource> From(SearchResult<VariantIndex> searchResult)
+    private static SearchResult<SsmResource> From(SearchResult<SsmIndex> searchResult)
     {
-        return new SearchResult<VariantResource>()
+        return new SearchResult<SsmResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new VariantResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SsmResource(index)).ToArray()
+        };
+    }
+
+    private static SearchResult<CnvResource> From(SearchResult<CnvIndex> searchResult)
+    {
+        return new SearchResult<CnvResource>()
+        {
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new CnvResource(index)).ToArray()
+        };
+    }
+
+    private static SearchResult<SvResource> From(SearchResult<SvIndex> searchResult)
+    {
+        return new SearchResult<SvResource>()
+        {
+            Total = searchResult.Total,
+            Rows = searchResult.Rows.Select(index => new SvResource(index)).ToArray()
         };
     }
 }
