@@ -1,16 +1,9 @@
-﻿using Unite.Indices.Entities.Basic.Genome.Dna;
+using Unite.Indices.Entities.Variants;
 
-namespace Unite.Composer.Web.Resources.Domain.Basic.Genome.Variants;
+namespace Unite.Composer.Web.Resources.Domain.Variants;
 
-public class CnvResource
+public class CnvResource : Basic.Genome.Variants.VariantResource
 {
-    public string Id { get; set; }
-
-    public string Chromosome { get; set; }
-    public int Start { get; set; }
-    public int End { get; set; }
-    public int Length { get; set; }
-
     public string Type { get; set; }
     public bool? Loh { get; set; }
     public bool? Del { get; set; }
@@ -23,16 +16,12 @@ public class CnvResource
     public int? Tcn { get; set; }
     public double? DhMax { get; set; }
 
+    public VariantStatsResource Stats { get; set; }
+    public VariantDataResource Data { get; set; }
 
-    public CnvResource(CnvIndex index)
+
+    public CnvResource(CnvIndex index, bool includeEffects = false) : base(index, includeEffects)
     {
-        Id = index.Id;
-
-        Chromosome = index.Chromosome;
-        Start = index.Start;
-        End = index.End;
-        Length = index.Length.Value;
-
         Type = index.Type;
         Loh = index.Loh;
         Del = index.Del;
@@ -43,5 +32,11 @@ public class CnvResource
         C2 = index.C2;
         Tcn = index.Tcn;
         TcnRatio = index.TcnRatio;
+
+        if (index.Stats != null)
+            Stats = new VariantStatsResource(index.Stats);
+
+        if (index.Data != null)
+            Data = new VariantDataResource(index.Data);
     }
 }
