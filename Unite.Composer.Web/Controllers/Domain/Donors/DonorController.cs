@@ -57,7 +57,7 @@ public class DonorController : DomainController
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = [id] };
-        criteria.Image = (criteria.Image ?? new ImageCriteria()) with { Type = DetectImageType(type) };
+        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
 
         var result = await _imagesSearchService.Search(criteria);
 
@@ -69,7 +69,7 @@ public class DonorController : DomainController
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = [id] };
-        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Type = DetectSpecimenType(type) };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
 
         var result = await _specimensSearchService.Search(criteria);
 

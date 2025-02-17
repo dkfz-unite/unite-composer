@@ -13,11 +13,14 @@ public class SpecimenDataResource
     public bool? Drugs { get; set; }
     public bool? Mris { get; set; }
     public bool? Cts { get; set; }
+    public bool? Exp { get; set; }
+    public bool? ExpSc { get; set; }
     public bool? Ssms { get; set; }
     public bool? Cnvs { get; set; }
     public bool? Svs { get; set; }
-    public bool? GeneExp { get; set; }
-    public bool? GeneExpSc { get; set; }
+    public bool? Meth { get; set; }
+
+    public int? Total { get; set; }
 
 
     public SpecimenDataResource(DataIndex index, string type)
@@ -25,17 +28,38 @@ public class SpecimenDataResource
         Donors = index.Donors;
         Clinical = index.Clinical;
         Treatments = index.Treatments;
-        Mris = index.Mris;
-        Cts = index.Cts;
-        Ssms = index.Ssms;
-        Cnvs = index.Cnvs;
-        Svs = index.Svs;
-        GeneExp = index.GeneExp;
-        GeneExpSc = index.GeneExpSc;
         Molecular = GetMolecilar(index, type);
         Interventions = GetInterventions(index, type);
         Drugs = GetDrugs(index, type);
+        Mris = index.Mris;
+        Cts = index.Cts;
+        Exp = index.Exp;
+        ExpSc = index.ExpSc;
+        Ssms = index.Ssms;
+        Cnvs = index.Cnvs;
+        Svs = index.Svs;
+        Meth = index.Meth;
     }
+
+    public SpecimenDataResource(IReadOnlyDictionary<object, DataIndex> indices, string type)
+    {
+        Clinical = indices.Values.Any(d => d.Clinical == true);
+        Treatments = indices.Values.Any(d => d.Treatments == true);
+        Molecular = indices.Values.Any(d => GetMolecilar(d, type) == true);
+        Interventions = indices.Values.Any(d => GetInterventions(d, type) == true);
+        Drugs = indices.Values.Any(d => GetDrugs(d, type) == true);
+        Mris = indices.Values.Any(d => d.Mris == true);
+        Cts = indices.Values.Any(d => d.Cts == true);
+        Exp = indices.Values.Any(d => d.Exp == true);
+        ExpSc = indices.Values.Any(d => d.ExpSc == true);
+        Ssms = indices.Values.Any(d => d.Ssms == true);
+        Cnvs = indices.Values.Any(d => d.Cnvs == true);
+        Svs = indices.Values.Any(d => d.Svs == true);
+        Meth = indices.Values.Any(d => d.Meth == true);
+
+        Total = indices.Count;
+    }
+
 
     private static bool? GetMolecilar(DataIndex index, string type)
     {

@@ -1,22 +1,19 @@
-using Nest;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Visualization.Lolliplot.Annotation;
 using Unite.Composer.Visualization.Lolliplot.Data;
 using Unite.Data.Context;
 using Unite.Indices.Context.Configuration.Options;
-using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Entities.Variants;
 using Unite.Indices.Search.Engine;
 using Unite.Indices.Search.Engine.Filters;
 using Unite.Indices.Search.Engine.Queries;
-using Unite.Indices.Search.Services.Filters.Base.Variants.Constants;
 
 namespace Unite.Composer.Visualization.Lolliplot;
 
 public class ProteinPlotDataService
 {
     private readonly DomainDbContext _dbContext;
-    private readonly IIndexService<VariantIndex> _variantsIndexService;
+    private readonly IIndexService<SsmIndex> _variantsIndexService;
     private readonly ProteinAnnotationService _proteinAnnotationService;
 
 
@@ -26,7 +23,7 @@ public class ProteinPlotDataService
         IEnsemblOptions ensemblOptions)
     {
         _dbContext = dbContext;
-        _variantsIndexService = new VariantsIndexService(elasticOptions);
+        _variantsIndexService = new SsmsIndexService(elasticOptions);
         _proteinAnnotationService = new ProteinAnnotationService(ensemblOptions);
     }
 
@@ -70,9 +67,8 @@ public class ProteinPlotDataService
     /// <returns>Array of protein mutations.</returns>
     private async Task<ProteinMutation[]> GetProteinMutations(int transcriptId)
     {   
-        var query = new SearchQuery<VariantIndex>()
+        var query = new SearchQuery<SsmIndex>()
             .AddPagination(0, 10000)
-            .AddFilter(CreateVariantTypeFilter())
             .AddFilter(CreateTranscriptFilter(transcriptId))
             .AddExclusion(variant => variant.Specimens);
 
@@ -82,7 +78,7 @@ public class ProteinPlotDataService
 
         foreach (var variant in searchResult.Rows)
         {
-            var affectedFeature = variant.Ssm.AffectedFeatures?
+            var affectedFeature = variant.AffectedFeatures?
                 .Where(affectedFeature => affectedFeature.Transcript.ProteinChange != null)
                 .FirstOrDefault(affectedFeature => affectedFeature.Transcript.Feature.Id == transcriptId);
 
@@ -94,11 +90,11 @@ public class ProteinPlotDataService
 
                 var proteinMutation = new ProteinMutation
                 {
-                    Id = variant.Ssm.Id,
+                    Id = $"{variant.Id}",
                     Effect = effect.Type,
                     Impact = effect.Impact,
                     ProteinChange = affectedFeature.Transcript.ProteinChange,
-                    NumberOfDonors = variant.NumberOfDonors
+                    NumberOfDonors = variant.Stats.Donors
                 };
 
                 proteinMutations.Add(proteinMutation);
@@ -109,22 +105,12 @@ public class ProteinPlotDataService
     }
 
 
-    private static IFilter<VariantIndex> CreateVariantTypeFilter()
+    private static IFilter<SsmIndex> CreateTranscriptFilter(int transcriptId)
     {
-        return new EqualityFilter<VariantIndex, object>
-        (
-            VariantFilterNames.VariantType,
-            variant => variant.Type.Suffix("keyword"),
-            VariantType.SSM
-        );
-    }
-
-    private static IFilter<VariantIndex> CreateTranscriptFilter(int transcriptId)
-    {
-        return new EqualityFilter<VariantIndex, int>
+        return new EqualityFilter<SsmIndex, int>
         (
             "SSM.Transcript.Id",
-            variant => variant.Ssm.AffectedFeatures.First().Transcript.Feature.Id,
+            variant => variant.AffectedFeatures.First().Transcript.Feature.Id,
             transcriptId
         );
     }

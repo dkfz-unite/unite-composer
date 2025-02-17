@@ -38,7 +38,7 @@ public class SpecimensController : DomainController
     public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Type = DetectSpecimenType(type) };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
 
         var result = await _searchService.Search(criteria);
 
@@ -49,18 +49,18 @@ public class SpecimensController : DomainController
     public async Task<IActionResult> Stats(string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Type = DetectSpecimenType(type) };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
 
         var stats = await _searchService.Stats(criteria);
 
-        return Ok(new SpecimensDataResource(stats, type));
+        return Ok(new SpecimenDataResource(stats, type));
     }
 
     [HttpPost("{type}/data")]
     public async Task<ActionResult> Data(string type, [FromBody]BulkDownloadModel model)
     {
         var criteria = model.Criteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimenCriteria()) with { Type = DetectSpecimenType(type) };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
 
         var stats = await _searchService.Stats(criteria);
 

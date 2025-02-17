@@ -13,7 +13,7 @@ public class SampleResource
     public AnalysisResource[] Analyses { get; set; }
 
 
-    public SampleResource(SpecimenIndex specimenIndex, SampleIndex[] sampleIndices = null)
+    public SampleResource(SpecimenNavIndex specimenIndex, SampleIndex[] sampleIndices = null)
     {
         Id = specimenIndex.Id;
         ReferenceId = specimenIndex.ReferenceId;

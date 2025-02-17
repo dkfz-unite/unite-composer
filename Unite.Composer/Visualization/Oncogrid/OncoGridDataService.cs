@@ -1,18 +1,16 @@
 ﻿using Unite.Composer.Visualization.Oncogrid.Data;
 using Unite.Indices.Context.Configuration.Options;
-using Unite.Indices.Entities.Basic.Genome.Dna.Constants;
 using Unite.Indices.Search.Engine;
 using Unite.Indices.Search.Engine.Filters;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services.Filters;
 using Unite.Indices.Search.Services.Filters.Base.Donors.Criteria;
 using Unite.Indices.Search.Services.Filters.Base.Genes.Criteria;
-using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
 using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using VariantIndex = Unite.Indices.Entities.Variants.VariantIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.SsmIndex;
 
 namespace Unite.Composer.Visualization.Oncogrid;
 
@@ -27,7 +25,7 @@ public class OncoGridDataService
     {
         _donorsIndexService = new DonorsIndexService(options);
         _genesIndexService = new GenesIndexService(options);
-        _variantsIndexService = new VariantsIndexService(options);
+        _variantsIndexService = new SsmsIndexService(options);
     }
 
 
@@ -81,7 +79,7 @@ public class OncoGridDataService
             .AddPagination(0, number)
             .AddFullTextSearch(criteria.Term)
             .AddFilters(filters)
-            .AddOrdering(donor => donor.NumberOfGenes)
+            .AddOrdering(donor => donor.Stats.Genes)
             .AddExclusion(donor => donor.Specimens)
             .AddExclusion(donor => donor.Treatments)
             .AddExclusion(donor => donor.Projects)
@@ -105,7 +103,6 @@ public class OncoGridDataService
         var criteria = new SearchCriteria();
         criteria.Donor = new DonorCriteria() { Id = donorIds.ToArray() };
         criteria.Gene = searchCriteria.Gene;
-        criteria.Variant = new VariantCriteria() { Type = [VariantType.SSM] };
         criteria.Ssm = searchCriteria.Ssm;
 
         var criteriaFilters = new GeneFiltersCollection(criteria).All();
@@ -113,7 +110,7 @@ public class OncoGridDataService
         var query = new SearchQuery<GeneIndex>()
             .AddPagination(0, number)
             .AddFilters(criteriaFilters)
-            .AddOrdering(gene => gene.NumberOfSsms)
+            .AddOrdering(gene => gene.Stats.Ssms)
             .AddExclusion(gene => gene.Specimens);
 
         return _genesIndexService.Search(query).Result;
@@ -134,19 +131,14 @@ public class OncoGridDataService
         var criteria = new SearchCriteria();
         criteria.Donor = new DonorCriteria() { Id = donorIds.ToArray() };
         criteria.Gene = new GeneCriteria() { Id = geneIds.ToArray() };
-        criteria.Variant = new VariantCriteria() { Type = [VariantType.SSM] };
         criteria.Ssm = searchCriteria.Ssm;
 
-        var criteriaFilters = new VariantFiltersCollection(criteria).All();
+        var criteriaFilters = new SsmFiltersCollection(criteria).All();
 
         var query = new SearchQuery<VariantIndex>()
             .AddPagination(0, 10000)
             .AddFilters(criteriaFilters)
-            .AddFilter(new NotNullFilter<VariantIndex, object>("SSM.HasAffectedFeatures", variant => variant.Ssm.AffectedFeatures))
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.ClinicalData)
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.Treatments)
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.Projects)
-            .AddExclusion(mutation => mutation.Specimens.First().Donor.Studies);
+            .AddFilter(new NotNullFilter<VariantIndex, object>("SSM.HasAffectedFeatures", variant => variant.AffectedFeatures));
 
         return _variantsIndexService.Search(query).Result;
     }
@@ -225,8 +217,8 @@ public class OncoGridDataService
                 var geneId = int.Parse(gene.Id);
 
                 var observedMutations = mutations.Where(mutation =>
-                    mutation.Specimens.Any(mutationSample => mutationSample.Donor.Id == donorId) &&
-                    mutation.Ssm.AffectedFeatures.Any(affectedFeature =>
+                    // mutation.Specimens.Any(mutationSample => mutationSample.Donor.Id == donorId) &&
+                    mutation.AffectedFeatures.Any(affectedFeature =>
                         affectedFeature.Transcript != null &&
                         affectedFeature.Gene != null &&
                         affectedFeature.Gene.Id == geneId)
@@ -234,7 +226,7 @@ public class OncoGridDataService
 
                 foreach (var mutation in observedMutations)
                 {
-                    var effect = mutation.Ssm.AffectedFeatures
+                    var effect = mutation.AffectedFeatures
                         .Where(affectedFeature => affectedFeature.Transcript != null)
                         .Where(affectedFeature => affectedFeature.Gene != null)
                         .Where(affectedFeature => affectedFeature.Gene.Id == geneId)
@@ -248,7 +240,7 @@ public class OncoGridDataService
                     {
                         yield return new OncoGridVariant
                         {
-                            Id = mutation.Id,
+                            Id = $"{mutation.Id}",
                             Code = GetVariantCode(mutation),
                             Effect = effect.Type,
                             Impact = effect.Impact,
@@ -274,6 +266,6 @@ public class OncoGridDataService
 
     private static string GetVariantCode(VariantIndex variant)
     {
-        return $"{variant.Ssm.Chromosome}:g.{variant.Ssm.Start}{variant.Ssm.Ref ?? "-"}>{variant.Ssm.Alt ?? "-"}";
+        return $"{variant.Chromosome}:g.{variant.Start}{variant.Ref ?? "-"}>{variant.Alt ?? "-"}";
     }
 }

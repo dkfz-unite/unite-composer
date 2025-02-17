@@ -45,7 +45,7 @@ public class GenesController : DomainController
     {
         var stats = await _searchService.Stats(searchCriteria);
 
-        return Ok(new GenesDataResource(stats));
+        return Ok(new GeneDataResource(stats));
     }
 
     [HttpPost("data")]

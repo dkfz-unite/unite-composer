@@ -5,21 +5,15 @@ namespace Unite.Composer.Web.Resources.Domain.Donors;
 
 public class DonorResource : Basic.Donors.DonorResource
 {
-    public int NumberOfGenes { get; set; }
-    public int NumberOfSsms { get; set; }
-    public int NumberOfCnvs { get; set; }
-    public int NumberOfSvs { get; set; }
-
+    public DonorStatsResource Stats { get; set; }
     public DonorDataResource Data { get; set; }
     public DonorSampleResource[] Samples { get; set; }
 
 
     public DonorResource(DonorIndex index) : base(index)
     {
-        NumberOfGenes = index.NumberOfGenes;
-        NumberOfSsms = index.NumberOfSsms;
-        NumberOfCnvs = index.NumberOfCnvs;
-        NumberOfSvs = index.NumberOfSvs;
+        if (index.Stats != null)
+            Stats = new DonorStatsResource(index.Stats);
         
         if (index.Data != null)
             Data = new DonorDataResource(index.Data);
