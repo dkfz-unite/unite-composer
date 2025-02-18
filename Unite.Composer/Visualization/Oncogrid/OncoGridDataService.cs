@@ -24,7 +24,7 @@ public class OncoGridDataService
     }
 
 
-    public OncoGridData LoadData(int numberOfDonors = 100, int numberOfGenes = 50, SearchCriteria searchCriteria = null)
+    public OncoGridData LoadData(int numberOfDonors = 30, int numberOfGenes = 50, SearchCriteria searchCriteria = null)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
@@ -39,7 +39,7 @@ public class OncoGridDataService
     }
 
 
-    private DonorIndex[] LoadDonors(SearchCriteria searchCriteria, int number = 100)
+    private DonorIndex[] LoadDonors(SearchCriteria searchCriteria, int number = 30)
     {
         var criteria = searchCriteria with
         { 
@@ -53,7 +53,8 @@ public class OncoGridDataService
     private VariantIndex[] LoadMutations(SearchCriteria searchCriteria, int[] donorIds)
     {
         var tasks = new List<Task>();
-        var variants = new List<VariantIndex>();
+        // var variants = new List<VariantIndex>();
+        var variants = new Dictionary<int, VariantIndex>();
 
         foreach (var id in donorIds)
         {
@@ -90,12 +91,20 @@ public class OncoGridDataService
                         .OrderBy(affectedFeature => affectedFeature.Effects.First().Severity)
                         .Take(1)
                         .ToArray();
+
+                    if (variant.AffectedFeatures.Any())
+                    {
+                        lock (variants)
+                        {
+                            variants.TryAdd(variant.Id, variant);
+                        }
+                    }
                 }
 
-                lock (variants)
-                {
-                    variants.AddRange(donorVariants.Where(variant => variant.AffectedFeatures.Any()));
-                }
+                // lock (variants)
+                // {
+                //     variants.AddRange(donorVariants.Where(variant => variant.AffectedFeatures.Any()));
+                // }
             });
             
             tasks.Add(task);
@@ -103,7 +112,7 @@ public class OncoGridDataService
 
         Task.WaitAll(tasks.ToArray());
 
-        return variants.ToArray();
+        return variants.Values.ToArray();
     }
 
     private GeneIndex[] LoadGenes(VariantIndex[] variants, int number = 50)
