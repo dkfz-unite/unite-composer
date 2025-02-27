@@ -13,7 +13,9 @@ internal static class SpecimenMappingExtensions
         return map
             .MapSpecimen()
             .Map(entity => entity.Material.TypeId, "type")
+            .Map(entity => entity.Material.FixationTypeId, "fixation_type")
             .Map(entity => entity.Material.TumorTypeId, "tumor_type")
+            .Map(entity => entity.Material.TumorGrade, "tumor_grade")
             .Map(entity => entity.Material.Source.Value, "source")
             .MapMolecularData();
     }
