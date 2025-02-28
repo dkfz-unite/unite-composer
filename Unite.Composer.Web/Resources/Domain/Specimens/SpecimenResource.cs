@@ -11,7 +11,7 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
     public string ParentReferenceId { get; set; }
     public string ParentType { get; set; }
 
-    public SpecimenResource Parent { get; set; }
+    public SpecimenParentResource Parent { get; set; }
     public SpecimenStatsResource Stats { get; set; }
     public SpecimenDataResource Data { get; set; }
     public SpecimenSampleResource Sample { get; set; }
@@ -43,6 +43,9 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
         ParentId = index.Parent?.Id;
         ParentReferenceId = index.Parent?.ReferenceId;
         ParentType = index.Parent?.Type;
+
+        if (index.Parent != null)
+            Parent = new SpecimenParentResource(index.Parent);
         
         if (index.Stats != null)
             Stats = new SpecimenStatsResource(index.Stats);
@@ -53,4 +56,6 @@ public class SpecimenResource : Basic.Specimens.SpecimenResource
         if (index.Samples.IsNotEmpty())
             Sample = new SpecimenSampleResource(index, index.Samples);
     }
+
+
 }
