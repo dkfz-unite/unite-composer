@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Donors;
+﻿using Unite.Indices.Entities.Basic.Projects;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Donors;
 
@@ -8,7 +8,7 @@ public class ProjectResource
     public string Name { get; set; }
 
 
-    public ProjectResource(ProjectIndex index)
+    public ProjectResource(ProjectNavIndex index)
     {
         Id = index.Id;
         Name = index.Name;

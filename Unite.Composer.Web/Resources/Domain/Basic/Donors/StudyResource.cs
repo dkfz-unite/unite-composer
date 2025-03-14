@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Donors;
+﻿using Unite.Indices.Entities.Basic.Projects;
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Donors;
 
@@ -8,7 +8,7 @@ public class StudyResource
     public string Name { get; set; }
 
 
-    public StudyResource(StudyIndex index)
+    public StudyResource(StudyNavIndex index)
     {
         Id = index.Id;
         Name = index.Name;

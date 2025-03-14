@@ -21,5 +21,4 @@ public static class TsvFileNames
     public const string Cnvs = "cnvs.tsv";
     public const string Svs = "svs.tsv";
     public const string GeneExp = "gene_expressions_bulk.tsv";
-    public const string GeneExpSc = "gene_expressions_sc.tsv";
 }
