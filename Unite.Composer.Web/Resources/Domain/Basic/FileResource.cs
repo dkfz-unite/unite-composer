@@ -4,6 +4,7 @@ namespace Unite.Composer.Web.Resources.Domain.Basic;
 
 public class FileResource
 {
+    public string Name { get; set; }
     public string Type { get; set; }
     public string Format { get; set; }
     public string Archive { get; set; }
@@ -17,6 +18,7 @@ public class FileResource
 
         return new FileResource
         {
+            Name = index.Name,
             Type = index.Type,
             Format = index.Format,
             Archive = index.Archive,

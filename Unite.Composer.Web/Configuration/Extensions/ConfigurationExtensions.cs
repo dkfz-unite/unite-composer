@@ -3,7 +3,6 @@ using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data.Datasets;
 using Unite.Composer.Data.Genome;
 using Unite.Composer.Data.Genome.Ranges;
-using Unite.Composer.Data.Projects;
 using Unite.Composer.Data.Specimens;
 using Unite.Composer.Data.Submissions;
 using Unite.Composer.Download.Configuration.Extensions;
@@ -43,7 +42,6 @@ public static class ConfigurationExtensions
 
         services.AddTsvDownload();
 
-        services.AddTransient<ProjectService>();
         services.AddTransient<GenomicProfileService>();
         services.AddTransient<OncoGridDataService>();
         services.AddTransient<ProteinPlotDataService>();

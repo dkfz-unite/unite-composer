@@ -30,12 +30,12 @@ public class DonorController : DomainController
 
 
     public DonorController(
-        ISearchService<DonorIndex> searchService,
+        ISearchService<DonorIndex> donorsSearchService,
         ISearchService<ImageIndex> imagesSearchService,
         ISearchService<SpecimenIndex> specimensSearchService,
         DonorsTsvDownloadService tsvDownloadService)
     {
-        _donorsSearchService = searchService;
+        _donorsSearchService = donorsSearchService;
         _imagesSearchService = imagesSearchService;
         _specimensSearchService = specimensSearchService;
         _tsvDownloadService = tsvDownloadService;
