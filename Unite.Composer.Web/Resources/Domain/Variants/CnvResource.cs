@@ -1,3 +1,4 @@
+using Unite.Essentials.Extensions;
 using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
@@ -18,6 +19,7 @@ public class CnvResource : Basic.Genome.Variants.VariantResource
 
     public VariantStatsResource Stats { get; set; }
     public VariantDataResource Data { get; set; }
+    public int[] Similars { get; set; }
 
 
     public CnvResource(CnvIndex index, bool includeEffects = false) : base(index, includeEffects)
@@ -38,5 +40,8 @@ public class CnvResource : Basic.Genome.Variants.VariantResource
 
         if (index.Data != null)
             Data = new VariantDataResource(index.Data);
+
+        if (index.Similars != null)
+            Similars = index.Similars.Select(i => i.Id).ToArrayOrNull();
     }
 }
