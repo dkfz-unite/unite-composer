@@ -43,6 +43,8 @@ public class CnvController : DomainController
 
         var result = await _variantsSearchService.Get(key);
 
+        // result.Similars
+
         return Ok(From(result));
     }
 
