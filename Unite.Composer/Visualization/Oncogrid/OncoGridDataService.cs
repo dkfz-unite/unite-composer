@@ -7,20 +7,20 @@ using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Basic.Genome.GeneIndex;
-using VariantIndex = Unite.Indices.Entities.Variants.SsmIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.SmIndex;
 
 namespace Unite.Composer.Visualization.Oncogrid;
 
 public class OncoGridDataService
 {
     private readonly DonorsSearchService _donorsSearchService;
-    private readonly SsmsSearchService _ssmsSearchService;
+    private readonly SmsSearchService _smsSearchService;
 
 
     public OncoGridDataService(IElasticOptions options)
     {
         _donorsSearchService = new DonorsSearchService(options);
-        _ssmsSearchService = new SsmsSearchService(options);
+        _smsSearchService = new SmsSearchService(options);
     }
 
 
@@ -65,7 +65,7 @@ public class OncoGridDataService
                 Donor = new DonorCriteria() { Id = [id] }
             };
 
-            var task = _ssmsSearchService.Search(criteria).ContinueWith(result => 
+            var task = _smsSearchService.Search(criteria).ContinueWith(result => 
             {
                 var donorVariants = result.Result.Rows;
 
@@ -79,8 +79,8 @@ public class OncoGridDataService
                     foreach (var affectedFeature in variant.AffectedFeatures)
                     {
                         affectedFeature.Effects = affectedFeature.Effects
-                            .Where(effect => HasMatchingImpact(effect.Impact, searchCriteria.Ssm.Impact))
-                            .Where(effect => HasMatchingEffects(effect.Type, searchCriteria.Ssm.Effect))
+                            .Where(effect => HasMatchingImpact(effect.Impact, searchCriteria.Sm.Impact))
+                            .Where(effect => HasMatchingEffects(effect.Type, searchCriteria.Sm.Effect))
                             .OrderBy(effect => effect.Severity)
                             .Take(1)
                             .ToArray();

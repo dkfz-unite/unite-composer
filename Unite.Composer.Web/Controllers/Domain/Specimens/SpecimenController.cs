@@ -16,7 +16,7 @@ using Unite.Indices.Search.Services.Filters.Base.Specimens.Criteria;
 
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using SsmIndex = Unite.Indices.Entities.Variants.SsmIndex;
+using SmIndex = Unite.Indices.Entities.Variants.SmIndex;
 using CnvIndex = Unite.Indices.Entities.Variants.CnvIndex;
 using SvIndex = Unite.Indices.Entities.Variants.SvIndex;
 
@@ -32,7 +32,7 @@ public class SpecimenController : DomainController
 {
     private readonly ISearchService<SpecimenIndex> _specimensSearchService;
     private readonly ISearchService<GeneIndex> _genesSearchService;
-    private readonly ISearchService<SsmIndex> _ssmsSearchService;
+    private readonly ISearchService<SmIndex> _smsSearchService;
     private readonly ISearchService<CnvIndex> _cnvsSearchService;
     private readonly ISearchService<SvIndex> _svsSearchService;
     private readonly DrugScreeningService _drugScreeningService;
@@ -43,7 +43,7 @@ public class SpecimenController : DomainController
     public SpecimenController(
         ISearchService<SpecimenIndex> specimensSearchService,
         ISearchService<GeneIndex> genesSearchService,
-        ISearchService<SsmIndex> ssmsSearchService,
+        ISearchService<SmIndex> smsSearchService,
         ISearchService<CnvIndex> cnvsSearchService,
         ISearchService<SvIndex> svsSearchService,
         DrugScreeningService drugScreeningService,
@@ -52,7 +52,7 @@ public class SpecimenController : DomainController
     {
         _specimensSearchService = specimensSearchService;
         _genesSearchService = genesSearchService;
-        _ssmsSearchService = ssmsSearchService;
+        _smsSearchService = smsSearchService;
         _cnvsSearchService = cnvsSearchService;
         _svsSearchService = svsSearchService;
         _drugScreeningService = drugScreeningService;
@@ -94,13 +94,13 @@ public class SpecimenController : DomainController
         return Ok(From(result));
     }
 
-    [HttpPost("{id}/variants/ssm")]
-    public async Task<IActionResult> Ssms(int id, [FromBody]SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/sm")]
+    public async Task<IActionResult> Sms(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
 
-        var result = await _ssmsSearchService.Search(criteria);
+        var result = await _smsSearchService.Search(criteria);
 
         return Ok(From(result));
     }
@@ -167,12 +167,12 @@ public class SpecimenController : DomainController
         };
     }
 
-    private static SearchResult<SsmResource> From(SearchResult<SsmIndex> searchResult)
+    private static SearchResult<SmResource> From(SearchResult<SmIndex> searchResult)
     {
-        return new SearchResult<SsmResource>()
+        return new SearchResult<SmResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new SsmResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SmResource(index)).ToArray()
         };
     }
 

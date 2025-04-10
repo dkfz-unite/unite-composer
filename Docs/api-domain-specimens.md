@@ -91,7 +91,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 - `404` - specimen not found
 
 
-## POST: [api/specimen/{id}/variants/{type?}](http://localhost:5002/api/specimen/1/variants/ssm)
+## POST: [api/specimen/{id}/variants/{type?}](http://localhost:5002/api/specimen/1/variants/sm)
 Search variants of given type appearing in the specimen filtered by search criteria.
 
 ### Parameters
@@ -99,7 +99,7 @@ Search variants of given type appearing in the specimen filtered by search crite
 - `type` - variant [type](#variant-types) or any if not specified.
 
 #### Variant Types
-- `SSM` - simple somatic mutation.
+- `SM` - simple mutation.
 - `CNV` - copy number variant.
 - `SV` - structural variant.
 
@@ -111,7 +111,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 {
     "from": 0,
     "size": 20,
-    "ssm": {
+    "sm": {
         "chromosome": [10, 11],
         "impact": ["High", "Moderate"]
     }
@@ -178,8 +178,8 @@ Data download [model](./api-domain-models-download.md).
     "molecular": true, // include specimen molecular data
     "drugs": true, // include specimen drugs screening data
     "interventions": true, // include specimen interventions data
-    "ssms": true, // include specimen SSMs data
-    "ssmsTranscriptsFull": true // include affected transcripts data in SSMs
+    "sms": true, // include specimen SMs data
+    "smsTranscriptsFull": true // include affected transcripts data in SMs
 }
 ```
 
@@ -297,8 +297,8 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
         "molecular": true,
         "drugs": true,
         "interventions": true,
-        "ssms": true,
-        "ssmsTranscriptsFull": true
+        "sms": true,
+        "smsTranscriptsFull": true
     }
 }
 ```

@@ -2,7 +2,7 @@ using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
-public class SsmResource : Basic.Genome.Variants.VariantResource
+public class SmResource : Basic.Genome.Variants.VariantResource
 {
     public string Type { get; }
     public string Ref { get; }
@@ -12,7 +12,7 @@ public class SsmResource : Basic.Genome.Variants.VariantResource
     public VariantDataResource Data { get; set; }
 
 
-    public SsmResource(SsmIndex index, bool includeEffects = false) : base(index, includeEffects)
+    public SmResource(SmIndex index, bool includeEffects = false) : base(index, includeEffects)
     {
         Type = index.Type;
         Ref = index.Ref;

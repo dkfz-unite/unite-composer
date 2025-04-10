@@ -19,7 +19,7 @@ public class SubmissionsService
     {
          var tasks = await _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
             .AsNoTracking()
-            .OrderBy(task => task.Date)
+            .OrderBy(task => task.Id)
             .Where(task => task.SubmissionTypeId != null)
             .Where(task => task.StatusTypeId == TaskStatusType.Preparing)
             .ToArrayAsync();

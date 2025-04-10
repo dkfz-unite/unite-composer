@@ -13,7 +13,7 @@ namespace Unite.Composer.Visualization.Lolliplot;
 public class ProteinPlotDataService
 {
     private readonly DomainDbContext _dbContext;
-    private readonly IIndexService<SsmIndex> _variantsIndexService;
+    private readonly IIndexService<SmIndex> _variantsIndexService;
     private readonly ProteinAnnotationService _proteinAnnotationService;
 
 
@@ -23,7 +23,7 @@ public class ProteinPlotDataService
         IEnsemblOptions ensemblOptions)
     {
         _dbContext = dbContext;
-        _variantsIndexService = new SsmsIndexService(elasticOptions);
+        _variantsIndexService = new SmsIndexService(elasticOptions);
         _proteinAnnotationService = new ProteinAnnotationService(ensemblOptions);
     }
 
@@ -67,7 +67,7 @@ public class ProteinPlotDataService
     /// <returns>Array of protein mutations.</returns>
     private async Task<ProteinMutation[]> GetProteinMutations(int transcriptId)
     {   
-        var query = new SearchQuery<SsmIndex>()
+        var query = new SearchQuery<SmIndex>()
             .AddPagination(0, 10000)
             .AddFilter(CreateTranscriptFilter(transcriptId))
             .AddExclusion(variant => variant.Specimens);
@@ -105,11 +105,11 @@ public class ProteinPlotDataService
     }
 
 
-    private static IFilter<SsmIndex> CreateTranscriptFilter(int transcriptId)
+    private static IFilter<SmIndex> CreateTranscriptFilter(int transcriptId)
     {
-        return new EqualityFilter<SsmIndex, int>
+        return new EqualityFilter<SmIndex, int>
         (
-            "SSM.Transcript.Id",
+            "SM.Transcript.Id",
             variant => variant.AffectedFeatures.First().Transcript.Feature.Id,
             transcriptId
         );

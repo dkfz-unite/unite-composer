@@ -1,5 +1,5 @@
-using Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
-using Unite.Data.Helpers.Genome.Dna.Ssm;
+using Unite.Data.Entities.Genome.Analysis.Dna.Sm;
+using Unite.Data.Helpers.Genome.Dna.Sm;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;
@@ -26,8 +26,8 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
             .Select(affectedTranscript => new {
                 Gene = affectedTranscript.Feature.Gene.Symbol ?? affectedTranscript.Feature.Gene.StableId,
                 Transcript = affectedTranscript.Feature.Symbol ?? affectedTranscript.Feature.StableId,
-                ProteinStart = affectedTranscript.ProteinStart,
-                ProteinEnd = affectedTranscript.ProteinEnd,
+                ProteinStart = affectedTranscript.AAStart,
+                ProteinEnd = affectedTranscript.AAEnd,
                 ProteinChange = affectedTranscript.ProteinChange,
                 Effect = affectedTranscript.Effects.OrderBy(effect => effect.Severity).First()
             })

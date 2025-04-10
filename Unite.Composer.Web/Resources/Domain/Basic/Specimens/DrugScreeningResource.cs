@@ -9,8 +9,8 @@ public class DrugScreeningResource
     public double? Gof { get; set; }
     public double? Dss { get; set; }
     public double? DssS { get; set; }
-    public double? MinDose { get; set; }
-    public double? MaxDose { get; set; }
+    public double? DoseMin { get; set; }
+    public double? DoseMax { get; set; }
     public double? Dose25 { get; set; }
     public double? Dose50 { get; set; }
     public double? Dose75 { get; set; }
@@ -29,8 +29,8 @@ public class DrugScreeningResource
         Gof = index.Gof;
         Dss = index.Dss;
         DssS = index.DssS;
-        MinDose = index.MinDose;
-        MaxDose = index.MaxDose;
+        DoseMin = index.DoseMin;
+        DoseMax = index.DoseMax;
         Dose25 = index.Dose25;
         Dose50 = index.Dose50;
         Dose75 = index.Dose75;
@@ -47,8 +47,8 @@ public class DrugScreeningResource
         Gof = model.Gof;
         Dss = model.Dss;
         DssS = model.DssS;
-        MinDose = model.MinDose;
-        MaxDose = model.MaxDose;
+        DoseMin = model.DoseMin;
+        DoseMax = model.DoseMax;
         Dose25 = model.Dose25;
         Dose50 = model.Dose50;
         Dose75 = model.Dose75;

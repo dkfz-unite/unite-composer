@@ -1,7 +1,7 @@
 using System.IO.Compression;
-using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
+using Unite.Composer.Download.Tsv.Models;
 using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens.Enums;
@@ -54,18 +54,18 @@ public class ImagesTsvDownloadService : TsvDownloadService
             if (criteria.Treatments == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForImages(ids));
 
-            if (type == ImageType.MRI)
-                await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetData(ids, ImageType.MRI));
+            if (type == ImageType.MR)
+                await CreateArchiveEntry(archive, TsvFileNames.Mrs, _imagesTsvService.GetData(ids, ImageType.MR));
 
             if (criteria.Specimens == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetDataForImages(ids, SpecimenType.Material));
 
-            if (criteria.Ssms == true)
+            if (criteria.Sms == true)
             {
-                if (criteria.SsmsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullDataForImages(ids, VariantType.SSM));
+                if (criteria.SmsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetFullDataForImages(ids, VariantType.SM));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetDataForImages(ids, VariantType.SSM, criteria.SsmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetDataForImages(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
             }
 
             if (criteria.Cnvs == true)

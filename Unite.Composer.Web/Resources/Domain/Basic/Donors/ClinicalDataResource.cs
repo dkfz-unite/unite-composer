@@ -4,7 +4,7 @@ namespace Unite.Composer.Web.Resources.Domain.Basic.Donors;
 
 public class ClinicalDataResource
 {
-    public string Gender { get; set; }
+    public string Sex { get; set; }
     public int? Age { get; set; }
     public string Diagnosis { get; set; }
     public string PrimarySite { get; set; }
@@ -13,13 +13,13 @@ public class ClinicalDataResource
     public int? VitalStatusChangeDay { get; set; }
     public bool? ProgressionStatus { get; set; }
     public int? ProgressionStatusChangeDay { get; set; }
-    public int? KpsBaseline { get; set; }
-    public bool? SteroidsBaseline { get; set; }
+    public bool? SteroidsReactive { get; set; }
+    public int? Kps { get; set; }
 
 
     public ClinicalDataResource(ClinicalDataIndex index)
     {
-        Gender = index.Gender;
+        Sex = index.Sex;
         Age = index.Age;
         Diagnosis = index.Diagnosis;
         PrimarySite = index.PrimarySite;
@@ -28,7 +28,7 @@ public class ClinicalDataResource
         VitalStatusChangeDay = index.VitalStatusChangeDay;
         ProgressionStatus = index.ProgressionStatus;
         ProgressionStatusChangeDay = index.ProgressionStatusChangeDay;
-        KpsBaseline = index.KpsBaseline;
-        SteroidsBaseline = index.SteroidsBaseline;
+        SteroidsReactive = index.SteroidsReactive;
+        Kps = index.Kps;
     }
 }

@@ -13,7 +13,7 @@ using Unite.Indices.Search.Services.Filters.Base.Genes.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using GeneIndex = Unite.Indices.Entities.Genes.GeneIndex;
-using SsmIndex = Unite.Indices.Entities.Variants.SsmIndex;
+using SmIndex = Unite.Indices.Entities.Variants.SmIndex;
 using CnvIndex = Unite.Indices.Entities.Variants.CnvIndex;
 using SvIndex = Unite.Indices.Entities.Variants.SvIndex;
 
@@ -27,7 +27,7 @@ public class GeneController : DomainController
 {
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<GeneIndex> _genesSearchService;
-    private readonly ISearchService<SsmIndex> _ssmsSearchService;
+    private readonly ISearchService<SmIndex> _smsSearchService;
     private readonly ISearchService<CnvIndex> _cnvsSearchService;
     private readonly ISearchService<SvIndex> _svsSearchService;
     private readonly GeneDataService _dataService;
@@ -37,7 +37,7 @@ public class GeneController : DomainController
     public GeneController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<GeneIndex> genesSearchService,
-        ISearchService<SsmIndex> ssmsSearchService,
+        ISearchService<SmIndex> smsSearchService,
         ISearchService<CnvIndex> cnvsSearchService,
         ISearchService<SvIndex> svsSearchService,
         GeneDataService dataService, 
@@ -45,7 +45,7 @@ public class GeneController : DomainController
     {
         _donorsSearchService = donorsSearchService;
         _genesSearchService = genesSearchService;
-        _ssmsSearchService = ssmsSearchService;
+        _smsSearchService = smsSearchService;
         _cnvsSearchService = cnvsSearchService;
         _svsSearchService = svsSearchService;
         _dataService = dataService;
@@ -74,13 +74,13 @@ public class GeneController : DomainController
         return Ok(From(result));
     }
 
-    [HttpPost("{id}/variants/ssm")]
-    public async Task<IActionResult> Ssms(int id, [FromBody] SearchCriteria searchCriteria)
+    [HttpPost("{id}/variants/sm")]
+    public async Task<IActionResult> Sms(int id, [FromBody] SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = [id] };
 
-        var result = await _ssmsSearchService.Search(criteria);
+        var result = await _smsSearchService.Search(criteria);
 
         return Ok(From(result));
     }
@@ -143,12 +143,12 @@ public class GeneController : DomainController
         };
     }
 
-    private static SearchResult<SsmResource> From(SearchResult<SsmIndex> searchResult)
+    private static SearchResult<SmResource> From(SearchResult<SmIndex> searchResult)
     {
-        return new SearchResult<SsmResource>()
+        return new SearchResult<SmResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new SsmResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SmResource(index)).ToArray()
         };
     }
 

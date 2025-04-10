@@ -8,7 +8,7 @@ Allows to retrieve information about images and their data.
 
 ## Image Types
 Images are classified by following types:
-- `MRI` - magnetic resonance image.
+- `MR` - magnetic resonance image.
 
 
 ## Overview
@@ -50,10 +50,10 @@ Data download [model](./api-domain-models-download.md).
     "donors": true, // include image donor data
     "clinical": true, // include image donor clinical data
     "treatments": true, // include image donor treatments data
-    "mris": true, // include MRI image data
+    "mrs": true, // include MR image data
     "specimens": true, // include image donor derived materials data
-    "ssms": true, // include image donor derived materials SSMs data
-    "ssmsTranscriptsFull": true, // include affected transcripts data in SSMs
+    "sms": true, // include image donor derived materials SMs data
+    "smsTranscriptsFull": true, // include affected transcripts data in SMs
     "geneExp": true, // include image donor derived materials bulk gene expressions data
 }
 ```
@@ -69,7 +69,7 @@ Data download [model](./api-domain-models-download.md).
 - `404` - image not found
 
 
-## POST: [api/images/{type}](http://localhost:5002/api/images/mri)
+## POST: [api/images/{type}](http://localhost:5002/api/images/mr)
 Search images of given type filtered by search criteria.
 
 ### Parameters
@@ -87,7 +87,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
         "diagnosis": ["Glioblastoma"],
         "age": { "from": 40, "to": 60 }
     },
-    "mri": {
+    "mr": {
         "wholeTumor": { "from": 200, "to": 300 }
     }
 }
@@ -103,7 +103,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 - `403` - missing required permissions
 
 
-## POST: [api/images/{type}/stats](http://localhost:5002/api/images/mri/stats)
+## POST: [api/images/{type}/stats](http://localhost:5002/api/images/mr/stats)
 Gather statistics about images filtered by search criteria.
 
 ### Parameters
@@ -120,7 +120,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
         "diagnosis": ["Glioblastoma"],
         "age": { "from": 40, "to": 60 }
     },
-    "mri": {
+    "mr": {
         "wholeTumor": { "from": 200, "to": 300 }
     }
 }
@@ -136,7 +136,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 - `403` - missing required permissions
 
 
-## POST: [api/images/{type}/data](http://localhost:5002/api/images/mri/data)
+## POST: [api/images/{type}/data](http://localhost:5002/api/images/mr/data)
 Download data for images filtered by search criteria.
 
 ### Parameters
@@ -154,7 +154,7 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
             "diagnosis": ["Glioblastoma"],
             "age": { "from": 40, "to": 60 }
         },
-        "mri": {
+        "mr": {
             "wholeTumor": { "from": 200, "to": 300 }
         }
     },
@@ -163,10 +163,10 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
         "donors": true,
         "clinical": true,
         "treatments": true,
-        "mris": true,
+        "mrs": true,
         "specimens": true,
-        "ssms": true,
-        "ssmsTranscriptsFull": true,
+        "sms": true,
+        "smsTranscriptsFull": true,
         "geneExp": true,
     }
 }
