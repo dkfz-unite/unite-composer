@@ -4,7 +4,7 @@ public class AnalysisDataResource
 {
     public bool? Exp { get; set; }
     public bool? ExpSc { get; set; }
-    public bool? Ssm { get; set; }
+    public bool? Sm { get; set; }
     public bool? Cnv { get; set; }
     public bool? Sv { get; set; }
     public bool? Meth { get; set; }
@@ -18,7 +18,7 @@ public class AnalysisDataResource
         {
             Exp = index.Exp ? true : null,
             ExpSc = index.ExpSc ? true : null,
-            Ssm = index.Ssm ? true : null,
+            Sm = index.Sm ? true : null,
             Cnv = index.Cnv ? true : null,
             Sv = index.Sv ? true : null,
             Meth = index.Meth ? true : null

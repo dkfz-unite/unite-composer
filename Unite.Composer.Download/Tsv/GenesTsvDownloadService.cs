@@ -1,7 +1,7 @@
 using System.IO.Compression;
-using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
+using Unite.Composer.Download.Tsv.Models;
 using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens.Enums;
@@ -54,8 +54,8 @@ public class GenesTsvDownloadService : TsvDownloadService
             if (criteria.Treatments == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForGenes(ids));
 
-            if (criteria.Mris == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetDataForGenes(ids, ImageType.MRI));
+            if (criteria.Mrs == true)
+                await CreateArchiveEntry(archive, TsvFileNames.Mrs, _imagesTsvService.GetDataForGenes(ids, ImageType.MR));
 
             if (criteria.Specimens == true)
             {
@@ -79,12 +79,12 @@ public class GenesTsvDownloadService : TsvDownloadService
                 await CreateArchiveEntry(archive, TsvFileNames.XenograftsDrugs, _specimensTsvService.GetDrugsScreeningsDataForGenes(ids, SpecimenType.Xenograft));
             }
 
-            if (criteria.Ssms == true)
+            if (criteria.Sms == true)
             {
-                if (criteria.SsmsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullDataForGenes(ids, VariantType.SSM));
+                if (criteria.SmsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetFullDataForGenes(ids, VariantType.SM));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetDataForGenes(ids, VariantType.SSM, criteria.SsmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetDataForGenes(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
             }
 
             if (criteria.Cnvs == true)

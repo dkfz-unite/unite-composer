@@ -6,7 +6,7 @@ using Unite.Data.Entities.Genome.Enums;
 using Unite.Data.Entities.Genome.Analysis.Rna;
 using Unite.Essentials.Extensions;
 
-using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
 using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
 using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
@@ -38,7 +38,7 @@ public class GenomicProfileService
 
         var profile = new GenomicRangesData(ranges)
         {
-            HasSsms = HasSsms(specimenId),
+            HasSms = HasSms(specimenId),
             HasCnvs = HasCnvs(specimenId),
             HasSvs = HasSvs(specimenId),
             HasExps = HasExpressions(specimenId)
@@ -46,7 +46,7 @@ public class GenomicProfileService
 
         await Task.WhenAll(
             LoadGenes(startChr, start, endChr, end, ranges[0].Length).ContinueWith(task => profile.Genes = GetGenesData(task.Result, ref ranges)),
-            LoadSsms(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Ssms = GetSsmsData(task.Result, ref ranges)),
+            LoadSms(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Sms = GetSmsData(task.Result, ref ranges)),
             LoadCnvs(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Cnvs = GetCnvsData(task.Result, ref ranges)),
             LoadSvs(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Svs = GetSvsData(task.Result, ref ranges)),
             LoadExpressions(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Exps = GetExpressionsData(task.Result, ref ranges))
@@ -92,9 +92,9 @@ public class GenomicProfileService
         return data.Values.ToArrayOrNull();
     }
 
-    private static Models.Profile.SsmsData[] GetSsmsData(in SSM.Variant[] variants, ref GenomicRange[] ranges)
+    private static Models.Profile.SmsData[] GetSmsData(in SM.Variant[] variants, ref GenomicRange[] ranges)
     {
-        var data = new List<Models.Profile.SsmsData>();
+        var data = new List<Models.Profile.SmsData>();
         
         foreach (var range in ranges)
         {
@@ -106,9 +106,9 @@ public class GenomicProfileService
             ).ToArray();
 
             if (rangeVariants.Length > 1)
-                data.Add(new Models.Profile.SsmsData([range.Index, range.Index], rangeVariants));
+                data.Add(new Models.Profile.SmsData([range.Index, range.Index], rangeVariants));
             else if (rangeVariants.Length == 1)
-                data.Add(new Models.Profile.SsmsData([range.Index, range.Index], rangeVariants[0]));
+                data.Add(new Models.Profile.SmsData([range.Index, range.Index], rangeVariants[0]));
         }
 
         return data.ToArrayOrNull();
@@ -228,11 +228,11 @@ public class GenomicProfileService
             .ToArrayAsync();
     }
 
-    private async Task<SSM.Variant[]> LoadSsms(int specimenId, int startChr, int start, int endChr, int end)
+    private async Task<SM.Variant[]> LoadSms(int specimenId, int startChr, int start, int endChr, int end)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return await dbContext.Set<SSM.VariantEntry>().AsNoTracking()
+        return await dbContext.Set<SM.VariantEntry>().AsNoTracking()
             .Include(entry => entry.Entity.AffectedTranscripts)
                 .ThenInclude(transcript => transcript.Feature)
             .Where(entry => entry.Sample.SpecimenId == specimenId)
@@ -284,11 +284,11 @@ public class GenomicProfileService
             .ToArrayAsync();
     }
 
-    private bool HasSsms(int specimenId)
+    private bool HasSms(int specimenId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return dbContext.Set<SSM.VariantEntry>()
+        return dbContext.Set<SM.VariantEntry>()
             .AsNoTracking()
             .Any(entry => entry.Sample.SpecimenId == specimenId);
     }

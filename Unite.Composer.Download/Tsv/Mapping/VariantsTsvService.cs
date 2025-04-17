@@ -6,7 +6,7 @@ using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Essentials.Tsv;
 
-using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
 using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
 using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
@@ -20,8 +20,8 @@ public class VariantsTsvService : TsvServiceBase
 
     public async Task<string> GetData(IEnumerable<int> ids, VariantType typeId, bool transcripts = false)
     {
-        if (typeId == VariantType.SSM)
-            return await GetData<SSM.VariantEntry, SSM.Variant>(ids, transcripts);
+        if (typeId == VariantType.SM)
+            return await GetData<SM.VariantEntry, SM.Variant>(ids, transcripts);
         else if (typeId == VariantType.CNV)
             return await GetData<CNV.VariantEntry, CNV.Variant>(ids, transcripts);
         else if (typeId == VariantType.SV)
@@ -61,8 +61,8 @@ public class VariantsTsvService : TsvServiceBase
 
     public async Task<string> GetFullData(IEnumerable<int> ids, VariantType typeId)
     {
-        if (typeId == VariantType.SSM)
-            return await GetFullData<SSM.VariantEntry, SSM.Variant>(ids);
+        if (typeId == VariantType.SM)
+            return await GetFullData<SM.VariantEntry, SM.Variant>(ids);
         else if (typeId == VariantType.CNV)
             return await GetFullData<CNV.VariantEntry, CNV.Variant>(ids);
         else if (typeId == VariantType.SV)
@@ -121,8 +121,8 @@ public class VariantsTsvService : TsvServiceBase
     {
         var type = typeof(TV);
 
-        if (type == typeof(SSM.Variant))
-            return await GetFullSsmsData(ids);
+        if (type == typeof(SM.Variant))
+            return await GetFullSmsData(ids);
         else if (type == typeof(CNV.Variant))
             return await GetFullCnvsData(ids);
         else if (type == typeof(SV.Variant))
@@ -131,19 +131,19 @@ public class VariantsTsvService : TsvServiceBase
             return null;
     }
 
-    private async Task<string> GetFullSsmsData(IEnumerable<int> ids)
+    private async Task<string> GetFullSmsData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var entities = await CreateQuery<SSM.VariantEntry, SSM.Variant>(dbContext, true)
+        var entities = await CreateQuery<SM.VariantEntry, SM.Variant>(dbContext, true)
             .Where(entity => ids.Contains(entity.EntityId))
             .ToArrayAsync();
 
         var entries = entities
-            .SelectMany(entity => entity.Entity.AffectedTranscripts, (vo, vat) => new SsmEntryWithAffectedTranscript(vo, vat))
+            .SelectMany(entity => entity.Entity.AffectedTranscripts, (vo, vat) => new SmEntryWithAffectedTranscript(vo, vat))
             .ToArray();
 
-        var map = new ClassMap<SsmEntryWithAffectedTranscript>().MapVariantEntries();
+        var map = new ClassMap<SmEntryWithAffectedTranscript>().MapVariantEntries();
         
         return Write(entries, map);
     }
@@ -185,8 +185,8 @@ public class VariantsTsvService : TsvServiceBase
 
     private async Task<int[]> GetIdsForDonors(IEnumerable<int> ids, VariantType typeId)
     {
-        if (typeId == VariantType.SSM)
-            return await _donorsRepository.GetRelatedVariants<SSM.Variant>(ids);
+        if (typeId == VariantType.SM)
+            return await _donorsRepository.GetRelatedVariants<SM.Variant>(ids);
         else if (typeId == VariantType.CNV)
             return await _donorsRepository.GetRelatedVariants<CNV.Variant>(ids);
         else if (typeId == VariantType.SV)
@@ -197,8 +197,8 @@ public class VariantsTsvService : TsvServiceBase
 
     private async Task<int[]> GetIdsForImages(IEnumerable<int> ids, VariantType typeId)
     {
-        if (typeId == VariantType.SSM)
-            return await _imagesRepository.GetRelatedVariants<SSM.Variant>(ids);
+        if (typeId == VariantType.SM)
+            return await _imagesRepository.GetRelatedVariants<SM.Variant>(ids);
         else if (typeId == VariantType.CNV)
             return await _imagesRepository.GetRelatedVariants<CNV.Variant>(ids);
         else if (typeId == VariantType.SV)
@@ -209,8 +209,8 @@ public class VariantsTsvService : TsvServiceBase
 
     private async Task<int[]> GetIdsForSpecimens(IEnumerable<int> ids, VariantType typeId)
     {
-        if (typeId == VariantType.SSM)
-            return await _specimensRepository.GetRelatedVariants<SSM.Variant>(ids);
+        if (typeId == VariantType.SM)
+            return await _specimensRepository.GetRelatedVariants<SM.Variant>(ids);
         else if (typeId == VariantType.CNV)
             return await _specimensRepository.GetRelatedVariants<CNV.Variant>(ids);
         else if (typeId == VariantType.SV)
@@ -221,8 +221,8 @@ public class VariantsTsvService : TsvServiceBase
 
     private async Task<int[]> GetIdsForGenes(IEnumerable<int> ids, VariantType typeId)
     {
-        if (typeId == VariantType.SSM)
-            return await _genesRepository.GetRelatedVariants<SSM.Variant>(ids);
+        if (typeId == VariantType.SM)
+            return await _genesRepository.GetRelatedVariants<SM.Variant>(ids);
         else if (typeId == VariantType.CNV)
             return await _genesRepository.GetRelatedVariants<CNV.Variant>(ids);
         else if (typeId == VariantType.SV)
@@ -277,7 +277,7 @@ public class VariantsTsvService : TsvServiceBase
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
-        if (query is IQueryable<SSM.VariantEntry> ssmQuery)
+        if (query is IQueryable<SM.VariantEntry> ssmQuery)
             return IncludeAffectedFeatures(ssmQuery, transcripts) as IQueryable<TVE>;
         else if (query is IQueryable<CNV.VariantEntry> cnvQuery)
             return IncludeAffectedFeatures(cnvQuery, transcripts) as IQueryable<TVE>;
@@ -287,9 +287,9 @@ public class VariantsTsvService : TsvServiceBase
             return query;
     }
 
-    private static IQueryable<SSM.VariantEntry> IncludeAffectedFeatures(IQueryable<SSM.VariantEntry> query, bool transcripts)
+    private static IQueryable<SM.VariantEntry> IncludeAffectedFeatures(IQueryable<SM.VariantEntry> query, bool transcripts)
     {
-        IQueryable<SSM.VariantEntry> includeQuery = query;
+        IQueryable<SM.VariantEntry> includeQuery = query;
 
         if (transcripts)
         {

@@ -25,10 +25,10 @@ internal static class DonorsMappingExtensions
     {
         return map
             .MapDonor(entity => entity.Donor)
-            .Map(entity => entity.GenderId, "sex")
-            .Map(entity => entity.Age, "age")
+            .Map(entity => entity.SexId, "sex")
+            .Map(entity => entity.EnrollmentDate, "enrollment_date")
+            .Map(entity => entity.EnrollmentAge, "enrollment_age")
             .Map(entity => entity.Diagnosis, "diagnosis")
-            .Map(entity => entity.DiagnosisDate, "diagnosis_date")
             .Map(entity => entity.PrimarySite.Value, "primary_site")
             .Map(entity => entity.Localization.Value, "localization")
             .Map(entity => entity.VitalStatus, "vital_status")
@@ -37,8 +37,8 @@ internal static class DonorsMappingExtensions
             .Map(entity => entity.ProgressionStatus, "progression_status")
             .Map(entity => entity.ProgressionStatusChangeDate, "progression_status_change_date")
             .Map(entity => entity.ProgressionStatusChangeDay, "progression_status_change_day")
-            .Map(entity => entity.KpsBaseline, "kps_baseline")
-            .Map(entity => entity.SteroidsBaseline, "steroids_baseline");
+            .Map(entity => entity.SteroidsReactive, "steroids_reactive")
+            .Map(entity => entity.Kps, "kps");
     }
 
     public static ClassMap<Treatment> MapTreatments(this ClassMap<Treatment> map)

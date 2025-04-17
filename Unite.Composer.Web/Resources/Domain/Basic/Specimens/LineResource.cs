@@ -16,9 +16,9 @@ public class LineResource
     public string DepositorEstablishment { get; set; }
     public DateOnly? EstablishmentDate { get; set; }
 
-    public string PubMedLink { get; set; }
+    public string PubmedLink { get; set; }
     public string AtccLink { get; set; }
-    public string ExPasyLink { get; set; }
+    public string ExpasyLink { get; set; }
 
 
     public LineResource(LineIndex index)
@@ -35,8 +35,8 @@ public class LineResource
         DepositorEstablishment = index.DepositorEstablishment;
         EstablishmentDate = index.EstablishmentDate;
 
-        PubMedLink = index.PubMedLink;
+        PubmedLink = index.PubmedLink;
         AtccLink = index.AtccLink;
-        ExPasyLink = index.ExPasyLink;
+        ExpasyLink = index.ExpasyLink;
     }
 }

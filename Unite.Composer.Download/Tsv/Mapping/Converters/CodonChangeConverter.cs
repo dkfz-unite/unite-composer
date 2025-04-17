@@ -1,5 +1,5 @@
 using Unite.Composer.Download.Tsv.Mapping.Models;
-using Unite.Data.Helpers.Genome.Dna.Ssm;
+using Unite.Data.Helpers.Genome.Dna.Sm;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;
@@ -13,7 +13,7 @@ internal class CodonChangeConverter : IConverter<string>
 
     public string Convert(object value, object row)
     {
-        var model = (SsmEntryWithAffectedTranscript)row;
+        var model = (SmEntryWithAffectedTranscript)row;
         var change = (string)value;
         
         return CodonChangeCodeGenerator.Generate(model.AffectedFeature.CDSStart, model.AffectedFeature.CDSEnd, change);

@@ -4,25 +4,25 @@ using Unite.Data.Context;
 
 namespace Unite.Composer.Data.Genome;
 
-public class SsmDataService
+public class SmDataService
 {
     private readonly DomainDbContext _dbContext;
 
 
-    public SsmDataService(DomainDbContext dbContext)
+    public SmDataService(DomainDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
 
     /// <summary>
-    /// Retrieves protein coding transcripts affected by given mutation (SSM).
+    /// Retrieves protein coding transcripts affected by given mutation (SM).
     /// </summary>
-    /// <param name="id">Mutation (SSM) identifier.</param>
+    /// <param name="id">Mutation (SM) identifier.</param>
     /// <returns>Array of transcripts.</returns>    
     public async Task<Transcript[]> GetTranslations(int id)
     {
-        var entities = await _dbContext.Set<Unite.Data.Entities.Genome.Analysis.Dna.Ssm.AffectedTranscript>()
+        var entities = await _dbContext.Set<Unite.Data.Entities.Genome.Analysis.Dna.Sm.AffectedTranscript>()
             .AsNoTracking()
             .Include(affectedTranscript => affectedTranscript.Feature.Protein)
             .Where(affectedTranscript => affectedTranscript.ProteinChange != null)

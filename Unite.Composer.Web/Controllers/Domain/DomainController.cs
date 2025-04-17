@@ -21,8 +21,8 @@ public abstract class DomainController : Controller
     {
         if (string.IsNullOrWhiteSpace(type))
             return null;
-        else if (type.Equals(ImageType.MRI, _comparison))
-            return [ImageType.MRI];
+        else if (type.Equals(ImageType.MR, _comparison))
+            return [ImageType.MR];
         else if (type.Equals(ImageType.CT, _comparison))
             return [ImageType.CT];
         else
@@ -47,8 +47,8 @@ public abstract class DomainController : Controller
 
     protected static Unite.Data.Entities.Images.Enums.ImageType ConvertImageType(string type)
     {
-        if (string.Equals(type, ImageType.MRI, _comparison))
-            return Unite.Data.Entities.Images.Enums.ImageType.MRI;
+        if (string.Equals(type, ImageType.MR, _comparison))
+            return Unite.Data.Entities.Images.Enums.ImageType.MR;
         else if (string.Equals(type, ImageType.CT, _comparison))
             return Unite.Data.Entities.Images.Enums.ImageType.CT;
         else

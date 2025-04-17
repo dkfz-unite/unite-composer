@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
 using Unite.Data.Entities.Genome.Analysis.Dna;
@@ -7,9 +6,10 @@ using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens.Enums;
 
-using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
 using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
 using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
+using Unite.Composer.Download.Tsv.Models;
 
 namespace Unite.Composer.Download.Tsv;
 
@@ -46,8 +46,8 @@ public class VariantsTsvDownloadService : TsvDownloadService
 
     public async Task<byte[]> Download(IEnumerable<int> ids, VariantType type, DataTypesCriteria criteria)
     {
-        if (type == VariantType.SSM)
-            return await Download<SSM.Variant>(ids, type, criteria);
+        if (type == VariantType.SM)
+            return await Download<SM.Variant>(ids, type, criteria);
         else if (type == VariantType.CNV)
             return await Download<CNV.Variant>(ids, type, criteria);
         else if (type == VariantType.SV)
@@ -73,8 +73,8 @@ public class VariantsTsvDownloadService : TsvDownloadService
             if (dataTypes.Treatments == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForVariants<TV>(ids));
 
-            if (dataTypes.Mris == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetDataForVariants<TV>(ids, ImageType.MRI));
+            if (dataTypes.Mrs == true)
+                await CreateArchiveEntry(archive, TsvFileNames.Mrs, _imagesTsvService.GetDataForVariants<TV>(ids, ImageType.MR));
 
             if (dataTypes.Specimens == true)
             {
@@ -98,13 +98,13 @@ public class VariantsTsvDownloadService : TsvDownloadService
                 await CreateArchiveEntry(archive, TsvFileNames.XenograftsDrugs, _specimensTsvService.GetDrugsScreeningsDataForVariants<TV>(ids, SpecimenType.Xenograft));
             }
 
-            if (dataTypes.Ssms == true && type == VariantType.SSM)
+            if (dataTypes.Sms == true && type == VariantType.SM)
             {
                 // TODO: Find intersecting variants
-                if (dataTypes.SsmsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullData(ids, VariantType.SSM));
+                if (dataTypes.SmsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetFullData(ids, VariantType.SM));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetData(ids, VariantType.SSM, dataTypes.SsmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetData(ids, VariantType.SM, dataTypes.SmsTranscriptsSlim ?? false));
             }
 
             if (dataTypes.Cnvs == true && type == VariantType.CNV)
