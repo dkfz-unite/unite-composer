@@ -19,7 +19,7 @@ namespace Unite.Composer.Web.Controllers.Domain.Variants;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class SsmController : DomainController
+public class SmController : DomainController
 {
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<VariantIndex> _variantsSearchService;
@@ -27,7 +27,7 @@ public class SsmController : DomainController
     private readonly VariantsTsvDownloadService _tsvDownloadService;
 
 
-    public SsmController(
+    public SmController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<VariantIndex> variantsSearchService,
         SmDataService smDataService,
