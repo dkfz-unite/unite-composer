@@ -35,7 +35,7 @@ public static class ConfigurationExtensions
 
         services.AddTransient<DrugScreeningService>();
         services.AddTransient<GeneDataService>();
-        services.AddTransient<SsmDataService>();
+        services.AddTransient<SmDataService>();
         services.AddTransient<SubmissionsService>();
         services.AddTransient<DatasetsService>();
         services.AddTransient<DatasetService>();

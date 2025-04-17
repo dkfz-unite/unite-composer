@@ -8,7 +8,7 @@ public class ImageResource
     public string ReferenceId { get; set; }
     public string Type { get; set; }
 
-    public MriImageResource Mri { get; set; }
+    public MrImageResource Mr { get; set; }
 
 
     public ImageResource(ImageIndex index)
@@ -17,7 +17,7 @@ public class ImageResource
         ReferenceId = index.ReferenceId;
         Type = index.Type;
 
-        if (index.Mri != null)
-            Mri = new MriImageResource(index.Mri);
+        if (index.Mr != null)
+            Mr = new MrImageResource(index.Mr);
     }
 }

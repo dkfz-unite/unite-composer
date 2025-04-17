@@ -12,30 +12,30 @@ using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
 using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
-using VariantIndex = Unite.Indices.Entities.Variants.SsmIndex;
+using VariantIndex = Unite.Indices.Entities.Variants.SmIndex;
 
-namespace Unite.Composer.Web.Controllers.Domain.Mutations;
+namespace Unite.Composer.Web.Controllers.Domain.Variants;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class SsmController : DomainController
+public class SmController : DomainController
 {
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<VariantIndex> _variantsSearchService;
-    private readonly SsmDataService _ssmDataService;
+    private readonly SmDataService _variantsDataService;
     private readonly VariantsTsvDownloadService _tsvDownloadService;
 
 
-    public SsmController(
+    public SmController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<VariantIndex> variantsSearchService,
-        SsmDataService ssmDataService,
+        SmDataService smDataService,
         VariantsTsvDownloadService tsvDownloadService)
     {
         _donorsSearchService = donorsSearchService;
         _variantsSearchService = variantsSearchService;
-        _ssmDataService = ssmDataService;
+        _variantsDataService = smDataService;
         _tsvDownloadService = tsvDownloadService;
     }
 
@@ -54,7 +54,7 @@ public class SsmController : DomainController
     public async Task<IActionResult> SearchDonors(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Ssm = (criteria.Ssm ?? new SsmCriteria()) with { Id = [id] };
+        criteria.Sm = (criteria.Sm ?? new SmCriteria()) with { Id = [id] };
 
         var result = await _donorsSearchService.Search(criteria);
 
@@ -64,7 +64,7 @@ public class SsmController : DomainController
     [HttpGet("{id}/translations")]
     public async Task<IActionResult> GetTranslations(int id)
     {
-        var translations = await _ssmDataService.GetTranslations(id);
+        var translations = await _variantsDataService.GetTranslations(id);
 
         return Ok(translations);
     }
@@ -72,20 +72,20 @@ public class SsmController : DomainController
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody]SingleDownloadModel model)
     {
-        var bytes = await _tsvDownloadService.Download(id, VariantType.SSM, model.Data);
+        var bytes = await _tsvDownloadService.Download(id, VariantType.SM, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
 
 
-    private static SsmResource From(VariantIndex index)
+    private static SmResource From(VariantIndex index)
     {
         if (index == null)
         {
             return null;
         }
 
-        return new SsmResource(index, true);
+        return new SmResource(index, true);
     }
 
     private static SearchResult<DonorResource> From(SearchResult<DonorIndex> searchResult)

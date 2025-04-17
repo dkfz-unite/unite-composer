@@ -33,25 +33,25 @@ Specifies which connected data do we want to download for one or several entries
 - Type: _Boolean_
 - Example: `false`
 
-**`Mris`** - Download related MR Images data.
+**`Mrs`** - Download related MR Images data.
 - Note: MR images are connected with donor derived materials only.
 - Type: _Boolean_
 - Example: `false`
 
-**`Ssms`** - Download related simple somatic mutations data.
+**`Sms`** - Download related simple mutations data.
 - Type: _Boolean_
 - Example: `true`
 
-**`SsmsTranscriptsSlim`** - Include simple somatic mutation affected gene names.
-- Note: SSMs data will include additional column with affected gene names.
+**`SmsTranscriptsSlim`** - Include simple mutation affected gene names.
+- Note: SMs data will include additional column with affected gene names.
 - Type: _Boolean_
-- Limitations: Available only if `Ssms` is set to `true` and `SsmsTranscriptsFull` is set to `false`.
+- Limitations: Available only if `Sms` is set to `true` and `SmsTranscriptsFull` is set to `false`.
 - Example: `false`
 
-**`SsmsTranscriptsFull`** - Include simple somatic mutation affected gene transcripts.
-- Note: SSMs data will include additional columns specifying variant affected transcripts. There can be multiple transcripts per variant, so final data size grows fast.
+**`SmsTranscriptsFull`** - Include simple mutation affected gene transcripts.
+- Note: SMs data will include additional columns specifying variant affected transcripts. There can be multiple transcripts per variant, so final data size grows fast.
 - Type: _Boolean_
-- Limitations: Available only if `Ssms` is set to `true` and `SsmsTranscriptsSlim` is set to `false`.
+- Limitations: Available only if `Sms` is set to `true` and `SmsTranscriptsSlim` is set to `false`.
 - Example: `true`
 
 **`Cnvs`** - Download related copy number variants data.

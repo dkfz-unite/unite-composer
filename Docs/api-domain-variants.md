@@ -7,7 +7,7 @@ Allows to retrieve information about variants and their data.
 
 ## Variant Types
 Variants are classified by following types:
-- `SSM` - simple somatic mutation.
+- `SM` - simple mutation.
 - `CNV` - copy number variant.
 - `SV` - structural variant.
 
@@ -72,7 +72,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 
 
 ## GET: [api/variant/{id}/translations](http://localhost:5002/api/variant/1/translations)
-Load translations of a gene affected by the variant (available for SSMs only).
+Load translations of a gene affected by the variant (available for SMs only).
 
 ### Parameters
 - `id` - variant id.
@@ -104,8 +104,8 @@ Data download [model](./api-domain-models-download.md).
     "clinical": true, // include variant affected donors clinical data
     "treatments": true, // include variant affected donors treatments data
     "specimens": true, // include variant affected specimens data
-    "ssms": true, // include SSMs data
-    "ssmsTranscriptsFull": true // include affected transcripts data in SSMs
+    "sms": true, // include SMs data
+    "smsTranscriptsFull": true // include affected transcripts data in SMs
 }
 ```
 
@@ -120,7 +120,7 @@ Data download [model](./api-domain-models-download.md).
 - `404` - variant not found
 
 
-## POST: [api/variants/{type}](http://localhost:5002/api/variants/ssm)
+## POST: [api/variants/{type}](http://localhost:5002/api/variants/sm)
 Search variants of given type filtered by search criteria.
 
 ### Parameters
@@ -138,7 +138,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
         "diagnosis": ["Glioblastoma"],
         "age": { "from": 40, "to": 60 }
     },
-    "ssm": {
+    "sm": {
         "chromosome": [10, 11],
         "impact": ["High", "Moderate"]
     }
@@ -155,7 +155,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 - `403` - missing required permissions
 
 
-## POST: [api/variants/{type}/stats](http://localhost:5002/api/variants/ssm/stats)
+## POST: [api/variants/{type}/stats](http://localhost:5002/api/variants/sm/stats)
 Gather statistics about variants of given type filtered by search criteria.
 
 ### Parameters
@@ -171,7 +171,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
         "diagnosis": ["Glioblastoma"],
         "age": { "from": 40, "to": 60 }
     },
-    "ssm": {
+    "sm": {
         "chromosome": [10, 11],
         "impact": ["High", "Moderate"]
     }
@@ -188,7 +188,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 - `403` - missing required permissions
 
 
-## POST: [api/variants/{type}/data](http://localhost:5002/api/variants/ssm/data)
+## POST: [api/variants/{type}/data](http://localhost:5002/api/variants/sm/data)
 Download data of variants of given type filtered by search criteria.
 
 ### Parameters
@@ -206,7 +206,7 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
             "diagnosis": ["Glioblastoma"],
             "age": { "from": 40, "to": 60 }
         },
-        "ssm": {
+        "sm": {
             "chromosome": [10, 11],
             "impact": ["High", "Moderate"]
         }
@@ -216,8 +216,8 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
         "clinical": true,
         "treatments": true,
         "specimens": true,
-        "ssms": true,
-        "ssmsTranscriptsFull": true
+        "sms": true,
+        "smsTranscriptsFull": true
     }
 }
 ```

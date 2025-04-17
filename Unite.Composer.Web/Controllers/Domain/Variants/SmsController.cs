@@ -11,20 +11,20 @@ using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Criteria;
 
-namespace Unite.Composer.Web.Controllers.Domain.Mutations;
+namespace Unite.Composer.Web.Controllers.Domain.Variants;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class SsmsController : DomainController
+public class SmsController : DomainController
 {
-    private readonly ISearchService<SsmIndex> _searchService;
+    private readonly ISearchService<SmIndex> _searchService;
     private readonly VariantsTsvDownloadService _tsvDownloadService;
     private readonly TaskStatsService _taskStatsService;
 
 
-    public SsmsController(
-        ISearchService<SsmIndex> searchService,
+    public SmsController(
+        ISearchService<SmIndex> searchService,
         VariantsTsvDownloadService tsvDownloadService,
         TaskStatsService taskStatsService)
     {
@@ -62,7 +62,7 @@ public class SsmsController : DomainController
         var stats = await _searchService.Stats(criteria);
 
         var originalIds = stats.Keys.Cast<int>();
-        var bytes = await _tsvDownloadService.Download(originalIds, VariantType.SSM, model.Data);
+        var bytes = await _tsvDownloadService.Download(originalIds, VariantType.SM, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
     }
@@ -70,18 +70,18 @@ public class SsmsController : DomainController
     [HttpGet("status")]
     public async Task<IActionResult> Status()
     {
-        var status = await _taskStatsService.GetStatus(IndexingTaskType.SSM);
+        var status = await _taskStatsService.GetStatus(IndexingTaskType.SM);
 
         return Ok(status);
     }
 
     
-    private static SearchResult<SsmResource> From(SearchResult<SsmIndex> searchResult)
+    private static SearchResult<SmResource> From(SearchResult<SmIndex> searchResult)
     {
-        return new SearchResult<SsmResource>()
+        return new SearchResult<SmResource>()
         {
             Total = searchResult.Total,
-            Rows = searchResult.Rows.Select(index => new SsmResource(index)).ToArray()
+            Rows = searchResult.Rows.Select(index => new SmResource(index)).ToArray()
         };
     }
 }

@@ -13,19 +13,19 @@ Domain data types:
 
 For example:
 - For `Donors`:
-    - Categories with DNA and RNA data like `Ssms` or `GeneExp` show, whether any specimen of the donor has this data available.
+    - Categories with DNA and RNA data like `Sms` or `GeneExp` show, whether any specimen of the donor has this data available.
 - For `Images`:
-    <!-- - Categories other than image type are not available: `Cts` are not available for `Mris`. -->
+    <!-- - Categories other than image type are not available: `Cts` are not available for `Mrs`. -->
     - Categories `Lines`, `Organoids`, `Xenografts` and related are not available, as image data is connected onle with donor derived materials.
-    - Categories with DNA and RNA data like `Ssms` or `GeneExp` show, whether any image donor material has this data available.
+    - Categories with DNA and RNA data like `Sms` or `GeneExp` show, whether any image donor material has this data available.
 - For `Specimens`:
     - Categories other than specimen type are not available: `Lines`, `Organoids`, `Xenografts` are not available for `Materials`.
 - For `Genes`:
     - Category `Donors` shows whether any donor in his/her specimens has gene either expressed or affected by any variant.
-    - Categories wth DNA data like `Ssms` or `Cnvs` show, whether any variant is affecting the gene in any specimen.
+    - Categories wth DNA data like `Sms` or `Cnvs` show, whether any variant is affecting the gene in any specimen.
     - Categories with RNA data like `GeneExp` show gene expression levels in different specimens.
 - For `Variants`:
-    - Categories other than variant type are not available: `Cnvs`, `Svs` are not available for `Ssms`.
+    - Categories other than variant type are not available: `Cnvs`, `Svs` are not available for `Sms`.
     - Category `Donors` shows whether any donor in his/her specimens has this variant.
 
 
@@ -47,7 +47,7 @@ For example:
 - Type: _Boolean_
 - Example: `true`
 
-**`Mris`** - Whether MR images data is available.
+**`Mrs`** - Whether MR images data is available.
 - Type: _Boolean_
 - Example: `true`
 
@@ -103,7 +103,7 @@ For example:
 - Type: _Boolean_
 - Example: `true`
 
-**`Ssms`** - Whether simple somatic mutations data is available.
+**`Sms`** - Whether simple mutations data is available.
 - Type: _Boolean_
 - Example: `true`
 

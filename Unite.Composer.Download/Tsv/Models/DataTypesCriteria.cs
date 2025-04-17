@@ -1,4 +1,4 @@
-namespace Unite.Composer.Download.Models;
+namespace Unite.Composer.Download.Tsv.Models;
 
 public record DataTypesCriteria
 {
@@ -11,12 +11,12 @@ public record DataTypesCriteria
     public bool? Interventions { get; set; }
     public bool? Drugs { get; set; }
 
-    public bool? Mris { get; set; }
+    public bool? Mrs { get; set; }
     public bool? Cts { get; set; }
 
-    public bool? Ssms { get; set; }
-    public bool? SsmsTranscriptsSlim { get; set; }
-    public bool? SsmsTranscriptsFull { get; set; }
+    public bool? Sms { get; set; }
+    public bool? SmsTranscriptsSlim { get; set; }
+    public bool? SmsTranscriptsFull { get; set; }
     public bool? Cnvs { get; set; }
     public bool? CnvsTranscriptsSlim { get; set; }
     public bool? CnvsTranscriptsFull { get; set; }

@@ -6,8 +6,8 @@ public class DrugScreeningModel
     public double? Gof;
     public double? Dss;
     public double? DssS;
-    public double? MinDose;
-    public double? MaxDose;
+    public double? DoseMin;
+    public double? DoseMax;
     public double? Dose25;
     public double? Dose50;
     public double? Dose75;

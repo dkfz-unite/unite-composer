@@ -16,8 +16,8 @@ public class ImagesTsvService : TsvServiceBase
 
     public async Task<string> GetData(IEnumerable<int> ids, ImageType typeId)
     {
-        if (typeId == ImageType.MRI)
-            return await GetMriImagesData(ids);
+        if (typeId == ImageType.MR)
+            return await GetMrImagesData(ids);
         
         return null;
     }
@@ -52,23 +52,23 @@ public class ImagesTsvService : TsvServiceBase
     }
 
 
-    private async Task<string> GetMriImagesData(IEnumerable<int> ids)
+    private async Task<string> GetMrImagesData(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var entities = await CreateMriImagesQuery(dbContext)
+        var entities = await CreateMrImagesQuery(dbContext)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 
-        var map = new ClassMap<Image>().MapMriImages();
+        var map = new ClassMap<Image>().MapMrImages();
 
         return Write(entities, map);
     }
 
-    private static IQueryable<Image> CreateMriImagesQuery(DomainDbContext dbContext)
+    private static IQueryable<Image> CreateMrImagesQuery(DomainDbContext dbContext)
     {
         return dbContext.Set<Image>().AsNoTracking()
             .Include(entity => entity.Donor)
-            .Include(entity => entity.MriImage);
+            .Include(entity => entity.MrImage);
     }
 }

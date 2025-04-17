@@ -66,7 +66,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 - `404` - gene not found
 
 
-## POST: [api/gene/{id}/variants/{type?}](http://localhost:5002/api/gene/1/variants/ssm)
+## POST: [api/gene/{id}/variants/{type?}](http://localhost:5002/api/gene/1/variants/sm)
 Search for variants of given type affecting the gene.
 
 ### Parameters
@@ -74,7 +74,7 @@ Search for variants of given type affecting the gene.
 - `type` - variant [type](#variant-types) or any if not specified.
 
 #### Variant Types
-- `SSM` - simple somatic mutation.
+- `SM` - simple mutation.
 - `CNV` - copy number variant.
 - `SV` - structural variant.
 
@@ -86,7 +86,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 {
     "from": 0,
     "size": 20,
-    "ssm": {
+    "sm": {
         "chromosome": [10, 11],
         "impact": ["High", "Moderate"]
     }
@@ -134,8 +134,8 @@ Data download [model](./api-domain-models-download.md).
 {
     "donors": true, // include gene expressed or affected donors data
     "clinical": true, // include gene expressed or affected donors clinical data
-    "ssms": true, // include gene affecting SSMs data
-    "ssmsTranscriptsFull": true, // include affected transcripts data in SSMs
+    "sms": true, // include gene affecting SMs data
+    "smsTranscriptsFull": true, // include affected transcripts data in SMs
     "cnvs": true, // include gene affecting CNVs data
     "cnvsTranscriptsFull": true, // include affected transcripts data in CNVs
     "svs": true, // include gene affecting SVs data
@@ -173,7 +173,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
     "gene": {
         "symbol": ["TP53", "EGFR"]
     },
-    "ssm": {
+    "sm": {
         "chromosome": [10, 11],
         "impact": ["High", "Moderate"]
     }
@@ -206,7 +206,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
     "gene": {
         "symbol": ["TP53", "EGFR"]
     },
-    "ssm": {
+    "sm": {
         "chromosome": [10, 11],
         "impact": ["High", "Moderate"]
     }
@@ -241,7 +241,7 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
         "gene": {
             "symbol": ["TP53", "EGFR"]
         },
-        "ssm": {
+        "sm": {
             "chromosome": [10, 11],
             "impact": ["High", "Moderate"]
         }
@@ -250,8 +250,8 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
     {
         "donors": true,
         "clinical": true,
-        "ssms": true,
-        "ssmsTranscriptsFull": true,
+        "sms": true,
+        "smsTranscriptsFull": true,
         "cnvs": true,
         "cnvsTranscriptsFull": true,
         "svs": true,

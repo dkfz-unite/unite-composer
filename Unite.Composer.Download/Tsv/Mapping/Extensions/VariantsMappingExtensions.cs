@@ -6,7 +6,7 @@ using Unite.Data.Entities.Genome.Analysis.Dna;
 using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 
-using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
 using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
 using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
@@ -18,7 +18,7 @@ internal static class VariantsMappingExtensions
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
-        if (map is ClassMap<SSM.VariantEntry> ssmMap)
+        if (map is ClassMap<SM.VariantEntry> ssmMap)
             ssmMap.MapVariantEntries(transcripts);
         else if (map is ClassMap<CNV.VariantEntry> cnvMap)
             cnvMap.MapVariantEntries(transcripts);
@@ -28,7 +28,7 @@ internal static class VariantsMappingExtensions
         return map;
     }
 
-    public static ClassMap<SSM.VariantEntry> MapVariantEntries(this ClassMap<SSM.VariantEntry> map, bool transcripts = false)
+    public static ClassMap<SM.VariantEntry> MapVariantEntries(this ClassMap<SM.VariantEntry> map, bool transcripts = false)
     {
         return map.MapSample(entity => entity.Sample)
                   .MapVariant(entity => entity.Entity)
@@ -50,7 +50,7 @@ internal static class VariantsMappingExtensions
     }
 
 
-    public static ClassMap<SsmEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<SsmEntryWithAffectedTranscript> map)
+    public static ClassMap<SmEntryWithAffectedTranscript> MapVariantEntries(this ClassMap<SmEntryWithAffectedTranscript> map)
     {
         return map.MapSample(entry => entry.Entry.Sample)
                   .MapVariant(entry => entry.Entry.Entity)
@@ -84,7 +84,7 @@ internal static class VariantsMappingExtensions
     }
 
 
-    private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, SSM.Variant>> path) where T : class
+    private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, SM.Variant>> path) where T : class
     {
         var chromosomeConverter = new ChromosomeConverter();
 
@@ -137,7 +137,7 @@ internal static class VariantsMappingExtensions
     }
 
 
-    private static ClassMap<SSM.VariantEntry> MapAffectedFeatures(this ClassMap<SSM.VariantEntry> map, bool transcripts = false)
+    private static ClassMap<SM.VariantEntry> MapAffectedFeatures(this ClassMap<SM.VariantEntry> map, bool transcripts = false)
     {
         if (transcripts)
         {
@@ -171,7 +171,7 @@ internal static class VariantsMappingExtensions
     }
 
 
-    private static ClassMap<T> MapAffectedTranscript<T>(this ClassMap<T> map, Expression<Func<T, SSM.AffectedTranscript>> path) where T : class
+    private static ClassMap<T> MapAffectedTranscript<T>(this ClassMap<T> map, Expression<Func<T, SM.AffectedTranscript>> path) where T : class
     {
         var codonChangeConverter = new CodonChangeConverter();
         var proteinChangeConverter = new ProteinChangeConverter();
@@ -204,7 +204,7 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.OverlapPercentage), "overlap_percentage")
             .Map(path.Join(entity => entity.CDNAStart), "cdna_breaking_point")
             .Map(path.Join(entity => entity.CDSStart), "cds_breaking_point")
-            .Map(path.Join(entity => entity.ProteinStart), "protein_breaking_point")
+            .Map(path.Join(entity => entity.AAStart), "protein_breaking_point")
             .Map(path.Join(entity => entity.Effects), "effects", effectsConverter);
     }
 
@@ -223,7 +223,7 @@ internal static class VariantsMappingExtensions
             .Map(path.Join(entity => entity.OverlapPercentage), "overlap_percentage")
             .Map(path.Join(entity => entity.CDNAStart), "cdna_breaking_point")
             .Map(path.Join(entity => entity.CDSStart), "cds_breaking_point")
-            .Map(path.Join(entity => entity.ProteinStart), "protein_breaking_point")
+            .Map(path.Join(entity => entity.AAStart), "protein_breaking_point")
             .Map(path.Join(entity => entity.Effects), "effects", effectsConverter);
     }
 }

@@ -26,8 +26,8 @@ public class SvAffectedTranscriptsConverter : IConverter<IEnumerable<AffectedTra
             .Select(affectedTranscript => new {
                 Gene = affectedTranscript.Feature.Gene.Symbol ?? affectedTranscript.Feature.Gene.StableId,
                 Transcript = affectedTranscript.Feature.Symbol ?? affectedTranscript.Feature.StableId,
-                ProteinStart = affectedTranscript.ProteinStart,
-                ProteinEnd = affectedTranscript.ProteinEnd,
+                ProteinStart = affectedTranscript.AAStart,
+                ProteinEnd = affectedTranscript.AAEnd,
                 Effect = affectedTranscript.Effects.OrderBy(effect => effect.Severity).First()
             })
             .GroupBy(affectedFeature => affectedFeature.Gene);

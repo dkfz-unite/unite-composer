@@ -1,4 +1,4 @@
-using Unite.Composer.Download.Models;
+using Unite.Composer.Download.Tsv.Models;
 using Unite.Indices.Search.Services.Filters.Criteria;
 
 namespace Unite.Composer.Web.Models;
