@@ -4,6 +4,7 @@ using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
+using Unite.Indices.Entities.Basic.Images.Constants;
 using Unite.Indices.Entities.Images;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
@@ -36,7 +37,17 @@ public class ImagesController : DomainController
     [HttpPost("{type}")]
     public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
+        var comparison = StringComparison.InvariantCultureIgnoreCase;
         var criteria = searchCriteria ?? new SearchCriteria();
+
+        // TODO: Find a better way to use data filters without reassignment
+        if (type.Equals(ImageType.MR, comparison))
+            AssignFrom(ref criteria, searchCriteria.Mr, type);
+        // else if (type.Equals(ImageType.CT, comparison))
+        //     AssignFrom(ref criteria, searchCriteria.Ct, type);
+        else
+            AssignFrom(ref criteria, null, type);
+
         criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
 
         var result = await _searchService.Search(criteria);
@@ -87,4 +98,18 @@ public class ImagesController : DomainController
             Rows = searchResult.Rows.Select(index => new ImageResource(index)).ToArray()
         };
     }
+
+    private static void AssignFrom(ref SearchCriteria searchCriteria, ImageCriteria imageCriteria, string type)
+    {
+        searchCriteria.Image = (searchCriteria.Image ?? new ImagesCriteria()) with
+        {
+            ImageType = DetectImageType(type),
+            HasExp = imageCriteria?.HasExp,
+            HasExpSc = imageCriteria?.HasExpSc,
+            HasSms = imageCriteria?.HasSms,
+            HasCnvs = imageCriteria?.HasCnvs,
+            HasSvs = imageCriteria?.HasSvs,
+            HasMeth = imageCriteria?.HasMeth
+        };
+    } 
 }

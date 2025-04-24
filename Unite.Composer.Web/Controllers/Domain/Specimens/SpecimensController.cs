@@ -37,8 +37,20 @@ public class SpecimensController : DomainController
     [HttpPost("{type}")]
     public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
+        var comparison = StringComparison.InvariantCultureIgnoreCase;
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
+
+        // TODO: Find a better way to use data filters without reassignment
+        if (type.Equals(SpecimenType.Material, comparison))
+            AssignFrom(ref criteria, searchCriteria.Material, type);
+        else if (type.Equals(SpecimenType.Line, comparison))
+            AssignFrom(ref criteria, searchCriteria.Line, type);
+        else if (type.Equals(SpecimenType.Organoid, comparison))
+            AssignFrom(ref criteria, searchCriteria.Organoid, type);
+        else if (type.Equals(SpecimenType.Xenograft, comparison))
+            AssignFrom(ref criteria, searchCriteria.Xenograft, type);
+        else
+            AssignFrom(ref criteria, null, type);
 
         var result = await _searchService.Search(criteria);
 
@@ -65,7 +77,7 @@ public class SpecimensController : DomainController
         var stats = await _searchService.Stats(criteria);
 
         var originalIds = stats.Keys.Cast<int>().ToArray();
-        var originalType = Convert(type);
+        var originalType = ConvertSpecimenType(type);
         var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
         return File(bytes, "application/zip", "data.zip");
@@ -89,15 +101,17 @@ public class SpecimensController : DomainController
         };
     }
 
-    private static Unite.Data.Entities.Specimens.Enums.SpecimenType Convert(string type)
+    private static void AssignFrom(ref SearchCriteria searchCriteria, in SpecimenCriteria specimenCriteria, in string specimenType)
     {
-        return type switch
+        searchCriteria.Specimen = (searchCriteria.Specimen ?? new SpecimenCriteria()) with
         {
-            SpecimenType.Material => Unite.Data.Entities.Specimens.Enums.SpecimenType.Material,
-            SpecimenType.Line => Unite.Data.Entities.Specimens.Enums.SpecimenType.Line,
-            SpecimenType.Organoid => Unite.Data.Entities.Specimens.Enums.SpecimenType.Organoid,
-            SpecimenType.Xenograft => Unite.Data.Entities.Specimens.Enums.SpecimenType.Xenograft,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            SpecimenType = DetectSpecimenType(specimenType),
+            HasExp = specimenCriteria?.HasExp,
+            HasExpSc = specimenCriteria?.HasExpSc,
+            HasSms = specimenCriteria?.HasSms,
+            HasCnvs = specimenCriteria?.HasCnvs,
+            HasSvs = specimenCriteria?.HasSvs,
+            HasMeth = specimenCriteria?.HasMeth
         };
     }
 }
