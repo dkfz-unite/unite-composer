@@ -37,20 +37,8 @@ public class SpecimensController : DomainController
     [HttpPost("{type}")]
     public async Task<IActionResult> Search(string type, [FromBody]SearchCriteria searchCriteria)
     {
-        var comparison = StringComparison.InvariantCultureIgnoreCase;
         var criteria = searchCriteria ?? new SearchCriteria();
-
-        // TODO: Find a better way to use data filters without reassignment
-        if (type.Equals(SpecimenType.Material, comparison))
-            AssignFrom(ref criteria, searchCriteria.Material, type);
-        else if (type.Equals(SpecimenType.Line, comparison))
-            AssignFrom(ref criteria, searchCriteria.Line, type);
-        else if (type.Equals(SpecimenType.Organoid, comparison))
-            AssignFrom(ref criteria, searchCriteria.Organoid, type);
-        else if (type.Equals(SpecimenType.Xenograft, comparison))
-            AssignFrom(ref criteria, searchCriteria.Xenograft, type);
-        else
-            AssignFrom(ref criteria, null, type);
+        Reassign(ref criteria, type);
 
         var result = await _searchService.Search(criteria);
 
@@ -61,7 +49,7 @@ public class SpecimensController : DomainController
     public async Task<IActionResult> Stats(string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
+        Reassign(ref criteria, type);
 
         var stats = await _searchService.Stats(criteria);
 
@@ -72,7 +60,7 @@ public class SpecimensController : DomainController
     public async Task<ActionResult> Data(string type, [FromBody]BulkDownloadModel model)
     {
         var criteria = model.Criteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
+        Reassign(ref criteria, type);
 
         var stats = await _searchService.Stats(criteria);
 
@@ -99,6 +87,24 @@ public class SpecimensController : DomainController
             Total = searchResult.Total,
             Rows = searchResult.Rows.Select(index => new SpecimenResource(index)).ToArray()
         };
+    }
+
+    private static void Reassign(ref SearchCriteria searchCriteria, string type)
+    {
+        // TODO: Find a better way to use data filters without reassignment
+
+        var comparison = StringComparison.InvariantCultureIgnoreCase;
+
+        if (type.Equals(SpecimenType.Material, comparison))
+            AssignFrom(ref searchCriteria, searchCriteria.Material, type);
+        else if (type.Equals(SpecimenType.Line, comparison))
+            AssignFrom(ref searchCriteria, searchCriteria.Line, type);
+        else if (type.Equals(SpecimenType.Organoid, comparison))
+            AssignFrom(ref searchCriteria, searchCriteria.Organoid, type);
+        else if (type.Equals(SpecimenType.Xenograft, comparison))
+            AssignFrom(ref searchCriteria, searchCriteria.Xenograft, type);
+        else
+            AssignFrom(ref searchCriteria, null, type);
     }
 
     private static void AssignFrom(ref SearchCriteria searchCriteria, in SpecimenCriteria specimenCriteria, in string specimenType)
