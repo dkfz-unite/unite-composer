@@ -1,7 +1,7 @@
 using Unite.Data.Entities.Genome;
 using Unite.Data.Entities.Genome.Analysis.Dna;
 
-using SSM = Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
 using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
 using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
 
@@ -13,9 +13,9 @@ internal record VariantEntryWithAffectedFeature<TVE, TV, TVAF, TF>(TVE Entry, TV
         where TVAF : VariantAffectedFeature<TV, TF>
         where TF : Feature;
 
-internal record SsmEntryWithAffectedTranscript : VariantEntryWithAffectedFeature<SSM.VariantEntry, SSM.Variant, SSM.AffectedTranscript, Transcript>
+internal record SmEntryWithAffectedTranscript : VariantEntryWithAffectedFeature<SM.VariantEntry, SM.Variant, SM.AffectedTranscript, Transcript>
 {
-    public SsmEntryWithAffectedTranscript(SSM.VariantEntry Entry, SSM.AffectedTranscript AffectedFeature) : base(Entry, AffectedFeature) { }
+    public SmEntryWithAffectedTranscript(SM.VariantEntry Entry, SM.AffectedTranscript AffectedFeature) : base(Entry, AffectedFeature) { }
 }
 
 internal record CnvEntryWithAffectedTranscript : VariantEntryWithAffectedFeature<CNV.VariantEntry, CNV.Variant, CNV.AffectedTranscript, Transcript>

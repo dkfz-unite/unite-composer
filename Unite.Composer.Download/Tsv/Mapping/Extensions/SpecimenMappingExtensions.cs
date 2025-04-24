@@ -32,9 +32,9 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.Line.Info.DepositorName, "depositor_name")
             .Map(entity => entity.Line.Info.DepositorEstablishment, "depositor_establishment")
             .Map(entity => entity.Line.Info.EstablishmentDate, "establishment_date")
-            .Map(entity => entity.Line.Info.PubMedLink, "pubmed_link")
+            .Map(entity => entity.Line.Info.PubmedLink, "pubmed_link")
             .Map(entity => entity.Line.Info.AtccLink, "atcc_link")
-            .Map(entity => entity.Line.Info.ExPasyLink, "expasy_link");
+            .Map(entity => entity.Line.Info.ExpasyLink, "expasy_link");
     }
 
     public static ClassMap<Specimen> MapOrganoids(this ClassMap<Specimen> map)
@@ -85,8 +85,8 @@ internal static class SpecimenMappingExtensions
             .Map(entity => entity.Gof, "gof")
             .Map(entity => entity.Dss, "dss")
             .Map(entity => entity.DssS, "dsss")
-            .Map(entity => entity.MinDose, "min_dose")
-            .Map(entity => entity.MaxDose, "max_dose")
+            .Map(entity => entity.DoseMin, "dose_min")
+            .Map(entity => entity.DoseMax, "dose_max")
             .Map(entity => entity.Dose25, "dose_25")
             .Map(entity => entity.Dose50, "dose_50")
             .Map(entity => entity.Dose75, "dose_75");

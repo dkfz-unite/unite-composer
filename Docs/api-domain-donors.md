@@ -32,7 +32,7 @@ Get donor general data by id.
 - `404` - donor not found
 
 
-## POST: [api/donor/{id}/images/{type?}](http://localhost:5002/api/donor/1/images/mri)
+## POST: [api/donor/{id}/images/{type?}](http://localhost:5002/api/donor/1/images/mr)
 Search donor images of given type filtered by search criteria.
 
 ### Parameters
@@ -40,7 +40,7 @@ Search donor images of given type filtered by search criteria.
 - `type` - image [type](#image-types) or any if not specified.
 
 #### Image Types
-- `MRI` - magnetic resonance image.
+- `MR` - magnetic resonance image.
 
 ### Body
 Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/search-criteria.md).
@@ -50,7 +50,7 @@ Search [criteria](https://github.com/dkfz-unite/unite-indices/blob/main/Docs/sea
 {
     "from": 0,
     "size": 20,
-    "mri": {
+    "mr": {
         "wholeTumor": { "from": 200, "to": 300 }
     }
 }
@@ -122,8 +122,8 @@ Data download [model](./api-domain-models-download.md).
     "clinical": true, // include donor clinical data
     "treatments": true, // include donor treatments data
     "specimens": true, // include donor specimens data
-    "ssms": true, // include donor specimens SSMs data
-    "ssmsTranscriptsFull": true, // include affected transcripts data in SSMs,
+    "sms": true, // include donor specimens SMs data
+    "smsTranscriptsFull": true, // include affected transcripts data in SMs,
     "geneExp": true // include donor bulk gene expressions data
 }
 ```
@@ -223,8 +223,8 @@ Data download [model](./api-domain-models-download.md) and search [criteria](htt
         "clinical": true,
         "treatments": true,
         "specimens": true,
-        "ssms": true,
-        "ssmsTranscriptsFull": true,
+        "sms": true,
+        "smsTranscriptsFull": true,
         "geneExp": true
     }
 }

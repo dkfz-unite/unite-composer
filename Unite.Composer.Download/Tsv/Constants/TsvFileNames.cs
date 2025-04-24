@@ -5,7 +5,7 @@ public static class TsvFileNames
     public const string Donors = "donors.tsv";
     public const string Clinical = "clinical.tsv";
     public const string Treatments = "treatments.tsv";
-    public const string Mris = "mris.tsv";
+    public const string Mrs = "mrs.tsv";
     public const string Cts = "cts.tsv";
     public const string Materials = "materials.tsv";
     public const string Lines = "lines.tsv";
@@ -17,7 +17,7 @@ public static class TsvFileNames
     public const string Xenografts = "xenografts.tsv";
     public const string XenograftsDrugs = "xenografts_drugs.tsv";
     public const string XenograftsInterventions = "xenografts_interventions.tsv";
-    public const string Ssms = "ssms.tsv";
+    public const string Sms = "sms.tsv";
     public const string Cnvs = "cnvs.tsv";
     public const string Svs = "svs.tsv";
     public const string GeneExp = "gene_expressions_bulk.tsv";

@@ -1,36 +1,36 @@
 using System.Text.Json.Serialization;
-using Unite.Data.Entities.Genome.Analysis.Dna.Ssm;
+using Unite.Data.Entities.Genome.Analysis.Dna.Sm;
 using Unite.Essentials.Extensions;
 
 namespace Unite.Composer.Data.Genome.Ranges.Models.Profile;
 
-public class SsmsData : RangeData
+public class SmsData : RangeData
 {
     /// <summary>
     /// Variant entry.
     /// </summary>
     [JsonPropertyName("e")]
-    public Ssm Variant { get; set; }
+    public Sm Variant { get; set; }
 
     /// <summary>
     /// Variants by impact in format [High, Moderate, Low, Unknown].
     /// </summary>
     [JsonPropertyName("i")]
-    public SsmImpact[] Impacts { get; set; }
+    public SmImpact[] Impacts { get; set; }
 
 
-    public SsmsData(int[] range, Variant variant) : base(range)
+    public SmsData(int[] range, Variant variant) : base(range)
     {
-        Variant = new Ssm(variant);
+        Variant = new Sm(variant);
 
-        Impacts = [new SsmImpact(), new SsmImpact(), new SsmImpact(), new SsmImpact()];
+        Impacts = [new SmImpact(), new SmImpact(), new SmImpact(), new SmImpact()];
 
         SetValues(variant);
     }
 
-    public SsmsData(int[] range, IEnumerable<Variant> variants) : base(range)
+    public SmsData(int[] range, IEnumerable<Variant> variants) : base(range)
     {
-        Impacts = [new SsmImpact(), new SsmImpact(), new SsmImpact(), new SsmImpact()];
+        Impacts = [new SmImpact(), new SmImpact(), new SmImpact(), new SmImpact()];
 
         foreach (var variant in variants)
         {
@@ -68,7 +68,7 @@ public class SsmsData : RangeData
         }
     }
 
-    private static void SetChangeFrom(SsmImpact impact, string nucleotide)
+    private static void SetChangeFrom(SmImpact impact, string nucleotide)
     {
         if (nucleotide == "A")
             impact.From[0]++;
@@ -80,7 +80,7 @@ public class SsmsData : RangeData
             impact.From[3]++;
     }
 
-    private static void SetChangeTo(SsmImpact impact, string nucleotide)
+    private static void SetChangeTo(SmImpact impact, string nucleotide)
     {
         if (nucleotide == "A")
             impact.To[0]++;
@@ -93,7 +93,7 @@ public class SsmsData : RangeData
     }
 }
 
-public class Ssm
+public class Sm
 {
     public string Id { get; set; }
     public string Position { get; set; }
@@ -105,14 +105,14 @@ public class Ssm
     public string Effect { get; set; }
     public string Gene { get; set; }
 
-    public Ssm(Variant variant)
+    public Sm(Variant variant)
     {
         var transcript = variant.GetMostAffectedTranscript();
         var effect = variant.GetMostSeverEffect();
         var chromosome = variant.ChromosomeId.ToDefinitionString();
         var position = variant.Start == variant.End ? $"{variant.Start}" : $"{variant.Start}-{variant.End}";
 
-        Id = $"SSM{variant.Id}";
+        Id = $"{variant.Id}";
         Position = $"{chromosome}:{position}";
         Change = $"{variant.Ref ?? "-"}>{variant.Alt ?? "-"}";
         ChangeCodon = transcript?.CodonChange;
@@ -124,7 +124,7 @@ public class Ssm
     }
 }
 
-public class SsmImpact
+public class SmImpact
 {
     /// <summary>
     /// Number of variants by impact in format [High, Moderate, Low, Unknown].
@@ -145,7 +145,7 @@ public class SsmImpact
     public int[] To { get; set; } = [0, 0, 0, 0];
 }
 
-public static class SsmExtensions
+public static class SmExtensions
 {
     private const string HighImpact = "High";
     private const string ModerateImpact = "Moderate";

@@ -1,7 +1,7 @@
 using System.IO.Compression;
-using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
+using Unite.Composer.Download.Tsv.Models;
 using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens.Enums;
@@ -54,8 +54,8 @@ public class SpecimensTsvDownloadService : TsvDownloadService
             if (criteria.Treatments == true)
                 await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForSpecimens(ids));
 
-            if (criteria.Mris == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Mris, _imagesTsvService.GetDataForSpecimens(ids, ImageType.MRI));
+            if (criteria.Mrs == true)
+                await CreateArchiveEntry(archive, TsvFileNames.Mrs, _imagesTsvService.GetDataForSpecimens(ids, ImageType.MR));
 
             if (criteria.Specimens == true)
             {
@@ -96,12 +96,12 @@ public class SpecimensTsvDownloadService : TsvDownloadService
                     await CreateArchiveEntry(archive, TsvFileNames.XenograftsDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Xenograft));
             }
 
-            if (criteria.Ssms == true)
+            if (criteria.Sms == true)
             {
-                if (criteria.SsmsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.SSM));
+                if (criteria.SmsTranscriptsFull == true)
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.SM));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Ssms, _variantsTsvService.GetDataForSpecimens(ids, VariantType.SSM, criteria.SsmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetDataForSpecimens(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
             }
 
             if (criteria.Cnvs == true)

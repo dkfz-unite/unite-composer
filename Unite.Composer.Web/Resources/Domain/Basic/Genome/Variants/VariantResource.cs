@@ -13,7 +13,7 @@ public abstract class VariantResource
     public int End { get; set; }
     public int? Length { get; set; }
 
-    // public SsmResource Ssm { get; set; }
+    // public SmResource Sm { get; set; }
     // public CnvResource Cnv { get; set; }
     // public SvResource Sv { get; set; }
     
@@ -42,13 +42,13 @@ public abstract class VariantResource
         End = index.End;
         Length = index.Length;
 
-        // if (index.Ssm != null)
+        // if (index.Sm != null)
         // {
-        //     Ssm = new SsmResource(index.Ssm);
-        //     Chromosome = index.Ssm.Chromosome;
-        //     Start = index.Ssm.Start;
-        //     End = index.Ssm.End;
-        //     Length = index.Ssm.Length;
+        //     Sm = new SsmResource(index.Sm);
+        //     Chromosome = index.Sm.Chromosome;
+        //     Start = index.Sm.Start;
+        //     End = index.Sm.End;
+        //     Length = index.Sm.Length;
         // }
         // else if (index.Cnv != null)
         // {

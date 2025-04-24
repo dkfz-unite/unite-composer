@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Images;
 
-public class MriImageResource
+public class MrImageResource
 {
     public int Id { get; set; }
     public string ReferenceId { get; set; }
@@ -29,7 +29,7 @@ public class MriImageResource
     public double? MedianMttEdema { get; set; }
 
 
-    public MriImageResource(MriImageIndex index)
+    public MrImageResource(MrImageIndex index)
     {
         Id = index.Id;
         ReferenceId = index.ReferenceId;
