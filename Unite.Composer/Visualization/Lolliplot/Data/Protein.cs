@@ -16,7 +16,7 @@ public record Protein
 
     }
 
-    public Protein(Unite.Data.Entities.Genome.Protein protein)
+    public Protein(Unite.Data.Entities.Omics.Protein protein)
     {
         Id = protein.Id;
         StableId = protein.StableId;

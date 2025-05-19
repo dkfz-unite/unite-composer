@@ -2,7 +2,7 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Genes;
 
-public class GeneResource : Basic.Genome.GeneResource
+public class GeneResource : Basic.Omics.GeneResource
 {
     public GeneStatsResource Stats { get; set; }
     public GeneDataResource Data { get; set; }

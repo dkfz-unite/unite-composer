@@ -3,7 +3,7 @@ using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
-public class CnvResource : Basic.Genome.Variants.VariantResource
+public class CnvResource : Basic.Omics.Variants.VariantResource
 {
     public string Type { get; set; }
     public bool? Loh { get; set; }

@@ -52,7 +52,7 @@ public class ProteinPlotDataService
     /// <returns>Protein data.</returns>
     private async Task<ProteinDomain[]> GetProteinDomains(int transcriptId)
     {
-        var protein = _dbContext.Set<Unite.Data.Entities.Genome.Protein>()
+        var protein = _dbContext.Set<Unite.Data.Entities.Omics.Protein>()
             .FirstOrDefault(protein => protein.TranscriptId == transcriptId);
 
         var proteinInfo = await _proteinAnnotationService.FindProtein(protein.StableId);

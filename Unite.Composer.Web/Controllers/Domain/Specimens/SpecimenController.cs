@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Data.Genome.Ranges;
-using Unite.Composer.Data.Genome.Ranges.Models;
+using Unite.Composer.Data.Omics.Ranges;
+using Unite.Composer.Data.Omics.Ranges.Models;
 using Unite.Composer.Data.Specimens;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Resources.Domain.Genes;

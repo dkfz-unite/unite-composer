@@ -1,14 +1,14 @@
 using System.IO.Compression;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
-using Unite.Data.Entities.Genome.Analysis.Dna;
-using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
+using Unite.Data.Entities.Omics.Analysis.Dna;
+using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Data.Entities.Specimens.Enums;
 
-using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
-using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
-using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
+using SM = Unite.Data.Entities.Omics.Analysis.Dna.Sm;
+using CNV = Unite.Data.Entities.Omics.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Omics.Analysis.Dna.Sv;
 using Unite.Composer.Download.Tsv.Models;
 
 namespace Unite.Composer.Download.Tsv;

@@ -1,9 +1,9 @@
-using Unite.Data.Entities.Genome;
-using Unite.Data.Entities.Genome.Analysis.Dna;
+using Unite.Data.Entities.Omics;
+using Unite.Data.Entities.Omics.Analysis.Dna;
 
-using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
-using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
-using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
+using SM = Unite.Data.Entities.Omics.Analysis.Dna.Sm;
+using CNV = Unite.Data.Entities.Omics.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Omics.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Models;
 

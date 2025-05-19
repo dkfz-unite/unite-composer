@@ -1,8 +1,8 @@
 ﻿using Unite.Cache.Configuration.Options;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data.Datasets;
-using Unite.Composer.Data.Genome;
-using Unite.Composer.Data.Genome.Ranges;
+using Unite.Composer.Data.Omics;
+using Unite.Composer.Data.Omics.Ranges;
 using Unite.Composer.Data.Specimens;
 using Unite.Composer.Data.Submissions;
 using Unite.Composer.Download.Configuration.Extensions;

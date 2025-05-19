@@ -1,4 +1,4 @@
-using Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
+using Unite.Data.Entities.Omics.Analysis.Dna.Cnv;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;

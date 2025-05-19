@@ -1,4 +1,4 @@
-using Unite.Data.Entities.Genome.Enums;
+using Unite.Data.Entities.Omics.Enums;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;

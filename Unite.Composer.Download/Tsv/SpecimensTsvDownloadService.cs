@@ -2,8 +2,8 @@ using System.IO.Compression;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Composer.Download.Tsv.Mapping;
 using Unite.Composer.Download.Tsv.Models;
-using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
 using Unite.Data.Entities.Images.Enums;
+using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Data.Entities.Specimens.Enums;
 
 namespace Unite.Composer.Download.Tsv;

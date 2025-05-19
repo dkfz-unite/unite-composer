@@ -2,7 +2,7 @@ using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
-public class SmResource : Basic.Genome.Variants.VariantResource
+public class SmResource : Basic.Omics.Variants.VariantResource
 {
     public string Type { get; }
     public string Ref { get; }

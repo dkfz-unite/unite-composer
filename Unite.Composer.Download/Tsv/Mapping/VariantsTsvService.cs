@@ -2,13 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Composer.Download.Tsv.Mapping.Models;
 using Unite.Data.Context;
-using Unite.Data.Entities.Genome.Analysis.Dna;
-using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
+using Unite.Data.Entities.Omics.Analysis.Dna;
+using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Essentials.Tsv;
 
-using SM = Unite.Data.Entities.Genome.Analysis.Dna.Sm;
-using CNV = Unite.Data.Entities.Genome.Analysis.Dna.Cnv;
-using SV = Unite.Data.Entities.Genome.Analysis.Dna.Sv;
+using SM = Unite.Data.Entities.Omics.Analysis.Dna.Sm;
+using CNV = Unite.Data.Entities.Omics.Analysis.Dna.Cnv;
+using SV = Unite.Data.Entities.Omics.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Tsv.Mapping;
 

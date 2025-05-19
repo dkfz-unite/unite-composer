@@ -6,7 +6,7 @@ using Unite.Indices.Search.Services.Filters.Base.Donors.Criteria;
 using Unite.Indices.Search.Services.Filters.Criteria;
 
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
-using GeneIndex = Unite.Indices.Entities.Basic.Genome.GeneIndex;
+using GeneIndex = Unite.Indices.Entities.Basic.Omics.GeneIndex;
 using VariantIndex = Unite.Indices.Entities.Variants.SmIndex;
 
 namespace Unite.Composer.Visualization.Oncogrid;

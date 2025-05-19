@@ -4,7 +4,7 @@ using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
+using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Data.Entities.Tasks.Enums;
 using Unite.Indices.Entities.Variants;
 using Unite.Indices.Search.Engine.Queries;
