@@ -3,7 +3,7 @@ using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
 using Unite.Data.Entities.Donors;
 using Unite.Data.Entities.Donors.Clinical;
-using Unite.Data.Entities.Genome.Analysis.Dna;
+using Unite.Data.Entities.Omics.Analysis.Dna;
 using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Tsv.Mapping;

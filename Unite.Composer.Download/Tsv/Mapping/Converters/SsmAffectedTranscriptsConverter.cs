@@ -1,5 +1,5 @@
-using Unite.Data.Entities.Genome.Analysis.Dna.Sm;
-using Unite.Data.Helpers.Genome.Dna.Sm;
+using Unite.Data.Entities.Omics.Analysis.Dna.Sm;
+using Unite.Data.Helpers.Omics.Dna.Sm;
 using Unite.Essentials.Tsv.Converters;
 
 namespace Unite.Composer.Download.Tsv.Mapping.Converters;

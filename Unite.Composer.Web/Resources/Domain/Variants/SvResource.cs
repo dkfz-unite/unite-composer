@@ -3,7 +3,7 @@ using Unite.Indices.Entities.Variants;
 
 namespace Unite.Composer.Web.Resources.Domain.Variants;
 
-public class SvResource : Basic.Genome.Variants.VariantResource
+public class SvResource : Basic.Omics.Variants.VariantResource
 {
     public string OtherChromosome { get; set; }
     public double? OtherStart { get; set; }

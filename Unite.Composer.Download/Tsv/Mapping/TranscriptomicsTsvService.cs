@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
-using Unite.Data.Entities.Genome.Analysis.Dna;
-using Unite.Data.Entities.Genome.Analysis.Rna;
+using Unite.Data.Entities.Omics.Analysis.Dna;
+using Unite.Data.Entities.Omics.Analysis.Rna;
 using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Tsv.Mapping;

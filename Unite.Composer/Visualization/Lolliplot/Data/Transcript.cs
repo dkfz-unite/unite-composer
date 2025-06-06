@@ -19,7 +19,7 @@ public record Transcript
 
     }
 
-    public Transcript(Unite.Data.Entities.Genome.Transcript transcript)
+    public Transcript(Unite.Data.Entities.Omics.Transcript transcript)
     {
         Id = transcript.Id;
         StableId = transcript.StableId;

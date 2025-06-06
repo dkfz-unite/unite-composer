@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using Unite.Data.Entities.Genome.Analysis;
-using Unite.Data.Entities.Genome.Analysis.Rna;
+using Unite.Data.Entities.Omics.Analysis;
+using Unite.Data.Entities.Omics.Analysis.Rna;
 using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv;
 

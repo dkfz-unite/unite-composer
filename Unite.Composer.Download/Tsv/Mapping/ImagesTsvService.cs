@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
-using Unite.Data.Entities.Genome.Analysis.Dna;
+using Unite.Data.Entities.Omics.Analysis.Dna;
 using Unite.Data.Entities.Images;
 using Unite.Data.Entities.Images.Enums;
 using Unite.Essentials.Tsv;

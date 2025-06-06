@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Data.Genome;
+using Unite.Composer.Data.Omics;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Genome.Analysis.Dna.Enums;
+using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;

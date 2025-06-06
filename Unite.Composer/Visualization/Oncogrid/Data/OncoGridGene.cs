@@ -1,4 +1,4 @@
-﻿using Unite.Indices.Entities.Basic.Genome;
+﻿using Unite.Indices.Entities.Basic.Omics;
 
 namespace Unite.Composer.Visualization.Oncogrid.Data;
 
