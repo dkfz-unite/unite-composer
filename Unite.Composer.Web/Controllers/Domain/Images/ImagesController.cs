@@ -40,7 +40,7 @@ public class ImagesController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         Reassign(ref criteria, type);
 
-        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
+        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = new ValuesCriteria<string>(DetectImageType(type)) };
 
         var result = await _searchService.Search(criteria);
 
@@ -109,7 +109,7 @@ public class ImagesController : DomainController
     {
         searchCriteria.Image = (searchCriteria.Image ?? new ImagesCriteria()) with
         {
-            ImageType = DetectImageType(type),
+            ImageType = new ValuesCriteria<string>(DetectImageType(type)),
             HasExp = imageCriteria?.HasExp,
             HasExpSc = imageCriteria?.HasExpSc,
             HasSms = imageCriteria?.HasSms,

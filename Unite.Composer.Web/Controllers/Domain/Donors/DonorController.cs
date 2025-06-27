@@ -56,8 +56,8 @@ public class DonorController : DomainController
     public async Task<IActionResult> Images(int id, string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = [id] };
-        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = DetectImageType(type) };
+        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
+        criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = new ValuesCriteria<string>(DetectImageType(type)) };
 
         var result = await _imagesSearchService.Search(criteria);
 
@@ -68,8 +68,8 @@ public class DonorController : DomainController
     public async Task<IActionResult> Specimens(int id, string type, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = [id] };
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = DetectSpecimenType(type) };
+        criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = new ValuesCriteria<string>(DetectSpecimenType(type)) };
 
         var result = await _specimensSearchService.Search(criteria);
 
