@@ -87,7 +87,7 @@ public class SpecimenController : DomainController
     public async Task<IActionResult> Genes(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _genesSearchService.Search(criteria);
 
@@ -98,7 +98,7 @@ public class SpecimenController : DomainController
     public async Task<IActionResult> Sms(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _smsSearchService.Search(criteria);
 
@@ -109,7 +109,7 @@ public class SpecimenController : DomainController
     public async Task<IActionResult> Cnvs(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _cnvsSearchService.Search(criteria);
 
@@ -120,7 +120,7 @@ public class SpecimenController : DomainController
     public async Task<IActionResult> Svs(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = [id] };
+        criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _svsSearchService.Search(criteria);
 

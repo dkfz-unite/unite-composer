@@ -62,7 +62,7 @@ public class OncoGridDataService
             {
                 From = 0,
                 Size = 10000,
-                Donor = new DonorCriteria() { Id = [id] }
+                Donor = new DonorCriteria() { Id = new ValuesCriteria<int>([id]) }
             };
 
             var task = _smsSearchService.Search(criteria).ContinueWith(result => 
@@ -79,8 +79,8 @@ public class OncoGridDataService
                     foreach (var affectedFeature in variant.AffectedFeatures)
                     {
                         affectedFeature.Effects = affectedFeature.Effects
-                            .Where(effect => HasMatchingImpact(effect.Impact, searchCriteria.Sm.Impact))
-                            .Where(effect => HasMatchingEffects(effect.Type, searchCriteria.Sm.Effect))
+                            .Where(effect => HasMatchingImpact(effect.Impact, searchCriteria.Sm?.Impact?.Value))
+                            .Where(effect => HasMatchingEffects(effect.Type, searchCriteria.Sm?.Effect?.Value))
                             .OrderBy(effect => effect.Severity)
                             .Take(1)
                             .ToArray();

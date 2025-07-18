@@ -50,7 +50,7 @@ public class SvController : DomainController
     public async Task<IActionResult> SearchDonors(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Sv = (criteria.Sv ?? new SvCriteria()) with { Id = [id] };
+        criteria.Sv = (criteria.Sv ?? new SvCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _donorsSearchService.Search(criteria);
 
