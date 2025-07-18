@@ -52,7 +52,7 @@ public class CnvController : DomainController
     public async Task<IActionResult> SearchDonors(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Cnv = (criteria.Cnv ?? new CnvCriteria()) with { Id = [id] };
+        criteria.Cnv = (criteria.Cnv ?? new CnvCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _donorsSearchService.Search(criteria);
 

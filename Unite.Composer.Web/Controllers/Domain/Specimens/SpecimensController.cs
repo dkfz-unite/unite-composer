@@ -111,7 +111,7 @@ public class SpecimensController : DomainController
     {
         searchCriteria.Specimen = (searchCriteria.Specimen ?? new SpecimenCriteria()) with
         {
-            SpecimenType = DetectSpecimenType(specimenType),
+            SpecimenType = new ValuesCriteria<string>([specimenType]),
             HasExp = specimenCriteria?.HasExp,
             HasExpSc = specimenCriteria?.HasExpSc,
             HasSms = specimenCriteria?.HasSms,

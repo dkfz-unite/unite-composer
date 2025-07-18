@@ -54,7 +54,7 @@ public class SmController : DomainController
     public async Task<IActionResult> SearchDonors(int id, [FromBody]SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
-        criteria.Sm = (criteria.Sm ?? new SmCriteria()) with { Id = [id] };
+        criteria.Sm = (criteria.Sm ?? new SmCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
         var result = await _donorsSearchService.Search(criteria);
 
