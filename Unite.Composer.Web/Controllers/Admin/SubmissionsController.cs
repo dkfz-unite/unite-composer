@@ -25,6 +25,19 @@ public class SubmissionsController : Controller
 
         return Ok(tasks);
     }
+
+    [HttpPost("approve")]
+    public async Task<IActionResult> ApproveAll()
+    {
+        var tatks = await _submissionsService.GetPedning();
+
+        foreach (var task in tatks)
+        {
+            await _submissionsService.Approve(task.Id);
+        }
+
+        return Ok();
+    }
     
     [HttpPost("{id}/approve")]
     public async Task<IActionResult> Approve(long id)
@@ -32,6 +45,19 @@ public class SubmissionsController : Controller
         var status = await _submissionsService.Approve(id);
         
         return status ? Ok() : NotFound();
+    }
+
+    [HttpGet("reject")]
+    public async Task<IActionResult> RejectAll([FromBody] RejectSubmissionModel model)
+    {
+        var tasks = await _submissionsService.GetPedning();
+
+        foreach (var task in tasks)
+        {
+            await _submissionsService.Reject(task.Id, model.Reason);
+        }
+
+        return Ok();
     }
 
     [HttpPost("{id}/reject")]
