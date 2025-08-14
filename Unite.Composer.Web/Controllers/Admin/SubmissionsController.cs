@@ -47,7 +47,7 @@ public class SubmissionsController : Controller
         return status ? Ok() : NotFound();
     }
 
-    [HttpGet("reject")]
+    [HttpPost("reject")]
     public async Task<IActionResult> RejectAll([FromBody] RejectSubmissionModel model)
     {
         var tasks = await _submissionsService.GetPedning();
