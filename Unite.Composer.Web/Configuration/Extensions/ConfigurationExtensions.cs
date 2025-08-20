@@ -7,7 +7,6 @@ using Unite.Composer.Data.Specimens;
 using Unite.Composer.Data.Submissions;
 using Unite.Composer.Download.Configuration.Extensions;
 using Unite.Composer.Visualization.Lolliplot;
-using Unite.Composer.Visualization.Oncogrid;
 using Unite.Composer.Web.Configuration.Options;
 using Unite.Data.Context.Configuration.Extensions;
 using Unite.Data.Context.Configuration.Options;
@@ -43,7 +42,6 @@ public static class ConfigurationExtensions
         services.AddTsvDownload();
 
         services.AddTransient<GenomicProfileService>();
-        services.AddTransient<OncoGridDataService>();
         services.AddTransient<ProteinPlotDataService>();
     }
 
