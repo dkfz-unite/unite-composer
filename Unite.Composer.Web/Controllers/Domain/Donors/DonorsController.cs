@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Tsv;
@@ -56,12 +57,20 @@ public class DonorsController : DomainController
     [HttpPost("data")]
     public async Task<IActionResult> Data([FromBody] BulkDownloadModel model)
     {
+        Response.Headers.Append("Content-Disposition", "attachment; filename=\"data.zip\"");
+        Response.ContentType = "application/zip";
+
         var stats = await _searchService.Stats(model.Criteria);
-
         var originalIds = stats.Keys.Cast<int>().ToArray();
-        var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
 
-        return File(bytes, "application/zip", "data.zip");
+        using var archive = new ZipArchive(Response.Body, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download(originalIds, model.Data, archive);
+        
+        return new EmptyResult();
+
+        // var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
+
+        // return File(bytes, "application/zip", "data.zip");
     }
 
     [HttpGet("status")]

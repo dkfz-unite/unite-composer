@@ -15,6 +15,7 @@ using Unite.Indices.Search.Services.Filters.Criteria;
 using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
+using System.IO.Compression;
 
 namespace Unite.Composer.Web.Controllers.Domain.Donors;
 
@@ -53,7 +54,7 @@ public class DonorController : DomainController
     }
 
     [HttpPost("{id}/images/{type?}")]
-    public async Task<IActionResult> Images(int id, string type, [FromBody]SearchCriteria searchCriteria)
+    public async Task<IActionResult> Images(int id, string type, [FromBody] SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
@@ -65,7 +66,7 @@ public class DonorController : DomainController
     }
 
     [HttpPost("{id}/specimens/{type?}")]
-    public async Task<IActionResult> Specimens(int id, string type, [FromBody]SearchCriteria searchCriteria)
+    public async Task<IActionResult> Specimens(int id, string type, [FromBody] SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
@@ -79,9 +80,14 @@ public class DonorController : DomainController
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
     {
-        var bytes = await _tsvDownloadService.Download(id, model.Data);
+        Response.ContentType = "application/octet-stream";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
-        return File(bytes, "application/zip", "data.zip");
+        var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download([id], model.Data, archive);
+
+        return new EmptyResult();
     }
 
 
@@ -111,5 +117,22 @@ public class DonorController : DomainController
             Total = searchResult.Total,
             Rows = searchResult.Rows.Select(index => new SpecimenResource(index)).ToArray()
         };
+    }
+}
+
+public class FileCallbackResult : FileResult
+{
+    private readonly Func<Stream, ActionContext, Task> _callback;
+
+    public FileCallbackResult(string contentType, Func<Stream, ActionContext, Task> callback) 
+        : base(contentType)
+    {
+        _callback = callback ?? throw new ArgumentNullException(nameof(callback));
+    }
+
+    public override async Task ExecuteResultAsync(ActionContext context)
+    {
+        var response = context.HttpContext.Response;
+        await _callback(response.Body, context);
     }
 }

@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -94,9 +95,18 @@ public class ProjectController : DomainController
             .Distinct()
             .ToArray();
 
-        var bytes = await _tsvDownloadService.Download(ids, model.Data);
+        Response.ContentType = "application/octet-stream";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
-        return File(bytes, "application/zip", "data.zip");
+        var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download(ids, model.Data, archive);
+
+        return new EmptyResult();
+
+        // var bytes = await _tsvDownloadService.Download(ids, model.Data);
+
+        // return File(bytes, "application/zip", "data.zip");
     }
 
 
