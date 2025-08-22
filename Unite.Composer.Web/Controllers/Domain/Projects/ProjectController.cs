@@ -84,7 +84,7 @@ public class ProjectController : DomainController
     }
 
     [HttpPost("{id}/data")]
-    public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
+    public async Task Data(int id, [FromBody] SingleDownloadModel model)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
@@ -102,7 +102,9 @@ public class ProjectController : DomainController
         using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
         await _tsvDownloadService.Download(ids, model.Data, archive);
 
-        return new EmptyResult();
+        await stream.FlushAsync();
+
+        // return new EmptyResult();
 
         // var bytes = await _tsvDownloadService.Download(ids, model.Data);
 
