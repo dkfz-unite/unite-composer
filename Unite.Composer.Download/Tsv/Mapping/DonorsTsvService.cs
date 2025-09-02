@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Context;
+using Unite.Data.Context.Repositories.Extensions.Queryable;
 using Unite.Data.Entities.Donors;
 using Unite.Data.Entities.Donors.Clinical;
 using Unite.Data.Entities.Omics.Analysis.Dna;
@@ -62,11 +63,11 @@ public class DonorsTsvService : TsvServiceBase
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var entities = await CreateClinicalDataQuery(dbContext)
-            .Where(entity => ids.Contains(entity.DonorId))
+        var entities = await CreateDonorsQuery(dbContext)
+            .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
 
-        var map = new ClassMap<ClinicalData>().MapClinicalData();
+        var map = new ClassMap<Donor>().MapClinicalData();
 
         return Write(entities, map);
     }
@@ -147,16 +148,9 @@ public class DonorsTsvService : TsvServiceBase
     private static IQueryable<Donor> CreateDonorsQuery(DomainDbContext dbContext)
     {
         return dbContext.Set<Donor>().AsNoTracking()
-            .Include(entity => entity.DonorProjects).ThenInclude(entity => entity.Project)
-            .Include(entity => entity.DonorStudies).ThenInclude(entity => entity.Study);
-    }
-
-    private static IQueryable<ClinicalData> CreateClinicalDataQuery(DomainDbContext dbContext)
-    {
-        return dbContext.Set<ClinicalData>().AsNoTracking()
-            .Include(entity => entity.Donor)
-            .Include(entity => entity.PrimarySite)
-            .Include(entity => entity.Localization);
+            .IncludeClinicalData()
+            .IncludeProjects()
+            .IncludeStudies();
     }
 
     private static IQueryable<Treatment> CreateTreatmentsQuery(DomainDbContext dbContext)

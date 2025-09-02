@@ -2,6 +2,7 @@ using System.IO.Compression;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Web.Configuration.Constants;
 using Unite.Composer.Web.Models;
@@ -22,6 +23,7 @@ public class ProjectController : DomainController
     private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     private readonly ISearchService<ProjectIndex> _projectSearchService;
     private readonly DonorsTsvDownloadService _tsvDownloadService;
+    private readonly DonorsDownloadService _donorsDownloadService;
 
     public record UpdateModel(string Description);
 
@@ -29,11 +31,13 @@ public class ProjectController : DomainController
     public ProjectController(
         IDbContextFactory<DomainDbContext> dbContextFactory,
         ISearchService<ProjectIndex> projectsSearchService,
-        DonorsTsvDownloadService tsvDownloadService)
+        DonorsTsvDownloadService tsvDownloadService,
+        DonorsDownloadService donorsDownloadService)
     {
         _dbContextFactory = dbContextFactory;
         _projectSearchService = projectsSearchService;
         _tsvDownloadService = tsvDownloadService;
+        _donorsDownloadService = donorsDownloadService;
     }
 
 
@@ -100,7 +104,8 @@ public class ProjectController : DomainController
 
         var stream = Response.BodyWriter.AsStream();
         using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
-        await _tsvDownloadService.Download(ids, model.Data, archive);
+        // await _tsvDownloadService.Download(ids, model.Data, archive);
+        await _donorsDownloadService.Download(ids, model.Data, archive);
 
         await stream.FlushAsync();
 

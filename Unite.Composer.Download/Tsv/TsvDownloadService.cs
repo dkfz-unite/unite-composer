@@ -17,13 +17,13 @@ public abstract class TsvDownloadService
     protected static async Task CreateArchiveEntry(ZipArchive arhive, string name, Task<string> task)
     {
         var content = await task;
-        var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
 
-        if (!string.IsNullOrEmpty(content))
-        {
-            var entry = arhive.CreateEntry(name);
-            await using var entryStream = entry.Open();
-            await contentStream.CopyToAsync(entryStream);
-        }
+        if (string.IsNullOrEmpty(content))
+            return;
+
+        await using var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+        var entry = arhive.CreateEntry(name);
+        await using var entryStream = entry.Open();
+        await contentStream.CopyToAsync(entryStream);
     }
 }

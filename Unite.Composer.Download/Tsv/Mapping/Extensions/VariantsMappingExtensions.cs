@@ -90,7 +90,7 @@ internal static class VariantsMappingExtensions
 
         return map
             .Map(path.Join(entity => entity.Id), "variant_id")
-            .Map(path.Join(entity => entity.ChromosomeId), "chromosome", chromosomeConverter)
+            .Map(path.Join(entity => entity.ChromosomeId), "chr", chromosomeConverter)
             .Map(path.Join(entity => entity.Start), "start")
             .Map(path.Join(entity => entity.End), "end")
             .Map(path.Join(entity => entity.Length), "length")

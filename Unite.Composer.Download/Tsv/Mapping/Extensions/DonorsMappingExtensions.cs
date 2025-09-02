@@ -15,30 +15,30 @@ internal static class DonorsMappingExtensions
         var studyDonorConverter = new StudyDonorConverter();
 
         return map
-            .Map(entity => entity.ReferenceId, "donor_id")
+            .Map(entity => entity.ReferenceId, "id")
             .Map(entity => entity.MtaProtected, "mta")
             .Map(entity => entity.DonorProjects, "projects", projectDonorConverter)
-            .Map(entity => entity.DonorStudies, "studies", studyDonorConverter);
+            .Map(entity => entity.DonorStudies, "studies", studyDonorConverter)
+            .MapClinicalData();
     }
 
-    public static ClassMap<ClinicalData> MapClinicalData(this ClassMap<ClinicalData> map)
+    public static ClassMap<Donor> MapClinicalData(this ClassMap<Donor> map)
     {
         return map
-            .MapDonor(entity => entity.Donor)
-            .Map(entity => entity.SexId, "sex")
-            .Map(entity => entity.EnrollmentDate, "enrollment_date")
-            .Map(entity => entity.EnrollmentAge, "enrollment_age")
-            .Map(entity => entity.Diagnosis, "diagnosis")
-            .Map(entity => entity.PrimarySite.Value, "primary_site")
-            .Map(entity => entity.Localization.Value, "localization")
-            .Map(entity => entity.VitalStatus, "vital_status")
-            .Map(entity => entity.VitalStatusChangeDate, "vital_status_change_date")
-            .Map(entity => entity.VitalStatusChangeDay, "vital_status_change_day")
-            .Map(entity => entity.ProgressionStatus, "progression_status")
-            .Map(entity => entity.ProgressionStatusChangeDate, "progression_status_change_date")
-            .Map(entity => entity.ProgressionStatusChangeDay, "progression_status_change_day")
-            .Map(entity => entity.SteroidsReactive, "steroids_reactive")
-            .Map(entity => entity.Kps, "kps");
+            .Map(entity => entity.ClinicalData.SexId, "sex")
+            .Map(entity => entity.ClinicalData.EnrollmentDate, "enrollment_date")
+            .Map(entity => entity.ClinicalData.EnrollmentAge, "enrollment_age")
+            .Map(entity => entity.ClinicalData.Diagnosis, "diagnosis")
+            .Map(entity => entity.ClinicalData.PrimarySite.Value, "primary_site")
+            .Map(entity => entity.ClinicalData.Localization.Value, "localization")
+            .Map(entity => entity.ClinicalData.VitalStatus, "vital_status")
+            .Map(entity => entity.ClinicalData.VitalStatusChangeDate, "vital_status_change_date")
+            .Map(entity => entity.ClinicalData.VitalStatusChangeDay, "vital_status_change_day")
+            .Map(entity => entity.ClinicalData.ProgressionStatus, "progression_status")
+            .Map(entity => entity.ClinicalData.ProgressionStatusChangeDate, "progression_status_change_date")
+            .Map(entity => entity.ClinicalData.ProgressionStatusChangeDay, "progression_status_change_day")
+            .Map(entity => entity.ClinicalData.SteroidsReactive, "steroids_reactive")
+            .Map(entity => entity.ClinicalData.Kps, "kps");
     }
 
     public static ClassMap<Treatment> MapTreatments(this ClassMap<Treatment> map)

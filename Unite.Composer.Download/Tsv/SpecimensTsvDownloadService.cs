@@ -46,78 +46,78 @@ public class SpecimensTsvDownloadService : TsvDownloadService
         using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
         {
             if (criteria.Donors == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Donors, _donorsTsvService.GetDataForSpecimens(ids));
+                await CreateArchiveEntry(archive, TsvFileNames.Donor, _donorsTsvService.GetDataForSpecimens(ids));
             
-            if (criteria.Clinical == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Clinical, _donorsTsvService.GetClinicalDataForSpecimens(ids));
+            // if (criteria.Clinical == true)
+            //     await CreateArchiveEntry(archive, TsvFileNames.Clinical, _donorsTsvService.GetClinicalDataForSpecimens(ids));
 
             if (criteria.Treatments == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForSpecimens(ids));
+                await CreateArchiveEntry(archive, TsvFileNames.Treatment, _donorsTsvService.GetTreatmentsDataForSpecimens(ids));
 
             if (criteria.Mrs == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Mrs, _imagesTsvService.GetDataForSpecimens(ids, ImageType.MR));
+                await CreateArchiveEntry(archive, TsvFileNames.Mr, _imagesTsvService.GetDataForSpecimens(ids, ImageType.MR));
 
             if (criteria.Specimens == true)
             {
                 if (type == SpecimenType.Material)
-                    await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetData(ids, SpecimenType.Material));
+                    await CreateArchiveEntry(archive, TsvFileNames.Material, _specimensTsvService.GetData(ids, SpecimenType.Material));
 
                 if (type == SpecimenType.Line)
-                    await CreateArchiveEntry(archive, TsvFileNames.Lines, _specimensTsvService.GetData(ids, SpecimenType.Line));
+                    await CreateArchiveEntry(archive, TsvFileNames.Line, _specimensTsvService.GetData(ids, SpecimenType.Line));
 
                 if (type == SpecimenType.Organoid)
-                    await CreateArchiveEntry(archive, TsvFileNames.Organoids, _specimensTsvService.GetData(ids, SpecimenType.Organoid));
+                    await CreateArchiveEntry(archive, TsvFileNames.Organoid, _specimensTsvService.GetData(ids, SpecimenType.Organoid));
 
                 if (type == SpecimenType.Xenograft)
-                    await CreateArchiveEntry(archive, TsvFileNames.Xenografts, _specimensTsvService.GetData(ids, SpecimenType.Xenograft));
+                    await CreateArchiveEntry(archive, TsvFileNames.Xenograft, _specimensTsvService.GetData(ids, SpecimenType.Xenograft));
             }
 
             if (criteria.Interventions == true)
             {
                 if (type == SpecimenType.Line)
-                    await CreateArchiveEntry(archive, TsvFileNames.LinesInterventions, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Line));
+                    await CreateArchiveEntry(archive, TsvFileNames.LineIntervention, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Line));
 
                 if (type == SpecimenType.Organoid)
-                    await CreateArchiveEntry(archive, TsvFileNames.OrganoidsInterventions, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Organoid));
+                    await CreateArchiveEntry(archive, TsvFileNames.OrganoidIntervention, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Organoid));
 
                 if (type == SpecimenType.Xenograft)
-                    await CreateArchiveEntry(archive, TsvFileNames.XenograftsInterventions, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Xenograft));
+                    await CreateArchiveEntry(archive, TsvFileNames.XenograftIntervention, _specimensTsvService.GetInterventionsData(ids, SpecimenType.Xenograft));
             }
 
             if (criteria.Drugs == true)
             {
                 if (type == SpecimenType.Line)
-                    await CreateArchiveEntry(archive, TsvFileNames.LinesDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Line));
+                    await CreateArchiveEntry(archive, TsvFileNames.LineDrug, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Line));
 
                 if (type == SpecimenType.Organoid)
-                    await CreateArchiveEntry(archive, TsvFileNames.OrganoidsDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Organoid));
+                    await CreateArchiveEntry(archive, TsvFileNames.OrganoidDrug, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Organoid));
 
                 if (type == SpecimenType.Xenograft)
-                    await CreateArchiveEntry(archive, TsvFileNames.XenograftsDrugs, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Xenograft));
+                    await CreateArchiveEntry(archive, TsvFileNames.XenograftDrug, _specimensTsvService.GetDrugsScreeningsData(ids, SpecimenType.Xenograft));
             }
 
             if (criteria.Sms == true)
             {
                 if (criteria.SmsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.SM));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sm, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.SM));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetDataForSpecimens(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sm, _variantsTsvService.GetDataForSpecimens(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
             }
 
             if (criteria.Cnvs == true)
             {
                 if (criteria.CnvsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.CNV));
+                    await CreateArchiveEntry(archive, TsvFileNames.Cnv, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.CNV));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetDataForSpecimens(ids, VariantType.CNV, criteria.CnvsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Cnv, _variantsTsvService.GetDataForSpecimens(ids, VariantType.CNV, criteria.CnvsTranscriptsSlim ?? false));
             }
 
             if (criteria.Svs == true)
             {
                 if (criteria.SvsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.SV));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sv, _variantsTsvService.GetFullDataForSpecimens(ids, VariantType.SV));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetDataForSpecimens(ids, VariantType.SV, criteria.SvsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sv, _variantsTsvService.GetDataForSpecimens(ids, VariantType.SV, criteria.SvsTranscriptsSlim ?? false));
             }
 
             if (criteria.GeneExp == true)

@@ -2,23 +2,22 @@ namespace Unite.Composer.Download.Tsv.Constants;
 
 public static class TsvFileNames
 {
-    public const string Donors = "donors.tsv";
-    public const string Clinical = "clinical.tsv";
-    public const string Treatments = "treatments.tsv";
-    public const string Mrs = "mrs.tsv";
-    public const string Cts = "cts.tsv";
-    public const string Materials = "materials.tsv";
-    public const string Lines = "lines.tsv";
-    public const string LinesDrugs = "lines_drugs.tsv";
-    public const string LinesInterventions = "lines_interventions.tsv";
-    public const string Organoids = "organoids.tsv";
-    public const string OrganoidsDrugs = "organoids_drugs.tsv";
-    public const string OrganoidsInterventions = "organoids_interventions.tsv";
-    public const string Xenografts = "xenografts.tsv";
-    public const string XenograftsDrugs = "xenografts_drugs.tsv";
-    public const string XenograftsInterventions = "xenografts_interventions.tsv";
-    public const string Sms = "sms.tsv";
-    public const string Cnvs = "cnvs.tsv";
-    public const string Svs = "svs.tsv";
-    public const string GeneExp = "gene_expressions_bulk.tsv";
+    public const string Donor = "donor.tsv";
+    public const string Treatment = "treatment.tsv";
+    public const string Mr = "mr.tsv";
+    public const string Ct = "ct.tsv";
+    public const string Material = "material.tsv";
+    public const string Line = "line.tsv";
+    public const string LineDrug = "line_drug.tsv";
+    public const string LineIntervention = "line_intervention.tsv";
+    public const string Organoid = "organoid.tsv";
+    public const string OrganoidDrug = "organoid_drug.tsv";
+    public const string OrganoidIntervention = "organoid_intervention.tsv";
+    public const string Xenograft = "xenograft.tsv";
+    public const string XenograftDrug = "xenograft_drug.tsv";
+    public const string XenograftIntervention = "xenograft_intervention.tsv";
+    public const string Sm = "dna/sm/{0}-{1}_{2}.tsv";
+    public const string Cnv = "dna/cnv/{0}-{1}_{2}.tsv";
+    public const string Sv = "dna/sv/{0}-{1}_{2}.tsv";
+    public const string GeneExp = "rna/exp/{0}-{1}_{2}.tsv";
 }

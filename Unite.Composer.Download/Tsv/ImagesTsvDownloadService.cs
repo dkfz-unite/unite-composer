@@ -46,42 +46,42 @@ public class ImagesTsvDownloadService : TsvDownloadService
         using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
         {
             if (criteria.Donors == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Donors, _donorsTsvService.GetDataForImages(ids));
+                await CreateArchiveEntry(archive, TsvFileNames.Donor, _donorsTsvService.GetDataForImages(ids));
             
-            if (criteria.Clinical == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Clinical, _donorsTsvService.GetClinicalDataForImages(ids));
+            // if (criteria.Clinical == true)
+            //     await CreateArchiveEntry(archive, TsvFileNames.Clinical, _donorsTsvService.GetClinicalDataForImages(ids));
 
             if (criteria.Treatments == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Treatments, _donorsTsvService.GetTreatmentsDataForImages(ids));
+                await CreateArchiveEntry(archive, TsvFileNames.Treatment, _donorsTsvService.GetTreatmentsDataForImages(ids));
 
             if (type == ImageType.MR)
-                await CreateArchiveEntry(archive, TsvFileNames.Mrs, _imagesTsvService.GetData(ids, ImageType.MR));
+                await CreateArchiveEntry(archive, TsvFileNames.Mr, _imagesTsvService.GetData(ids, ImageType.MR));
 
             if (criteria.Specimens == true)
-                await CreateArchiveEntry(archive, TsvFileNames.Materials, _specimensTsvService.GetDataForImages(ids, SpecimenType.Material));
+                await CreateArchiveEntry(archive, TsvFileNames.Material, _specimensTsvService.GetDataForImages(ids, SpecimenType.Material));
 
             if (criteria.Sms == true)
             {
                 if (criteria.SmsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetFullDataForImages(ids, VariantType.SM));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sm, _variantsTsvService.GetFullDataForImages(ids, VariantType.SM));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Sms, _variantsTsvService.GetDataForImages(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sm, _variantsTsvService.GetDataForImages(ids, VariantType.SM, criteria.SmsTranscriptsSlim ?? false));
             }
 
             if (criteria.Cnvs == true)
             {
                 if (criteria.CnvsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Cnvs, _variantsTsvService.GetFullDataForImages(ids, VariantType.CNV));
+                    await CreateArchiveEntry(archive, TsvFileNames.Cnv, _variantsTsvService.GetFullDataForImages(ids, VariantType.CNV));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetDataForImages(ids, VariantType.CNV, criteria.CnvsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sv, _variantsTsvService.GetDataForImages(ids, VariantType.CNV, criteria.CnvsTranscriptsSlim ?? false));
             }
 
             if (criteria.Svs == true)
             {
                 if (criteria.SvsTranscriptsFull == true)
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetFullDataForImages(ids, VariantType.SV));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sv, _variantsTsvService.GetFullDataForImages(ids, VariantType.SV));
                 else
-                    await CreateArchiveEntry(archive, TsvFileNames.Svs, _variantsTsvService.GetDataForImages(ids, VariantType.SV, criteria.SvsTranscriptsSlim ?? false));
+                    await CreateArchiveEntry(archive, TsvFileNames.Sv, _variantsTsvService.GetDataForImages(ids, VariantType.SV, criteria.SvsTranscriptsSlim ?? false));
             }
 
             if (criteria.GeneExp == true)

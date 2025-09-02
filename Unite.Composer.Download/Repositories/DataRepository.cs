@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Data.Context;
 using Unite.Data.Context.Repositories;
-using Unite.Essentials.Tsv;
 
-namespace Unite.Composer.Download.Tsv.Mapping;
+namespace Unite.Composer.Download.Repositories;
 
-public abstract class TsvServiceBase
+public abstract class DataRepository
 {
     protected readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     protected readonly DonorsRepository _donorsRepository;
@@ -14,7 +13,8 @@ public abstract class TsvServiceBase
     protected readonly GenesRepository _genesRepository;
     protected readonly VariantsRepository _variantsRepository;
 
-    public TsvServiceBase(IDbContextFactory<DomainDbContext> dbContextFactory)
+
+    public DataRepository(IDbContextFactory<DomainDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
         _donorsRepository = new DonorsRepository(dbContextFactory);
@@ -22,11 +22,5 @@ public abstract class TsvServiceBase
         _specimensRepository = new SpecimensRepository(dbContextFactory);
         _genesRepository = new GenesRepository(dbContextFactory);
         _variantsRepository = new VariantsRepository(dbContextFactory);
-    }
-
-    protected static string Write<T>(IEnumerable<T> items, ClassMap<T> map, IEnumerable<string> comments = null)
-        where T : class
-    {
-        return items?.Any() == true ? TsvWriter.Write(items, map, true, comments) : null;
     }
 }

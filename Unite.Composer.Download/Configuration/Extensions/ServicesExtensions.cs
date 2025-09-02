@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Download.Tsv;
 using Unite.Composer.Download.Tsv.Mapping;
 
@@ -26,6 +27,8 @@ public static class ServicesExtensions
         services.AddTransient<SpecimensTsvDownloadService>();
         services.AddTransient<GenesTsvDownloadService>();
         services.AddTransient<VariantsTsvDownloadService>();
+
+        services.AddTransient<DonorsDownloadService>();
 
         return services;
     }
