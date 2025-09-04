@@ -57,7 +57,8 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.Sms == true)
         {
-            foreach (var chunk in ids.Chunk(10))
+            var size = criteria.SmsTranscriptsSlim == true ? 50 : 100;
+            foreach (var chunk in ids.Chunk(size))
             {
                 var variants = await _variantsDataRepository.GetVariantsForDonors<SM.VariantEntry, SM.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
@@ -73,7 +74,8 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.Cnvs == true)
         {
-            foreach (var chunk in ids.Chunk(10))
+            var size = criteria.CnvsTranscriptsSlim == true ? 10 : 50;
+            foreach (var chunk in ids.Chunk(size))
             {
                 var variants = await _variantsDataRepository.GetVariantsForDonors<CNV.VariantEntry, CNV.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
@@ -89,7 +91,8 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.Svs == true)
         {
-            foreach (var chunk in ids.Chunk(10))
+            var size = criteria.SvsTranscriptsSlim == true ? 10 : 50;
+            foreach (var chunk in ids.Chunk(size))
             {
                 var variants = await _variantsDataRepository.GetVariantsForDonors<SV.VariantEntry, SV.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
@@ -98,14 +101,15 @@ public class DonorsDownloadService : DownloadService
                 {
                     var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
                     var entryName = string.Format(TsvFileNames.Sv, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
-                    WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<SV.VariantEntry, SV.Variant>(criteria.SvsTranscriptsFull ?? false));
+                    WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<SV.VariantEntry, SV.Variant>(criteria.SvsTranscriptsSlim ?? false));
                 }
             }
         }
 
         if (criteria.GeneExp == true)
         {
-            foreach (var chunk in ids.Chunk(10))
+            var size = 50;
+            foreach (var chunk in ids.Chunk(size))
             {
                 var expressions = await _geneExpressionsDataRepository.GetExpressionsForDonors(chunk);
                 var groups = expressions.GroupBy(entry => entry.SampleId);
