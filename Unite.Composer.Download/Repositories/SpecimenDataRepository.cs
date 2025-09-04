@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Data.Context;
 using Unite.Data.Entities.Specimens;
+using Unite.Data.Entities.Specimens.Analysis.Drugs;
 using Unite.Data.Entities.Specimens.Enums;
 
 namespace Unite.Composer.Download.Repositories;
 
-public class SpecimensDataRepository : DataRepository
+public class SpecimenDataRepository : DataRepository
 {
-    public SpecimensDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
+    public SpecimenDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
     }
 
@@ -60,6 +61,23 @@ public class SpecimensDataRepository : DataRepository
     }
 
 
+    public async Task<DrugScreening[]> GetDrugScreeningsForSpecimens(IEnumerable<int> ids, SpecimenType type)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await CreateDrugScreeningsQuery(dbContext, type)
+            .Where(entity => ids.Contains(entity.Sample.SpecimenId))
+            .ToArrayAsync();
+    }
+
+    public async Task<DrugScreening[]> GetDrugScreeningsForDonors(IEnumerable<int> ids, SpecimenType type)
+    {
+        var specimenIds = await _donorsRepository.GetRelatedSpecimens(ids, type);
+
+        return await GetDrugScreeningsForSpecimens(specimenIds, type);
+    }
+
+
     private static IQueryable<Specimen> CreateSpecimensQuery(DomainDbContext dbContext, SpecimenType type)
     {
         var query = dbContext.Set<Specimen>().AsNoTracking();
@@ -85,5 +103,14 @@ public class SpecimensDataRepository : DataRepository
             .AsNoTracking()
             .Include(entity => entity.Specimen.Donor)
             .Where(entity => entity.Specimen.TypeId == type);
+    }
+
+    public static IQueryable<DrugScreening> CreateDrugScreeningsQuery(DomainDbContext dbContext, SpecimenType type)
+    {
+        return dbContext.Set<DrugScreening>()
+            .AsNoTracking()
+            .Include(entity => entity.Sample.Specimen)
+            .Include(entity => entity.Entity)
+            .Where(entity => entity.Sample.Specimen.TypeId == type);
     }
 }

@@ -5,11 +5,11 @@ using Unite.Data.Entities.Omics.Analysis.Rna;
 
 namespace Unite.Composer.Download.Repositories;
 
-public class GeneExpressionsDataRepository : DataRepository
+public class RnaAnalysisDataRepository : OmicsAnalysisDataRepository
 {
     private static readonly AnalysisType[] AnalysisTypes = [AnalysisType.RNASeq];
 
-    public GeneExpressionsDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
+    public RnaAnalysisDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
     }
 

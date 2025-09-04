@@ -24,101 +24,113 @@ public class DonorsDownloadService : DownloadService
     public override async Task Download(IEnumerable<int> ids, DataTypesCriteria criteria, ZipArchive archive)
     {
         if (criteria.Donors == true)
-            await WriteData(archive, TsvFileNames.Donor, _donorsDataRepository.GetDonors(ids), DonorMapper.GetDonorMap());
+            await WriteData(archive, TsvFileNames.Donor, _donorDataRepository.GetDonors(ids), DonorMapper.GetDonorMap());
 
         if (criteria.Treatments == true)
-            await WriteData(archive, TsvFileNames.Treatment, _donorsDataRepository.GetTreatments(ids), DonorMapper.GetTreatmentMap());
+            await WriteData(archive, TsvFileNames.Treatment, _donorDataRepository.GetTreatments(ids), DonorMapper.GetTreatmentMap());
 
         if (criteria.Mrs == true)
-            await WriteData(archive, TsvFileNames.Mr, _imagesDataRepository.GetImagesForDonors(ids, ImageType.MR), ImageMapper.GetMrMap());
+            await WriteData(archive, TsvFileNames.Mr, _imageDataRepository.GetImagesForDonors(ids, ImageType.MR), ImageMapper.GetMrMap());
 
         // if (criteria.Ct == true)
         //     await WriteData(archive, TsvFileNames.Ct, _imagesDataRepository.GetImagesForDonors(ids, ImageType.CT), ImageMapper.GetMrMap());
 
         if (criteria.Specimens == true)
         {
-            await WriteData(archive, TsvFileNames.Material, _specimensDataRepository.GetSpecimensForDonors(ids, SpecimenType.Material), SpecimenMapper.GetMaterialMap());
-            await WriteData(archive, TsvFileNames.Line, _specimensDataRepository.GetSpecimensForDonors(ids, SpecimenType.Line), SpecimenMapper.GetLineMap());
-            await WriteData(archive, TsvFileNames.Organoid, _specimensDataRepository.GetSpecimensForDonors(ids, SpecimenType.Organoid), SpecimenMapper.GetOrganoidMap());
-            await WriteData(archive, TsvFileNames.Xenograft, _specimensDataRepository.GetSpecimensForDonors(ids, SpecimenType.Xenograft), SpecimenMapper.GetXenograftMap());
+            await WriteData(archive, TsvFileNames.Material, _specimenDataRepository.GetSpecimensForDonors(ids, SpecimenType.Material), SpecimenMapper.GetMaterialMap());
+            await WriteData(archive, TsvFileNames.Line, _specimenDataRepository.GetSpecimensForDonors(ids, SpecimenType.Line), SpecimenMapper.GetLineMap());
+            await WriteData(archive, TsvFileNames.Organoid, _specimenDataRepository.GetSpecimensForDonors(ids, SpecimenType.Organoid), SpecimenMapper.GetOrganoidMap());
+            await WriteData(archive, TsvFileNames.Xenograft, _specimenDataRepository.GetSpecimensForDonors(ids, SpecimenType.Xenograft), SpecimenMapper.GetXenograftMap());
         }
 
         if (criteria.Interventions == true)
         {
-            await WriteData(archive, TsvFileNames.LineIntervention, _specimensDataRepository.GetInterventionsForDonors(ids, SpecimenType.Line), SpecimenMapper.GetInterventionMap());
-            await WriteData(archive, TsvFileNames.OrganoidIntervention, _specimensDataRepository.GetInterventionsForDonors(ids, SpecimenType.Organoid), SpecimenMapper.GetInterventionMap());
-            await WriteData(archive, TsvFileNames.XenograftIntervention, _specimensDataRepository.GetInterventionsForDonors(ids, SpecimenType.Xenograft), SpecimenMapper.GetInterventionMap());
+            await WriteData(archive, TsvFileNames.LineIntervention, _specimenDataRepository.GetInterventionsForDonors(ids, SpecimenType.Line), SpecimenMapper.GetInterventionMap());
+            await WriteData(archive, TsvFileNames.OrganoidIntervention, _specimenDataRepository.GetInterventionsForDonors(ids, SpecimenType.Organoid), SpecimenMapper.GetInterventionMap());
+            await WriteData(archive, TsvFileNames.XenograftIntervention, _specimenDataRepository.GetInterventionsForDonors(ids, SpecimenType.Xenograft), SpecimenMapper.GetInterventionMap());
         }
 
         if (criteria.Drugs == true)
         {
+            foreach (var chunk in ids.Chunk(100))
+            {
+                var drugs = await _specimenAnalysisDataRepository.GetDrugsForDonors(chunk);
+                var groups = drugs.GroupBy(entry => entry.SampleId);
+                var samples = (await _specimenAnalysisDataRepository.GetSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
 
+                foreach (var group in groups)
+                {
+                    var sample = samples[group.Key];
+                    var entryName = string.Format(TsvFileNames.DrugScreening, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    WriteData(archive, entryName, group.ToArray(), SpecimenAnalysisMapper.MapSample(sample), SpecimenAnalysisMapper.GetDrugScreeningMap());
+                }
+            }
         }
 
         if (criteria.Sms == true)
         {
-            var size = criteria.SmsTranscriptsSlim == true ? 50 : 100;
-            foreach (var chunk in ids.Chunk(size))
+            foreach (var chunk in ids.Chunk(50))
             {
-                var variants = await _variantsDataRepository.GetVariantsForDonors<SM.VariantEntry, SM.Variant>(chunk);
+                var variants = await _dnaAnalysisDataRepository.GetVariantsForDonors<SM.VariantEntry, SM.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
+                var samples = (await _dnaAnalysisDataRepository.GetSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
 
                 foreach (var group in groups)
                 {
-                    var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
+                    var sample = samples[group.Key];
                     var entryName = string.Format(TsvFileNames.Sm, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
-                    WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<SM.VariantEntry, SM.Variant>(criteria.SmsTranscriptsSlim ?? false));
+                    WriteData(archive, entryName, group.ToArray(), OmicsAnalysisMapper.MapSample(sample), DnaAnalysisMapper.GetVariantMap<SM.VariantEntry, SM.Variant>(criteria.SmsTranscriptsSlim ?? false));
                 }
             }
         }
 
         if (criteria.Cnvs == true)
         {
-            var size = criteria.CnvsTranscriptsSlim == true ? 10 : 50;
-            foreach (var chunk in ids.Chunk(size))
+            foreach (var chunk in ids.Chunk(25))
             {
-                var variants = await _variantsDataRepository.GetVariantsForDonors<CNV.VariantEntry, CNV.Variant>(chunk);
+                var variants = await _dnaAnalysisDataRepository.GetVariantsForDonors<CNV.VariantEntry, CNV.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
+                var samples = (await _dnaAnalysisDataRepository.GetSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
 
                 foreach (var group in groups)
                 {
-                    var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
+                    var sample = samples[group.Key];
                     var entryName = string.Format(TsvFileNames.Cnv, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
-                    WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<CNV.VariantEntry, CNV.Variant>(criteria.CnvsTranscriptsSlim ?? false));
+                    WriteData(archive, entryName, group.ToArray(), OmicsAnalysisMapper.MapSample(sample), DnaAnalysisMapper.GetVariantMap<CNV.VariantEntry, CNV.Variant>(criteria.CnvsTranscriptsSlim ?? false));
                 }
             }
         }
 
         if (criteria.Svs == true)
         {
-            var size = criteria.SvsTranscriptsSlim == true ? 10 : 50;
-            foreach (var chunk in ids.Chunk(size))
+            foreach (var chunk in ids.Chunk(25))
             {
-                var variants = await _variantsDataRepository.GetVariantsForDonors<SV.VariantEntry, SV.Variant>(chunk);
+                var variants = await _dnaAnalysisDataRepository.GetVariantsForDonors<SV.VariantEntry, SV.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
+                var samples = (await _dnaAnalysisDataRepository.GetSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
 
                 foreach (var group in groups)
                 {
-                    var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
+                    var sample = samples[group.Key];
                     var entryName = string.Format(TsvFileNames.Sv, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
-                    WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<SV.VariantEntry, SV.Variant>(criteria.SvsTranscriptsSlim ?? false));
+                    WriteData(archive, entryName, group.ToArray(), OmicsAnalysisMapper.MapSample(sample), DnaAnalysisMapper.GetVariantMap<SV.VariantEntry, SV.Variant>(criteria.SvsTranscriptsSlim ?? false));
                 }
             }
         }
 
         if (criteria.GeneExp == true)
         {
-            var size = 50;
-            foreach (var chunk in ids.Chunk(size))
+            foreach (var chunk in ids.Chunk(25))
             {
-                var expressions = await _geneExpressionsDataRepository.GetExpressionsForDonors(chunk);
+                var expressions = await _rnaAnalysisDataRepository.GetExpressionsForDonors(chunk);
                 var groups = expressions.GroupBy(entry => entry.SampleId);
+                var samples = (await _rnaAnalysisDataRepository.GetSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
 
                 foreach (var group in groups)
                 {
-                    var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
+                    var sample = samples[group.Key];
                     var entryName = string.Format(TsvFileNames.GeneExp, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
-                    WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), GeneExpressionMapper.GetGeneExpressionMap());
+                    WriteData(archive, entryName, group.ToArray(), OmicsAnalysisMapper.MapSample(sample), RnaAnalysisMapper.GetExpressionMap());
                 }
             }
         }

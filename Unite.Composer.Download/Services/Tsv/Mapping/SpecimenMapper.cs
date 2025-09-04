@@ -1,5 +1,6 @@
 using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Entities.Specimens;
+using Unite.Data.Entities.Specimens.Analysis.Drugs;
 using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Services.Tsv.Mapping;
@@ -29,5 +30,10 @@ public static class SpecimenMapper
     public static ClassMap<Intervention> GetInterventionMap()
     {
         return new ClassMap<Intervention>().MapInterventions();
+    }
+
+    public static ClassMap<DrugScreening> GetDrugScreeningMap()
+    {
+        return new ClassMap<DrugScreening>().MapDrugScreenings();
     }
 }

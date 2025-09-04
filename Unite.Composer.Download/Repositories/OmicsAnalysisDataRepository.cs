@@ -5,14 +5,14 @@ using Unite.Data.Entities.Omics.Analysis.Enums;
 
 namespace Unite.Composer.Download.Repositories;
 
-public class SamplesDataRepository : DataRepository
+public abstract class OmicsAnalysisDataRepository : DataRepository
 {
-    public SamplesDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
+    public OmicsAnalysisDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
     }
 
 
-    public async Task<Sample[]> GetSamples(IEnumerable<int> ids)
+    public virtual async Task<Sample[]> GetSamples(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
@@ -21,21 +21,21 @@ public class SamplesDataRepository : DataRepository
             .ToArrayAsync();
     }
 
-    public async Task<Sample[]> GetSamplesForDonors(IEnumerable<int> ids, IEnumerable<AnalysisType> typeIds = null)
+    public virtual async Task<Sample[]> GetSamplesForDonors(IEnumerable<int> ids, IEnumerable<AnalysisType> typeIds = null)
     {
         var sampleIds = await _donorsRepository.GetRelatedSamples(ids, typeIds);
 
         return await GetSamples(sampleIds);
     }
 
-    public async Task<Sample[]> GetSamplesForImages(IEnumerable<int> ids, IEnumerable<AnalysisType> typeIds = null)
+    public virtual async Task<Sample[]> GetSamplesForImages(IEnumerable<int> ids, IEnumerable<AnalysisType> typeIds = null)
     {
         var sampleIds = await _imagesRepository.GetRelatedSamples(ids, typeIds);
 
         return await GetSamples(sampleIds);
     }
 
-    public async Task<Sample[]> GetSamplesForSpecimens(IEnumerable<int> ids, IEnumerable<AnalysisType> typeIds = null)
+    public virtual async Task<Sample[]> GetSamplesForSpecimens(IEnumerable<int> ids, IEnumerable<AnalysisType> typeIds = null)
     {
         var sampleIds = await _specimensRepository.GetRelatedSamples(ids, typeIds);
 
@@ -43,7 +43,7 @@ public class SamplesDataRepository : DataRepository
     }
 
 
-    private static IQueryable<Sample> CreateSamplesQuery(DomainDbContext dbContext)
+    protected static IQueryable<Sample> CreateSamplesQuery(DomainDbContext dbContext)
     {
         return dbContext.Set<Sample>()
             .AsNoTracking()

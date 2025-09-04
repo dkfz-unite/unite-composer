@@ -4,7 +4,7 @@ using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Services.Tsv.Mapping;
 
-public static class VariantMapper
+public static class DnaAnalysisMapper
 {
     public static ClassMap<TVE> GetVariantMap<TVE, TV>(bool effects)
         where TVE : VariantEntry<TV>

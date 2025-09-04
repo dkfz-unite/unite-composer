@@ -11,23 +11,25 @@ namespace Unite.Composer.Download.Services;
 public abstract class DownloadService
 {
     protected readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
-    protected readonly DonorsDataRepository _donorsDataRepository;
-    protected readonly ImagesDataRepository _imagesDataRepository;
-    protected readonly SpecimensDataRepository _specimensDataRepository;
-    protected readonly SamplesDataRepository _samplesDataRepository;
-    protected readonly VariantsDataRepository _variantsDataRepository;
-    protected readonly GeneExpressionsDataRepository _geneExpressionsDataRepository;
+    protected readonly DonorDataRepository _donorDataRepository;
+    protected readonly ImageDataRepository _imageDataRepository;
+    protected readonly ImageAnalysisDataRepository _imageAnalysisDataRepository;
+    protected readonly SpecimenDataRepository _specimenDataRepository;
+    protected readonly SpecimenAnalysisDataRepository _specimenAnalysisDataRepository;
+    protected readonly DnaAnalysisDataRepository _dnaAnalysisDataRepository;
+    protected readonly RnaAnalysisDataRepository _rnaAnalysisDataRepository;
 
 
     public DownloadService(IDbContextFactory<DomainDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _donorsDataRepository = new DonorsDataRepository(_dbContextFactory);
-        _imagesDataRepository = new ImagesDataRepository(_dbContextFactory);
-        _specimensDataRepository = new SpecimensDataRepository(_dbContextFactory);
-        _samplesDataRepository = new SamplesDataRepository(_dbContextFactory);
-        _variantsDataRepository = new VariantsDataRepository(_dbContextFactory);
-        _geneExpressionsDataRepository = new GeneExpressionsDataRepository(_dbContextFactory);
+        _donorDataRepository = new DonorDataRepository(_dbContextFactory);
+        _imageDataRepository = new ImageDataRepository(_dbContextFactory);
+        _imageAnalysisDataRepository = new ImageAnalysisDataRepository(_dbContextFactory);
+        _specimenDataRepository = new SpecimenDataRepository(_dbContextFactory);
+        _specimenAnalysisDataRepository = new SpecimenAnalysisDataRepository(_dbContextFactory);
+        _dnaAnalysisDataRepository = new DnaAnalysisDataRepository(_dbContextFactory);
+        _rnaAnalysisDataRepository = new RnaAnalysisDataRepository(_dbContextFactory);
     }
 
 

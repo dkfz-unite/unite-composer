@@ -4,9 +4,9 @@ using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Services.Tsv.Mapping;
 
-public static class GeneExpressionMapper
+public static class RnaAnalysisMapper
 {
-    public static ClassMap<GeneExpression> GetGeneExpressionMap()
+    public static ClassMap<GeneExpression> GetExpressionMap()
     {
         return new ClassMap<GeneExpression>().MapExpressions();
     }

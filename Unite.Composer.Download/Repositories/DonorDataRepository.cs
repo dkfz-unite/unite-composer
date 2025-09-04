@@ -6,9 +6,9 @@ using Unite.Data.Entities.Donors.Clinical;
 
 namespace Unite.Composer.Download.Repositories;
 
-public class DonorsDataRepository : DataRepository
+public class DonorDataRepository : DataRepository
 {
-    public DonorsDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
+    public DonorDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
     }
 

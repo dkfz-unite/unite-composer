@@ -5,9 +5,9 @@ using Unite.Data.Entities.Images.Enums;
 
 namespace Unite.Composer.Download.Repositories;
 
-public class ImagesDataRepository : DataRepository
+public class ImageDataRepository : DataRepository
 {
-    public ImagesDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
+    public ImageDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
     }
 

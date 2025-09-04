@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
-using Unite.Data.Entities.Omics.Analysis;
 using Unite.Data.Entities.Omics.Analysis.Enums;
 using Unite.Data.Entities.Omics.Analysis.Dna;
 using Unite.Data.Context;
@@ -12,12 +10,12 @@ using SV = Unite.Data.Entities.Omics.Analysis.Dna.Sv;
 
 namespace Unite.Composer.Download.Repositories;
 
-public class VariantsDataRepository : DataRepository
+public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
 {
     private static readonly AnalysisType[] AnalysisTypes = [AnalysisType.WES, AnalysisType.WGS];
 
 
-    public VariantsDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
+    public DnaAnalysisDataRepository(IDbContextFactory<DomainDbContext> dbContextFactory) : base(dbContextFactory)
     {
     }
 

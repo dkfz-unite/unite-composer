@@ -4,7 +4,7 @@ using Unite.Essentials.Tsv;
 
 namespace Unite.Composer.Download.Services.Tsv.Mapping;
 
-public static class SampleMapper
+public static class OmicsAnalysisMapper
 {
     public static ClassMap<Sample> GetSampleMap()
     {

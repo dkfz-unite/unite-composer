@@ -16,6 +16,7 @@ using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 using SpecimenIndex = Unite.Indices.Entities.Specimens.SpecimenIndex;
 using System.IO.Compression;
+using Unite.Composer.Download.Services.Tsv;
 
 namespace Unite.Composer.Web.Controllers.Domain.Donors;
 
@@ -28,18 +29,21 @@ public class DonorController : DomainController
     private readonly ISearchService<ImageIndex> _imagesSearchService;
     private readonly ISearchService<SpecimenIndex> _specimensSearchService;
     private readonly DonorsTsvDownloadService _tsvDownloadService;
+    private readonly DonorsDownloadService _donorsDownloadService;
 
 
     public DonorController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<ImageIndex> imagesSearchService,
         ISearchService<SpecimenIndex> specimensSearchService,
-        DonorsTsvDownloadService tsvDownloadService)
+        DonorsTsvDownloadService tsvDownloadService,
+        DonorsDownloadService donorsDownloadService)
     {
         _donorsSearchService = donorsSearchService;
         _imagesSearchService = imagesSearchService;
         _specimensSearchService = specimensSearchService;
         _tsvDownloadService = tsvDownloadService;
+        _donorsDownloadService = donorsDownloadService;
     }
 
 
@@ -85,6 +89,7 @@ public class DonorController : DomainController
 
         var stream = Response.BodyWriter.AsStream();
         using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _donorsDownloadService.Download([id], model.Data, archive);
         await _tsvDownloadService.Download([id], model.Data, archive);
 
         return new EmptyResult();

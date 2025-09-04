@@ -16,6 +16,8 @@ public static class TsvFileNames
     public const string Xenograft = "xenograft.tsv";
     public const string XenograftDrug = "xenograft_drug.tsv";
     public const string XenograftIntervention = "xenograft_intervention.tsv";
+    
+    public const string DrugScreening = "drug_screening/{0}-{1}_{2}.tsv";
     public const string Sm = "dna/sm/{0}-{1}_{2}.tsv";
     public const string Cnv = "dna/cnv/{0}-{1}_{2}.tsv";
     public const string Sv = "dna/sv/{0}-{1}_{2}.tsv";
