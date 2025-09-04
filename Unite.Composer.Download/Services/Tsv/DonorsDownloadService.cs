@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
-using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Services.Tsv.Mapping;
 using Unite.Composer.Download.Tsv.Constants;
 using Unite.Data.Context;
@@ -58,15 +57,15 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.Sms == true)
         {
-            foreach (var id in ids)
+            foreach (var chunk in ids.Chunk(10))
             {
-                var variants = await _variantsDataRepository.GetVariantsForDonors<SM.VariantEntry, SM.Variant>([id]);
+                var variants = await _variantsDataRepository.GetVariantsForDonors<SM.VariantEntry, SM.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
 
                 foreach (var group in groups)
                 {
                     var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
-                    var entryName = string.Format(TsvFileNames.Sm, id, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    var entryName = string.Format(TsvFileNames.Sm, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
                     WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<SM.VariantEntry, SM.Variant>(criteria.SmsTranscriptsSlim ?? false));
                 }
             }
@@ -74,15 +73,15 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.Cnvs == true)
         {
-            foreach (var id in ids)
+            foreach (var chunk in ids.Chunk(10))
             {
-                var variants = await _variantsDataRepository.GetVariantsForDonors<CNV.VariantEntry, CNV.Variant>([id]);
+                var variants = await _variantsDataRepository.GetVariantsForDonors<CNV.VariantEntry, CNV.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
 
                 foreach (var group in groups)
                 {
                     var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
-                    var entryName = string.Format(TsvFileNames.Cnv, id, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    var entryName = string.Format(TsvFileNames.Cnv, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
                     WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<CNV.VariantEntry, CNV.Variant>(criteria.CnvsTranscriptsSlim ?? false));
                 }
             }
@@ -90,15 +89,15 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.Svs == true)
         {
-            foreach (var id in ids)
+            foreach (var chunk in ids.Chunk(10))
             {
-                var variants = await _variantsDataRepository.GetVariantsForDonors<SV.VariantEntry, SV.Variant>([id]);
+                var variants = await _variantsDataRepository.GetVariantsForDonors<SV.VariantEntry, SV.Variant>(chunk);
                 var groups = variants.GroupBy(entry => entry.SampleId);
 
                 foreach (var group in groups)
                 {
                     var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
-                    var entryName = string.Format(TsvFileNames.Sv, id, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    var entryName = string.Format(TsvFileNames.Sv, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
                     WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), VariantMapper.GetVariantMap<SV.VariantEntry, SV.Variant>(criteria.SvsTranscriptsFull ?? false));
                 }
             }
@@ -106,15 +105,15 @@ public class DonorsDownloadService : DownloadService
 
         if (criteria.GeneExp == true)
         {
-            foreach (var id in ids)
+            foreach (var chunk in ids.Chunk(10))
             {
-                var expressions = await _geneExpressionsDataRepository.GetExpressionsForDonors([id]);
+                var expressions = await _geneExpressionsDataRepository.GetExpressionsForDonors(chunk);
                 var groups = expressions.GroupBy(entry => entry.SampleId);
 
                 foreach (var group in groups)
                 {
                     var sample = (await _samplesDataRepository.GetSamples([group.Key])).First();
-                    var entryName = string.Format(TsvFileNames.GeneExp, id, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    var entryName = string.Format(TsvFileNames.GeneExp, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
                     WriteData(archive, entryName, group.ToArray(), SampleMapper.MapSample(sample), GeneExpressionMapper.GetGeneExpressionMap());
                 }
             }
