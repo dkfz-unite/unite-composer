@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Data.Context;
 using Unite.Data.Entities.Images;
-using Unite.Data.Entities.Images.Enums;
 
 namespace Unite.Composer.Download.Repositories;
 
@@ -12,41 +11,35 @@ public class ImageDataRepository : DataRepository
     }
 
 
-    public async Task<Image[]> GetImages(IEnumerable<int> ids, ImageType type)
+    public async Task<Image[]> GetImages(IEnumerable<int> ids)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return await CreateImagesQuery(dbContext, type)
+        return await CreateImagesQuery(dbContext)
             .Where(entity => ids.Contains(entity.Id))
             .ToArrayAsync();
     }
 
-    public async Task<Image[]> GetImagesForDonors(IEnumerable<int> ids, ImageType type)
+    public async Task<Image[]> GetImagesForDonors(IEnumerable<int> ids)
     {
-        var imageIds = await _donorsRepository.GetRelatedImages(ids, type);
+        var imageIds = await _donorsRepository.GetRelatedImages(ids);
 
-        return await GetImages(imageIds, type);
+        return await GetImages(imageIds);
     }
 
-    public async Task<Image[]> GetImagesForSpecimens(IEnumerable<int> ids, ImageType type)
+    public async Task<Image[]> GetImagesForSpecimens(IEnumerable<int> ids)
     {
-        var imageIds = await _specimensRepository.GetRelatedImages(ids, type);
+        var imageIds = await _specimensRepository.GetRelatedImages(ids);
 
-        return await GetImages(imageIds, type);
+        return await GetImages(imageIds);
     }
 
 
-    private static IQueryable<Image> CreateImagesQuery(DomainDbContext dbContext, ImageType type)
+    private static IQueryable<Image> CreateImagesQuery(DomainDbContext dbContext)
     {
-        var query = dbContext.Set<Image>().AsNoTracking();
-
-        if (type == ImageType.MR)
-            query = query.Include(entity => entity.MrImage);
-        // else if (type == ImageType.CT)
-        //     query = query.Include(entity => entity.CtImage);
-       
-        return query
+        return dbContext.Set<Image>()
+            .AsNoTracking()
             .Include(entity => entity.Donor)
-            .Where(entity => entity.TypeId == type);
+            .Include(entity => entity.MrImage);
     }
 }

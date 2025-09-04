@@ -4,8 +4,11 @@ public static class TsvFileNames
 {
     public const string Donor = "donor.tsv";
     public const string Treatment = "treatment.tsv";
+    public const string Image = "{0}.tsv";
     public const string Mr = "mr.tsv";
     public const string Ct = "ct.tsv";
+    public const string Specimen = "{0}.tsv";
+    public const string Intervention = "{0}_intervention.tsv";
     public const string Material = "material.tsv";
     public const string Line = "line.tsv";
     public const string LineDrug = "line_drug.tsv";
