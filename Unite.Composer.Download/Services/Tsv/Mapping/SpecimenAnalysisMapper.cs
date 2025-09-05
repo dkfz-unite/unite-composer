@@ -1,4 +1,3 @@
-using Unite.Composer.Download.Tsv.Mapping.Extensions;
 using Unite.Data.Entities.Specimens.Analysis;
 using Unite.Data.Entities.Specimens.Analysis.Drugs;
 using Unite.Essentials.Extensions;
@@ -35,6 +34,21 @@ public static class SpecimenAnalysisMapper
     public static ClassMap<DrugScreening> GetDrugScreeningMap()
     {
         return new ClassMap<DrugScreening>().MapDrugScreenings();
+    }
+
+    public static ClassMap<DrugScreening> MapDrugScreenings(this ClassMap<DrugScreening> map)
+    {
+        return map
+            .Map(entity => entity.Entity.Name, "drug_name")
+            .Map(entity => entity.Entity.Description, "drug_description")
+            .Map(entity => entity.Gof, "gof")
+            .Map(entity => entity.Dss, "dss")
+            .Map(entity => entity.DssS, "dsss")
+            .Map(entity => entity.DoseMin, "dose_min")
+            .Map(entity => entity.DoseMax, "dose_max")
+            .Map(entity => entity.Dose25, "dose_25")
+            .Map(entity => entity.Dose50, "dose_50")
+            .Map(entity => entity.Dose75, "dose_75");
     }
 
 

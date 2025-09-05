@@ -1,10 +1,9 @@
-using Unite.Data.Entities.Omics.Analysis.Dna.Sm;
-using Unite.Data.Helpers.Omics.Dna.Sm;
+using Unite.Data.Entities.Omics.Analysis.Dna.Sv;
 using Unite.Essentials.Tsv.Converters;
 
-namespace Unite.Composer.Download.Tsv.Mapping.Converters;
+namespace Unite.Composer.Download.Services.Tsv.Mapping.Converters;
 
-public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTranscript>>
+public class SvAffectedTranscriptsConverter : IConverter<IEnumerable<AffectedTranscript>>
 {
     public object Convert(string value, string row)
     {
@@ -18,6 +17,7 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
         return string.Join("; ", GetAffectedGenes(affectedTranscripts));
     }
 
+
     private IEnumerable<string> GetAffectedGenes(IEnumerable<AffectedTranscript> affectedTranscripts)
     {
         var affectedFeatureGroups = affectedTranscripts
@@ -28,7 +28,6 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
                 Transcript = affectedTranscript.Feature.Symbol ?? affectedTranscript.Feature.StableId,
                 ProteinStart = affectedTranscript.AAStart,
                 ProteinEnd = affectedTranscript.AAEnd,
-                ProteinChange = affectedTranscript.ProteinChange,
                 Effect = affectedTranscript.Effects.OrderBy(effect => effect.Severity).First()
             })
             .GroupBy(affectedFeature => affectedFeature.Gene);
@@ -38,11 +37,20 @@ public class SsmAffectedTranscriptsConverter: IConverter<IEnumerable<AffectedTra
             var gene = affectedFeatureGroup.Key;
 
             var proteins = affectedFeatureGroup
-                .Where(affectedFeature => affectedFeature.ProteinChange != null)
-                .Select(affectedFeature => ProteinChangeCodeGenerator.Generate(affectedFeature.ProteinStart, affectedFeature.ProteinEnd, affectedFeature.ProteinChange))
+                .Where(affectedFeature => affectedFeature.ProteinStart != null || affectedFeature.ProteinEnd != null)
+                .Select(affectedFeature => GetTranscriptBreakingPoint(affectedFeature.ProteinStart, affectedFeature.ProteinEnd))
                 .Distinct();
 
             yield return proteins.Any() ? $"{gene}({string.Join(", ", proteins)})" : $"{gene}";
         }
+    }
+
+    private string GetTranscriptBreakingPoint(int? start, int? end)
+    {
+        return start == end ? $"{start}" 
+             : start != null && end != null ? $"{start}-{end}"
+             : start != null ? $"{start}*"
+             : end != null ? $"*{end}"
+             : string.Empty;
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
-using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Basic;
 using Unite.Composer.Web.Resources.Domain.Donors;
@@ -19,13 +19,13 @@ namespace Unite.Composer.Web.Controllers.Domain.Donors;
 public class DonorsController : DomainController
 {
     private readonly ISearchService<DonorIndex> _searchService;
-    private readonly DonorsTsvDownloadService _tsvDownloadService;
+    private readonly DonorsDownloadService _tsvDownloadService;
     private readonly TaskStatsService _taskStatsService;
 
 
     public DonorsController(
         ISearchService<DonorIndex> searchService, 
-        DonorsTsvDownloadService tsvDownloadService,
+        DonorsDownloadService tsvDownloadService,
         TaskStatsService taskStatsService)
     {
         _searchService = searchService;
@@ -63,14 +63,11 @@ public class DonorsController : DomainController
         var stats = await _searchService.Stats(model.Criteria);
         var originalIds = stats.Keys.Cast<int>().ToArray();
 
-        using var archive = new ZipArchive(Response.Body, ZipArchiveMode.Create, leaveOpen: true);
+        using var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
         await _tsvDownloadService.Download(originalIds, model.Data, archive);
         
         return new EmptyResult();
-
-        // var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
-
-        // return File(bytes, "application/zip", "data.zip");
     }
 
     [HttpGet("status")]

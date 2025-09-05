@@ -1,6 +1,6 @@
-namespace Unite.Composer.Download.Tsv.Constants;
+namespace Unite.Composer.Download.Services.Tsv.Constants;
 
-public static class TsvFileNames
+public static class FileNames
 {
     public const string Donor = "donor.tsv";
     public const string Treatment = "treatment.tsv";

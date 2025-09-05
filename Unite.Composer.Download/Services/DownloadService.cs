@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Models;
 using Unite.Composer.Download.Repositories;
-using Unite.Composer.Download.Tsv.Models;
 using Unite.Data.Context;
 
 namespace Unite.Composer.Download.Services;
@@ -33,9 +32,7 @@ public abstract class DownloadService
     }
 
 
-    // public abstract Task Download(IEnumerable<int> ids, DownloadCriteria criteria, ZipArchive archive);
     public abstract Task Download(IEnumerable<int> ids, DataTypesCriteria criteria, ZipArchive archive);
-
 
 
     protected static StreamWriter CreateEntryWriter(ZipArchive archive, string name)

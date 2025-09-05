@@ -1,7 +1,7 @@
 using Unite.Data.Entities.Specimens;
 using Unite.Essentials.Tsv.Converters;
 
-namespace Unite.Composer.Download.Tsv.Mapping.Converters;
+namespace Unite.Composer.Download.Services.Tsv.Mapping.Converters;
 
 public class SpecimenTypeConverter : IConverter<Specimen>
 {

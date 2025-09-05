@@ -1,7 +1,7 @@
 using Unite.Data.Entities.Omics.Analysis.Dna.Cnv;
 using Unite.Essentials.Tsv.Converters;
 
-namespace Unite.Composer.Download.Tsv.Mapping.Converters;
+namespace Unite.Composer.Download.Services.Tsv.Mapping.Converters;
 
 public class CnvAffectedTranscriptsConverter : IConverter<IEnumerable<AffectedTranscript>>
 {

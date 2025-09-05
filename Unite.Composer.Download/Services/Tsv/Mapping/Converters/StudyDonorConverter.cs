@@ -1,7 +1,7 @@
 using Unite.Data.Entities.Donors;
 using Unite.Essentials.Tsv.Converters;
 
-namespace Unite.Composer.Download.Tsv.Mapping.Converters;
+namespace Unite.Composer.Download.Services.Tsv.Mapping.Converters;
 
 public class StudyDonorConverter : IConverter<IEnumerable<StudyDonor>>
 {

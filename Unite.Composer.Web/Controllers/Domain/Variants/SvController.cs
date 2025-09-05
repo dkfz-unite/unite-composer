@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Download.Tsv;
-using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
@@ -22,17 +19,14 @@ public class SvController : DomainController
 {
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<VariantIndex> _variantsSearchService;
-    private readonly VariantsTsvDownloadService _tsvDownloadService;
 
 
     public SvController(
         ISearchService<DonorIndex> donorsSearchService,
-        ISearchService<VariantIndex> variantsSearchService,
-        VariantsTsvDownloadService tsvDownloadService)
+        ISearchService<VariantIndex> variantsSearchService)
     {
         _donorsSearchService = donorsSearchService;
         _variantsSearchService = variantsSearchService;
-        _tsvDownloadService = tsvDownloadService;
     }
 
 
@@ -55,14 +49,6 @@ public class SvController : DomainController
         var result = await _donorsSearchService.Search(criteria);
 
         return Ok(From(result));
-    }
-
-    [HttpPost("{id}/data")]
-    public async Task<IActionResult> Data(int id, [FromBody]SingleDownloadModel model)
-    {
-        var bytes = await _tsvDownloadService.Download(id, VariantType.SV, model.Data);
-
-        return File(bytes, "application/zip", "data.zip");
     }
 
 

@@ -19,74 +19,86 @@ public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
     {
     }
 
-    public async Task<TVE[]> GetVariantsForSamples<TVE, TV>(IEnumerable<int> ids)
+    public async Task<TVE[]> GetVariantsForSamples<TVE, TV>(IEnumerable<int> ids, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return await CreateVariantsQuery<TVE, TV>(dbContext)
+        return await CreateVariantsQuery<TVE, TV>(dbContext, transcripts)
             .Where(entity => ids.Contains(entity.SampleId))
             .ToArrayAsync();
     }
 
-    public async Task<TVE[]> GetVariantsForDonors<TVE, TV>(IEnumerable<int> ids)
+    public async Task<TVE[]> GetVariantsForDonors<TVE, TV>(IEnumerable<int> ids, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
         var sampleIds = await _donorsRepository.GetRelatedSamples(ids, AnalysisTypes);
 
-        return await GetVariantsForSamples<TVE, TV>(sampleIds);
+        return await GetVariantsForSamples<TVE, TV>(sampleIds, transcripts);
     }
 
-    public async Task<TVE[]> GetVariantsForImages<TVE, TV>(IEnumerable<int> ids)
+    public async Task<TVE[]> GetVariantsForImages<TVE, TV>(IEnumerable<int> ids, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
         var sampleIds = await _imagesRepository.GetRelatedSamples(ids, AnalysisTypes);
 
-        return await GetVariantsForSamples<TVE, TV>(sampleIds);
+        return await GetVariantsForSamples<TVE, TV>(sampleIds, transcripts);
     }
 
-    public async Task<TVE[]> GetVariantsForSpecimens<TVE, TV>(IEnumerable<int> ids)
+    public async Task<TVE[]> GetVariantsForSpecimens<TVE, TV>(IEnumerable<int> ids, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
         var sampleIds = await _specimensRepository.GetRelatedSamples(ids, AnalysisTypes);
 
-        return await GetVariantsForSamples<TVE, TV>(sampleIds);
+        return await GetVariantsForSamples<TVE, TV>(sampleIds, transcripts);
     }
 
 
-    private static IQueryable<TVE> CreateVariantsQuery<TVE, TV>(DomainDbContext dbContext)
+    private static IQueryable<TVE> CreateVariantsQuery<TVE, TV>(DomainDbContext dbContext, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
     {
         if (typeof(TVE) == typeof(SM.VariantEntry))
-            return (IQueryable<TVE>)CreateSmsQuery(dbContext);
+            return (IQueryable<TVE>)CreateSmsQuery(dbContext, transcripts);
         else if (typeof(TVE) == typeof(CNV.VariantEntry))
-            return (IQueryable<TVE>)CreateCnvsQuery(dbContext);
+            return (IQueryable<TVE>)CreateCnvsQuery(dbContext, transcripts);
         else if (typeof(TVE) == typeof(SV.VariantEntry))
-            return (IQueryable<TVE>)CreateSvsQuery(dbContext);
+            return (IQueryable<TVE>)CreateSvsQuery(dbContext, transcripts);
         else
             throw new NotSupportedException($"Type '{typeof(TVE)}' is not supported.");
     }
 
-    private static IQueryable<SM.VariantEntry> CreateSmsQuery(DomainDbContext dbContext)
+    private static IQueryable<SM.VariantEntry> CreateSmsQuery(DomainDbContext dbContext, bool transcripts)
     {
-        return dbContext.Set<SM.VariantEntry>().AsNoTracking()
-            .IncludeAffectedTranscripts();
+        var query = dbContext.Set<SM.VariantEntry>().AsNoTracking();
+
+        if (transcripts)
+            query = query.IncludeAffectedTranscripts();
+
+        return query;
     }
 
-    private static IQueryable<CNV.VariantEntry> CreateCnvsQuery(DomainDbContext dbContext)
+    private static IQueryable<CNV.VariantEntry> CreateCnvsQuery(DomainDbContext dbContext, bool transcripts)
     {
-        return dbContext.Set<CNV.VariantEntry>().AsNoTracking()
-            .IncludeAffectedTranscripts();
+        var query = dbContext.Set<CNV.VariantEntry>().AsNoTracking();
+
+        if (transcripts)
+            query = query.IncludeAffectedTranscripts();
+            
+        return query;
     }
 
-    private static IQueryable<SV.VariantEntry> CreateSvsQuery(DomainDbContext dbContext)
+    private static IQueryable<SV.VariantEntry> CreateSvsQuery(DomainDbContext dbContext, bool transcripts)
     {
-        return dbContext.Set<SV.VariantEntry>().AsNoTracking()
-            .IncludeAffectedTranscripts();
+        var query = dbContext.Set<SV.VariantEntry>().AsNoTracking();
+
+        if (transcripts)
+            query = query.IncludeAffectedTranscripts();
+
+        return query;
     }
 }

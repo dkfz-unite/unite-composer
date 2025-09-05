@@ -1,7 +1,8 @@
 using Unite.Data.Entities.Omics.Enums;
+using Unite.Essentials.Extensions;
 using Unite.Essentials.Tsv.Converters;
 
-namespace Unite.Composer.Download.Tsv.Mapping.Converters;
+namespace Unite.Composer.Download.Services.Tsv.Mapping.Converters;
 
 public class ChromosomeConverter : IConverter<Chromosome>
 {
@@ -14,9 +15,11 @@ public class ChromosomeConverter : IConverter<Chromosome>
     {
         var chromosome = (Chromosome)value;
 
-        return (int)chromosome <= 22 ? ((int)chromosome).ToString() :
-               (int)chromosome == 23 ? "X" :
-               (int)chromosome == 24 ? "Y" :
-               string.Empty;
+        // return (int)chromosome <= 22 ? ((int)chromosome).ToString() :
+        //        (int)chromosome == 23 ? "X" :
+        //        (int)chromosome == 24 ? "Y" :
+        //        string.Empty;
+
+        return chromosome.ToDefinitionString();
     }
 }
