@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
-using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Indices.Entities.Basic.Images.Constants;
@@ -19,13 +20,13 @@ namespace Unite.Composer.Web.Controllers.Domain.Images;
 public class ImagesController : DomainController
 {
     private readonly ISearchService<ImageIndex> _searchService;
-    private readonly ImagesTsvDownloadService _tsvDownloadService;
+    private readonly ImagesDownloadService _tsvDownloadService;
     private readonly TaskStatsService _taskStatsService;
 
 
     public ImagesController(
         ISearchService<ImageIndex> searchService,
-        ImagesTsvDownloadService tsvDownloadService,
+        ImagesDownloadService tsvDownloadService,
         TaskStatsService taskStatsService)
     {
         _searchService = searchService;
@@ -61,16 +62,20 @@ public class ImagesController : DomainController
     [HttpPost("{type}/data")]
     public async Task<IActionResult> Data(string type, [FromBody] BulkDownloadModel model)
     {
+        Response.Headers.Append("Content-Disposition", "attachment; filename=\"data.zip\"");
+        Response.ContentType = "application/zip";
+
         var criteria = model.Criteria ?? new SearchCriteria();
         Reassign(ref criteria, type);
 
         var stats = await _searchService.Stats(criteria);
-
         var originalIds = stats.Keys.Cast<int>().ToArray();
-        var originalType = ConvertImageType(type);
-        var bytes = await _tsvDownloadService.Download(originalIds, originalType, model.Data);
 
-        return File(bytes, "application/zip", "data.zip");
+        using var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download(originalIds, model.Data, archive);
+        
+        return new EmptyResult();
     }
 
     [HttpGet("{type}/status")]

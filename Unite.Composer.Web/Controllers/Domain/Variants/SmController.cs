@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Omics;
-using Unite.Composer.Download.Tsv;
-using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Base.Variants.Criteria;
@@ -24,19 +21,15 @@ public class SmController : DomainController
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<VariantIndex> _variantsSearchService;
     private readonly SmDataService _variantsDataService;
-    private readonly VariantsTsvDownloadService _tsvDownloadService;
-
 
     public SmController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<VariantIndex> variantsSearchService,
-        SmDataService smDataService,
-        VariantsTsvDownloadService tsvDownloadService)
+        SmDataService smDataService)
     {
         _donorsSearchService = donorsSearchService;
         _variantsSearchService = variantsSearchService;
         _variantsDataService = smDataService;
-        _tsvDownloadService = tsvDownloadService;
     }
 
 
@@ -67,14 +60,6 @@ public class SmController : DomainController
         var translations = await _variantsDataService.GetTranslations(id);
 
         return Ok(translations);
-    }
-
-    [HttpPost("{id}/data")]
-    public async Task<IActionResult> Data(int id, [FromBody]SingleDownloadModel model)
-    {
-        var bytes = await _tsvDownloadService.Download(id, VariantType.SM, model.Data);
-
-        return File(bytes, "application/zip", "data.zip");
     }
 
 

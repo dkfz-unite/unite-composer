@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
-using Unite.Composer.Download.Tsv;
-using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Variants;
-using Unite.Data.Entities.Omics.Analysis.Dna.Enums;
 using Unite.Data.Entities.Tasks.Enums;
 using Unite.Indices.Entities.Variants;
 using Unite.Indices.Search.Engine.Queries;
@@ -19,17 +16,14 @@ namespace Unite.Composer.Web.Controllers.Domain.Variants;
 public class SmsController : DomainController
 {
     private readonly ISearchService<SmIndex> _searchService;
-    private readonly VariantsTsvDownloadService _tsvDownloadService;
     private readonly TaskStatsService _taskStatsService;
 
 
     public SmsController(
         ISearchService<SmIndex> searchService,
-        VariantsTsvDownloadService tsvDownloadService,
         TaskStatsService taskStatsService)
     {
         _searchService = searchService;
-        _tsvDownloadService = tsvDownloadService;
         _taskStatsService = taskStatsService;
     }
 
@@ -52,19 +46,6 @@ public class SmsController : DomainController
         var data = await _searchService.Stats(criteria);
 
         return Ok(new VariantDataResource(data));
-    }
-
-    [HttpPost("data")]
-    public async Task<ActionResult> Data(BulkDownloadModel model)
-    {
-        var criteria = model.Criteria ?? new SearchCriteria();
-
-        var stats = await _searchService.Stats(criteria);
-
-        var originalIds = stats.Keys.Cast<int>();
-        var bytes = await _tsvDownloadService.Download(originalIds, VariantType.SM, model.Data);
-
-        return File(bytes, "application/zip", "data.zip");
     }
 
     [HttpGet("status")]

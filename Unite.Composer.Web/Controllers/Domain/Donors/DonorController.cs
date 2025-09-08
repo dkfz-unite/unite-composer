@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Images;
@@ -26,14 +27,14 @@ public class DonorController : DomainController
     private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly ISearchService<ImageIndex> _imagesSearchService;
     private readonly ISearchService<SpecimenIndex> _specimensSearchService;
-    private readonly DonorsTsvDownloadService _tsvDownloadService;
+    private readonly DonorsDownloadService _tsvDownloadService;
 
 
     public DonorController(
         ISearchService<DonorIndex> donorsSearchService,
         ISearchService<ImageIndex> imagesSearchService,
         ISearchService<SpecimenIndex> specimensSearchService,
-        DonorsTsvDownloadService tsvDownloadService)
+        DonorsDownloadService tsvDownloadService)
     {
         _donorsSearchService = donorsSearchService;
         _imagesSearchService = imagesSearchService;
@@ -53,7 +54,7 @@ public class DonorController : DomainController
     }
 
     [HttpPost("{id}/images/{type?}")]
-    public async Task<IActionResult> Images(int id, string type, [FromBody]SearchCriteria searchCriteria)
+    public async Task<IActionResult> Images(int id, string type, [FromBody] SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
@@ -65,7 +66,7 @@ public class DonorController : DomainController
     }
 
     [HttpPost("{id}/specimens/{type?}")]
-    public async Task<IActionResult> Specimens(int id, string type, [FromBody]SearchCriteria searchCriteria)
+    public async Task<IActionResult> Specimens(int id, string type, [FromBody] SearchCriteria searchCriteria)
     {
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
@@ -79,9 +80,14 @@ public class DonorController : DomainController
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
     {
-        var bytes = await _tsvDownloadService.Download(id, model.Data);
+        Response.ContentType = "application/octet-stream";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
-        return File(bytes, "application/zip", "data.zip");
+        using var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download([id], model.Data, archive);
+
+        return new EmptyResult();
     }
 
 
