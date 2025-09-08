@@ -77,9 +77,9 @@ public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
         var query = dbContext.Set<SM.VariantEntry>().AsNoTracking();
 
         if (transcripts)
-            query = query.IncludeAffectedTranscripts();
-
-        return query;
+            return query.IncludeAffectedTranscripts();
+        else
+            return query.Include(entity => entity.Entity);
     }
 
     private static IQueryable<CNV.VariantEntry> CreateCnvsQuery(DomainDbContext dbContext, bool transcripts)
@@ -87,9 +87,9 @@ public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
         var query = dbContext.Set<CNV.VariantEntry>().AsNoTracking();
 
         if (transcripts)
-            query = query.IncludeAffectedTranscripts();
-            
-        return query;
+            return query.IncludeAffectedTranscripts();
+        else
+            return query.Include(entity => entity.Entity);
     }
 
     private static IQueryable<SV.VariantEntry> CreateSvsQuery(DomainDbContext dbContext, bool transcripts)
@@ -97,8 +97,8 @@ public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
         var query = dbContext.Set<SV.VariantEntry>().AsNoTracking();
 
         if (transcripts)
-            query = query.IncludeAffectedTranscripts();
-
-        return query;
+            return query.IncludeAffectedTranscripts();
+        else
+            return query.Include(entity => entity.Entity);
     }
 }
