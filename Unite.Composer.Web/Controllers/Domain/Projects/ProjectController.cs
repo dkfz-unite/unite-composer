@@ -1,7 +1,8 @@
+using System.IO.Compression;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Configuration.Constants;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Projects;
@@ -20,7 +21,7 @@ public class ProjectController : DomainController
 {
     private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     private readonly ISearchService<ProjectIndex> _projectSearchService;
-    private readonly DonorsTsvDownloadService _tsvDownloadService;
+    private readonly DonorsDownloadService _tsvDownloadService;
 
     public record UpdateModel(string Description);
 
@@ -28,7 +29,7 @@ public class ProjectController : DomainController
     public ProjectController(
         IDbContextFactory<DomainDbContext> dbContextFactory,
         ISearchService<ProjectIndex> projectsSearchService,
-        DonorsTsvDownloadService tsvDownloadService)
+        DonorsDownloadService tsvDownloadService)
     {
         _dbContextFactory = dbContextFactory;
         _projectSearchService = projectsSearchService;
@@ -89,14 +90,19 @@ public class ProjectController : DomainController
 
         var ids = dbContext.Set<ProjectDonor>()
             .AsNoTracking()
-            .Where(entity => entity.ProjectId == id)
-            .Select(entity => entity.DonorId)
+            .Where(project => project.ProjectId == id)
+            .Select(project => project.DonorId)
             .Distinct()
             .ToArray();
 
-        var bytes = await _tsvDownloadService.Download(ids, model.Data);
+        Response.ContentType = "application/octet-stream";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
-        return File(bytes, "application/zip", "data.zip");
+        using var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download(ids, model.Data, archive);
+
+        return new EmptyResult();
     }
 
 

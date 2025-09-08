@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Download.Tsv;
 using Unite.Composer.Data.Omics;
-using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Variants;
@@ -31,7 +29,6 @@ public class GeneController : DomainController
     private readonly ISearchService<CnvIndex> _cnvsSearchService;
     private readonly ISearchService<SvIndex> _svsSearchService;
     private readonly GeneDataService _dataService;
-    private readonly GenesTsvDownloadService _tsvDownloadService;
 
 
     public GeneController(
@@ -40,8 +37,7 @@ public class GeneController : DomainController
         ISearchService<SmIndex> smsSearchService,
         ISearchService<CnvIndex> cnvsSearchService,
         ISearchService<SvIndex> svsSearchService,
-        GeneDataService dataService, 
-        GenesTsvDownloadService tsvDownloadService)
+        GeneDataService dataService)
     {
         _donorsSearchService = donorsSearchService;
         _genesSearchService = genesSearchService;
@@ -49,7 +45,6 @@ public class GeneController : DomainController
         _cnvsSearchService = cnvsSearchService;
         _svsSearchService = svsSearchService;
         _dataService = dataService;
-        _tsvDownloadService = tsvDownloadService;
     }
 
 
@@ -113,14 +108,6 @@ public class GeneController : DomainController
         var translations = await _dataService.GetTranslations(id);
 
         return Ok(translations);
-    }
-
-    [HttpPost("{id}/data")]
-    public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
-    {
-        var bytes = await _tsvDownloadService.Download(id, model.Data);
-
-        return File(bytes, "application/zip", "data.zip");
     }
 
 

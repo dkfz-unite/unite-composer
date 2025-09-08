@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Omics.Ranges;
 using Unite.Composer.Data.Omics.Ranges.Models;
 using Unite.Composer.Data.Specimens;
-using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Specimens;
 using Unite.Composer.Web.Resources.Domain.Variants;
@@ -37,7 +38,7 @@ public class SpecimenController : DomainController
     private readonly ISearchService<SvIndex> _svsSearchService;
     private readonly DrugScreeningService _drugScreeningService;
     private readonly GenomicProfileService _genomicProfileService;
-    private readonly SpecimensTsvDownloadService _tsvDownloadService;
+    private readonly SpecimensDownloadService _tsvDownloadService;
 
 
     public SpecimenController(
@@ -48,7 +49,7 @@ public class SpecimenController : DomainController
         ISearchService<SvIndex> svsSearchService,
         DrugScreeningService drugScreeningService,
         GenomicProfileService genomicProfileService,
-        SpecimensTsvDownloadService tsvDownloadService)
+        SpecimensDownloadService tsvDownloadService)
     {
         _specimensSearchService = specimensSearchService;
         _genesSearchService = genesSearchService;
@@ -138,13 +139,14 @@ public class SpecimenController : DomainController
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody]SingleDownloadModel model)
     {
-        var key = id.ToString();
-        var index = await _specimensSearchService.Get(key);
+        Response.ContentType = "application/octet-stream";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
-        var originalType = Convert(index.Type);
-        var bytes = await _tsvDownloadService.Download(id, originalType, model.Data);
+        using var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download([id], model.Data, archive);
 
-        return File(bytes, "application/zip", "data.zip");
+        return new EmptyResult();
     }
     
 

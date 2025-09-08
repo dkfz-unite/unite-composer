@@ -16,13 +16,11 @@ namespace Unite.Composer.Web.Controllers.Domain.Projects;
 public class ProjectsController : DomainController
 {
     private readonly ISearchService<ProjectIndex> _searchService;
-    // private readonly ProjectsTsvDownloadService _tsvDownloadService;
     private readonly TaskStatsService _taskStatsService;
 
 
     public ProjectsController(
         ISearchService<ProjectIndex> searchService,
-        // ProjectsTsvDownloadService tsvDownloadService,
         TaskStatsService taskStatsService)
     {
         _searchService = searchService;
@@ -49,17 +47,6 @@ public class ProjectsController : DomainController
 
         return Ok(new DataResource(stats));
     }
-
-    // [HttpPost("data")]
-    // public async Task<IActionResult> Data([FromBody] BulkDownloadModel model)
-    // {
-    //     var stats = await _searchService.Stats(model.Criteria);
-
-    //     var originalIds = stats.Keys.Cast<int>().ToArray();
-    //     var bytes = await _tsvDownloadService.Download(originalIds, model.Data);
-
-    //     return File(bytes, "application/zip", "data.zip");
-    // }
 
     [HttpGet("status")]
     public async Task<IActionResult> Status()

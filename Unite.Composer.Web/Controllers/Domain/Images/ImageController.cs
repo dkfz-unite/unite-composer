@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Unite.Composer.Download.Tsv;
+using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Indices.Search.Services;
@@ -15,12 +16,12 @@ namespace Unite.Composer.Web.Controllers.Domain.Images;
 public class ImageController : DomainController
 {
     private readonly ISearchService<ImageIndex> _searchService;
-    private readonly ImagesTsvDownloadService _tsvDownloadService;
+    private readonly ImagesDownloadService _tsvDownloadService;
 
 
     public ImageController(
         ISearchService<ImageIndex> searchService,
-        ImagesTsvDownloadService tsvDownloadService)
+        ImagesDownloadService tsvDownloadService)
     {
         _searchService = searchService;
         _tsvDownloadService = tsvDownloadService;
@@ -40,14 +41,14 @@ public class ImageController : DomainController
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody]SingleDownloadModel model)
     {
-        var key = id.ToString();
-        
-        var index = await _searchService.Get(key);
+        Response.ContentType = "application/octet-stream";
+        Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
-        var originalType = ConvertImageType(index.Type);
-        var bytes = await _tsvDownloadService.Download(id, originalType, model.Data);
+        using var stream = Response.BodyWriter.AsStream();
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true);
+        await _tsvDownloadService.Download([id], model.Data, archive);
 
-        return File(bytes, "application/zip", "data.zip");
+        return new EmptyResult();
     }
 
 
