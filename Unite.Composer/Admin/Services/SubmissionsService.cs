@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Unite.Data.Context;
 using Unite.Data.Entities.Tasks.Enums;
+using Unite.Essentials.Extensions;
 
 namespace Unite.Composer.Admin.Services;
 
@@ -15,14 +16,18 @@ public class SubmissionsService
         _dbContext = dbContext;
     }
     
-    public async Task<Submission[]> GetPedning()
+    public async Task<Submission[]> GetPedning(long[] ids = null)
     {
-         var tasks = await _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+        var query = _dbContext.Set<Unite.Data.Entities.Tasks.Task>()
             .AsNoTracking()
             .OrderBy(task => task.Id)
             .Where(task => task.SubmissionTypeId != null)
-            .Where(task => task.StatusTypeId == TaskStatusType.Preparing)
-            .ToArrayAsync();
+            .Where(task => task.StatusTypeId == TaskStatusType.Preparing);
+
+        if (ids.IsNotEmpty())
+            query = query.Where(task => ids.Contains(task.Id));
+    
+        var tasks = await query.ToArrayAsync();
 
         return tasks.Select(task => new Submission(task.Id, task.SubmissionTypeId.Value, task.Date)).ToArray();
     }
