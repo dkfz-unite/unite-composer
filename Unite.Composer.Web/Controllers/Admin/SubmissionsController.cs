@@ -27,9 +27,9 @@ public class SubmissionsController : Controller
     }
 
     [HttpPost("approve")]
-    public async Task<IActionResult> ApproveAll()
+    public async Task<IActionResult> ApproveMany([FromBody] long[] ids = null)
     {
-        var tatks = await _submissionsService.GetPedning();
+        var tatks = await _submissionsService.GetPedning(ids);
 
         foreach (var task in tatks)
         {
@@ -48,9 +48,9 @@ public class SubmissionsController : Controller
     }
 
     [HttpPost("reject")]
-    public async Task<IActionResult> RejectAll([FromBody] RejectSubmissionModel model)
+    public async Task<IActionResult> RejectMany([FromBody] RejectSubmissionsModel model)
     {
-        var tasks = await _submissionsService.GetPedning();
+        var tasks = await _submissionsService.GetPedning(model.Ids);
 
         foreach (var task in tasks)
         {
