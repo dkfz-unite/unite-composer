@@ -10,6 +10,7 @@ public class MolecularDataResource
     public string GeneExpressionSubtype { get; set; }
     public string MethylationSubtype { get; set; }
     public bool? GcimpMethylation { get; set; }
+    public string[] GeneKnockouts { get; set; }
 
 
     public MolecularDataResource(MolecularDataIndex index)
@@ -20,5 +21,6 @@ public class MolecularDataResource
         GeneExpressionSubtype = index.GeneExpressionSubtype;
         MethylationSubtype = index.MethylationSubtype;
         GcimpMethylation = index.GcimpMethylation;
+        GeneKnockouts = index.GeneKnockouts;
     }
 }
