@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Unite.Composer.Download.Services.Tsv.Mapping.Converters;
 using Unite.Data.Entities.Specimens;
 using Unite.Data.Entities.Specimens.Enums;
 using Unite.Essentials.Extensions;
@@ -8,6 +9,7 @@ namespace Unite.Composer.Download.Services.Tsv.Mapping;
 
 public static class SpecimenMapper
 {
+    private static readonly ArrayConverter<string> _stringArrayConverter = new ();
 
     public static ClassMap<Specimen> GetSpecimenMap(SpecimenType type)
     {
@@ -143,6 +145,7 @@ public static class SpecimenMapper
             .Map(entity => entity.MolecularData.IdhStatusId, "idh")
             .Map(entity => entity.MolecularData.IdhMutationId, "idh_mutation")
             .Map(entity => entity.MolecularData.MethylationSubtypeId, "methylation_subtype")
-            .Map(entity => entity.MolecularData.GcimpMethylation, "g-cimp_methylation");
+            .Map(entity => entity.MolecularData.GcimpMethylation, "g-cimp_methylation")
+            .Map(entity => entity.MolecularData.GeneKnockouts, "gene_knockouts", _stringArrayConverter);
     }
 }
