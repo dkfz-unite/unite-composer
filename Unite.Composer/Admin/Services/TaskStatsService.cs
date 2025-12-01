@@ -21,9 +21,9 @@ public class TaskStatsService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var submissionTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.SubmissionTypeId != null);
-        var annotationTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.AnnotationTypeId != null);
-        var indexingTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.IndexingTypeId != null);
+        var submissionTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.SubmissionTypeId != null && task.StatusTypeId != TaskStatusType.Rejected);
+        var annotationTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.AnnotationTypeId != null && task.StatusTypeId != TaskStatusType.Rejected);
+        var indexingTasksNumber = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.IndexingTypeId != null && task.StatusTypeId != TaskStatusType.Rejected);
 
         return new TaskNumbersStats(submissionTasksNumber, annotationTasksNumber, indexingTasksNumber);
     }
@@ -36,7 +36,10 @@ public class TaskStatsService
 
         foreach (var taskType in tasks.Keys)
         {
-            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.SubmissionTypeId == taskType);
+            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+                .Where(task => task.SubmissionTypeId == taskType)
+                .Where(task => task.StatusTypeId != TaskStatusType.Rejected)
+                .CountAsync();
         }
 
         return tasks;
@@ -50,7 +53,10 @@ public class TaskStatsService
 
         foreach (var taskType in tasks.Keys)
         {
-            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.AnnotationTypeId == taskType);
+            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+                .Where(task => task.AnnotationTypeId == taskType)
+                .Where(task => task.StatusTypeId != TaskStatusType.Rejected)
+                .CountAsync();
         }
 
         return tasks;
@@ -64,7 +70,10 @@ public class TaskStatsService
 
         foreach (var taskType in tasks.Keys)
         {
-            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().CountAsync(task => task.IndexingTypeId == taskType);
+            tasks[taskType] = await dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+                .Where(task => task.IndexingTypeId == taskType)
+                .Where(task => task.StatusTypeId != TaskStatusType.Rejected)
+                .CountAsync();
         }
 
         return tasks;
@@ -74,7 +83,8 @@ public class TaskStatsService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().AnyAsync(task => task.SubmissionTypeId == type);
+        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+            .AnyAsync(task => task.SubmissionTypeId == type);
 
         return !hasTasks;
     }
@@ -83,7 +93,8 @@ public class TaskStatsService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().AnyAsync(task => task.AnnotationTypeId == type);
+        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+            .AnyAsync(task => task.AnnotationTypeId == type);
 
         return !hasTasks;
     }
@@ -92,7 +103,8 @@ public class TaskStatsService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>().AnyAsync(task => task.IndexingTypeId == type);
+        var hasTasks = await dbContext.Set<Unite.Data.Entities.Tasks.Task>()
+            .AnyAsync(task => task.IndexingTypeId == type);
 
         return !hasTasks;
     }
