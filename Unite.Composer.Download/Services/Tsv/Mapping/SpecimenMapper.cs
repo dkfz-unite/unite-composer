@@ -54,11 +54,9 @@ public static class SpecimenMapper
     {
         return map
             .MapSpecimen()
-            .Map(entity => entity.Material.TypeId, "type")
             .Map(entity => entity.Material.FixationTypeId, "fixation_type")
-            .Map(entity => entity.Material.TumorTypeId, "tumor_type")
-            .Map(entity => entity.Material.TumorGrade, "tumor_grade")
             .Map(entity => entity.Material.Source.Value, "source")
+            .MapTumorClassification()
             .MapMolecularData();
     }
 
@@ -69,6 +67,7 @@ public static class SpecimenMapper
             .Map(entity => entity.Line.CellsSpeciesId, "cells_species")
             .Map(entity => entity.Line.CellsTypeId, "cells_type")
             .Map(entity => entity.Line.CellsCultureTypeId, "cells_culture_type")
+            .MapTumorClassification()
             .MapMolecularData()
             .Map(entity => entity.Line.Info.Name, "public_name")
             .Map(entity => entity.Line.Info.DepositorName, "depositor_name")
@@ -86,6 +85,7 @@ public static class SpecimenMapper
             .Map(entity => entity.Organoid.ImplantedCellsNumber, "implanted_cells_number")
             .Map(entity => entity.Organoid.Tumorigenicity, "tumorigenicity")
             .Map(entity => entity.Organoid.Medium, "medium")
+            .MapTumorClassification()
             .MapMolecularData();
     }
 
@@ -102,6 +102,7 @@ public static class SpecimenMapper
             .Map(entity => entity.Xenograft.TumorGrowthFormId, "tumor_growth_form")
             .Map(entity => entity.Xenograft.SurvivalDaysFrom, "survival_days_from")
             .Map(entity => entity.Xenograft.SurvivalDaysTo, "survival_days_to")
+            .MapTumorClassification()
             .MapMolecularData();
     }
 
@@ -127,7 +128,10 @@ public static class SpecimenMapper
             .Map(entity => entity.Parent.ReferenceId, "parent_id")
             .Map(entity => entity.Parent.TypeId, "parent_type")
             .Map(entity => entity.CreationDate, "creation_date")
-            .Map(entity => entity.CreationDay, "creation_day");
+            .Map(entity => entity.CreationDay, "creation_day")
+            .Map(entity => entity.ConditionId, "condition")
+            .Map(entity => entity.TumorTypeId, "tumor_type")
+            .Map(entity => entity.TumorGrade, "tumor_grade");
     }
 
     private static ClassMap<T> MapSpecimen<T>(this ClassMap<T> map, Expression<Func<T, Specimen>> path) where T : class
@@ -138,12 +142,24 @@ public static class SpecimenMapper
             .Map(path.Join(entity => entity.TypeId), "specimen_type");
     }
 
+    private static ClassMap<Specimen> MapTumorClassification(this ClassMap<Specimen> map)
+    {
+        return map
+            .Map(entity => entity.TumorClassification.SuperfamilyId, "tumor_superfamily")
+            .Map(entity => entity.TumorClassification.FamilyId, "tumor_family")
+            .Map(entity => entity.TumorClassification.ClassId, "tumor_class")
+            .Map(entity => entity.TumorClassification.SubclassId, "tumor_subclass");
+    }
+
     private static ClassMap<Specimen> MapMolecularData(this ClassMap<Specimen> map)
     {
         return map
-            .Map(entity => entity.MolecularData.MgmtStatusId, "mgmt")
-            .Map(entity => entity.MolecularData.IdhStatusId, "idh")
+            .Map(entity => entity.MolecularData.MgmtStatus, "mgmt_status")
+            .Map(entity => entity.MolecularData.IdhStatus, "idh_status")
+            .Map(entity => entity.MolecularData.TertStatus, "tert_status")
+            .Map(entity => entity.MolecularData.TertMutationId, "tert_mutation")
             .Map(entity => entity.MolecularData.IdhMutationId, "idh_mutation")
+            .Map(entity => entity.MolecularData.ExpressionSubtypeId, "expression_subtype")
             .Map(entity => entity.MolecularData.MethylationSubtypeId, "methylation_subtype")
             .Map(entity => entity.MolecularData.GcimpMethylation, "g-cimp_methylation")
             .Map(entity => entity.MolecularData.GeneKnockouts, "gene_knockouts", _stringArrayConverter);

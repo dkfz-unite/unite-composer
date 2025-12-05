@@ -9,13 +9,14 @@ public class SpecimenResource
     public int Id { get; set; }
     public string ReferenceId { get; set; }
     public string Type { get; set; }
-    public int? CreationDay { get; set; }
 
     public MaterialResource Material { get; set; }
     public LineResource Line { get; set; }
     public OrganoidResource Organoid { get; set; }
     public XenograftResource Xenograft { get; set; }
 
+
+    public TumorClassificationResource TumorClassification { get; set; }
     public MolecularDataResource MolecularData { get; set; }
     public InterventionResource[] Interventions { get; set; }
     public DrugScreeningResource[] DrugScreenings { get; set; }
@@ -39,6 +40,9 @@ public class SpecimenResource
             Organoid = new OrganoidResource(index.Organoid);
         else if (index.Xenograft != null)
             Xenograft = new XenograftResource(index.Xenograft);
+
+        if (index.GetTumorClassification() != null)
+            TumorClassification = new TumorClassificationResource(index.GetTumorClassification());
 
         if (index.GetMolecularData() != null)
             MolecularData = new MolecularDataResource(index.GetMolecularData());

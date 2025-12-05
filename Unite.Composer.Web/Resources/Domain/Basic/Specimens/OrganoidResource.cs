@@ -2,21 +2,15 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
-public class OrganoidResource
+public class OrganoidResource : SpecimenBaseResource
 {
-    public int Id { get; set; }
-    public string ReferenceId { get; set; }
-    public int? CreationDay { get; set; }
     public string Medium { get; set; }
     public int? ImplantedCellsNumber { get; set; }
     public bool? Tumorigenicity { get; set; }
 
     
-    public OrganoidResource(OrganoidIndex index)
+    public OrganoidResource(OrganoidIndex index) : base(index)
     {
-        Id = index.Id;
-        ReferenceId = index.ReferenceId;
-        CreationDay = index.CreationDay;
         Medium = index.Medium;
         ImplantedCellsNumber = index.ImplantedCellsNumber;
         Tumorigenicity = index.Tumorigenicity;
