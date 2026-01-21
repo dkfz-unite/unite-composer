@@ -145,10 +145,10 @@ public static class SpecimenMapper
     private static ClassMap<Specimen> MapTumorClassification(this ClassMap<Specimen> map)
     {
         return map
-            .Map(entity => entity.TumorClassification.SuperfamilyId, "tumor_superfamily")
-            .Map(entity => entity.TumorClassification.FamilyId, "tumor_family")
-            .Map(entity => entity.TumorClassification.ClassId, "tumor_class")
-            .Map(entity => entity.TumorClassification.SubclassId, "tumor_subclass");
+            .Map(entity => entity.TumorClassification.Superfamily.Name, "tumor_superfamily")
+            .Map(entity => entity.TumorClassification.Family.Name, "tumor_family")
+            .Map(entity => entity.TumorClassification.Class.Name, "tumor_class")
+            .Map(entity => entity.TumorClassification.Subclass.Name, "tumor_subclass");
     }
 
     private static ClassMap<Specimen> MapMolecularData(this ClassMap<Specimen> map)
@@ -156,9 +156,9 @@ public static class SpecimenMapper
         return map
             .Map(entity => entity.MolecularData.MgmtStatus, "mgmt_status")
             .Map(entity => entity.MolecularData.IdhStatus, "idh_status")
+            .Map(entity => entity.MolecularData.IdhMutationId, "idh_mutation")
             .Map(entity => entity.MolecularData.TertStatus, "tert_status")
             .Map(entity => entity.MolecularData.TertMutationId, "tert_mutation")
-            .Map(entity => entity.MolecularData.IdhMutationId, "idh_mutation")
             .Map(entity => entity.MolecularData.ExpressionSubtypeId, "expression_subtype")
             .Map(entity => entity.MolecularData.MethylationSubtypeId, "methylation_subtype")
             .Map(entity => entity.MolecularData.GcimpMethylation, "g-cimp_methylation")
