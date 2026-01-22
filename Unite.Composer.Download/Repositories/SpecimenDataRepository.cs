@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Unite.Data.Context;
+using Unite.Data.Context.Repositories.Extensions.Queryable;
 using Unite.Data.Entities.Specimens;
 using Unite.Data.Entities.Specimens.Analysis.Drugs;
 
@@ -69,7 +70,8 @@ public class SpecimenDataRepository : DataRepository
             .Include(entity => entity.Line)
             .Include(entity => entity.Organoid)
             .Include(entity => entity.Xenograft)
-            .Include(entity => entity.MolecularData);
+            .IncludeTumorClassification()
+            .IncludeMolecularData();
     }
 
     public static IQueryable<Intervention> GetInterventionsQuery(DomainDbContext dbContext)

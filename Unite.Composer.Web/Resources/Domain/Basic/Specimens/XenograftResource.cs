@@ -2,11 +2,8 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
-public class XenograftResource
+public class XenograftResource : SpecimenBaseResource
 {
-    public int Id { get; set; }
-    public string ReferenceId { get; set; }
-    public int? CreationDay { get; set; }
     public string MouseStrain { get; set; }
     public int? GroupSize { get; set; }
     public string ImplantType { get; set; }
@@ -17,11 +14,8 @@ public class XenograftResource
     public string SurvivalDays { get; set; }
 
 
-    public XenograftResource(XenograftIndex index)
+    public XenograftResource(XenograftIndex index) : base(index)
     {
-        Id = index.Id;
-        ReferenceId = index.ReferenceId;
-        CreationDay = index.CreationDay;
         MouseStrain = index.MouseStrain;
         GroupSize = index.GroupSize;
         ImplantType = index.ImplantType;
