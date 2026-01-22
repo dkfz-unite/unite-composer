@@ -2,11 +2,8 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Specimens;
 
-public class LineResource
+public class LineResource : SpecimenBaseResource
 {
-    public int Id { get; set; }
-    public string ReferenceId { get; set; }
-    public int? CreationDay { get; set; }
     public string CellsSpecies { get; set; }
     public string CellsType { get; set; }
     public string CellsCultureType { get; set; }
@@ -21,11 +18,8 @@ public class LineResource
     public string ExpasyLink { get; set; }
 
 
-    public LineResource(LineIndex index)
+    public LineResource(LineIndex index) : base(index)
     {
-        Id = index.Id;
-        ReferenceId = index.ReferenceId;
-        CreationDay = index.CreationDay;
         CellsSpecies = index.CellsSpecies;
         CellsType = index.CellsType;
         CellsCultureType = index.CellsCultureType;
