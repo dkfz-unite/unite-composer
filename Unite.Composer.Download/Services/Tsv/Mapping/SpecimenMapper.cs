@@ -129,7 +129,7 @@ public static class SpecimenMapper
             .Map(entity => entity.Parent.TypeId, "parent_type")
             .Map(entity => entity.CreationDate, "creation_date")
             .Map(entity => entity.CreationDay, "creation_day")
-            .Map(entity => entity.ConditionId, "condition")
+            .Map(entity => entity.CategoryId, "category")
             .Map(entity => entity.TumorTypeId, "tumor_type")
             .Map(entity => entity.TumorGrade, "tumor_grade");
     }

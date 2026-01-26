@@ -7,7 +7,7 @@ public abstract class SpecimenBaseResource
     public int Id { get; set; }
     public string ReferenceId { get; set; }
     public int? CreationDay { get; set; }
-    public string Condition { get; set; }
+    public string Category { get; set; }
     public string TumorType { get; set; }
     public double? TumorGrade { get; set; }
 
@@ -17,7 +17,7 @@ public abstract class SpecimenBaseResource
         Id = index.Id;
         ReferenceId = index.ReferenceId;
         CreationDay = index.CreationDay;
-        Condition = index.Condition;
+        Category = index.Category;
         TumorType = index.TumorType;
         TumorGrade = index.TumorGrade;
     }
