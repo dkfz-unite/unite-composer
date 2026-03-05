@@ -154,6 +154,23 @@ public abstract class DownloadService : Services.DownloadService
                 }
             }
         }
+
+        if (criteria.ProtExp == true)
+        {
+            foreach (var chunk in ids.Chunk(25))
+            {
+                var expressions = await GetProteinExpressions(chunk);
+                var groups = expressions.GroupBy(entry => entry.SampleId);
+                var samples = (await GetProtSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
+
+                foreach (var group in groups)
+                {
+                    var sample = samples[group.Key];
+                    var entryName = string.Format(FileNames.ProtExp, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    WriteData(archive, entryName, group.ToArray(), ProtAnalysisMapper.GetExpressionMap(), comments: OmicsAnalysisMapper.MapSample(sample));
+                }
+            }
+        }
     }
 
 
@@ -173,10 +190,11 @@ public abstract class DownloadService : Services.DownloadService
     protected abstract Task<CNV.VariantEntry[]> GetCnvVariants(IEnumerable<int> ids, bool transcripts);
     protected abstract Task<SV.VariantEntry[]> GetSvVariants(IEnumerable<int> ids, bool transcripts);
 
-
     protected abstract Task<Data.Entities.Omics.Analysis.Sample[]> GetRnaSamples(IEnumerable<int> ids);
     protected abstract Task<Data.Entities.Omics.Analysis.Rna.GeneExpression[]> GetGeneExpressions(IEnumerable<int> ids);
      
+    protected abstract Task<Data.Entities.Omics.Analysis.Sample[]> GetProtSamples(IEnumerable<int> ids);
+    protected abstract Task<Data.Entities.Omics.Analysis.Prot.ProteinExpression[]> GetProteinExpressions(IEnumerable<int> ids);
 
 
     private static void WriteData<T>(ZipArchive archive, string name, T[] data, ClassMap<T> map, string[] comments = null) where T : class

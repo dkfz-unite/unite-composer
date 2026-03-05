@@ -85,4 +85,15 @@ public class DonorsDownloadService : DownloadService
     {
         return _rnaAnalysisDataRepository.GetExpressionsForDonors(ids);
     }
+
+
+    protected override Task<Data.Entities.Omics.Analysis.Sample[]> GetProtSamples(IEnumerable<int> ids)
+    {
+        return _protAnalysisDataRepository.GetSamples(ids);
+    }
+
+    protected override Task<Data.Entities.Omics.Analysis.Prot.ProteinExpression[]> GetProteinExpressions(IEnumerable<int> ids)
+    {
+        return _protAnalysisDataRepository.GetExpressionsForDonors(ids);
+    }
 }

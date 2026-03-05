@@ -19,6 +19,7 @@ public class SpecimenDataResource
     public bool? Cnvs { get; set; }
     public bool? Svs { get; set; }
     public bool? Meth { get; set; }
+    public bool? Prot { get; set; }
 
     public int? Total { get; set; }
 
@@ -39,6 +40,7 @@ public class SpecimenDataResource
         Cnvs = index.Cnvs;
         Svs = index.Svs;
         Meth = index.Meth;
+        Prot = index.Prot;
     }
 
     public SpecimenDataResource(IReadOnlyDictionary<object, DataIndex> indices, string type)
@@ -56,6 +58,7 @@ public class SpecimenDataResource
         Cnvs = indices.Values.Any(d => d.Cnvs == true);
         Svs = indices.Values.Any(d => d.Svs == true);
         Meth = indices.Values.Any(d => d.Meth == true);
+        Prot = indices.Values.Any(d => d.Prot == true);
 
         Total = indices.Count;
     }

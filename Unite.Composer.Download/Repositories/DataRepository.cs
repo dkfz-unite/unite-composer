@@ -11,6 +11,7 @@ public abstract class DataRepository
     protected readonly ImagesRepository _imagesRepository;
     protected readonly SpecimensRepository _specimensRepository;
     protected readonly GenesRepository _genesRepository;
+    protected readonly ProteinsRepository _proteinsRepository;
     protected readonly VariantsRepository _variantsRepository;
 
 
@@ -21,6 +22,7 @@ public abstract class DataRepository
         _imagesRepository = new ImagesRepository(dbContextFactory);
         _specimensRepository = new SpecimensRepository(dbContextFactory);
         _genesRepository = new GenesRepository(dbContextFactory);
+        _proteinsRepository = new ProteinsRepository(dbContextFactory);
         _variantsRepository = new VariantsRepository(dbContextFactory);
     }
 }
