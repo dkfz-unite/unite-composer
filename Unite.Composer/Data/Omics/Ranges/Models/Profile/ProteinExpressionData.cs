@@ -20,8 +20,8 @@ public class ProteinExpressionData : RangeData
     {
         Expression = new ProteinExpression(expression);
 
-        var raw = Math.Round((double)expression.Intensity);
-        var medianCenteredLog2 = Math.Round((double)expression.MedianCenteredLog2, 3);
+        var raw = Math.Round((double)expression.Raw);
+        var medianCenteredLog2 = Math.Round((double)expression.Normalized, 3);
 
         Intensity = [raw, medianCenteredLog2];
     }
@@ -30,8 +30,8 @@ public class ProteinExpressionData : RangeData
     {
         foreach (var expression in expressions)
         {
-            var raw = Math.Round(expressions.Average(expression => expression.Intensity));
-            var medianCenteredLog2 = Math.Round(expressions.Average(expression => expression.MedianCenteredLog2), 3);
+            var raw = Math.Round(expressions.Average(expression => expression.Raw));
+            var medianCenteredLog2 = Math.Round(expressions.Average(expression => expression.Normalized), 3);
 
             Intensity = [raw, medianCenteredLog2];
         }

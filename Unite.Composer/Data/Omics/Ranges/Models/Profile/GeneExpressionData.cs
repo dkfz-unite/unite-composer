@@ -20,7 +20,7 @@ public class GeneExpressionData : RangeData
     {
         Expression = new GeneExpression(expression);
 
-        var reads = Math.Round((double)expression.Reads);
+        var reads = Math.Round((double)expression.Raw);
         var tpm = Math.Round((double)expression.TPM);
         var fpkm = Math.Round((double)expression.FPKM);
 
@@ -31,7 +31,7 @@ public class GeneExpressionData : RangeData
     {
         foreach (var expression in expressions)
         {
-            var reads = Math.Round(expressions.Average(expression => expression.Reads));
+            var reads = Math.Round(expressions.Average(expression => expression.Raw));
             var tpm = Math.Round(expressions.Average(expression => expression.TPM));
             var fpkm = Math.Round(expressions.Average(expression => expression.FPKM));
 

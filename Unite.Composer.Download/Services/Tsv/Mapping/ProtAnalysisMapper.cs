@@ -16,6 +16,7 @@ public static class ProtAnalysisMapper
             .Map(entity => entity.Entity.StableId, "protein_id")
             .Map(entity => entity.Entity.AccessionId, "protein_accession_id")
             .Map(entity => entity.Entity.Symbol, "protein_symbol")
-            .Map(entity => entity.Intensity, "intensity");
+            .Map(entity => entity.Raw, "raw")
+            .Map(entity => entity.Normalized, "normalized");
     }
 }
