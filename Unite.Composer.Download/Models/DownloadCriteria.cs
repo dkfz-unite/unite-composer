@@ -19,4 +19,5 @@ public class DownloadCriteria
     public bool? SvEffect { get; set; }
     
     public bool? GeneExp { get; set; }
+    public bool? ProtExp { get; set; }
 }

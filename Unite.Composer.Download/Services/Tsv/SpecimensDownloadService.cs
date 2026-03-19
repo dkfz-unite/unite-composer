@@ -86,4 +86,15 @@ public class SpecimensDownloadService : DownloadService
     {
         return _rnaAnalysisDataRepository.GetExpressionsForSpecimens(ids);
     }
+
+
+    protected override Task<Data.Entities.Omics.Analysis.Sample[]> GetProtSamples(IEnumerable<int> ids)
+    {
+        return _protAnalysisDataRepository.GetSamples(ids);
+    }
+
+    protected override Task<Data.Entities.Omics.Analysis.Prot.ProteinExpression[]> GetProteinExpressions(IEnumerable<int> ids)
+    {
+        return _protAnalysisDataRepository.GetExpressionsForSpecimens(ids);
+    }
 }

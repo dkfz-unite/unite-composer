@@ -2,13 +2,13 @@ using System.Text.Json.Serialization;
 
 namespace Unite.Composer.Data.Omics.Ranges.Models.Profile;
 
-public class ExpressionData : RangeData
+public class GeneExpressionData : RangeData
 {
     /// <summary>
     /// Gene entry.
     /// </summary>
     [JsonPropertyName("e")]
-    public Expression Expression { get; set; }
+    public GeneExpression Expression { get; set; }
 
     /// <summary>
     /// Array of gene expression stats in format [Reads, TPM, FPKM].
@@ -16,22 +16,22 @@ public class ExpressionData : RangeData
     public double[] Reads { get; set; }
 
 
-    public ExpressionData(int[] range, Unite.Data.Entities.Omics.Analysis.Rna.GeneExpression expression) : base(range)
+    public GeneExpressionData(int[] range, Unite.Data.Entities.Omics.Analysis.Rna.GeneExpression expression) : base(range)
     {
-        Expression = new Expression(expression);
+        Expression = new GeneExpression(expression);
 
-        var reads = Math.Round((double)expression.Reads);
+        var reads = Math.Round((double)expression.Raw);
         var tpm = Math.Round((double)expression.TPM);
         var fpkm = Math.Round((double)expression.FPKM);
 
         Reads = [reads, tpm, fpkm];
     }
 
-    public ExpressionData(int[] range, IEnumerable<Unite.Data.Entities.Omics.Analysis.Rna.GeneExpression> expressions) : base(range)
+    public GeneExpressionData(int[] range, IEnumerable<Unite.Data.Entities.Omics.Analysis.Rna.GeneExpression> expressions) : base(range)
     {
         foreach (var expression in expressions)
         {
-            var reads = Math.Round(expressions.Average(expression => expression.Reads));
+            var reads = Math.Round(expressions.Average(expression => expression.Raw));
             var tpm = Math.Round(expressions.Average(expression => expression.TPM));
             var fpkm = Math.Round(expressions.Average(expression => expression.FPKM));
 
@@ -40,11 +40,11 @@ public class ExpressionData : RangeData
     }
 }
 
-public class Expression
+public class GeneExpression
 {
     public string Gene { get; set; }
 
-    public Expression(Unite.Data.Entities.Omics.Analysis.Rna.GeneExpression expression)
+    public GeneExpression(Unite.Data.Entities.Omics.Analysis.Rna.GeneExpression expression)
     {
         Gene = expression.Entity.Symbol;
     }
