@@ -17,6 +17,7 @@ public abstract class DownloadService
     protected readonly SpecimenAnalysisDataRepository _specimenAnalysisDataRepository;
     protected readonly DnaAnalysisDataRepository _dnaAnalysisDataRepository;
     protected readonly RnaAnalysisDataRepository _rnaAnalysisDataRepository;
+    protected readonly ProtAnalysisDataRepository _protAnalysisDataRepository;
 
 
     public DownloadService(IDbContextFactory<DomainDbContext> dbContextFactory)
@@ -29,6 +30,7 @@ public abstract class DownloadService
         _specimenAnalysisDataRepository = new SpecimenAnalysisDataRepository(_dbContextFactory);
         _dnaAnalysisDataRepository = new DnaAnalysisDataRepository(_dbContextFactory);
         _rnaAnalysisDataRepository = new RnaAnalysisDataRepository(_dbContextFactory);
+        _protAnalysisDataRepository = new ProtAnalysisDataRepository(_dbContextFactory);
     }
 
 

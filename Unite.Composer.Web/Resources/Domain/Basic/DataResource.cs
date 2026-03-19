@@ -29,6 +29,7 @@ public class DataResource
     public bool? Cnvs { get; set; }
     public bool? Svs { get; set; }
     public bool? Meth { get; set; }
+    public bool? Prot { get; set; }
 
     public int? Total { get; set; }
 
@@ -60,6 +61,7 @@ public class DataResource
         Cnvs = index.Cnvs;
         Svs = index.Svs;
         Meth = index.Meth;
+        Prot = index.Prot;
     }
 
     public DataResource(IReadOnlyDictionary<object, DataIndex> indices)
@@ -89,6 +91,7 @@ public class DataResource
         Cnvs = indices.Values.Any(d => d.Cnvs == true);
         Svs = indices.Values.Any(d => d.Svs == true);
         Meth = indices.Values.Any(d => d.Meth == true);
+        Prot = indices.Values.Any(d => d.Prot == true);
         
         Total = indices.Count;
     }

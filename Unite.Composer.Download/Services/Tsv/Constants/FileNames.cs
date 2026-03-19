@@ -25,4 +25,5 @@ public static class FileNames
     public const string Cnv = "dna/cnv/{0}-{1}_{2}.tsv";
     public const string Sv = "dna/sv/{0}-{1}_{2}.tsv";
     public const string GeneExp = "rna/exp/{0}-{1}_{2}.tsv";
+    public const string ProtExp = "prot/exp/{0}-{1}_{2}.tsv";
 }

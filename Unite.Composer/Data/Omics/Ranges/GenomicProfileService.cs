@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Unite.Composer.Data.Omics.Ranges.Models;
 using Unite.Data.Context;
 using Unite.Data.Entities.Omics;
 using Unite.Data.Entities.Omics.Enums;
+using Unite.Data.Entities.Omics.Analysis.Prot;
 using Unite.Data.Entities.Omics.Analysis.Rna;
 using Unite.Essentials.Extensions;
 
@@ -15,17 +17,20 @@ namespace Unite.Composer.Data.Omics.Ranges;
 public class GenomicProfileService
 {
     private readonly GenomicRangesFilterService _rangesService;
+    private readonly IMemoryCache _memoryCache;
     private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
 
-    public GenomicProfileService(IDbContextFactory<DomainDbContext> dbContextFactory)
+    public GenomicProfileService(IDbContextFactory<DomainDbContext> dbContextFactory, IMemoryCache memoryCache)
     {
         _rangesService = new GenomicRangesFilterService();
         _dbContextFactory = dbContextFactory;
+        _memoryCache = memoryCache;
     }
 
     public async Task<GenomicRangesData> GetProfile(int specimenId, GenomicRangesFilterCriteria filterCriteria)
     {
-        
+        // TODO: Use memory cache to store genes and proteins data.
+        // TODO: User memory cache to store gene expressions and protein expressions data for shorter time.
         var ranges = _rangesService.GetRanges(filterCriteria).ToArray();
         
         var startChr = ranges.Min(range => range.Chr);
@@ -41,15 +46,18 @@ public class GenomicProfileService
             HasSms = HasSms(specimenId),
             HasCnvs = HasCnvs(specimenId),
             HasSvs = HasSvs(specimenId),
-            HasExps = HasExpressions(specimenId)
+            HasExps = HasGeneExpressions(specimenId),
+            // HasProts = HasProteinExpressions(specimenId)
         };
 
         await Task.WhenAll(
             LoadGenes(startChr, start, endChr, end, ranges[0].Length).ContinueWith(task => profile.Genes = GetGenesData(task.Result, ref ranges)),
+            // LoadProteins(startChr, start, endChr, end, ranges[0].Length).ContinueWith(task => profile.Prots = GetProteinsData(task.Result, ref ranges)),
             LoadSms(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Sms = GetSmsData(task.Result, ref ranges)),
             LoadCnvs(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Cnvs = GetCnvsData(task.Result, ref ranges)),
             LoadSvs(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Svs = GetSvsData(task.Result, ref ranges)),
-            LoadExpressions(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Exps = GetExpressionsData(task.Result, ref ranges))
+            LoadGeneExpressions(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Exps = GetGeneExpressionsData(task.Result, ref ranges))
+            // LoadProteinExpressions(specimenId, startChr, start, endChr, end).ContinueWith(task => profile.Pexps = GetProteinExpressionsData(task.Result, ref ranges))
         );
 
         return profile;
@@ -85,6 +93,42 @@ public class GenomicProfileService
                 else
                 {
                     geneData.Range[1] = range.Index;
+                }
+            }
+        }
+    
+        return data.Values.ToArrayOrNull();
+    }
+
+    private static Models.Profile.ProteinsData[] GetProteinsData(in Protein[] proteins, ref GenomicRange[] ranges)
+    {
+        var data = new Dictionary<int, Models.Profile.ProteinsData>();
+        
+        foreach (var range in ranges)
+        {
+            var rangeProteins = proteins.Where(protein =>
+                protein.ChromosomeId == (Chromosome)range.Chr &&
+                ((protein.End >= range.Start && protein.End <= range.End) ||
+                (protein.Start >= range.Start && protein.Start <= range.End) ||
+                (protein.Start >= range.Start && protein.End <= range.End) ||
+                (protein.Start <= range.Start && protein.End >= range.End))
+            );
+
+            var protein = rangeProteins.FirstOrDefault();
+
+            if (protein != null)
+            {
+                var exists = data.TryGetValue(protein.Id, out var protData);
+                
+                if (!exists)
+                {
+                    protData = new Models.Profile.ProteinsData([range.Index, range.Index], protein);
+
+                    data.Add(protein.Id, protData);
+                }
+                else
+                {
+                    protData.Range[1] = range.Index;
                 }
             }
         }
@@ -194,9 +238,9 @@ public class GenomicProfileService
         return data.Values.ToArrayOrNull();
     }
 
-    private static Models.Profile.ExpressionData[] GetExpressionsData(in GeneExpression[] expressions, ref GenomicRange[] ranges)
+    private static Models.Profile.GeneExpressionData[] GetGeneExpressionsData(in GeneExpression[] expressions, ref GenomicRange[] ranges)
     {
-        var data = new List<Models.Profile.ExpressionData>();
+        var data = new List<Models.Profile.GeneExpressionData>();
 
         foreach (var range in ranges)
         {
@@ -209,9 +253,32 @@ public class GenomicProfileService
             ).ToArray();
 
             if (rangeExpressions.Length > 1)
-                data.Add(new Models.Profile.ExpressionData([range.Index, range.Index], rangeExpressions));
+                data.Add(new Models.Profile.GeneExpressionData([range.Index, range.Index], rangeExpressions));
             else if (rangeExpressions.Length == 1)
-                data.Add(new Models.Profile.ExpressionData([range.Index, range.Index], rangeExpressions[0]));
+                data.Add(new Models.Profile.GeneExpressionData([range.Index, range.Index], rangeExpressions[0]));
+        }
+
+        return data.ToArrayOrNull();
+    }
+
+    private static Models.Profile.ProteinExpressionData[] GetProteinExpressionsData(in ProteinExpression[] expressions, ref GenomicRange[] ranges)
+    {
+        var data = new List<Models.Profile.ProteinExpressionData>();
+
+        foreach (var range in ranges)
+        {
+            var rangeExpressions = expressions.Where(expression =>
+                expression.Entity.ChromosomeId == (Chromosome)range.Chr &&
+                ((expression.Entity.End >= range.Start && expression.Entity.End <= range.End) ||
+                (expression.Entity.Start >= range.Start && expression.Entity.Start <= range.End) ||
+                (expression.Entity.Start >= range.Start && expression.Entity.End <= range.End) ||
+                (expression.Entity.Start <= range.Start && expression.Entity.End >= range.End))
+            ).ToArray();
+
+            if (rangeExpressions.Length > 1)
+                data.Add(new Models.Profile.ProteinExpressionData([range.Index, range.Index], rangeExpressions));
+            else if (rangeExpressions.Length == 1)
+                data.Add(new Models.Profile.ProteinExpressionData([range.Index, range.Index], rangeExpressions[0]));
         }
 
         return data.ToArrayOrNull();
@@ -221,10 +288,34 @@ public class GenomicProfileService
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        return await dbContext.Set<Gene>()
-            .AsNoTracking()
+        var genes = _memoryCache.Get<Gene[]>("genes");
+
+        if (genes == null)
+        {
+            genes = await dbContext.Set<Gene>().AsNoTracking().ToArrayAsync();
+            _memoryCache.Set("genes", genes, TimeSpan.FromMinutes(5));
+        }
+
+        return genes
             .Where(gene => (int)gene.ChromosomeId >= startChr && (int)gene.ChromosomeId <= endChr)
             .Where(gene => gene.End - gene.Start + 1 >= length)
+            .ToArray();
+
+        // return await dbContext.Set<Gene>()
+        //     .AsNoTracking()
+        //     .Where(gene => (int)gene.ChromosomeId >= startChr && (int)gene.ChromosomeId <= endChr)
+        //     .Where(gene => gene.End - gene.Start + 1 >= length)
+        //     .ToArrayAsync();
+    }
+
+    private async Task<Protein[]> LoadProteins(int startChr, int start, int endChr, int end, int length)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<Protein>()
+            .AsNoTracking()
+            .Where(protein => (int)protein.ChromosomeId >= startChr && (int)protein.ChromosomeId <= endChr)
+            .Where(protein => protein.End - protein.Start + 1 >= length)
             .ToArrayAsync();
     }
 
@@ -272,11 +363,23 @@ public class GenomicProfileService
             .ToArrayAsync();
     }
 
-    private async Task<GeneExpression[]> LoadExpressions(int specimenId, int startChr, int start, int endChr, int end)
+    private async Task<GeneExpression[]> LoadGeneExpressions(int specimenId, int startChr, int start, int endChr, int end)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
         return await dbContext.Set<GeneExpression>()
+            .AsNoTracking()
+            .Include(expression => expression.Entity)
+            .Where(expression => expression.Sample.SpecimenId == specimenId)
+            .Where(expression => (int)expression.Entity.ChromosomeId >= startChr && (int)expression.Entity.ChromosomeId <= endChr)
+            .ToArrayAsync();
+    }
+
+    private async Task<ProteinExpression[]> LoadProteinExpressions(int specimenId, int startChr, int start, int endChr, int end)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await dbContext.Set<ProteinExpression>()
             .AsNoTracking()
             .Include(expression => expression.Entity)
             .Where(expression => expression.Sample.SpecimenId == specimenId)
@@ -311,11 +414,20 @@ public class GenomicProfileService
             .Any(entry => entry.Sample.SpecimenId == specimenId);
     }
 
-    private bool HasExpressions(int specimenId)
+    private bool HasGeneExpressions(int specimenId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
         return dbContext.Set<GeneExpression>()
+            .AsNoTracking()
+            .Any(expression => expression.Sample.SpecimenId == specimenId);
+    }
+
+    private bool HasProteinExpressions(int specimenId)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return dbContext.Set<ProteinExpression>()
             .AsNoTracking()
             .Any(expression => expression.Sample.SpecimenId == specimenId);
     }

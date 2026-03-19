@@ -11,6 +11,7 @@ builder.Logging.AddConsole();
 
 
 builder.Services.AddServices();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddResponseCompression(options => options.AddCompressionOptions());
 

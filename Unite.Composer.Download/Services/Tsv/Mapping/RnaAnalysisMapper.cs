@@ -15,8 +15,9 @@ public static class RnaAnalysisMapper
         return map
             .Map(entity => entity.Entity.StableId, "gene_id")
             .Map(entity => entity.Entity.Symbol, "gene_symbol")
-            .Map(entity => entity.Reads, "reads")
+            .Map(entity => entity.Raw, "raw")
             .Map(entity => entity.TPM, "tpm")
-            .Map(entity => entity.FPKM, "fpkm");
+            .Map(entity => entity.FPKM, "fpkm")
+            .Map(entity => entity.Normalized, "normalized");
     }
 }
