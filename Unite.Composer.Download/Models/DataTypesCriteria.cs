@@ -19,4 +19,5 @@ public record DataTypesCriteria
     public bool? SvTranscript { get; set; }
     
     public bool? GeneExp { get; set; }
+    public bool? ProtExp { get; set; }
 }
