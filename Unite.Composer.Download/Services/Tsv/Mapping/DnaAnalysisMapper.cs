@@ -55,9 +55,11 @@ public static class DnaAnalysisMapper
     private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, SM.Variant>> path) where T : class
     {
         var chromosomeConverter = new ChromosomeConverter();
+        var chromosomeArmConverter = new ChromosomeArmConverter();
 
         return map
             .Map(path.Join(entity => entity.ChromosomeId), "chromosome", chromosomeConverter)
+            .Map(path.Join(entity => entity.ChromosomeArmId), "chromosome_arm", chromosomeArmConverter)
             .Map(path.Join(entity => entity.Start), "start")
             .Map(path.Join(entity => entity.End), "end")
             .Map(path.Join(entity => entity.Length), "length")
@@ -69,9 +71,11 @@ public static class DnaAnalysisMapper
     private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, CNV.Variant>> path) where T : class
     {
         var chromosomeConverter = new ChromosomeConverter();
+        var chromosomeArmConverter = new ChromosomeArmConverter();
 
         return map
             .Map(path.Join(entity => entity.ChromosomeId), "chromosome", chromosomeConverter)
+            .Map(path.Join(entity => entity.ChromosomeArmId), "chromosome_arm", chromosomeArmConverter)
             .Map(path.Join(entity => entity.Start), "start")
             .Map(path.Join(entity => entity.End), "end")
             .Map(path.Join(entity => entity.Length), "length")
@@ -89,12 +93,15 @@ public static class DnaAnalysisMapper
     private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, SV.Variant>> path) where T : class
     {
         var chromosomeConverter = new ChromosomeConverter();
+        var chromosomeArmConverter = new ChromosomeArmConverter();
 
         return map
             .Map(path.Join(entity => entity.ChromosomeId), "chromosome_1", chromosomeConverter)
+            .Map(path.Join(entity => entity.ChromosomeArmId), "chromosome_arm_1", chromosomeArmConverter)
             .Map(path.Join(entity => entity.Start), "start_1")
             .Map(path.Join(entity => entity.End), "end_1")
             .Map(path.Join(entity => entity.OtherChromosomeId), "chromosome_2", chromosomeConverter)
+            .Map(path.Join(entity => entity.OtherChromosomeArmId), "chromosome_arm_2", chromosomeArmConverter)
             .Map(path.Join(entity => entity.OtherStart), "start_2")
             .Map(path.Join(entity => entity.OtherEnd), "end_2")
             .Map(path.Join(entity => entity.Length), "length")

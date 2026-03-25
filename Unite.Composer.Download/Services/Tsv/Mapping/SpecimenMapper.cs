@@ -146,9 +146,13 @@ public static class SpecimenMapper
     {
         return map
             .Map(entity => entity.TumorClassification.Superfamily.Name, "tumor_superfamily")
+            .Map(entity => entity.TumorClassification.SuperfamilyScore, "tumor_superfamily_score")
             .Map(entity => entity.TumorClassification.Family.Name, "tumor_family")
+            .Map(entity => entity.TumorClassification.FamilyScore, "tumor_family_score")
             .Map(entity => entity.TumorClassification.Class.Name, "tumor_class")
-            .Map(entity => entity.TumorClassification.Subclass.Name, "tumor_subclass");
+            .Map(entity => entity.TumorClassification.ClassScore, "tumor_class_score")
+            .Map(entity => entity.TumorClassification.Subclass.Name, "tumor_subclass")
+            .Map(entity => entity.TumorClassification.SubclassScore, "tumor_subclass_score");
     }
 
     private static ClassMap<Specimen> MapMolecularData(this ClassMap<Specimen> map)
