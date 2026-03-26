@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../unite-data/Unite.Data.Context/Unite.Data.Context.csproj" />
-    <ProjectReference Include="../../unite-indices/Unite.Indices.Search/Unite.Indices.Search.csproj" />
+    <!-- <ProjectReference Include="../../unite-data/Unite.Data.Context/Unite.Data.Context.csproj" /> -->
+    <!-- <ProjectReference Include="../../unite-indices/Unite.Indices.Search/Unite.Indices.Search.csproj" /> -->
   </ItemGroup>
 </Project>
