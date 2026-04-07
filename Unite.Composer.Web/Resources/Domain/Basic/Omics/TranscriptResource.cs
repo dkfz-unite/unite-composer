@@ -2,11 +2,8 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Omics;
 
-public class TranscriptResource
+public class TranscriptResource : TranscriptResourceBase
 {
-    public int Id { get; set; }
-    public string StableId { get; set; }
-    public string Symbol { get; set; }
     public string Description { get; set; }
     public string Biotype { get; set; }
     public bool? IsCanonical { get; set; }

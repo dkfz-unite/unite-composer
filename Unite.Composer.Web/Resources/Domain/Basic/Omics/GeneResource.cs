@@ -2,17 +2,14 @@
 
 namespace Unite.Composer.Web.Resources.Domain.Basic.Omics;
 
-public class GeneResource
+public class GeneResource : GeneResourceBase
 {
-    public int Id { get; }
-    public string StableId { get; }
-    public string Symbol { get; }
     public string Description { get; set; }
-    public string Biotype { get; }
-    public string Chromosome { get; }
-    public int? Start { get; }
-    public int? End { get; }
-    public bool? Strand { get; }
+    public string Biotype { get; set; }
+    public string Chromosome { get; set; }
+    public int? Start { get; set; }
+    public int? End { get; set; }
+    public bool? Strand { get; set; }
     public int? ExonicLength { get; set; }
     
 
