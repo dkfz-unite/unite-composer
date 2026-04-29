@@ -119,6 +119,20 @@ public abstract class DownloadService : Services.DownloadService
                     WriteData(archive, entryName, group.ToArray(), DnaAnalysisMapper.GetVariantMap<CNV.VariantEntry, CNV.Variant>(criteria.CnvTranscript ?? false), comments: OmicsAnalysisMapper.MapSample(sample));
                 }
             }
+
+            foreach (var chunk in ids.Chunk(25))
+            {
+                var profiles = await GetCnvProfiles(chunk);
+                var groups = profiles.GroupBy(entry => entry.SampleId);
+                var samples = (await GetDnaSamples(groups.Select(group => group.Key))).ToDictionary(sample => sample.Id);
+
+                foreach (var group in groups)
+                {
+                    var sample = samples[group.Key];
+                    var entryName = string.Format(FileNames.CnvProfile, sample.Specimen.Donor.ReferenceId, sample.Specimen.ReferenceId, sample.Specimen.TypeId.ToDefinitionString());
+                    WriteData(archive, entryName, group.ToArray(), DnaAnalysisMapper.GetCnvProfileMap(), comments: OmicsAnalysisMapper.MapSample(sample));
+                }
+            }
         }
 
         if (criteria.Sv == true)
@@ -189,6 +203,7 @@ public abstract class DownloadService : Services.DownloadService
     protected abstract Task<SM.VariantEntry[]> GetSmVariants(IEnumerable<int> ids, bool transcripts);
     protected abstract Task<CNV.VariantEntry[]> GetCnvVariants(IEnumerable<int> ids, bool transcripts);
     protected abstract Task<SV.VariantEntry[]> GetSvVariants(IEnumerable<int> ids, bool transcripts);
+    protected abstract Task<CNV.Profile[]> GetCnvProfiles(IEnumerable<int> ids);
 
     protected abstract Task<Data.Entities.Omics.Analysis.Sample[]> GetRnaSamples(IEnumerable<int> ids);
     protected abstract Task<Data.Entities.Omics.Analysis.Rna.GeneExpression[]> GetGeneExpressions(IEnumerable<int> ids);

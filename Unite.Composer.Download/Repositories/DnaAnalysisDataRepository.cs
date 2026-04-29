@@ -58,6 +58,36 @@ public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
     }
 
 
+    public async Task<CNV.Profile[]> GetCnvProfilesForSamples(IEnumerable<int> ids)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        return await CreateCnvProfilesQuery(dbContext, false)
+            .Where(entity => ids.Contains(entity.SampleId))
+            .ToArrayAsync();
+    }
+
+    public async Task<CNV.Profile[]> GetCnvProfilesForDonors(IEnumerable<int> ids)
+    {
+        var sampleIds = await _donorsRepository.GetRelatedSamples(ids, AnalysisTypes);
+
+        return await GetCnvProfilesForSamples(sampleIds);
+    }
+
+    public async Task<CNV.Profile[]> GetCnvProfilesForImages(IEnumerable<int> ids)
+    {
+        var sampleIds = await _imagesRepository.GetRelatedSamples(ids, AnalysisTypes);
+
+        return await GetCnvProfilesForSamples(sampleIds);
+    }
+
+    public async Task<CNV.Profile[]> GetCnvProfilesForSpecimens(IEnumerable<int> ids)
+    {
+        var sampleIds = await _specimensRepository.GetRelatedSamples(ids, AnalysisTypes);
+
+        return await GetCnvProfilesForSamples(sampleIds);
+    }
+
     private static IQueryable<TVE> CreateVariantsQuery<TVE, TV>(DomainDbContext dbContext, bool transcripts)
         where TVE : VariantEntry<TV>
         where TV : Variant
@@ -100,5 +130,12 @@ public class DnaAnalysisDataRepository : OmicsAnalysisDataRepository
             return query.IncludeAffectedTranscripts();
         else
             return query.Include(entity => entity.Entity);
+    }
+
+    private static IQueryable<CNV.Profile> CreateCnvProfilesQuery(DomainDbContext dbContext, bool transcripts)
+    {
+        var query = dbContext.Set<CNV.Profile>().AsNoTracking();
+
+        return query;
     }
 }

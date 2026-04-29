@@ -23,6 +23,7 @@ public static class FileNames
     public const string DrugScreening = "drug_screening/{0}-{1}_{2}.tsv";
     public const string Sm = "dna/sm/{0}-{1}_{2}.tsv";
     public const string Cnv = "dna/cnv/{0}-{1}_{2}.tsv";
+    public const string CnvProfile = "dna/cnv_profile/{0}-{1}_{2}.tsv";
     public const string Sv = "dna/sv/{0}-{1}_{2}.tsv";
     public const string GeneExp = "rna/exp/{0}-{1}_{2}.tsv";
     public const string ProtExp = "prot/exp/{0}-{1}_{2}.tsv";
