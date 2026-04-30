@@ -75,6 +75,11 @@ public class DonorsDownloadService : DownloadService
         return _dnaAnalysisDataRepository.GetVariantsForDonors<SV.VariantEntry, SV.Variant>(ids, transcripts);
     }
 
+    protected override Task<CNV.Profile[]> GetCnvProfiles(IEnumerable<int> ids)
+    {
+        return _dnaAnalysisDataRepository.GetCnvProfilesForDonors(ids);
+    }
+
 
     protected override Task<Data.Entities.Omics.Analysis.Sample[]> GetRnaSamples(IEnumerable<int> ids)
     {

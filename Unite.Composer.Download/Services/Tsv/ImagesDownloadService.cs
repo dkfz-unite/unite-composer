@@ -76,6 +76,11 @@ public class ImagesDownloadService : DownloadService
         return _dnaAnalysisDataRepository.GetVariantsForImages<SV.VariantEntry, SV.Variant>(ids, transcripts);
     }
 
+    protected override Task<CNV.Profile[]> GetCnvProfiles(IEnumerable<int> ids)
+    {
+        return _dnaAnalysisDataRepository.GetCnvProfilesForImages(ids);
+    }
+
 
     protected override Task<Data.Entities.Omics.Analysis.Sample[]> GetRnaSamples(IEnumerable<int> ids)
     {

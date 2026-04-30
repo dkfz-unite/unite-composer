@@ -51,6 +51,10 @@ public static class DnaAnalysisMapper
                   .MapAffectedFeatures(transcripts);
     }
 
+    public static ClassMap<CNV.Profile> GetCnvProfileMap()
+    {
+        return new ClassMap<CNV.Profile>().MapProfile();
+    }
 
     private static ClassMap<T> MapVariant<T>(this ClassMap<T> map, Expression<Func<T, SM.Variant>> path) where T : class
     {
@@ -139,5 +143,18 @@ public static class DnaAnalysisMapper
         }
 
         return map;
+    }
+
+    private static ClassMap<CNV.Profile> MapProfile(this ClassMap<CNV.Profile> map)
+    {
+        var chromosomeConverter = new ChromosomeConverter();
+        var chromosomeArmConverter = new ChromosomeArmConverter();
+
+        return map
+            .Map(entity => entity.ChromosomeId, "chromosome", chromosomeConverter)
+            .Map(entity => entity.ChromosomeArmId, "chromosome_arm", chromosomeArmConverter)
+            .Map(entity => entity.Gain, "gain")
+            .Map(entity => entity.Neutral, "neutral")
+            .Map(entity => entity.Loss, "loss");
     }
 }

@@ -18,6 +18,7 @@ public class SpecimenDataResource
     public bool? Sms { get; set; }
     public bool? Cnvs { get; set; }
     public bool? Svs { get; set; }
+    public bool? Cnvps { get; set; }
     public bool? Meth { get; set; }
     public bool? Prot { get; set; }
 
@@ -39,6 +40,7 @@ public class SpecimenDataResource
         Sms = index.Sms;
         Cnvs = index.Cnvs;
         Svs = index.Svs;
+        Cnvps = index.Cnvps;
         Meth = index.Meth;
         Prot = index.Prot;
     }
@@ -57,6 +59,7 @@ public class SpecimenDataResource
         Sms = indices.Values.Any(d => d.Sms == true);
         Cnvs = indices.Values.Any(d => d.Cnvs == true);
         Svs = indices.Values.Any(d => d.Svs == true);
+        Cnvps = indices.Values.Any(d => d.Cnvps == true);
         Meth = indices.Values.Any(d => d.Meth == true);
         Prot = indices.Values.Any(d => d.Prot == true);
 

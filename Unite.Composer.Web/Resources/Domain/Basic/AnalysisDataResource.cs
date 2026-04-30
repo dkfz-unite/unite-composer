@@ -7,7 +7,9 @@ public class AnalysisDataResource
     public bool? Sm { get; set; }
     public bool? Cnv { get; set; }
     public bool? Sv { get; set; }
+    public bool? Cnvp { get; set; }
     public bool? Meth { get; set; }
+    public bool? Prot { get; set; }
 
     public static AnalysisDataResource CreateFrom(Indices.Entities.Basic.Analysis.SampleDataIndex index)
     {
@@ -21,7 +23,9 @@ public class AnalysisDataResource
             Sm = index.Sm ? true : null,
             Cnv = index.Cnv ? true : null,
             Sv = index.Sv ? true : null,
-            Meth = index.Meth ? true : null
+            Cnvp = index.Cnvp ? true : null,
+            Meth = index.Meth ? true : null,
+            Prot = index.Prot ? true : null
         };
     }
 }
