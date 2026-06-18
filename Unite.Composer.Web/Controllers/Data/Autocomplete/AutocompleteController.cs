@@ -37,6 +37,11 @@ public class AutocompleteController : Controller
             if (field.Equals("symbol", comparison))
                 results = await _autocompleteService.Search<Unite.Data.Entities.Omics.Gene>(gene => gene.Symbol, query);
         }
+        else if (model.Equals("protein", comparison))
+        {
+            if (field.Equals("symbol", comparison))
+                results = await _autocompleteService.Search<Unite.Data.Entities.Omics.Protein>(protein => protein.Symbol, query);
+        }
 
         return Ok(results);   
     } 
