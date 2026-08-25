@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Services.Tsv;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Indices.Entities.Basic.Images.Constants;
@@ -43,7 +44,7 @@ public class ImagesController : DomainController
 
         criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = new ValuesCriteria<string>(DetectImageType(type)) };
 
-        var result = await _searchService.Search(criteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -54,7 +55,7 @@ public class ImagesController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         Reassign(ref criteria, type);
 
-        var stats = await _searchService.Stats(criteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(new ImageDataResource(stats));
     }
@@ -68,7 +69,7 @@ public class ImagesController : DomainController
         var criteria = model.Criteria ?? new SearchCriteria();
         Reassign(ref criteria, type);
 
-        var stats = await _searchService.Stats(criteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
         var originalIds = stats.Keys.Cast<int>().ToArray();
 
         using var stream = Response.BodyWriter.AsStream();

@@ -1,7 +1,9 @@
 ﻿using System.IO.Compression;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Download.Services.Tsv;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Images;
@@ -59,8 +61,8 @@ public class DonorController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
         criteria.Image = (criteria.Image ?? new ImagesCriteria()) with { ImageType = new ValuesCriteria<string>(DetectImageType(type)) };
-
-        var result = await _imagesSearchService.Search(criteria);
+        
+        var result = await _imagesSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -72,7 +74,7 @@ public class DonorController : DomainController
         criteria.Donor = (criteria.Donor ?? new DonorCriteria()) with { Id = new ValuesCriteria<int>([id]) };
         criteria.Specimen = (criteria.Specimen ?? new SpecimensCriteria()) with { SpecimenType = new ValuesCriteria<string>(DetectSpecimenType(type)) };
 
-        var result = await _specimensSearchService.Search(criteria);
+        var result = await _specimensSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }

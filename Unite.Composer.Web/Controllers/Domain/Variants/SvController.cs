@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
 using Unite.Indices.Search.Engine.Queries;
@@ -46,7 +47,7 @@ public class SvController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Sv = (criteria.Sv ?? new SvCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
-        var result = await _donorsSearchService.Search(criteria);
+        var result = await _donorsSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }

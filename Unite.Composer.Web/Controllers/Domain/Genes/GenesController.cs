@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Indices.Entities.Genes;
 using Unite.Indices.Search.Engine.Queries;
@@ -30,7 +31,7 @@ public class GenesController : DomainController
     [HttpPost("")]
     public async Task<IActionResult> Genes([FromBody] SearchCriteria searchCriteria)
     {
-        var result = await _searchService.Search(searchCriteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), searchCriteria));
 
         return Ok(From(result));
     }
@@ -38,7 +39,7 @@ public class GenesController : DomainController
     [HttpPost("stats")]
     public async Task<IActionResult> Stats([FromBody] SearchCriteria searchCriteria)
     {
-        var stats = await _searchService.Stats(searchCriteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), searchCriteria));
 
         return Ok(new GeneDataResource(stats));
     }
