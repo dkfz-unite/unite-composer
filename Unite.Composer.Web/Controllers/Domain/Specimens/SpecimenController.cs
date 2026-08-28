@@ -68,7 +68,7 @@ public class SpecimenController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _specimensSearchService.Get(key);
+        var result = await _specimensSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }

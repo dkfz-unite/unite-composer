@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Configuration.Constants;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Projects;
 using Unite.Data.Context;
 using Unite.Data.Entities.Donors;
 using Unite.Indices.Search.Services;
-
+using Unite.Indices.Search.Services.Filters.Criteria;
 using ProjectIndex = Unite.Indices.Entities.Projects.ProjectIndex;
 
 namespace Unite.Composer.Web.Controllers.Domain.Projects;
@@ -42,7 +43,7 @@ public class ProjectController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _projectSearchService.Get(key);
+        var result = await _projectSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }

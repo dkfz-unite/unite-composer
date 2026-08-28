@@ -39,7 +39,7 @@ public class SmController : DomainController
     {
         var key = id;
 
-        var result = await _variantsSearchService.Get(key);
+        var result = await _variantsSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }

@@ -50,7 +50,7 @@ public class DonorController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _donorsSearchService.Get(key);
+        var result = await _donorsSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }

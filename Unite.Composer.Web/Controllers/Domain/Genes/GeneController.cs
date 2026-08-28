@@ -54,7 +54,7 @@ public class GeneController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _genesSearchService.Get(key);
+        var result = await _genesSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }
