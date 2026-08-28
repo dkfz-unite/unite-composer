@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Resources.Domain.Proteins;
 using Unite.Indices.Entities.Proteins;
 using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Criteria;
 
 
 namespace Unite.Composer.Web.Controllers.Domain.Proteins;
@@ -27,7 +29,7 @@ public class ProteinController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _proteinsSearchService.Get(key);
+        var result = await _proteinsSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }

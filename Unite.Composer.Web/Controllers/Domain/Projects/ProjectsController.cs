@@ -7,6 +7,7 @@ using Unite.Indices.Entities.Projects;
 using Unite.Indices.Search.Engine.Queries;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Criteria;
+using Unite.Composer.Web.Extensions;
 
 namespace Unite.Composer.Web.Controllers.Domain.Projects;
 
@@ -33,7 +34,7 @@ public class ProjectsController : DomainController
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var result = await _searchService.Search(criteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -43,7 +44,7 @@ public class ProjectsController : DomainController
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var stats = await _searchService.Stats(criteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(new DataResource(stats));
     }

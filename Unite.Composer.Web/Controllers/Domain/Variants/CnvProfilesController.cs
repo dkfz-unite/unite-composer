@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Web.Extensions;
 using Unite.Indices.Entities.CnvProfiles;
 using Unite.Indices.Search.Services;
 using Unite.Indices.Search.Services.Filters.Criteria;
@@ -26,7 +27,7 @@ public class CnvProfilesController : Controller
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var result = await _searchService.Search(criteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }

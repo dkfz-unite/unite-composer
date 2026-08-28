@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Download.Services.Tsv;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Images;
 using Unite.Indices.Search.Services;
-
+using Unite.Indices.Search.Services.Filters.Criteria;
 using ImageIndex = Unite.Indices.Entities.Images.ImageIndex;
 
 namespace Unite.Composer.Web.Controllers.Domain.Images;
@@ -33,7 +34,7 @@ public class ImageController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _searchService.Get(key);
+        var result = await _searchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }

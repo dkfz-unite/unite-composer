@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Resources.Domain.Proteins;
 using Unite.Indices.Entities.Proteins;
 using Unite.Indices.Search.Engine.Queries;
@@ -30,7 +31,7 @@ public class ProteinsController : DomainController
     [HttpPost("")]
     public async Task<IActionResult> Proteins([FromBody] SearchCriteria searchCriteria)
     {
-        var result = await _searchService.Search(searchCriteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), searchCriteria));
 
         return Ok(From(result));
     }
@@ -38,7 +39,7 @@ public class ProteinsController : DomainController
     [HttpPost("stats")]
     public async Task<IActionResult> Stats([FromBody] SearchCriteria searchCriteria)
     {
-        var stats = await _searchService.Stats(searchCriteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), searchCriteria));
 
         return Ok(new ProteinDataResource(stats));
     }

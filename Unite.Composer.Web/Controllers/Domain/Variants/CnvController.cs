@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Variants;
@@ -37,7 +38,7 @@ public class CnvController : DomainController
     {
         var key = id;
 
-        var result = await _variantsSearchService.Get(key);
+        var result = await _variantsSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         // result.Similars
 
@@ -50,7 +51,7 @@ public class CnvController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Cnv = (criteria.Cnv ?? new CnvCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
-        var result = await _donorsSearchService.Search(criteria);
+        var result = await _donorsSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Resources.Domain.Variants;
 using Unite.Data.Entities.Tasks.Enums;
 using Unite.Indices.Entities.Variants;
@@ -33,7 +34,7 @@ public class SvsController : Controller
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var result = await _searchService.Search(criteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -43,7 +44,7 @@ public class SvsController : Controller
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var data = await _searchService.Stats(criteria);
+        var data = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(new VariantDataResource(data));
     }

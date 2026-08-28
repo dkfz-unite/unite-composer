@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Omics;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Resources.Domain.Donors;
 using Unite.Composer.Web.Resources.Domain.Genes;
 using Unite.Composer.Web.Resources.Domain.Variants;
@@ -53,7 +54,7 @@ public class GeneController : DomainController
     {
         var key = id.ToString();
 
-        var result = await _genesSearchService.Get(key);
+        var result = await _genesSearchService.Get(new PersonalGetCriteria(key, new UserClaims(User.GetUserId(), User.GetIsRoot())));
 
         return Ok(From(result));
     }
@@ -64,7 +65,7 @@ public class GeneController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
-        var result = await _donorsSearchService.Search(criteria);
+        var result = await _donorsSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -75,7 +76,7 @@ public class GeneController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
-        var result = await _smsSearchService.Search(criteria);
+        var result = await _smsSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -86,7 +87,7 @@ public class GeneController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
-        var result = await _cnvsSearchService.Search(criteria);
+        var result = await _cnvsSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -97,7 +98,7 @@ public class GeneController : DomainController
         var criteria = searchCriteria ?? new SearchCriteria();
         criteria.Gene = (criteria.Gene ?? new GeneCriteria()) with { Id = new ValuesCriteria<int>([id]) };
 
-        var result = await _svsSearchService.Search(criteria);
+        var result = await _svsSearchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }

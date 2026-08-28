@@ -1,8 +1,10 @@
 ﻿using System.IO.Compression;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Admin.Services;
 using Unite.Composer.Download.Services.Tsv;
+using Unite.Composer.Web.Extensions;
 using Unite.Composer.Web.Models;
 using Unite.Composer.Web.Resources.Domain.Basic;
 using Unite.Composer.Web.Resources.Domain.Donors;
@@ -39,7 +41,7 @@ public class DonorsController : DomainController
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var result = await _searchService.Search(criteria);
+        var result = await _searchService.Search(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(From(result));
     }
@@ -49,7 +51,7 @@ public class DonorsController : DomainController
     {
         var criteria = searchCriteria ?? new SearchCriteria();
 
-        var stats = await _searchService.Stats(criteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
 
         return Ok(new DataResource(stats));
     }
@@ -60,7 +62,7 @@ public class DonorsController : DomainController
         Response.Headers.Append("Content-Disposition", "attachment; filename=\"data.zip\"");
         Response.ContentType = "application/zip";
 
-        var stats = await _searchService.Stats(model.Criteria);
+        var stats = await _searchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), model.Criteria));
         var originalIds = stats.Keys.Cast<int>().ToArray();
 
         using var stream = Response.BodyWriter.AsStream();
