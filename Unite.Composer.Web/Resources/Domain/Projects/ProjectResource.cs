@@ -10,6 +10,7 @@ public class ProjectResource : ProjectIndex
         Name = index.Name;
         Stats = index.Stats;
         Data = index.Data;
+        IsPublic = index.IsPublic;
         // Donors = index.Donors;
     }
 }
