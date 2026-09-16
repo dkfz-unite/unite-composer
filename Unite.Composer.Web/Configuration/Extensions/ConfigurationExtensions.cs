@@ -1,5 +1,6 @@
 ﻿using Unite.Cache.Configuration.Options;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
+using Unite.Composer.Data;
 using Unite.Composer.Data.Datasets;
 using Unite.Composer.Data.Omics;
 using Unite.Composer.Data.Omics.Ranges;
@@ -38,6 +39,7 @@ public static class ConfigurationExtensions
         services.AddTransient<SubmissionsService>();
         services.AddTransient<DatasetsService>();
         services.AddTransient<DatasetService>();
+        services.AddTransient<ProjectService>();
 
         services.AddTsvDownload();
 

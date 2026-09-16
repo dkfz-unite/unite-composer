@@ -1,7 +1,9 @@
 using System.IO.Compression;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Unite.Composer.Data;
 using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Configuration.Constants;
 using Unite.Composer.Web.Extensions;
@@ -23,6 +25,7 @@ public class ProjectController : DomainController
     private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     private readonly ISearchService<ProjectIndex> _projectSearchService;
     private readonly DonorsDownloadService _tsvDownloadService;
+    private readonly ProjectService _projectService;
 
     public record UpdateModel(string Description);
 
@@ -30,11 +33,12 @@ public class ProjectController : DomainController
     public ProjectController(
         IDbContextFactory<DomainDbContext> dbContextFactory,
         ISearchService<ProjectIndex> projectsSearchService,
-        DonorsDownloadService tsvDownloadService)
+        DonorsDownloadService tsvDownloadService, ProjectService projectService)
     {
         _dbContextFactory = dbContextFactory;
         _projectSearchService = projectsSearchService;
         _tsvDownloadService = tsvDownloadService;
+        _projectService = projectService;
     }
 
 
@@ -105,8 +109,20 @@ public class ProjectController : DomainController
 
         return new EmptyResult();
     }
+    
+    [HttpPost("{id}/assign-user")]
+    public async Task<IActionResult> AssignUser(int id, int userId)
+    {
+        if (!User.GetIsRoot())
+            return Forbid();
 
+        var projectUser = await _projectService.AssignUserToProject(userId, id);
+        if (projectUser == null)
+            return NotFound();
 
+        return Ok(projectUser);
+    }
+    
     private static ProjectResource From(ProjectIndex index)
     {
         if (index == null)
