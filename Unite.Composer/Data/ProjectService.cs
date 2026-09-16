@@ -25,9 +25,26 @@ public class ProjectService
         var project = await _projectRepository.Load(projectId);
         if (project == null)
             throw new Exception("Cannot load Project");
-
-        //TODO: trigger reindexing Projects
         
-        return await _projectRepository.AssignToProject(dataUser.Id, project.Id);
+        var projectUser = await _projectRepository.AssignToProject(dataUser.Id, project.Id);
+
+        //TODO: trigger reindexing Projects SYNC
+        
+        return projectUser;
+    }
+    
+    public async Task RemoveUserFromProject(int userId, int projectId)
+    {
+        var dataUser = await _dataUserRepository.Load(userId);
+        if (dataUser == null)
+            throw new Exception("Cannot load or create DataUser");
+
+        var project = await _projectRepository.Load(projectId);
+        if (project == null)
+            throw new Exception("Cannot load Project");
+        
+        await _projectRepository.RemoveFromProject(dataUser.Id, project.Id);
+        
+        //TODO: trigger reindexing Projects SYNC
     }
 }

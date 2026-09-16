@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -110,7 +109,7 @@ public class ProjectController : DomainController
         return new EmptyResult();
     }
     
-    [HttpPost("{id}/assign-user")]
+    [HttpPost("{id}/user/{userId}")]
     public async Task<IActionResult> AssignUser(int id, int userId)
     {
         if (!User.GetIsRoot())
@@ -121,6 +120,17 @@ public class ProjectController : DomainController
             return NotFound();
 
         return Ok(projectUser);
+    }
+    
+    [HttpDelete("{id}/user/{userId}")]
+    public async Task<IActionResult> RemoveUser(int id, int userId)
+    {
+        if (!User.GetIsRoot())
+            return Forbid();
+
+        await _projectService.RemoveUserFromProject(userId, id);
+
+        return Ok();
     }
     
     private static ProjectResource From(ProjectIndex index)
