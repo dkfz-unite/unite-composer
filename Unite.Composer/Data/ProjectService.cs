@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Unite.Composer.Clients.DonorFeed;
 using Unite.Data.Context;
 using Unite.Data.Context.Repositories;
 using Unite.Data.Entities.Donors;
@@ -9,9 +10,11 @@ public class ProjectService
 {
     private readonly DataUserRepository _dataUserRepository;
     private readonly ProjectsRepository _projectRepository;
+    private readonly DonorFeedApiClient _donorFeedApiClient;
     
-    public ProjectService(IDbContextFactory<DomainDbContext> dbContextFactory)
+    public ProjectService(IDbContextFactory<DomainDbContext> dbContextFactory, DonorFeedApiClient donorFeedApiClient)
     {
+        _donorFeedApiClient = donorFeedApiClient;
         _projectRepository = new ProjectsRepository(dbContextFactory);
         _dataUserRepository = new DataUserRepository(dbContextFactory);
     }
@@ -28,7 +31,7 @@ public class ProjectService
         
         var projectUser = await _projectRepository.AssignToProject(dataUser.Id, project.Id);
 
-        //TODO: trigger reindexing Projects SYNC
+        await _donorFeedApiClient.IndexProjects();
         
         return projectUser;
     }
@@ -45,6 +48,6 @@ public class ProjectService
         
         await _projectRepository.RemoveFromProject(dataUser.Id, project.Id);
         
-        //TODO: trigger reindexing Projects SYNC
+        await _donorFeedApiClient.IndexProjects();
     }
 }

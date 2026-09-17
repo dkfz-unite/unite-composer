@@ -10,9 +10,11 @@
     <PackageReference Include="Unite.Essentials.Tsv" Version="4.2.0" />
     <PackageReference Include="Unite.Cache" Version="1.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <!-- <ProjectReference Include="../../unite-data/Unite.Data.Context/Unite.Data.Context.csproj" /> -->
     <!-- <ProjectReference Include="../../unite-indices/Unite.Indices.Search/Unite.Indices.Search.csproj" /> -->
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>

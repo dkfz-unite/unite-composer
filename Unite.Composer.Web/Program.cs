@@ -25,6 +25,8 @@ builder.Services.AddControllers(options => options.AddMvcOptions())
 
 builder.Services.AddFluentValidationAutoValidation();
 
+builder.Services.AddHttpContextAccessor();
+
 
 var app = builder.Build();
 

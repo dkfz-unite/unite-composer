@@ -1,4 +1,5 @@
 ﻿using Unite.Cache.Configuration.Options;
+using Unite.Composer.Clients.DonorFeed;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data;
 using Unite.Composer.Data.Datasets;
@@ -40,6 +41,7 @@ public static class ConfigurationExtensions
         services.AddTransient<DatasetsService>();
         services.AddTransient<DatasetService>();
         services.AddTransient<ProjectService>();
+        services.AddTransient<DonorFeedApiClient>();
 
         services.AddTsvDownload();
 
@@ -54,6 +56,7 @@ public static class ConfigurationExtensions
         services.AddTransient<ISqlOptions, SqlOptions>();
         services.AddTransient<IMongoOptions, MongoOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
+        services.AddTransient<IDonorFeedOptions, DonorFeedOptions>();
     }
 
     private static void AddValidation(this IServiceCollection services)

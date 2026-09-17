@@ -25,28 +25,7 @@ internal class JsonHttpClient : IDisposable
     {
         var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-        AddRequestHeaders(request, headers);
-
-        var response = await _httpClient.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var options = new JsonSerializerOptions()
-            {
-                Converters = { new JsonStringEnumMemberConverter() },
-                WriteIndented = true
-            };
-
-            var dataJson = await response.Content.ReadAsStringAsync();
-            var data = JsonSerializer.Deserialize<T>(dataJson, options);
-
-            return data;
-        }
-        else
-        {
-            var message = await response.Content?.ReadAsStringAsync();
-            throw new HttpRequestException($"{response.StatusCode} - {response.ReasonPhrase} - {message}");
-        }
+        return await SendRequest<T>(request, headers);
     }
 
     public async Task<T> PostAsync<T, TBody>(string url, TBody body, params (string name, string value)[] headers)
@@ -58,31 +37,59 @@ internal class JsonHttpClient : IDisposable
 
         request.Content = content;
 
+        return await SendRequest<T>(request, headers);
+    }
+    
+    public async Task<T> PostAsync<T>(string url, params (string name, string value)[] headers)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+        return await SendRequest<T>(request, headers);
+    }
+    
+    public async Task PostAsync(string url, params (string name, string value)[] headers)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+        await SendRequest(request, headers);
+    }
+
+    private async Task<T> SendRequest<T>(HttpRequestMessage request, params (string name, string value)[] headers)
+    {
+        var response = await GetResponse(request, headers);
+        
+        var options = new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumMemberConverter() },
+            WriteIndented = true
+        };
+
+        var dataJson = await response.Content.ReadAsStringAsync();
+        var data = JsonSerializer.Deserialize<T>(dataJson, options);
+
+        return data;
+    }
+
+    private async Task SendRequest(HttpRequestMessage request, params (string name, string value)[] headers)
+    {
+        await GetResponse(request, headers);
+    }
+    
+    private async Task<HttpResponseMessage> GetResponse(HttpRequestMessage request, params (string name, string value)[] headers)
+    {
         AddRequestHeaders(request, headers);
 
         var response = await _httpClient.SendAsync(request);
 
-        if (response.IsSuccessStatusCode)
-        {
-            var options = new JsonSerializerOptions()
-            {
-                Converters = { new JsonStringEnumMemberConverter() },
-                WriteIndented = true
-            };
-
-            var dataJson = await response.Content.ReadAsStringAsync();
-            var data = JsonSerializer.Deserialize<T>(dataJson, options);
-
-            return data;
-        }
-        else
+        if (!response.IsSuccessStatusCode)
         {
             var message = await response.Content?.ReadAsStringAsync();
             throw new HttpRequestException($"{response.StatusCode} - {response.ReasonPhrase} - {message}");
         }
+        
+        return response;
     }
-
-
+    
     private void AddRequestHeaders(HttpRequestMessage request, params (string name, string value)[] headers)
     {
         if (headers != null)
