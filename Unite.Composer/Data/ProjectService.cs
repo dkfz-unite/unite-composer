@@ -19,34 +19,34 @@ public class ProjectService
         _dataUserRepository = new DataUserRepository(dbContextFactory);
     }
     
-    public async Task<ProjectUser> AssignUserToProject(int userId, int projectId)
+    public async Task<List<ProjectUser>> AssignUserToProject(int[] userIds, int projectId)
     {
-        var dataUser = await _dataUserRepository.LoadOrCreate(userId);
-        if (dataUser == null)
+        var dataUsers = await _dataUserRepository.LoadOrCreate(userIds);
+        if (dataUsers == null)
             throw new Exception("Cannot load or create DataUser");
 
         var project = await _projectRepository.Load(projectId);
         if (project == null)
             throw new Exception("Cannot load Project");
         
-        var projectUser = await _projectRepository.AssignToProject(dataUser.Id, project.Id);
+        var projectUser = await _projectRepository.AssignToProject(dataUsers.Select(x => x.Id).ToArray(), project.Id);
 
         await _donorFeedApiClient.IndexProjects();
         
         return projectUser;
     }
     
-    public async Task RemoveUserFromProject(int userId, int projectId)
+    public async Task RemoveUserFromProject(int[] userIds, int projectId)
     {
-        var dataUser = await _dataUserRepository.Load(userId);
-        if (dataUser == null)
+        var dataUsers = await _dataUserRepository.Load(userIds);
+        if (dataUsers == null)
             throw new Exception("Cannot load or create DataUser");
 
         var project = await _projectRepository.Load(projectId);
         if (project == null)
             throw new Exception("Cannot load Project");
         
-        await _projectRepository.RemoveFromProject(dataUser.Id, project.Id);
+        await _projectRepository.RemoveFromProject(dataUsers.Select(x => x.Id).ToArray(), project.Id);
         
         await _donorFeedApiClient.IndexProjects();
     }

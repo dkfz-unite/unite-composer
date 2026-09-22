@@ -109,21 +109,21 @@ public class ProjectController : DomainController
         return new EmptyResult();
     }
     
-    [HttpPost("{id}/user/{userId}")]
-    public async Task<IActionResult> AssignUser(int id, int userId)
+    [HttpPost("{id}/users")]
+    public async Task<IActionResult> AssignUser(int id, [FromBody]int[] userIds)
     {
         if (!User.GetIsRoot())
             return Forbid();
 
-        var projectUser = await _projectService.AssignUserToProject(userId, id);
+        var projectUser = await _projectService.AssignUserToProject(userIds, id);
         if (projectUser == null)
             return NotFound();
 
         return Ok(projectUser);
     }
     
-    [HttpDelete("{id}/user/{userId}")]
-    public async Task<IActionResult> RemoveUser(int id, int userId)
+    [HttpDelete("{id}/users")]
+    public async Task<IActionResult> RemoveUser(int id, [FromBody]int[] userId)
     {
         if (!User.GetIsRoot())
             return Forbid();
