@@ -1,4 +1,5 @@
 ﻿using Unite.Cache.Configuration.Options;
+using Unite.Composer.Admin.Services;
 using Unite.Composer.Clients.DonorFeed;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
 using Unite.Composer.Data;
@@ -6,7 +7,6 @@ using Unite.Composer.Data.Datasets;
 using Unite.Composer.Data.Omics;
 using Unite.Composer.Data.Omics.Ranges;
 using Unite.Composer.Data.Specimens;
-using Unite.Composer.Data.Submissions;
 using Unite.Composer.Download.Configuration.Extensions;
 using Unite.Composer.Visualization.Lolliplot;
 using Unite.Composer.Web.Configuration.Options;
@@ -14,6 +14,7 @@ using Unite.Data.Context.Configuration.Extensions;
 using Unite.Data.Context.Configuration.Options;
 using Unite.Indices.Context.Configuration.Options;
 using Unite.Indices.Search.Configuration.Extensions;
+using SubmissionsService = Unite.Composer.Data.Submissions.SubmissionsService;
 
 
 namespace Unite.Composer.Web.Configuration.Extensions;
@@ -41,6 +42,7 @@ public static class ConfigurationExtensions
         services.AddTransient<DatasetsService>();
         services.AddTransient<DatasetService>();
         services.AddTransient<ProjectService>();
+        services.AddTransient<DataUserService>();
         services.AddTransient<DonorFeedApiClient>();
 
         services.AddTsvDownload();

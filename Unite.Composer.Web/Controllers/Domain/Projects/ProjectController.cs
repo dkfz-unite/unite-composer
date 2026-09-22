@@ -110,11 +110,9 @@ public class ProjectController : DomainController
     }
     
     [HttpPost("{id}/users")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> AssignUser(int id, [FromBody]int[] userIds)
     {
-        if (!User.GetIsRoot())
-            return Forbid();
-
         var projectUser = await _projectService.AssignUserToProject(userIds, id);
         if (projectUser == null)
             return NotFound();
@@ -123,12 +121,10 @@ public class ProjectController : DomainController
     }
     
     [HttpDelete("{id}/users")]
-    public async Task<IActionResult> RemoveUser(int id, [FromBody]int[] userId)
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<IActionResult> RemoveUser(int id, [FromBody]int[] userIds)
     {
-        if (!User.GetIsRoot())
-            return Forbid();
-
-        await _projectService.RemoveUserFromProject(userId, id);
+        await _projectService.RemoveUserFromProject(userIds, id);
 
         return Ok();
     }
