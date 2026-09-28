@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Data;
+using Unite.Composer.Data.Projects;
 using Unite.Composer.Download.Services.Tsv;
 using Unite.Composer.Web.Configuration.Constants;
 using Unite.Composer.Web.Extensions;
@@ -127,6 +128,14 @@ public class ProjectController : DomainController
         await _projectService.RemoveUserFromProject(userIds, id);
 
         return Ok();
+    }
+    
+    [HttpGet("{id}/users")]
+    public async Task<IActionResult> GetProjectUsers(int id)
+    {
+        var projectUsers = await _projectService.ListProjectUsers(id);
+
+        return Ok(projectUsers);
     }
     
     private static ProjectResource From(ProjectIndex index)

@@ -2,10 +2,12 @@
 using Unite.Composer.Admin.Services;
 using Unite.Composer.Clients.DonorFeed;
 using Unite.Composer.Clients.Ensembl.Configuration.Options;
+using Unite.Composer.Clients.Identity;
 using Unite.Composer.Data;
 using Unite.Composer.Data.Datasets;
 using Unite.Composer.Data.Omics;
 using Unite.Composer.Data.Omics.Ranges;
+using Unite.Composer.Data.Projects;
 using Unite.Composer.Data.Specimens;
 using Unite.Composer.Download.Configuration.Extensions;
 using Unite.Composer.Visualization.Lolliplot;
@@ -44,6 +46,7 @@ public static class ConfigurationExtensions
         services.AddTransient<ProjectService>();
         services.AddTransient<DataUserService>();
         services.AddTransient<DonorFeedApiClient>();
+        services.AddTransient<IdentityServiceApiClient>();
 
         services.AddTsvDownload();
 
@@ -59,6 +62,7 @@ public static class ConfigurationExtensions
         services.AddTransient<IMongoOptions, MongoOptions>();
         services.AddTransient<IEnsemblOptions, EnsemblOptions>();
         services.AddTransient<IDonorFeedOptions, DonorFeedOptions>();
+        services.AddTransient<IIdentityServiceOptions, IdentityServiceOptions>();
     }
 
     private static void AddValidation(this IServiceCollection services)
