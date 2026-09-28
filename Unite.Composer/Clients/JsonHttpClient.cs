@@ -58,7 +58,7 @@ internal class JsonHttpClient : IDisposable
     {
         var response = await GetResponse(request, headers);
         
-        var options = new JsonSerializerOptions
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
         {
             Converters = { new JsonStringEnumMemberConverter() },
             WriteIndented = true
