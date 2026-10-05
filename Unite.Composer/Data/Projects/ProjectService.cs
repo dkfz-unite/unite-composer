@@ -28,11 +28,11 @@ public class ProjectService
     {
         var dataUsers = await _dataUserRepository.LoadOrCreate(userIds);
         if (dataUsers == null)
-            throw new Exception("Cannot load or create DataUser");
+            throw new KeyNotFoundException("Cannot load or create DataUser");
         
         var project = await _projectRepository.Load(projectId);
         if (project == null)
-            throw new Exception("Cannot load Project");
+            throw new KeyNotFoundException("Cannot load Project");
         
         var projectUser = await _projectRepository.AssignToProject(dataUsers.Select(x => x.Id).ToArray(), project.Id);
 
@@ -45,11 +45,11 @@ public class ProjectService
     {
         var dataUsers = await _dataUserRepository.Load(userIds);
         if (dataUsers == null)
-            throw new Exception("Cannot load or create DataUser");
+            throw new KeyNotFoundException("Cannot load or create DataUser");
 
         var project = await _projectRepository.Load(projectId);
         if (project == null)
-            throw new Exception("Cannot load Project");
+            throw new KeyNotFoundException("Cannot load Project");
         
         await _projectRepository.RemoveFromProject(dataUsers.Select(x => x.Id).ToArray(), project.Id);
         
@@ -79,5 +79,18 @@ public class ProjectService
         }
         
         return projectUsers;
+    }
+
+    public async Task SetIsPublic(int projectId, bool isPublic)
+    {
+        var project = await _projectRepository.Load(projectId);
+        if (project == null)
+            throw new KeyNotFoundException("Cannot load Project");
+        
+        project.IsPublic = isPublic;
+        
+        await _projectRepository.Save(project);
+        
+        await _donorFeedApiClient.IndexProjects();
     }
 }
