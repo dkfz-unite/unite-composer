@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Clients.DonorFeed;
 using Unite.Data.Context;
 using Unite.Data.Context.Repositories;
+using Unite.Data.Entities;
 
 namespace Unite.Composer.Admin.Services;
 
@@ -33,11 +34,12 @@ public class DataUserService
     {
         await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 
-        var dataUsers = await dbContext.DataUsers
-            .Where(du => dataUserIds.Contains(du.Id))
-            .ToListAsync();
+        var dataUsers = await dbContext.Set<DataUser>()
+            .AsNoTracking()
+            .Where(dataUser => dataUserIds.Contains(dataUser.Id))
+            .ToArrayAsync();
 
-        if (dataUsers.Count > 0)
+        if (dataUsers.Length > 0)
         {
             dbContext.DataUsers.RemoveRange(dataUsers);
             await dbContext.SaveChangesAsync();
