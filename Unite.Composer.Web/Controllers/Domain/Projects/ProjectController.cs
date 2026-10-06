@@ -138,6 +138,15 @@ public class ProjectController : DomainController
         return Ok(projectUsers);
     }
     
+    [HttpPost("{id}/is-public")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<IActionResult> SetIsPublic(int id, [FromBody]bool isPublic)
+    {
+        await _projectService.SetIsPublic(id, isPublic);
+        
+        return Ok();
+    }
+    
     private static ProjectResource From(ProjectIndex index)
     {
         if (index == null)

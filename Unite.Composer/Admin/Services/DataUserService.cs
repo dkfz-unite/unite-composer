@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Unite.Composer.Clients.DonorFeed;
 using Unite.Data.Context;
 using Unite.Data.Context.Repositories;
+using Unite.Data.Entities;
 
 namespace Unite.Composer.Admin.Services;
 
@@ -9,9 +10,11 @@ public class DataUserService
 {
     private readonly DataUserRepository _dataUserRepository;
     private readonly DonorFeedApiClient _donorFeedApiClient;
+    private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     
     public DataUserService(IDbContextFactory<DomainDbContext> dbContextFactory, DonorFeedApiClient donorFeedApiClient)
     {
+        _dbContextFactory = dbContextFactory;
         _donorFeedApiClient = donorFeedApiClient;
         _dataUserRepository = new DataUserRepository(dbContextFactory);
     }
@@ -22,8 +25,24 @@ public class DataUserService
         if (dataUsers == null)
             throw new Exception("Cannot load data users");
 
-        await _dataUserRepository.Delete(dataUsers.Select(x => x.Id).ToArray());
+        await DeleteDataUsers(dataUsers.Select(x => x.Id).ToArray());
         
         await _donorFeedApiClient.IndexProjects();
+    }
+    
+    private async Task DeleteDataUsers(int[] dataUserIds)
+    {
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var dataUsers = await dbContext.Set<DataUser>()
+            .AsNoTracking()
+            .Where(dataUser => dataUserIds.Contains(dataUser.Id))
+            .ToArrayAsync();
+
+        if (dataUsers.Length > 0)
+        {
+            dbContext.DataUsers.RemoveRange(dataUsers);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
