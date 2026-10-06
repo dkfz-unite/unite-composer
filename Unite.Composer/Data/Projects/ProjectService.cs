@@ -146,9 +146,9 @@ public class ProjectService
         var projectUsers = await dbContext.Set<ProjectUser>()
             .AsNoTracking()
             .Where(projectUser => projectUser.ProjectId == projectId && dataUserIds.Contains(projectUser.UserId))
-            .ToListAsync();
+            .ToArrayAsync();
 
-        if (projectUsers.Count > 0)
+        if (projectUsers.Length > 0)
         {
             dbContext.Set<ProjectUser>().RemoveRange(projectUsers);
             await dbContext.SaveChangesAsync();
@@ -164,7 +164,7 @@ public class ProjectService
         var existingDataUsers = await dbContext.Set<DataUser>()
             .AsNoTracking()
             .Where(dataUser => distinctUserIds.Contains(dataUser.UserId))
-            .ToListAsync();
+            .ToArrayAsync();
 
         var existingUserIds = existingDataUsers.Select(dataUser => dataUser.UserId).ToHashSet();
 
