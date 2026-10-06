@@ -9,9 +9,11 @@ public class DataUserService
 {
     private readonly DataUserRepository _dataUserRepository;
     private readonly DonorFeedApiClient _donorFeedApiClient;
+    private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     
     public DataUserService(IDbContextFactory<DomainDbContext> dbContextFactory, DonorFeedApiClient donorFeedApiClient)
     {
+        _dbContextFactory = dbContextFactory;
         _donorFeedApiClient = donorFeedApiClient;
         _dataUserRepository = new DataUserRepository(dbContextFactory);
     }
@@ -22,8 +24,23 @@ public class DataUserService
         if (dataUsers == null)
             throw new Exception("Cannot load data users");
 
-        await _dataUserRepository.Delete(dataUsers.Select(x => x.Id).ToArray());
+        await DeleteDataUsers(dataUsers.Select(x => x.Id).ToArray());
         
         await _donorFeedApiClient.IndexProjects();
+    }
+    
+    private async Task DeleteDataUsers(int[] dataUserIds)
+    {
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        var dataUsers = await dbContext.DataUsers
+            .Where(du => dataUserIds.Contains(du.Id))
+            .ToListAsync();
+
+        if (dataUsers.Count > 0)
+        {
+            dbContext.DataUsers.RemoveRange(dataUsers);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }
