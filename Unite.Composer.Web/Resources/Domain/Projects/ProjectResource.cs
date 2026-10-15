@@ -11,6 +11,7 @@ public class ProjectResource : ProjectIndex
         Stats = index.Stats;
         Data = index.Data;
         IsPublic = index.IsPublic;
+        IsAccessible = index.IsAccessible;
         // Donors = index.Donors;
     }
 }
