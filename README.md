@@ -48,6 +48,7 @@ To configure the application, change environment variables in either docker or i
 - `UNITE_MONGO_USER` - MongoDB user.
 - `UNITE_MONGO_PASSWORD` - MongoDB password.
 - `UNITE_ENSEMBL_HOST` - Ensembl web api (`http://data.ensembl.unite.net`).
+- `UNITE_GENOME_BUILD` - genome build of the installation, `GRCh37` (default) or `GRCh38`; selects the Ensembl database used for protein annotations.
 - `UNITE_IDENTITY_HOST` - Identity service host, used for project users (`http://identity.unite.net`).
 - `UNITE_FEED_DONORS_HOST` - Donors feed host, used for project reindexing (`http://donors.feed.unite.net`).
 
