@@ -147,12 +147,13 @@ public class EnsemblApiClient
     }
 
 
-    private static string GetArguments(bool length, bool expand)
+    private string GetArguments(bool length, bool expand)
     {
         var arguments = new string[]
         {
             $"length={length}",
-            $"expand={expand}"
+            $"expand={expand}",
+            $"grch={_options.Grch}"
         };
 
         return $"?{string.Join('&', arguments)}";
