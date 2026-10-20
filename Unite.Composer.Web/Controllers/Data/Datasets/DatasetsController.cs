@@ -21,34 +21,24 @@ public class DatasetsController : Controller
 
 
     [HttpPost]
-    public async Task<ActionResult<DatasetModel[]>> Load([FromBody] SearchModel model)
+    public async Task<ActionResult<DatasetModel[]>> Load()
     {
-        // Root can load datasets of any user, others only their own
-        if (!User.GetIsRoot() || String.IsNullOrEmpty(model.UserId))
-        {
-            var email = User.GetUserEmail();
-            if (email == null)
-                return Forbid();
+        var email = User.GetUserEmail();
+        if (email == null)
+            return Forbid();
 
-            model.UserId = email;
-        }
-
+        var model = new SearchModel { UserId = email };
         return await _datasetsService.Load(model);
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromQuery] string userId)
+    public async Task<IActionResult> Delete()
     {
-        var localUserId = userId;
-        // Root can delete datasets of any user, others only their own
-        if (!User.GetIsRoot() || String.IsNullOrEmpty(localUserId))
-        {
-            localUserId = User.GetUserEmail();
-            if (localUserId == null)
-                return Forbid();
-        }
+        var email = User.GetUserEmail();
+        if (email == null)
+            return Forbid();
 
-        var model = new SearchModel { UserId = localUserId };
+        var model = new SearchModel { UserId = email };
         await _datasetsService.Delete(model);
         return Ok();
     }

@@ -35,17 +35,14 @@ public class DatasetController : Controller
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
-        if (!User.GetIsRoot())
-        {
-            var email = User.GetUserEmail();
-            if (email == null)
-                return Forbid();
+        var email = User.GetUserEmail();
+        if (email == null)
+            return Forbid();
 
-            var datasets = await _datasetsService.Load(new SearchModel { UserId = email });
-            //Check if dataset belongs to the user
-            if (datasets.All(dataset => dataset.Id != id))
-                return NotFound();
-        }
+        var datasets = await _datasetsService.Load(new SearchModel { UserId = email });
+        //Check if dataset belongs to the user
+        if (datasets.All(dataset => dataset.Id != id))
+            return NotFound();
 
         await _datasetService.Delete(id);
         return Ok();
