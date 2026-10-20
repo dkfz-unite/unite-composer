@@ -15,7 +15,16 @@ public static class PersonalizationExtensions
         
         return userId;
     }
-    
+
+    public static string GetUserEmail(this ClaimsPrincipal user)
+    {
+        var emailClaim = user.FindFirstValue(ClaimTypes.Email);
+        if(String.IsNullOrEmpty(emailClaim))
+            return null;
+
+        return emailClaim;
+    }
+
     public static bool GetIsRoot(this ClaimsPrincipal user)
     {
         var roleClaim = user.FindFirstValue(ClaimTypes.Role);
