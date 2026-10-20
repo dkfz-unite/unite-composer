@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Unite.Composer.Data.Datasets;
 using Unite.Composer.Data.Datasets.Models;
+using Unite.Composer.Web.Extensions;
 
 namespace Unite.Composer.Web.Controllers.Data.DataSets;
 
@@ -20,15 +21,25 @@ public class DatasetsController : Controller
 
 
     [HttpPost]
-    public async Task<DatasetModel[]> Load([FromBody] SearchModel model)
+    public async Task<ActionResult<DatasetModel[]>> Load()
     {
+        var email = User.GetUserEmail();
+        if (email == null)
+            return Forbid();
+
+        var model = new SearchModel { UserId = email };
         return await _datasetsService.Load(model);
     }
 
     [HttpDelete]
-    public async Task Delete([FromQuery] string userId)
+    public async Task<IActionResult> Delete()
     {
-        var model = new SearchModel { UserId = userId };
+        var email = User.GetUserEmail();
+        if (email == null)
+            return Forbid();
+
+        var model = new SearchModel { UserId = email };
         await _datasetsService.Delete(model);
+        return Ok();
     }
 }
