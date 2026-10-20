@@ -12,7 +12,9 @@ using Unite.Composer.Web.Resources.Domain.Projects;
 using Unite.Data.Context;
 using Unite.Data.Entities.Donors;
 using Unite.Indices.Search.Services;
+using Unite.Indices.Search.Services.Filters.Base.Donors.Criteria;
 using Unite.Indices.Search.Services.Filters.Criteria;
+using DonorIndex = Unite.Indices.Entities.Donors.DonorIndex;
 using ProjectIndex = Unite.Indices.Entities.Projects.ProjectIndex;
 
 namespace Unite.Composer.Web.Controllers.Domain.Projects;
@@ -24,6 +26,7 @@ public class ProjectController : DomainController
 {
     private readonly IDbContextFactory<DomainDbContext> _dbContextFactory;
     private readonly ISearchService<ProjectIndex> _projectSearchService;
+    private readonly ISearchService<DonorIndex> _donorsSearchService;
     private readonly DonorsDownloadService _tsvDownloadService;
     private readonly ProjectService _projectService;
 
@@ -33,10 +36,12 @@ public class ProjectController : DomainController
     public ProjectController(
         IDbContextFactory<DomainDbContext> dbContextFactory,
         ISearchService<ProjectIndex> projectsSearchService,
+        ISearchService<DonorIndex> donorsSearchService,
         DonorsDownloadService tsvDownloadService, ProjectService projectService)
     {
         _dbContextFactory = dbContextFactory;
         _projectSearchService = projectsSearchService;
+        _donorsSearchService = donorsSearchService;
         _tsvDownloadService = tsvDownloadService;
         _projectService = projectService;
     }
@@ -93,12 +98,20 @@ public class ProjectController : DomainController
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-        var ids = dbContext.Set<ProjectDonor>()
+        var project = await dbContext.Set<Project>()
             .AsNoTracking()
-            .Where(project => project.ProjectId == id)
-            .Select(project => project.DonorId)
-            .Distinct()
-            .ToArray();
+            .FirstOrDefaultAsync(entity => entity.Id == id);
+
+        if (project == null)
+            return NotFound();
+
+        // Only donors of the project, which are accessible to the user
+        var criteria = new SearchCriteria { Donor = new DonorCriteria { Project = new ValuesCriteria<string>([project.Name]) } };
+        var stats = await _donorsSearchService.Stats(new PersonalSearchCriteria(User.GetUserId(), User.GetIsRoot(), criteria));
+        var ids = stats.Keys.Cast<int>().ToArray();
+
+        if (ids.Length == 0)
+            return NotFound();
 
         Response.ContentType = "application/octet-stream";
         Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
