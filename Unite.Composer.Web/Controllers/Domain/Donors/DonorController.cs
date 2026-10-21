@@ -82,6 +82,10 @@ public class DonorController : DomainController
     [HttpPost("{id}/data")]
     public async Task<IActionResult> Data(int id, [FromBody] SingleDownloadModel model)
     {
+        var entity = await _donorsSearchService.Get(new PersonalGetCriteria(id.ToString(), new UserClaims(User.GetUserId(), User.GetIsRoot())));
+        if (entity == null)
+            return NotFound();
+
         Response.ContentType = "application/octet-stream";
         Response.Headers.Append("Content-Disposition", "attachment; filename=data.zip");
 
