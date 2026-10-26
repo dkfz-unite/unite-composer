@@ -15,6 +15,7 @@ public record DataTypesCriteria
     public bool? SmTranscript { get; set; }
     public bool? Cnv { get; set; }
     public bool? CnvTranscript { get; set; }
+    public bool? Cnvp { get; set; }
     public bool? Sv { get; set; }
     public bool? SvTranscript { get; set; }
     
