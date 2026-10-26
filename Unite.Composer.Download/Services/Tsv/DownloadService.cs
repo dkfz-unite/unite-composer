@@ -119,7 +119,10 @@ public abstract class DownloadService : Services.DownloadService
                     WriteData(archive, entryName, group.ToArray(), DnaAnalysisMapper.GetVariantMap<CNV.VariantEntry, CNV.Variant>(criteria.CnvTranscript ?? false), comments: OmicsAnalysisMapper.MapSample(sample));
                 }
             }
+        }
 
+        if (criteria.Cnvp == true)
+        {
             foreach (var chunk in ids.Chunk(25))
             {
                 var profiles = await GetCnvProfiles(chunk);
