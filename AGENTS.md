@@ -50,7 +50,8 @@ dotnet run --project Unite.Composer.Web --launch-profile Unite.Composer.Web
 
 - Restore needs the `https://nuget.pkg.github.com/dkfz-unite/index.json` NuGet
   source with GitHub credentials in the developer's NuGet configuration; the
-  repository has no `nuget.config`. The Dockerfile adds the source from build args.
+  repository has no `nuget.config`. The Dockerfile mounts the package token as
+  a BuildKit secret during restore.
 - The launch profile serves `http://localhost:5002` and expects local
   PostgreSQL 5432, MongoDB 27017, Elasticsearch 9200, Ensembl Data 5200,
   Identity 5000 and the donors feed 5100.

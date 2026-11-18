@@ -66,9 +66,13 @@ The easiest way to install the application is to use docker-compose:
 The image of the service is available in our [registry](https://github.com/dkfz-unite/unite-composer/pkgs/container/unite-composer).
 
 [Dockerfile](Dockerfile) is used to build an image of the application.
-To build an image run the following command:
+To build an image, set `GITHUB_TOKEN` to a token with package read access and
+run the following command:
 ```
-docker build -t unite.composer:latest .
+docker build \
+--build-arg USER=[github_user] \
+--secret id=github_token,env=GITHUB_TOKEN \
+-t unite.composer:latest .
 ```
 
 All application components should run in the same docker network.
