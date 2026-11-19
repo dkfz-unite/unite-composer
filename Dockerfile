@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 ENV ASPNETCORE_HTTP_PORTS=80
 WORKDIR /app
@@ -5,15 +7,16 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
 ARG USER
-ARG TOKEN
 WORKDIR /src
-RUN dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p ${TOKEN} --store-password-in-clear-text
 COPY ["Unite.Composer/Unite.Composer.csproj", "Unite.Composer/"]
 COPY ["Unite.Composer.Download/Unite.Composer.Download.csproj", "Unite.Composer.Download/"]
 COPY ["Unite.Composer.Web/Unite.Composer.Web.csproj", "Unite.Composer.Web/"]
-RUN dotnet restore "Unite.Composer/Unite.Composer.csproj"
-RUN dotnet restore "Unite.Composer.Download/Unite.Composer.Download.csproj"
-RUN dotnet restore "Unite.Composer.Web/Unite.Composer.Web.csproj"
+RUN --mount=type=secret,id=github_token \
+    dotnet nuget add source https://nuget.pkg.github.com/dkfz-unite/index.json -n github -u ${USER} -p "$(cat /run/secrets/github_token)" --store-password-in-clear-text \
+    && dotnet restore "Unite.Composer/Unite.Composer.csproj" \
+    && dotnet restore "Unite.Composer.Download/Unite.Composer.Download.csproj" \
+    && dotnet restore "Unite.Composer.Web/Unite.Composer.Web.csproj" \
+    && dotnet nuget remove source github
 
 FROM restore AS build
 COPY . .

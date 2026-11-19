@@ -9,9 +9,9 @@ public class EnsemblApiClient
     private const int _threadsNumber = 5;
     private const int _bucketSize = 200;
 
-    private const string _genesUrl = @"/api/genes";
-    private const string _transcriptsUrl = @"/api/transcripts";
-    private const string _proteinsUrl = @"/api/proteins";
+    private const string _genesUrl = @"/genes";
+    private const string _transcriptsUrl = @"/transcripts";
+    private const string _proteinsUrl = @"/proteins";
 
     private readonly IEnsemblOptions _options;
 
@@ -152,16 +152,17 @@ public class EnsemblApiClient
         var arguments = new string[]
         {
             $"length={length}",
-            $"expand={expand}",
-            $"grch={_options.Grch}"
+            $"expand={expand}"
         };
 
         return $"?{string.Join('&', arguments)}";
     }
 
-    private static string GetUrl<T>() where T : LookupResource
+    private string GetUrl<T>() where T : LookupResource
     {
-        return typeof(T) == typeof(ProteinResource) ? $"{_proteinsUrl}"
+        var root = $"/api/grch{_options.Grch}";
+
+        return typeof(T) == typeof(ProteinResource) ? $"{root}{_proteinsUrl}"
              : throw new NotImplementedException();
     }
 }
