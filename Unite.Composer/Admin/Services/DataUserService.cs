@@ -3,6 +3,7 @@ using Unite.Composer.Clients.DonorFeed;
 using Unite.Data.Context;
 using Unite.Data.Context.Repositories;
 using Unite.Data.Entities;
+using Unite.Data.Entities.Donors;
 
 namespace Unite.Composer.Admin.Services;
 
@@ -25,9 +26,26 @@ public class DataUserService
         if (dataUsers == null)
             throw new Exception("Cannot load data users");
 
-        await DeleteDataUsers(dataUsers.Select(x => x.Id).ToArray());
-        
-        await _donorFeedApiClient.IndexProjects();
+        var dataUserIds = dataUsers.Select(x => x.Id).ToArray();
+
+        var projectIds = await LoadProjectIds(dataUserIds);
+
+        await DeleteDataUsers(dataUserIds);
+
+        foreach (var projectId in projectIds)
+            await _donorFeedApiClient.IndexProject(projectId);
+    }
+
+    private async Task<int[]> LoadProjectIds(int[] dataUserIds)
+    {
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+        return await dbContext.Set<ProjectUser>()
+            .AsNoTracking()
+            .Where(projectUser => dataUserIds.Contains(projectUser.UserId))
+            .Select(projectUser => projectUser.ProjectId)
+            .Distinct()
+            .ToArrayAsync();
     }
     
     private async Task DeleteDataUsers(int[] dataUserIds)

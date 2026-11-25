@@ -39,7 +39,7 @@ public class ProjectService
         
         var projectUser = await AssignToProject(dataUsers.Select(dataUser => dataUser.Id).ToArray(), project.Id);
 
-        await _donorFeedApiClient.IndexProjects();
+        await _donorFeedApiClient.IndexProject(project.Id);
         
         return projectUser;
     }
@@ -56,7 +56,7 @@ public class ProjectService
         
         await RemoveFromProject(dataUsers.Select(dataUser => dataUser.Id).ToArray(), project.Id);
         
-        await _donorFeedApiClient.IndexProjects();
+        await _donorFeedApiClient.IndexProject(project.Id);
     }
 
     public async Task<ProjectUserModel[]> ListProjectUsers(int projectId)
@@ -94,7 +94,7 @@ public class ProjectService
         
         await SaveProject(project);
         
-        await _donorFeedApiClient.IndexProjects();
+        await _donorFeedApiClient.IndexProject(project.Id);
     }
     
     private async Task<Project> LoadProject(int projectId)

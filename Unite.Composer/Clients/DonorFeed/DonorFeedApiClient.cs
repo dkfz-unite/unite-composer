@@ -13,11 +13,11 @@ public class DonorFeedApiClient
         _httpContextAccessor = httpContextAccessor;
     }
     
-    public async Task IndexProjects()
+    public async Task IndexProject(int id)
     {
         using var httpClient = new JsonHttpClient(_options.Host);
 
-        var url = $"/api/indexing/projects";
+        var url = $"/api/indexing/projects/{id}";
 
         var authHeader = _httpContextAccessor.HttpContext?.Request.Headers.Authorization.ToString();
         
